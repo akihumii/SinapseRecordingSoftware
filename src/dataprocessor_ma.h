@@ -10,14 +10,13 @@ class DataProcessor_MA : public Data
 {
 public:
     DataProcessor_MA();
+    Data *data;
     void parseFrameMarkers(QByteArray rawData);
-//    QVector<double> filterData(QVector<double> unfilteredData);
-private:
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
 
     int firstFrameMarker;
-    quint16 fullWord_rawData;
+    qint16 fullWord_rawData;
     int lastFrameMarker;
     QByteArray leftOverData;
 };

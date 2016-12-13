@@ -22,12 +22,11 @@ public:
     QByteArray getlastCommand();
 
 private:
-    QTcpSocket *socketData;
+
     QTcpSocket *socketCommand;
     Channel *NeutrinoChannel;
     Command *NeutrinoCommand;
     DataProcessor_KA *NeutrinoData;
-    //SerialNeutrino *serialNeutrino;
 
 
     qint64 maxSize = 8192;
@@ -41,14 +40,8 @@ private:
 
 private slots:
 
-    void connectedDataSocket();
-    void disconnectedDataSocket();
-    void bytesWritten(qint64 bytes);
-    void ReadData();
-
     void connectedCommandSocket();
     void disconnectedCommandSocket();
-    //void bytesWritten(qint64 bytes);
     void ReadCommand();
 };
 

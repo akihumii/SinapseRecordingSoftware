@@ -32,7 +32,10 @@ SOURCES += main.cpp\
     connectiondialog.cpp \
     socketedison.cpp \
     dataprocessor_ma.cpp \
-    dataprocessor_ka.cpp
+    dataprocessor_ka.cpp \
+    serialneutrino.cpp \
+    filter.cpp \
+    filterdialog.cpp
 
 HEADERS  += mainwindow_ma.h \
     data.h \
@@ -49,10 +52,10 @@ HEADERS  += mainwindow_ma.h \
     connectiondialog.h \
     socketedison.h \
     dataprocessor_ma.h \
-    dataprocessor_ka.h
-
-SUBDIRS += \
-    MarshalWirelessRecording.pro
+    dataprocessor_ka.h \
+    serialneutrino.h \
+    filter.h \
+    filterdialog.h
 
 FORMS +=
 

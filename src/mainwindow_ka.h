@@ -11,7 +11,7 @@
 #include "filenamedialog.h"
 #include "dataprocessor_ka.h"
 #include "channel.h"
-//#include "serialneutrino.h"
+#include "serialneutrino.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -49,12 +49,14 @@ private slots:
 
 private:
     SocketEdison *socketEdison;
-    //SerialNeutrino *serialNeutrino;
+    SerialNeutrino *serialNeutrino;
     Command *NeutrinoCommand;
     DataProcessor_KA *NeutrinoData;
     Channel *NeutrinoChannel;
     QElapsedTimer timer;
     QTimer dataTimer;
+
+    QList<QSerialPortInfo> portInfo;
 
     void createStatusBar();
     void create10x1Layout();

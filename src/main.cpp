@@ -2,10 +2,9 @@
 #include "mainwindow_ka.h"
 #include <QApplication>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
     QApplication a(argc, argv);
-    MainWindow_KA w;
+    MainWindow_MA w;
     w.show();
     w.setMinimumSize(1366,768);
 

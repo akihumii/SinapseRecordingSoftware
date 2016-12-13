@@ -2,6 +2,7 @@
 #define DATA_H
 
 #include "qtincludes.h"
+#include "filter.h"
 
 #define END_OF_LINE 2779058
 
@@ -17,7 +18,7 @@ enum TimeFrames{
     TimeFrames5000ms = 5000
 };
 
-class Data
+class Data : public Filter
 {
 public:
     Data();
@@ -37,10 +38,10 @@ public:
     void setNumDataPoints(int timeFrames);
     int getNumDataPoints();
     double getSamplingRate();
-
+    Filter* filter;
 protected:
     QVector<double> X_axis;
-    QVector<double> ChannelData[3];
+    QVector<double> ChannelData[10];
 
     quint64 total_data_count = 0;
     bool RecordEnabled = false;

@@ -5,10 +5,12 @@
 #include "qtincludes.h"
 #include "qcustomplot.h"
 #include "data.h"
+#include "filter.h"
 #include "signalchannel.h"
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "filenamedialog.h"
+#include "filterdialog.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -22,11 +24,13 @@ public:
     ~MainWindow_MA();
     QLabel *statusBarLabel;
     SerialChannel *serialChannel;
+    DataProcessor_MA *data;
 public slots:
 
 private slots:
     void updateData();
     void on_serialConfig_triggered();
+    void on_filterConfig_trigger();
     void on_record_triggered();
     void on_recordFileName_triggered();
     void on_resetRange_triggered();
@@ -39,6 +43,13 @@ private slots:
     void on_timeFrame1000_triggered();
     void on_timeFrame2000_triggered();
     void on_timeFrame5000_triggered();
+    void on_voltage50u_triggered();
+    void on_voltage100u_triggered();
+    void on_voltage200u_triggered();
+    void on_voltage500u_triggered();
+    void on_voltage1000u_triggered();
+    void on_voltage2000u_triggered();
+    void on_voltage5000u_triggered();
     void resetGraph1Range();
     void resetGraph2Range();
     void resetGraph3Range();
@@ -46,7 +57,6 @@ private slots:
 private:
     int numDataPoints;
 
-    DataProcessor_MA *data;
     QElapsedTimer timer;
     QTimer dataTimer;
 
@@ -63,10 +73,13 @@ private:
     QMenu *fileMenu;
     QMenu *layoutMenu;
     QMenu *timeFrameMenu;
+    QMenu *voltageMenu;
+    QMenu *filterMenu;
 
     QCustomPlot *channelGraph[10];
 
     QAction *serialPortAction;
+    QAction *filterAction;
 
     QAction *exitAction;
     QAction *recordAction;
@@ -84,10 +97,19 @@ private:
 
     QActionGroup *timeFrameGroup;
 
+    QAction *voltage50u;
+    QAction *voltage100u;
+    QAction *voltage200u;
+    QAction *voltage500u;
+    QAction *voltage1000u;
+    QAction *voltage2000u;
+    QAction *voltage5000u;
+
+    QActionGroup *voltageGroup;
+
     QAction *resetDefaultRange;
 
     QStatusBar *statusBarMainWindow;
-
 };
 
 #endif // MAINWINDOW_MA_H

@@ -38,7 +38,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setFlowControl(QSerialPort::NoFlowControl);
     implantPort->setReadBufferSize(2000);
 
-    if (implantPort->open(QIODevice::ReadWrite)) {
+    if (implantPort->open(QIODevice::ReadOnly)) {
         return 1;
     }
     else{
@@ -53,7 +53,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-    ADCPort->setReadBufferSize(2000);
+    ADCPort->setReadBufferSize(100);
 
     if (ADCPort->open(QIODevice::ReadWrite)) {
         return 1;

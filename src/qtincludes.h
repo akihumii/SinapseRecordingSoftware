@@ -62,5 +62,7 @@
 #include <QtSerialPort>
 #include <QSerialPortInfo>
 #include <QMessageBox>
+#include <qmath.h>
+#include "math.h"
 
 #endif // QTINCLUDES_H

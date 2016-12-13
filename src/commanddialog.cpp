@@ -419,5 +419,6 @@ void CommandDialog::loadDefault(){
         JTAG[i]->setChecked(true);
         NeutrinoCommand->setJTAGbit(i);
     }
-    JTAG[6]->setChecked(false);
+    JTAG[8]->setChecked(false);
+    JTAG[9]->setChecked(false);
 }

@@ -1,8 +1,6 @@
 #include "dataprocessor_ma.h"
 
-DataProcessor_MA::DataProcessor_MA()
-{
-
+DataProcessor_MA::DataProcessor_MA(){
 }
 
 void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
@@ -12,35 +10,34 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
         }
         leftOverData.clear();
     }
-
     firstFrameMarker = findfirstFrameMarkers(rawData);
     lastFrameMarker = findlastFrameMarkers(rawData);
+    if(lastFrameMarker > 0){
+        for(int i=0;i<lastFrameMarker-5;i=i+1){
+            if (i%5 == firstFrameMarker){
+                fullWord_rawData = (((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2)))-32768;
+                if(RecordEnabled){
+                    RecordData(fullWord_rawData);
+                }
+                ChannelData[0].append(fullWord_rawData*(0.000000195));
 
-    for(int i=0;i<lastFrameMarker-5;i=i+1){
-        if (i%5 == firstFrameMarker){
-            fullWord_rawData = (((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768);
-            if(RecordEnabled){
-                RecordData(fullWord_rawData);
+                fullWord_rawData = (((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4)))-32768;
+                if(RecordEnabled){
+                    RecordData(fullWord_rawData);
+                }
+                ChannelData[1].append(fullWord_rawData*(0.000000195));
+                if(RecordEnabled){
+                    RecordData((quint8) rawData.at(i));
+                    RecordData(END_OF_LINE);
+                }
+                ChannelData[2].append((quint8) rawData.at(i));
+                total_data_count = total_data_count+1;
+                X_axis.append(total_data_count*0.000048);
             }
-            ChannelData[0].append(fullWord_rawData*(0.000000195/65536));
-
-            fullWord_rawData = (((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768);
-            if(RecordEnabled){
-                RecordData(fullWord_rawData);
-            }
-            ChannelData[1].append(fullWord_rawData*(0.000000195/65536));
-
-            if(RecordEnabled){
-                RecordData((quint8) rawData.at(i));
-                RecordData(END_OF_LINE);
-            }
-            ChannelData[2].append((quint8) rawData.at(i));
-            total_data_count = total_data_count+1;
-            X_axis.append(total_data_count*0.000048);
         }
-    }
-    for(int i = lastFrameMarker; i < rawData.size(); i++){
-        leftOverData.append(rawData.at(i));
+        for(int i = lastFrameMarker; i < rawData.size(); i++){
+            leftOverData.append(rawData.at(i));
+        }
     }
 }
 

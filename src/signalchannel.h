@@ -18,6 +18,10 @@ public:
     QString customChannelName;
     bool enabled;
     int channelID;
+    bool isHighpassEnable;
+    bool isLowpassEnable;
+    bool isNotchEnable;
+    QVector<double> channelData;
 
 private:
 

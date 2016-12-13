@@ -1,17 +1,11 @@
 #include "socketedison.h"
 
 SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProcessor_KA *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent){
-    socketData = new QTcpSocket(this);
     socketCommand = new QTcpSocket(this);
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoData = NeutrinoData_;
     NeutrinoChannel = NeutrinoChannel_;
     //serialNeutrino = serialNeutrino_;
-
-    connect(socketData, SIGNAL(connected()), this, SLOT(connectedDataSocket()));
-    connect(socketData, SIGNAL(disconnected()), this, SLOT(disconnectedDataSocket()));
-    connect(socketData, SIGNAL(readyRead()), this, SLOT(ReadData()));
-    connect(socketData, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
 
     connect(socketCommand, SIGNAL(connected()), this, SLOT(connectedCommandSocket()));
     connect(socketCommand, SIGNAL(disconnected()), this, SLOT(disconnectedCommandSocket()));
@@ -21,19 +15,14 @@ SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProce
 void SocketEdison::doConnect(QString ipAddress, int port){
     qDebug() << "Connecting...";
 
-    socketData->connectToHost(ipAddress, port); //change iP Address
+    //socketData->connectToHost(ipAddress, port); //change iP Address
     socketCommand->connectToHost(ipAddress, port);
 
     qDebug() << "Waiting...";
 
-    if(!socketData->waitForConnected(5000)){
-        qDebug() << "Error: " << socketData->errorString();
+    if(!socketCommand->waitForConnected(1000)){
+        qDebug() << "Error: " << socketCommand->errorString();
     }
-}
-
-void SocketEdison::connectedDataSocket(){
-    qDebug() << "Connected!";
-
 }
 
 void SocketEdison::connectedCommandSocket(){
@@ -45,50 +34,10 @@ void SocketEdison::disconnectedCommandSocket(){
 }
 
 void SocketEdison::ReadCommand(){
-    if(socketCommand->bytesAvailable() > maxSize-1 && wifiEnabled){
-        if(NeutrinoData->isPlotEnabled()){
-            if(Mode_8Bit == true){
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketCommand->read(maxSize)));
-            }
-            else if(Mode_8Bit == false){
-                QByteArray data_buf = socketCommand->read(maxSize);
-                if(data_buf.size()<maxSize){
-                    qDebug() << data_buf.size() << "Bytes Read";
-                }
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(data_buf));
-            }
-        }
-    }
-}
-
-void SocketEdison::disconnectedDataSocket(){
-    qDebug() << "Disconnected!";
-}
-void SocketEdison::bytesWritten(qint64 bytes){
-    qDebug() << bytes << "bytes written..";
-}
-void SocketEdison::ReadData(){
-    if(socketData->bytesAvailable() > maxSize-1 && wifiEnabled){
-        if(NeutrinoData->isPlotEnabled()){
-            if(Mode_8Bit == true){
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketData->read(maxSize)));
-            }
-            else if(Mode_8Bit == false){
-                QByteArray data_buf = socketData->read(maxSize);
-                if(data_buf.size()<maxSize){
-                    qDebug() << data_buf.size() << "Bytes Read";
-                }
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(data_buf));
-            }
-        }
-    }
 }
 
 void SocketEdison::doDisconnect(){
-    if(socketData->state() == QAbstractSocket::ConnectedState){
-        socketData->flush();
-        socketData->disconnectFromHost();
-        socketData->close();
+    if(socketCommand->state() == QAbstractSocket::ConnectedState){
         socketCommand->flush();
         socketCommand->disconnectFromHost();
         socketCommand->close();
@@ -97,7 +46,7 @@ void SocketEdison::doDisconnect(){
 }
 
 bool SocketEdison::isConnected(){
-    if (socketData->state() == QAbstractSocket::ConnectedState){
+    if (socketCommand->state() == QAbstractSocket::ConnectedState){
         return true;
     }
     else return false;
@@ -135,7 +84,7 @@ bool SocketEdison::writeCommand(QByteArray Command){
 }
 
 QString SocketEdison::getError(){
-    return socketData->errorString();
+    return socketCommand->errorString();
 }
 
 int SocketEdison::getNumChannels(QByteArray lastCommand){

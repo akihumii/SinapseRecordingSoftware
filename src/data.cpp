@@ -5,6 +5,9 @@ Data::Data(){
 }
 
 QVector<double> Data::retrieveData(int ChannelIndex){
+    if(isFilterEnabled() && ChannelIndex == 1){
+        ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex]);
+    }
     return ChannelData[ChannelIndex];
 }
 

@@ -6,12 +6,12 @@ MainWindow_MA::MainWindow_MA(){
 
     defaultRange = new QCPRange(-0.00000016, 0.00000032);
 
-    setWindowTitle(tr("Marshal Wirless Recording V") + version);
+    setWindowTitle(tr("Sinapse Recording Software V") + version);
     timer.start();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     data = new DataProcessor_MA;
     serialChannel = new SerialChannel(this, data);
-    dataTimer.start(10);     //tick timer every XXX msec
+    dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
@@ -52,14 +52,9 @@ void MainWindow_MA::createLayout(){
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(70,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.00000016, 0.00000032, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setRange(-0.000050, 0.000100, Qt::AlignLeft);
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis2->setTickStep(0.1);//0.000048);
-        connect(channelGraph[i]->yAxis, SIGNAL(rangeChanged(QCPRange)), channelGraph[i]->yAxis2, SLOT(setRange(QCPRange)));
-        connect(channelGraph[i]->xAxis, SIGNAL(rangeChanged(QCPRange)), channelGraph[i]->xAxis2, SLOT(setRange(QCPRange)));
-        channelGraph[i]->setInteractions(QCP::iRangeZoom | QCP::iRangeDrag);
-        channelGraph[i]->axisRect()->setRangeZoom(Qt::Vertical);
-        channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
@@ -79,6 +74,9 @@ void MainWindow_MA::createActions(){
     serialPortAction->setShortcut(tr("Ctrl+E"));
     connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
 
+    filterAction = new QAction(tr("Filter Configuration"), this);
+    filterAction->setShortcut(tr("Ctrl+F"));
+    connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
 
     recordFileNameAction = new QAction(tr("&Specify File Name"), this);
     recordFileNameAction->setShortcut(tr("Ctrl+S"));
@@ -116,11 +114,28 @@ void MainWindow_MA::createActions(){
     connect(timeFrame2000ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame2000_triggered()));
     connect(timeFrame5000ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame5000_triggered()));
 
+    voltage50u = new QAction(tr("+/- 50uV"));
+    voltage100u = new QAction(tr("+/- 100uV"));
+    voltage200u = new QAction(tr("+/- 200uV"));
+    voltage500u = new QAction(tr("+/- 500uV"));
+    voltage1000u = new QAction(tr("+/- 1000uV"));
+    voltage2000u = new QAction(tr("+/- 2000uV"));
+    voltage5000u = new QAction(tr("+/- 5000uV"));
+
+    connect(voltage50u, SIGNAL(triggered(bool)), this, SLOT(on_voltage50u_triggered()));
+    connect(voltage100u, SIGNAL(triggered(bool)), this, SLOT(on_voltage100u_triggered()));
+    connect(voltage200u, SIGNAL(triggered(bool)), this, SLOT(on_voltage200u_triggered()));
+    connect(voltage500u, SIGNAL(triggered(bool)), this, SLOT(on_voltage500u_triggered()));
+    connect(voltage1000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage1000u_triggered()));
+    connect(voltage2000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage2000u_triggered()));
+    connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
+
 }
 
 void MainWindow_MA::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(serialPortAction);
+    fileMenu->addAction(filterAction);
     fileMenu->addAction(resetDefaultRange);
     fileMenu->addSeparator();
     fileMenu->addAction(recordAction);
@@ -128,8 +143,7 @@ void MainWindow_MA::createMenus(){
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
-    timeFrameMenu = menuBar()->addMenu(tr("&Time Frames"));
-    timeFrameGroup = new QActionGroup(this);
+    timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameMenu->addAction(timeFrame10ms);
     timeFrame10ms->setCheckable(true);
     timeFrameMenu->addAction(timeFrame20ms);
@@ -160,6 +174,32 @@ void MainWindow_MA::createMenus(){
     timeFrameGroup->addAction(timeFrame1000ms);
     timeFrameGroup->addAction(timeFrame2000ms);
     timeFrameGroup->addAction(timeFrame5000ms);
+
+    voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
+    voltageMenu->addAction(voltage50u);
+    voltage50u->setCheckable(true);
+    voltageMenu->addAction(voltage100u);
+    voltage100u->setCheckable(true);
+    voltageMenu->addAction(voltage200u);
+    voltage200u->setCheckable(true);
+    voltageMenu->addAction(voltage500u);
+    voltage500u->setCheckable(true);
+    voltageMenu->addAction(voltage1000u);
+    voltage1000u->setCheckable(true);
+    voltageMenu->addAction(voltage2000u);
+    voltage2000u->setCheckable(true);
+    voltageMenu->addAction(voltage5000u);
+    voltage5000u->setCheckable(true);
+
+    voltageGroup = new QActionGroup(this);
+    voltageGroup->addAction(voltage50u);
+    voltageGroup->addAction(voltage100u);
+    voltageGroup->addAction(voltage200u);
+    voltageGroup->addAction(voltage500u);
+    voltage500u->setChecked(true);
+    voltageGroup->addAction(voltage1000u);
+    voltageGroup->addAction(voltage2000u);
+    voltageGroup->addAction(voltage5000u);
 }
 
 void MainWindow_MA::createStatusBar(){
@@ -203,6 +243,11 @@ void MainWindow_MA::on_serialConfig_triggered(){
             statusBarLabel->setText("Connected ADC Port");
         }
     }
+}
+
+void MainWindow_MA::on_filterConfig_trigger(){
+    FilterDialog filterDialog(data);
+    filterDialog.exec();
 }
 
 void MainWindow_MA::on_record_triggered(){
@@ -290,4 +335,46 @@ void MainWindow_MA::on_timeFrame2000_triggered(){
 void MainWindow_MA::on_timeFrame5000_triggered(){
     data->setNumDataPoints(TimeFrames5000ms);
     data->clearallChannelData();
+}
+
+void MainWindow_MA::on_voltage50u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
+    }
+}
+
+void MainWindow_MA::on_voltage100u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
+    }
+}
+
+void MainWindow_MA::on_voltage200u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
+    }
+}
+
+void MainWindow_MA::on_voltage500u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
+    }
+}
+
+void MainWindow_MA::on_voltage1000u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
+    }
+}
+
+void MainWindow_MA::on_voltage2000u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
+    }
+}
+
+void MainWindow_MA::on_voltage5000u_triggered(){
+    for(int i = 0; i < 2; i++){
+        channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
+    }
 }

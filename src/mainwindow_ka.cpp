@@ -6,9 +6,14 @@ MainWindow_KA::MainWindow_KA(){
     NeutrinoCommand = new Command(NeutrinoChannel);
     NeutrinoData = new DataProcessor_KA(NeutrinoChannel);
 
-    ////serialNeutrino = new //serialNeutrino(this, NeutrinoCommand, NeutrinoData, NeutrinoChannel);
-    socketEdison = new SocketEdison(this, NeutrinoCommand, NeutrinoData, NeutrinoChannel);//, //serialNeutrino);
-    setWindowTitle(tr("Neutrino Edison V") + version);
+    serialNeutrino = new SerialNeutrino(this, NeutrinoCommand, NeutrinoData, NeutrinoChannel);
+    portInfo = QSerialPortInfo::availablePorts();
+    if(portInfo.size()>0){
+        qDebug() << portInfo.at(0).portName();
+        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(0).portName());
+    }
+    socketEdison = new SocketEdison(this, NeutrinoCommand, NeutrinoData, NeutrinoChannel);
+    setWindowTitle(tr("Sinapse Recording Software V") + version);
     timer.start();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(10);     //tick timer every XXX msec
@@ -244,7 +249,7 @@ MainWindow_KA::~MainWindow_KA(){
         socketEdison->writeCommand(QByteArray::number(255, 10));
         socketEdison->doDisconnect();
     }
-    //serialNeutrino->closePort();
+    serialNeutrino->closePort();
 }
 
 void MainWindow_KA::on_ConnectMenu_triggered(){
@@ -364,15 +369,16 @@ void MainWindow_KA::on_timeFrame5000_triggered(){
 
 void MainWindow_KA::on_wifi_triggered(){
     qDebug() << "ready via Wifi";
-    //serialNeutrino->closePort();
-    //serialNeutrino->//serialenabled = false;
+    serialNeutrino->closePort();
+    serialNeutrino->serialenabled = false;
     socketEdison->wifiEnabled = true;
 }
 
 void MainWindow_KA::on_wired_triggered(){
-    qDebug() << "ready via USB";
-    //serialNeutrino->//serialenabled = true;
-    //serialNeutrino->doConnect();
+    serialNeutrino->serialenabled = true;
+    if(serialNeutrino->doConnect()){
+        qDebug() << "ready via USB";
+    }
     socketEdison->wifiEnabled = false;
 }
 
