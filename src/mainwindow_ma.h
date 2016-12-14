@@ -53,6 +53,7 @@ private slots:
     void resetGraph1Range();
     void resetGraph2Range();
     void resetGraph3Range();
+    void resetGraph4Range();
 
 private:
     int numDataPoints;

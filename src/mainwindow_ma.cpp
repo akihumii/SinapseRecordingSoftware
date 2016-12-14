@@ -4,7 +4,7 @@ MainWindow_MA::MainWindow_MA(){
 
     QString version(APP_VERSION);
 
-    defaultRange = new QCPRange(-0.00000016, 0.00000032);
+    defaultRange = new QCPRange(-0.00050, 0.00100);
 
     setWindowTitle(tr("Sinapse Recording Software V") + version);
     timer.start();
@@ -46,13 +46,13 @@ MainWindow_MA::MainWindow_MA(){
 
 void MainWindow_MA::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    for(int i=0;i<3;i++){
+    for(int i=0;i<4;i++){
         channelGraph[i] = new QCustomPlot;
         mainLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(70,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.000050, 0.000100, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis2->setTickStep(0.1);//0.000048);
     }
@@ -60,9 +60,10 @@ void MainWindow_MA::createLayout(){
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
     channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
     channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
+    channelGraph[3]->graph()->setPen(QPen(Qt::darkBlue));
 
-    channelGraph[2]->axisRect()->setMargins(QMargins(70,0,0,15));
-    channelGraph[2]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[3]->axisRect()->setMargins(QMargins(70,0,0,15));
 
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -269,27 +270,37 @@ void MainWindow_MA::on_recordFileName_triggered(){
 }
 
 void MainWindow_MA::on_resetRange_triggered(){
-    for(int i=0;i<2;i++){
-        channelGraph[i]->yAxis->setRange(-0.00000016, 0.00000032, Qt::AlignLeft);
+    for(int i=0;i<3;i++){
+        channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
-    channelGraph[2]->yAxis->setRange(0, 255, Qt::AlignLeft);
-    channelGraph[2]->replot();
+    channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[3]->replot();
+    voltage500u->setChecked(true);
+
+    data->setNumDataPoints(TimeFrames100ms);
+    data->clearallChannelData();
+    timeFrame100ms->setChecked(true);
 }
 
 void MainWindow_MA::resetGraph1Range(){
-    channelGraph[0]->yAxis->setRange(-0.00000016, 0.00000032, Qt::AlignLeft);
+    channelGraph[0]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
     channelGraph[0]->replot();
 }
 
 void MainWindow_MA::resetGraph2Range(){
-    channelGraph[1]->yAxis->setRange(-0.00000016, 0.00000032, Qt::AlignLeft);
+    channelGraph[1]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
     channelGraph[1]->replot();
 }
 
 void MainWindow_MA::resetGraph3Range(){
-    channelGraph[2]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[2]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
     channelGraph[2]->replot();
+}
+
+void MainWindow_MA::resetGraph4Range(){
+    channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[3]->replot();
 }
 
 void MainWindow_MA::on_timeFrame10_triggered(){
@@ -338,43 +349,50 @@ void MainWindow_MA::on_timeFrame5000_triggered(){
 }
 
 void MainWindow_MA::on_voltage50u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage100u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage200u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage500u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage1000u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage2000u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage5000u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
+        channelGraph[i]->replot();
     }
 }

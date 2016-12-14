@@ -12,10 +12,13 @@ public:
     DataProcessor_MA();
     Data *data;
     void parseFrameMarkers(QByteArray rawData);
+    bool checkNextFrameMarker(QByteArray data, int currentIndex);
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
 
     int firstFrameMarker;
+    quint8 currentFrameMarker;
+    int currentFrameMarkerIndex;
     qint16 fullWord_rawData;
     int lastFrameMarker;
     QByteArray leftOverData;

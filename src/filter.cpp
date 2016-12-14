@@ -108,70 +108,70 @@ double Filter::currentNotchFreq(){
     return notchFreq;
 }
 
-QVector<double> Filter::filterData(QVector<double> rawData){
-    if(prevRawData.size() >= 2){
-        rawData.prepend(prevRawData.at(0));
-        rawData.prepend(prevRawData.at(1));
-        prevRawData.clear();
+QVector<double> Filter::filterData(QVector<double> rawData, int ChannelIndex){
+    if(prevRawData[ChannelIndex].size() >= 2){
+        rawData.prepend(prevRawData[ChannelIndex].at(0));
+        rawData.prepend(prevRawData[ChannelIndex].at(1));
+        prevRawData[ChannelIndex].clear();
     }
-    prevRawData.append(rawData.at(rawData.size()-1));
-    prevRawData.append(rawData.at(rawData.size()-2));
+    prevRawData[ChannelIndex].append(rawData.at(rawData.size()-1));
+    prevRawData[ChannelIndex].append(rawData.at(rawData.size()-2));
     if(notchFilterEnabled){
-        rawData = notchFilter(rawData);
+        rawData = notchFilter(rawData, ChannelIndex);
     }
     if(highpassFilterEnabled){
-        rawData = hipassFilter(rawData);
+        rawData = hipassFilter(rawData, ChannelIndex);
     }
     if(lowpassFilterEnabled){
-        rawData = lopassFilter(rawData);
+        rawData = lopassFilter(rawData, ChannelIndex);
     }
     return rawData;
 }
 
-QVector<double> Filter::hipassFilter(QVector<double> rawData){
+QVector<double> Filter::hipassFilter(QVector<double> rawData, int ChannelIndex){
     double temp;
-    if(filteredData_hp.size() > 1){
-        filteredData_hp.remove(0, filteredData_hp.size()-2);
+    if(filteredData_hp[ChannelIndex].size() > 1){
+        filteredData_hp[ChannelIndex].remove(0, filteredData_hp[ChannelIndex].size()-2);
     }
     else{
-        filteredData_hp.append(rawData.at(0));
-        filteredData_hp.append(rawData.at(1));
+        filteredData_hp[ChannelIndex].append(rawData.at(0));
+        filteredData_hp[ChannelIndex].append(rawData.at(1));
     }
     for (int t = 2; t < rawData.size(); t++) {
-        temp = a0_hp * rawData.at(t) + a1_hp * rawData.at(t-1) + a2_hp * rawData.at(t-2) - b1_hp * filteredData_hp.at(t-1) - b2_hp * filteredData_hp.at(t-2);
-        filteredData_hp.append(temp);
+        temp = a0_hp * rawData.at(t) + a1_hp * rawData.at(t-1) + a2_hp * rawData.at(t-2) - b1_hp * filteredData_hp[ChannelIndex].at(t-1) - b2_hp * filteredData_hp[ChannelIndex].at(t-2);
+        filteredData_hp[ChannelIndex].append(temp);
     }
-    return filteredData_hp;
+    return filteredData_hp[ChannelIndex];
 }
 
-QVector<double> Filter::lopassFilter(QVector<double> rawData){
+QVector<double> Filter::lopassFilter(QVector<double> rawData, int ChannelIndex){
     double temp;
-    if(filteredData.size() > 1){
-        filteredData.remove(0, filteredData.size()-2);
+    if(filteredData[ChannelIndex].size() > 1){
+        filteredData[ChannelIndex].remove(0, filteredData[ChannelIndex].size()-2);
     }
     else{
-        filteredData.append(rawData.at(0));
-        filteredData.append(rawData.at(1));
+        filteredData[ChannelIndex].append(rawData.at(0));
+        filteredData[ChannelIndex].append(rawData.at(1));
     }
     for (int t = 2; t < rawData.size(); t++) {
-        temp = a0_lp * rawData.at(t) + a1_lp * rawData.at(t-1) + a2_lp * rawData.at(t-2) - b1_lp * filteredData.at(t-1) - b2_lp * filteredData.at(t-2);
-        filteredData.append(temp);
+        temp = a0_lp * rawData.at(t) + a1_lp * rawData.at(t-1) + a2_lp * rawData.at(t-2) - b1_lp * filteredData[ChannelIndex].at(t-1) - b2_lp * filteredData[ChannelIndex].at(t-2);
+        filteredData[ChannelIndex].append(temp);
     }
-    return filteredData;
+    return filteredData[ChannelIndex];
 }
 
-QVector<double> Filter::notchFilter(QVector<double> rawData){
+QVector<double> Filter::notchFilter(QVector<double> rawData, int ChannelIndex){
     double temp;
-    if(filteredData_n.size() > 1){
-        filteredData_n.remove(0, filteredData_n.size()-2);
+    if(filteredData_n[ChannelIndex].size() > 1){
+        filteredData_n[ChannelIndex].remove(0, filteredData_n[ChannelIndex].size()-2);
     }
     else{
-        filteredData_n.append(rawData.at(0));
-        filteredData_n.append(rawData.at(1));
+        filteredData_n[ChannelIndex].append(rawData.at(0));
+        filteredData_n[ChannelIndex].append(rawData.at(1));
     }
     for (int t = 2; t < rawData.size(); t++) {
-        temp = a0_n * rawData.at(t) + a1_n * rawData.at(t-1) + a2_n * rawData.at(t-2) - b1_n * filteredData_n.at(t-1) - b2_n * filteredData_n.at(t-2);
-        filteredData_n.append(temp);
+        temp = a0_n * rawData.at(t) + a1_n * rawData.at(t-1) + a2_n * rawData.at(t-2) - b1_n * filteredData_n[ChannelIndex].at(t-1) - b2_n * filteredData_n[ChannelIndex].at(t-2);
+        filteredData_n[ChannelIndex].append(temp);
     }
-    return filteredData_n;
+    return filteredData_n[ChannelIndex];
 }

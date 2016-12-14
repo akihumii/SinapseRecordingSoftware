@@ -59,7 +59,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QtNetwork>
-#include <QtSerialPort>
+#include <QtSerialPort/QtSerialPort>
 #include <QSerialPortInfo>
 #include <QMessageBox>
 #include <qmath.h>

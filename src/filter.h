@@ -26,20 +26,20 @@ public:
     bool isHighpassFilterEnabled();
     double currentHighpassFreq();
     bool isFilterEnabled();
-    QVector<double> filterData(QVector<double> rawData);
+    QVector<double> filterData(QVector<double> rawData, int ChannelIndex);
 
 private:
     double a0_hp, a1_hp, a2_hp, b1_hp, b2_hp;        // coefficients for 2nd order low pass butterworth filter
     double a0_lp, a1_lp, a2_lp, b1_lp, b2_lp;        // coefficients for 2nd order high pass butterworth filter
     double a0_n, a1_n, a2_n, b1_n, b2_n;             // coefficients for notch filter
     double TWO_PI = 6.28318530718;
-    QVector<double> filteredData;
-    QVector<double> filteredData_hp;
-    QVector<double> filteredData_n;
-    QVector<double> prevRawData;
-    QVector<double> hipassFilter(QVector<double> rawData);
-    QVector<double> lopassFilter(QVector<double> rawData);
-    QVector<double> notchFilter(QVector<double> rawData);
+    QVector<double> filteredData[3];
+    QVector<double> filteredData_hp[3];
+    QVector<double> filteredData_n[3];
+    QVector<double> prevRawData[3];
+    QVector<double> hipassFilter(QVector<double> rawData, int ChannelIndex);
+    QVector<double> lopassFilter(QVector<double> rawData, int ChannelIndex);
+    QVector<double> notchFilter(QVector<double> rawData, int ChannelIndex);
 };
 
 #endif // FILTER_H
