@@ -27,6 +27,12 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
                 }
                 ChannelData[1].append(fullWord_rawData*(0.000000195));
                 if(RecordEnabled){
+                    if(ADC_Data.size()>0){
+                        RecordData(ADC_Data[0]);
+                    }
+                    else{
+                        RecordData(0);
+                    }
                     RecordData((quint8) rawData.at(i));
                     RecordData(END_OF_LINE);
                 }

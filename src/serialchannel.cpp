@@ -13,7 +13,7 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor_MA *dataProcessor_) 
 
 void SerialChannel::ReadImplantData(){
     dataProcessor->parseFrameMarkers(implantPort->read(2000));
-
+    dataProcessor->sortADCData(ADCPort->read(2000));
 }
 
 void SerialChannel::closeImplantPort(){
@@ -25,7 +25,7 @@ void SerialChannel::closeADCPort(){
 }
 
 void SerialChannel::ReadADCData(){
-    dataProcessor->sortADCData(ADCPort->read(2000));
+
 }
 
 bool SerialChannel::enableImplantPort(QString portName){
