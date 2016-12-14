@@ -21,13 +21,13 @@ MainWindow_MA::MainWindow_MA(){
 
     portInfo = QSerialPortInfo::availablePorts();
     if(portInfo.size()>1){
-        if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
+        if(serialChannel->enableImplantPort(portInfo.at(1).portName())){
             connectionStatus.append("Connected to Implant Port |");
         }
         else{
             connectionStatus.append("Connection to Implant Port failed |");
         }
-        if(serialChannel->enableADCPort(portInfo.at(1).portName())){
+        if(serialChannel->enableADCPort(portInfo.at(0).portName())){
             connectionStatus.append(" Connected to ADC Port");
         }
         else{

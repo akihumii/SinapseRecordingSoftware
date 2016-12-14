@@ -13,6 +13,7 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor_MA *dataProcessor_) 
 
 void SerialChannel::ReadImplantData(){
     dataProcessor->parseFrameMarkers(implantPort->read(2000));
+
 }
 
 void SerialChannel::closeImplantPort(){
@@ -53,7 +54,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
     ADCPort->setReadBufferSize(2000);
 
-    if (ADCPort->open(QIODevice::ReadWrite)) {
+    if (ADCPort->open(QIODevice::ReadOnly)) {
         return 1;
     }
     else{

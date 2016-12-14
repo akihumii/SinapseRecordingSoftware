@@ -23,6 +23,7 @@ public:
     qint16 fullWord_rawData;
     int lastFrameMarker;
     QByteArray leftOverData;
+    QVector<double> ADC_Data;
 };
 
 #endif // DATAPROCESSOR_MA_H

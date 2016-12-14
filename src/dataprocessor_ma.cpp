@@ -30,6 +30,10 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
                     RecordData((quint8) rawData.at(i));
                     RecordData(END_OF_LINE);
                 }
+                if(ADC_Data.size()>0){
+                    ChannelData[2].append(ADC_Data.at(0));
+                    ADC_Data.remove(0, 1);
+                }
                 ChannelData[3].append((quint8) rawData.at(i));
                 total_data_count = total_data_count+1;
                 X_axis.append(total_data_count*0.000048);
@@ -86,7 +90,7 @@ int DataProcessor_MA::findlastFrameMarkers(QByteArray rawData){
 void DataProcessor_MA::sortADCData(QByteArray adcData){
     double temp;
     for(int i=0;i<adcData.size();i++){
-        temp = ((quint8) adcData.at(i) / 256) * 2.5;
-        ChannelData[2].append(temp);
+        temp = ((quint8)adcData.at(i)/ 256.0) * 2.5;
+        ADC_Data.append(temp);
     }
 }
