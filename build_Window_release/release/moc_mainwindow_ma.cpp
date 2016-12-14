@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_MA_t {
     QByteArrayData data[28];
-    char stringdata0[627];
+    char stringdata0[607];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,35 +32,34 @@ static const qt_meta_stringdata_MainWindow_MA_t qt_meta_stringdata_MainWindow_MA
 QT_MOC_LITERAL(0, 0, 13), // "MainWindow_MA"
 QT_MOC_LITERAL(1, 14, 10), // "updateData"
 QT_MOC_LITERAL(2, 25, 0), // ""
-QT_MOC_LITERAL(3, 26, 25), // "on_serialConfig_triggered"
-QT_MOC_LITERAL(4, 52, 23), // "on_filterConfig_trigger"
-QT_MOC_LITERAL(5, 76, 19), // "on_record_triggered"
-QT_MOC_LITERAL(6, 96, 27), // "on_recordFileName_triggered"
-QT_MOC_LITERAL(7, 124, 23), // "on_resetRange_triggered"
-QT_MOC_LITERAL(8, 148, 24), // "on_timeFrame10_triggered"
-QT_MOC_LITERAL(9, 173, 24), // "on_timeFrame20_triggered"
-QT_MOC_LITERAL(10, 198, 24), // "on_timeFrame50_triggered"
-QT_MOC_LITERAL(11, 223, 25), // "on_timeFrame100_triggered"
-QT_MOC_LITERAL(12, 249, 25), // "on_timeFrame200_triggered"
-QT_MOC_LITERAL(13, 275, 25), // "on_timeFrame500_triggered"
-QT_MOC_LITERAL(14, 301, 26), // "on_timeFrame1000_triggered"
-QT_MOC_LITERAL(15, 328, 26), // "on_timeFrame2000_triggered"
-QT_MOC_LITERAL(16, 355, 26), // "on_timeFrame5000_triggered"
-QT_MOC_LITERAL(17, 382, 23), // "on_voltage50u_triggered"
-QT_MOC_LITERAL(18, 406, 24), // "on_voltage100u_triggered"
-QT_MOC_LITERAL(19, 431, 24), // "on_voltage200u_triggered"
-QT_MOC_LITERAL(20, 456, 24), // "on_voltage500u_triggered"
-QT_MOC_LITERAL(21, 481, 25), // "on_voltage1000u_triggered"
-QT_MOC_LITERAL(22, 507, 25), // "on_voltage2000u_triggered"
-QT_MOC_LITERAL(23, 533, 25), // "on_voltage5000u_triggered"
-QT_MOC_LITERAL(24, 559, 16), // "resetGraph1Range"
-QT_MOC_LITERAL(25, 576, 16), // "resetGraph2Range"
-QT_MOC_LITERAL(26, 593, 16), // "resetGraph3Range"
-QT_MOC_LITERAL(27, 610, 16) // "resetGraph4Range"
+QT_MOC_LITERAL(3, 26, 23), // "on_filterConfig_trigger"
+QT_MOC_LITERAL(4, 50, 19), // "on_record_triggered"
+QT_MOC_LITERAL(5, 70, 27), // "on_recordFileName_triggered"
+QT_MOC_LITERAL(6, 98, 23), // "on_resetRange_triggered"
+QT_MOC_LITERAL(7, 122, 24), // "on_timeFrame10_triggered"
+QT_MOC_LITERAL(8, 147, 24), // "on_timeFrame20_triggered"
+QT_MOC_LITERAL(9, 172, 24), // "on_timeFrame50_triggered"
+QT_MOC_LITERAL(10, 197, 25), // "on_timeFrame100_triggered"
+QT_MOC_LITERAL(11, 223, 25), // "on_timeFrame200_triggered"
+QT_MOC_LITERAL(12, 249, 25), // "on_timeFrame500_triggered"
+QT_MOC_LITERAL(13, 275, 26), // "on_timeFrame1000_triggered"
+QT_MOC_LITERAL(14, 302, 26), // "on_timeFrame2000_triggered"
+QT_MOC_LITERAL(15, 329, 26), // "on_timeFrame5000_triggered"
+QT_MOC_LITERAL(16, 356, 23), // "on_voltage50u_triggered"
+QT_MOC_LITERAL(17, 380, 24), // "on_voltage100u_triggered"
+QT_MOC_LITERAL(18, 405, 24), // "on_voltage200u_triggered"
+QT_MOC_LITERAL(19, 430, 24), // "on_voltage500u_triggered"
+QT_MOC_LITERAL(20, 455, 25), // "on_voltage1000u_triggered"
+QT_MOC_LITERAL(21, 481, 25), // "on_voltage2000u_triggered"
+QT_MOC_LITERAL(22, 507, 25), // "on_voltage5000u_triggered"
+QT_MOC_LITERAL(23, 533, 5), // "about"
+QT_MOC_LITERAL(24, 539, 16), // "resetGraph1Range"
+QT_MOC_LITERAL(25, 556, 16), // "resetGraph2Range"
+QT_MOC_LITERAL(26, 573, 16), // "resetGraph3Range"
+QT_MOC_LITERAL(27, 590, 16) // "resetGraph4Range"
 
     },
     "MainWindow_MA\0updateData\0\0"
-    "on_serialConfig_triggered\0"
     "on_filterConfig_trigger\0on_record_triggered\0"
     "on_recordFileName_triggered\0"
     "on_resetRange_triggered\0"
@@ -79,9 +78,9 @@ QT_MOC_LITERAL(27, 610, 16) // "resetGraph4Range"
     "on_voltage500u_triggered\0"
     "on_voltage1000u_triggered\0"
     "on_voltage2000u_triggered\0"
-    "on_voltage5000u_triggered\0resetGraph1Range\0"
-    "resetGraph2Range\0resetGraph3Range\0"
-    "resetGraph4Range"
+    "on_voltage5000u_triggered\0about\0"
+    "resetGraph1Range\0resetGraph2Range\0"
+    "resetGraph3Range\0resetGraph4Range"
 };
 #undef QT_MOC_LITERAL
 
@@ -164,27 +163,27 @@ void MainWindow_MA::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->updateData(); break;
-        case 1: _t->on_serialConfig_triggered(); break;
-        case 2: _t->on_filterConfig_trigger(); break;
-        case 3: _t->on_record_triggered(); break;
-        case 4: _t->on_recordFileName_triggered(); break;
-        case 5: _t->on_resetRange_triggered(); break;
-        case 6: _t->on_timeFrame10_triggered(); break;
-        case 7: _t->on_timeFrame20_triggered(); break;
-        case 8: _t->on_timeFrame50_triggered(); break;
-        case 9: _t->on_timeFrame100_triggered(); break;
-        case 10: _t->on_timeFrame200_triggered(); break;
-        case 11: _t->on_timeFrame500_triggered(); break;
-        case 12: _t->on_timeFrame1000_triggered(); break;
-        case 13: _t->on_timeFrame2000_triggered(); break;
-        case 14: _t->on_timeFrame5000_triggered(); break;
-        case 15: _t->on_voltage50u_triggered(); break;
-        case 16: _t->on_voltage100u_triggered(); break;
-        case 17: _t->on_voltage200u_triggered(); break;
-        case 18: _t->on_voltage500u_triggered(); break;
-        case 19: _t->on_voltage1000u_triggered(); break;
-        case 20: _t->on_voltage2000u_triggered(); break;
-        case 21: _t->on_voltage5000u_triggered(); break;
+        case 1: _t->on_filterConfig_trigger(); break;
+        case 2: _t->on_record_triggered(); break;
+        case 3: _t->on_recordFileName_triggered(); break;
+        case 4: _t->on_resetRange_triggered(); break;
+        case 5: _t->on_timeFrame10_triggered(); break;
+        case 6: _t->on_timeFrame20_triggered(); break;
+        case 7: _t->on_timeFrame50_triggered(); break;
+        case 8: _t->on_timeFrame100_triggered(); break;
+        case 9: _t->on_timeFrame200_triggered(); break;
+        case 10: _t->on_timeFrame500_triggered(); break;
+        case 11: _t->on_timeFrame1000_triggered(); break;
+        case 12: _t->on_timeFrame2000_triggered(); break;
+        case 13: _t->on_timeFrame5000_triggered(); break;
+        case 14: _t->on_voltage50u_triggered(); break;
+        case 15: _t->on_voltage100u_triggered(); break;
+        case 16: _t->on_voltage200u_triggered(); break;
+        case 17: _t->on_voltage500u_triggered(); break;
+        case 18: _t->on_voltage1000u_triggered(); break;
+        case 19: _t->on_voltage2000u_triggered(); break;
+        case 20: _t->on_voltage5000u_triggered(); break;
+        case 21: _t->about(); break;
         case 22: _t->resetGraph1Range(); break;
         case 23: _t->resetGraph2Range(); break;
         case 24: _t->resetGraph3Range(); break;

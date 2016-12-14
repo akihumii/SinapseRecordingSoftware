@@ -29,7 +29,6 @@ public slots:
 
 private slots:
     void updateData();
-    void on_serialConfig_triggered();
     void on_filterConfig_trigger();
     void on_record_triggered();
     void on_recordFileName_triggered();
@@ -50,6 +49,7 @@ private slots:
     void on_voltage1000u_triggered();
     void on_voltage2000u_triggered();
     void on_voltage5000u_triggered();
+    void about();
     void resetGraph1Range();
     void resetGraph2Range();
     void resetGraph3Range();
@@ -75,12 +75,13 @@ private:
     QMenu *layoutMenu;
     QMenu *timeFrameMenu;
     QMenu *voltageMenu;
-    QMenu *filterMenu;
+    QMenu *helpMenu;
 
     QCustomPlot *channelGraph[10];
 
     QAction *serialPortAction;
     QAction *filterAction;
+    QAction *aboutAction;
 
     QAction *exitAction;
     QAction *recordAction;

@@ -15,6 +15,7 @@ public:
     bool checkNextFrameMarker(QByteArray data, int currentIndex);
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
+    void sortADCData(QByteArray adcData);
 
     int firstFrameMarker;
     quint8 currentFrameMarker;

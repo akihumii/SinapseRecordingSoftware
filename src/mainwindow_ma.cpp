@@ -17,12 +17,10 @@ MainWindow_MA::MainWindow_MA(){
     createActions();
     createMenus();
 
-    statusBarLabel->setText("Scanning Serial Devices");
+    statusBarLabel->setText("Insufficient Serial Devices...");
 
     portInfo = QSerialPortInfo::availablePorts();
     if(portInfo.size()>1){
-//        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(0).portName());
-//        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(1).portName());
         if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
             connectionStatus.append("Connected to Implant Port |");
         }
@@ -54,7 +52,7 @@ void MainWindow_MA::createLayout(){
         channelGraph[i]->axisRect()->setMargins(QMargins(70,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis2->setTickStep(0.1);//0.000048);
+        channelGraph[i]->xAxis2->setTickStep(0.1);
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
@@ -72,9 +70,9 @@ void MainWindow_MA::createLayout(){
 }
 
 void MainWindow_MA::createActions(){
-    serialPortAction = new QAction(tr("S&erial Port Configuration"), this);
-    serialPortAction->setShortcut(tr("Ctrl+E"));
-    connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
+//    serialPortAction = new QAction(tr("S&erial Port Configuration"), this);
+//    serialPortAction->setShortcut(tr("Ctrl+E"));
+//    connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
 
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
@@ -132,11 +130,14 @@ void MainWindow_MA::createActions(){
     connect(voltage2000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage2000u_triggered()));
     connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
 
+    aboutAction = new QAction(tr("About SINAPSE Recording Software"));
+    connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
+
 }
 
 void MainWindow_MA::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(serialPortAction);
+//    fileMenu->addAction(serialPortAction);
     fileMenu->addAction(filterAction);
     fileMenu->addAction(resetDefaultRange);
     fileMenu->addSeparator();
@@ -202,6 +203,9 @@ void MainWindow_MA::createMenus(){
     voltageGroup->addAction(voltage1000u);
     voltageGroup->addAction(voltage2000u);
     voltageGroup->addAction(voltage5000u);
+
+    helpMenu = menuBar()->addMenu(tr("Help"));
+    helpMenu->addAction(aboutAction);
 }
 
 void MainWindow_MA::createStatusBar(){
@@ -212,7 +216,8 @@ void MainWindow_MA::createStatusBar(){
 }
 
 MainWindow_MA::~MainWindow_MA(){
-
+    serialChannel->closeADCPort();
+    serialChannel->closeImplantPort();
 }
 
 void MainWindow_MA::updateData(){
@@ -230,22 +235,22 @@ void MainWindow_MA::updateData(){
     }
 }
 
-void MainWindow_MA::on_serialConfig_triggered(){
-    SerialPortDialog serialPortDialog(serialChannel);
-    serialPortDialog.exec();
-    portInfo = QSerialPortInfo::availablePorts();
-    qDebug() << "portInfo.size() = " << portInfo.size();
-    if(portInfo.size()>1){
-        if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
-            QMessageBox::information(this, "Connected!", "Implant Port");
-            statusBarLabel->setText("Connected Implant Port");
-        }
-        if(serialChannel->enableADCPort(portInfo.at(1).portName())){
-            QMessageBox::information(this, "Connected!", "ADC Port");
-            statusBarLabel->setText("Connected ADC Port");
-        }
-    }
-}
+//void MainWindow_MA::on_serialConfig_triggered(){
+//    SerialPortDialog serialPortDialog(serialChannel);
+//    serialPortDialog.exec();
+//    portInfo = QSerialPortInfo::availablePorts();
+//    qDebug() << "portInfo.size() = " << portInfo.size();
+//    if(portInfo.size()>1){
+//        if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
+//            QMessageBox::information(this, "Connected!", "Implant Port");
+//            statusBarLabel->setText("Connected Implant Port");
+//        }
+//        if(serialChannel->enableADCPort(portInfo.at(1).portName())){
+//            QMessageBox::information(this, "Connected!", "ADC Port");
+//            statusBarLabel->setText("Connected ADC Port");
+//        }
+//    }
+//}
 
 void MainWindow_MA::on_filterConfig_trigger(){
     FilterDialog filterDialog(data);
@@ -397,4 +402,27 @@ void MainWindow_MA::on_voltage5000u_triggered(){
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
+}
+
+// Display "About" message box.
+void MainWindow_MA::about()
+{
+    QMessageBox::about(this, tr("About SINAPSE Recording Software"),
+            tr("<h2>Singapore Institute for Neurotechnology</h2>"
+               "<p>Version 1.0"
+               "<p>Copyright &copy; 2016-2018 SINAPSE"
+               "<p>This biopotential recording application controls the RHD2000 "
+               "USB Interface Board from Intan Technologies.  The C++/Qt source code "
+               "for this application is freely available from Intan Technologies. "
+               "For more information visit <i>http://www.intantech.com</i>."
+               "<p>This program is free software: you can redistribute it and/or modify "
+               "it under the terms of the GNU Lesser General Public License as published "
+               "by the Free Software Foundation, either version 3 of the License, or "
+               "(at your option) any later version."
+               "<p>This program is distributed in the hope that it will be useful, "
+               "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+               "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+               "GNU Lesser General Public License for more details."
+               "<p>You should have received a copy of the GNU Lesser General Public License "
+               "along with this program.  If not, see <i>http://www.gnu.org/licenses/</i>."));
 }

@@ -82,3 +82,11 @@ int DataProcessor_MA::findlastFrameMarkers(QByteArray rawData){
     }
     return -1;
 }
+
+void DataProcessor_MA::sortADCData(QByteArray adcData){
+    double temp;
+    for(int i=0;i<adcData.size();i++){
+        temp = ((quint8) adcData.at(i) / 256) * 2.5;
+        ChannelData[2].append(temp);
+    }
+}

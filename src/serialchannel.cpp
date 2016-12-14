@@ -17,16 +17,14 @@ void SerialChannel::ReadImplantData(){
 
 void SerialChannel::closeImplantPort(){
     implantPort->close();
-    qDebug() << "implant port closed";
 }
 
 void SerialChannel::closeADCPort(){
     ADCPort->close();
-    qDebug() << "ADC port closed";
 }
 
 void SerialChannel::ReadADCData(){
-
+    dataProcessor->sortADCData(ADCPort->read(2000));
 }
 
 bool SerialChannel::enableImplantPort(QString portName){
@@ -53,7 +51,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-    ADCPort->setReadBufferSize(100);
+    ADCPort->setReadBufferSize(2000);
 
     if (ADCPort->open(QIODevice::ReadWrite)) {
         return 1;
