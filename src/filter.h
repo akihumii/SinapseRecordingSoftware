@@ -7,9 +7,9 @@ class Filter
 {
 public:
     Filter();
-    bool notchFilterEnabled;
-    bool lowpassFilterEnabled;
-    bool highpassFilterEnabled;
+    bool notchFilterEnabled = false;
+    bool lowpassFilterEnabled = false;
+    bool highpassFilterEnabled = false;
     double highpassFreq = 0;
     double lowpassFreq = 0;
     double notchFreq = 0;

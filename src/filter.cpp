@@ -6,7 +6,6 @@ Filter::Filter(){
 
 // Set cutoff frequency and sample frequency for calculation of butterworth low pass filter's coefficient
 void Filter::setLowpassFilter(double cutoffFreq, double sampleFreq){
-    qDebug() << "Setting Low pass filter";
     lowpassFreq = cutoffFreq;
     double fr = sampleFreq/cutoffFreq;
     double omega = qTan(M_PI/fr);
@@ -23,7 +22,6 @@ void Filter::setLowpassFilter(double cutoffFreq, double sampleFreq){
 // filters.  Narrower bandwidths will produce extended ringing in the time
 // domain in response to large transients.
 void Filter::setNotchFilter(double cutoffFreq, double bandwidth, double sampleFreq){
-    qDebug() << "Setting Notch filter";
     notchFreq = cutoffFreq;
     double d = qExp(-M_PI * bandwidth / sampleFreq);
 
@@ -37,7 +35,6 @@ void Filter::setNotchFilter(double cutoffFreq, double bandwidth, double sampleFr
 
 // Set cutoff frequency and sample frequency for calculation of butterworth high pass filter's coefficient
 void Filter::setHighpassFilter(double cutoffFreq, double sampleFreq){
-    qDebug() << "Setting High pass filter";
     highpassFreq = cutoffFreq;
     cutoffFreq = 0.5*sampleFreq - cutoffFreq;
     double fr = sampleFreq/cutoffFreq;
@@ -48,64 +45,6 @@ void Filter::setHighpassFilter(double cutoffFreq, double sampleFreq){
     a1_hp = a0_hp * -2;
     b1_hp = -2 * (omega * omega - 1) / c;
     b2_hp = (1 - qCos(M_PI/4) * omega + (omega * omega)) / c;
-}
-
-void Filter::setLowpassFilterEnabled(bool enableFlag){
-    lowpassFilterEnabled = enableFlag;
-    if(lowpassFilterEnabled){
-        qDebug() << "Low pass filter disabled";
-    }
-    else{
-        qDebug() << "Low pass filter disabled";
-    }
-}
-
-void Filter::setNotchFilterEnabled(bool enableFlag){
-    notchFilterEnabled = enableFlag;
-    if(notchFilterEnabled){
-        qDebug() << "Notch filter enabled";
-    }
-    else{
-        qDebug() << "Notch filter disabled";
-    }
-}
-
-void Filter::setHighpassFilterEnabled(bool enableFlag){
-    highpassFilterEnabled = enableFlag;
-    if(highpassFilterEnabled){
-        qDebug() << "High pass filter enabled";
-    }
-    else{
-        qDebug() << "High pass filter disabled";
-    }
-}
-
-bool Filter::isHighpassFilterEnabled(){
-    return highpassFilterEnabled;
-}
-
-bool Filter::isLowpassFilterEnabled(){
-    return lowpassFilterEnabled;
-}
-
-bool Filter::isNotchFilterEnabled(){
-    return notchFilterEnabled;
-}
-
-bool Filter::isFilterEnabled(){
-    return highpassFilterEnabled || lowpassFilterEnabled || notchFilterEnabled;
-}
-
-double Filter::currentLowpassFreq(){
-    return lowpassFreq;
-}
-
-double Filter::currentHighpassFreq(){
-    return highpassFreq;
-}
-
-double Filter::currentNotchFreq(){
-    return notchFreq;
 }
 
 QVector<double> Filter::filterData(QVector<double> rawData, int ChannelIndex){
@@ -174,4 +113,44 @@ QVector<double> Filter::notchFilter(QVector<double> rawData, int ChannelIndex){
         filteredData_n[ChannelIndex].append(temp);
     }
     return filteredData_n[ChannelIndex];
+}
+
+void Filter::setLowpassFilterEnabled(bool enableFlag){
+    lowpassFilterEnabled = enableFlag;
+}
+
+void Filter::setNotchFilterEnabled(bool enableFlag){
+    notchFilterEnabled = enableFlag;
+}
+
+void Filter::setHighpassFilterEnabled(bool enableFlag){
+    highpassFilterEnabled = enableFlag;
+}
+
+bool Filter::isHighpassFilterEnabled(){
+    return highpassFilterEnabled;
+}
+
+bool Filter::isLowpassFilterEnabled(){
+    return lowpassFilterEnabled;
+}
+
+bool Filter::isNotchFilterEnabled(){
+    return notchFilterEnabled;
+}
+
+bool Filter::isFilterEnabled(){
+    return highpassFilterEnabled || lowpassFilterEnabled || notchFilterEnabled;
+}
+
+double Filter::currentLowpassFreq(){
+    return lowpassFreq;
+}
+
+double Filter::currentHighpassFreq(){
+    return highpassFreq;
+}
+
+double Filter::currentNotchFreq(){
+    return notchFreq;
 }

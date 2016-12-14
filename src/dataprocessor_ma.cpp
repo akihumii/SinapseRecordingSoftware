@@ -11,13 +11,7 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
         leftOverData.clear();
     }
     firstFrameMarker = findfirstFrameMarkers(rawData);
-//    if(firstFrameMarker != 0){
-//        qDebug() << firstFrameMarker;
-//    }
     lastFrameMarker = findlastFrameMarkers(rawData);
-//    if(lastFrameMarker != 90 && lastFrameMarker != 95){
-//        qDebug() << lastFrameMarker;
-//    }
     if(lastFrameMarker > 0){
         for(int i=0;i<lastFrameMarker-4;i=i+1){
             if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
@@ -36,7 +30,7 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
                     RecordData((quint8) rawData.at(i));
                     RecordData(END_OF_LINE);
                 }
-                ChannelData[2].append((quint8) rawData.at(i));
+                ChannelData[3].append((quint8) rawData.at(i));
                 total_data_count = total_data_count+1;
                 X_axis.append(total_data_count*0.000048);
             }
@@ -45,49 +39,6 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
-//    if(leftOverData.size() > 0){
-//        for(int i=leftOverData.size()-1;i>=0;i--){
-//            rawData.prepend(leftOverData.at(i));
-//        }
-//        leftOverData.clear();
-//    }
-//    firstFrameMarker = findfirstFrameMarkers(rawData);
-//    if(firstFrameMarker != 0){
-//        rawData.remove(0, firstFrameMarker-1);
-//    }
-//    currentFrameMarkerIndex = 0;
-//    currentFrameMarker = (quint8) rawData.at(0);
-//    for(int i = 0; i < rawData.size()-5; i++){
-//        if(i == currentFrameMarkerIndex){
-//            if(checkNextFrameMarker(rawData)){
-//                if(RecordEnabled){
-//                    RecordData((quint8) rawData.at(i));
-//                }
-//                ChannelData[2].append((quint8) rawData.at(i));
-//                fullWord_rawData = (((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2)))-32768;
-//                if(RecordEnabled){
-//                    RecordData(fullWord_rawData);
-//                }
-//                ChannelData[0].append(fullWord_rawData*(0.000000195));
-
-//                fullWord_rawData = (((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4)))-32768;
-//                if(RecordEnabled){
-//                    RecordData(fullWord_rawData);
-//                }
-//                ChannelData[1].append(fullWord_rawData*(0.000000195));
-//                if(RecordEnabled){
-//                    RecordData(END_OF_LINE);
-//                }
-//                total_data_count = total_data_count+1;
-//                X_axis.append(total_data_count*0.000048);
-//            }
-//        }
-//    }
-//    if(rawData.size()<5){
-//        for(int i = 0; i < rawData.size(); i++){
-//            leftOverData.append(rawData.at(i));
-//        }
-//    }
 }
 
 bool DataProcessor_MA::checkNextFrameMarker(QByteArray data, int currentIndex){

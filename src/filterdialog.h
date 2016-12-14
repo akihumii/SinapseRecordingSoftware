@@ -27,13 +27,13 @@ private:
 
     QVBoxLayout *channelLayout;
 
-    QVBoxLayout *lowpassLayout;
+//    QVBoxLayout *lowpassLayout;
     QVBoxLayout *highpassLayout;
 
     QHBoxLayout *lownhighLayout;
     QHBoxLayout *notchLayout;
 
-    QCheckBox *channelFilterEnable;
+//    QCheckBox *channelFilterEnable;
     QCheckBox *filterEnable[2];
 
     QLabel *filterLabel;
@@ -44,12 +44,12 @@ private:
     QComboBox *notchFilter;
 
 private slots:
-    void on_channelFilter_toggled();
-    void on_lowpassEnable_toggled(bool enableFlag);
+//    void on_channelFilter_toggled();
     void on_highpassEnable_toggled(bool);
     void on_notchFilter_changed(int Index);
-    void on_lowpassFreq_changed();
     void on_highpassFreq_changed();
+//    void on_lowpassEnable_toggled(bool enableFlag);
+//    void on_lowpassFreq_changed();
 
 };
 

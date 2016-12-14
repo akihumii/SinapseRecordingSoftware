@@ -21,8 +21,8 @@ MainWindow_MA::MainWindow_MA(){
 
     portInfo = QSerialPortInfo::availablePorts();
     if(portInfo.size()>1){
-        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(0).portName());
-        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(1).portName());
+//        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(0).portName());
+//        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(1).portName());
         if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
             connectionStatus.append("Connected to Implant Port |");
         }
@@ -62,6 +62,7 @@ void MainWindow_MA::createLayout(){
     channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
     channelGraph[3]->graph()->setPen(QPen(Qt::darkBlue));
 
+    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->axisRect()->setMargins(QMargins(70,0,0,15));
 
@@ -217,7 +218,7 @@ MainWindow_MA::~MainWindow_MA(){
 void MainWindow_MA::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
     if(X_axis.size() > data->getNumDataPoints()){
-        for(int i=0; i<3; i++){
+        for(int i=0; i<4; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*0.000048, Qt::AlignLeft);
@@ -270,10 +271,11 @@ void MainWindow_MA::on_recordFileName_triggered(){
 }
 
 void MainWindow_MA::on_resetRange_triggered(){
-    for(int i=0;i<3;i++){
+    for(int i=0;i<2;i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
+    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->replot();
     voltage500u->setChecked(true);
@@ -294,7 +296,7 @@ void MainWindow_MA::resetGraph2Range(){
 }
 
 void MainWindow_MA::resetGraph3Range(){
-    channelGraph[2]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
+    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
     channelGraph[2]->replot();
 }
 
@@ -349,49 +351,49 @@ void MainWindow_MA::on_timeFrame5000_triggered(){
 }
 
 void MainWindow_MA::on_voltage50u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage100u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage200u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage500u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage1000u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage2000u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow_MA::on_voltage5000u_triggered(){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         channelGraph[i]->replot();
     }

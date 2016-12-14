@@ -5,10 +5,13 @@ Data::Data(){
 }
 
 QVector<double> Data::retrieveData(int ChannelIndex){
-    if(isFilterEnabled() && ChannelIndex != 2){
-        ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
+    if(ChannelIndex != 2){
+        if(isFilterEnabled() && ChannelIndex != 3){
+            ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
+        }
+        return ChannelData[ChannelIndex];
     }
-    return ChannelData[ChannelIndex];
+    return ChannelData[1];
 }
 
 QVector<double> Data::retrieveXAxis(){
@@ -20,7 +23,7 @@ void Data::clearChannelData(int ChannelIndex){
 }
 
 void Data::clearallChannelData(){
-    for(int i=0; i<3; i++){
+    for(int i=0; i<4; i++){
         ChannelData[i].remove(0,ChannelData[i].size());
     }
 }
