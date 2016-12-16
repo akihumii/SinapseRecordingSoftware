@@ -6,10 +6,10 @@
 
 #define END_OF_LINE 2779058
 
-class DataProcessor_MA : public Data
-{
+class DataProcessor_MA : public Data, public QObject{
+//    Q_OBJECT
 public:
-    DataProcessor_MA();
+    DataProcessor_MA(QObject *parent);
     Data *data;
     void parseFrameMarkers(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int currentIndex);
@@ -24,6 +24,16 @@ public:
     int lastFrameMarker;
     QByteArray leftOverData;
     QVector<double> ADC_Data;
+
+private:
+    QAudioOutput* audio; // class member
+    QIODevice *audioDevice;
+//    QDataStream *out3;
+    QFile *file3;
+    QByteArray audioArray;
+private slots:
+    void handleStateChanged(QAudio::State);
+    void onNotify();
 };
 
 #endif // DATAPROCESSOR_MA_H

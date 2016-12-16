@@ -22,6 +22,8 @@ private:
     QSerialPort *implantPort;
     QSerialPort *ADCPort;
     DataProcessor_MA *dataProcessor;
+
+
 };
 
 #endif // SerialChannel_H

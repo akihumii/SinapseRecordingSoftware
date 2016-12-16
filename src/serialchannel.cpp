@@ -38,6 +38,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setReadBufferSize(2000);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
+
         return 1;
     }
     else{
@@ -55,9 +56,12 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setReadBufferSize(2000);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
+
         return 1;
     }
     else{
         return 0;
     }
 }
+
+

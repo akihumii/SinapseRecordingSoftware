@@ -9,7 +9,7 @@ MainWindow_MA::MainWindow_MA(){
     setWindowTitle(tr("Sinapse Recording Software V") + version);
     timer.start();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    data = new DataProcessor_MA;
+    data = new DataProcessor_MA(this);
     serialChannel = new SerialChannel(this, data);
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();

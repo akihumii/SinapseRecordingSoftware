@@ -51,6 +51,7 @@
 #include <QLayout>
 #include <QStandardItemModel>
 #include <QStatusBar>
+#include <QAudioOutput>
 #include <QTcpSocket>
 #include <QTcpServer>
 #include <QHostAddress>

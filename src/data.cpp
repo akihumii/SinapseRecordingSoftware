@@ -4,6 +4,9 @@ Data::Data(){
     File = new QFile("Edison.txt");
 }
 
+Data::~Data(){
+}
+
 QVector<double> Data::retrieveData(int ChannelIndex){
         if(isFilterEnabled() && ChannelIndex != 3){
             ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);

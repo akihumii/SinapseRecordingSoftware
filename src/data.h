@@ -22,6 +22,7 @@ class Data : public Filter
 {
 public:
     Data();
+    ~Data();
     QVector<double> retrieveData(int ChannelIndex);
     QVector<double> retrieveXAxis();
     QVector<quint16> sortData(QByteArray data_store);

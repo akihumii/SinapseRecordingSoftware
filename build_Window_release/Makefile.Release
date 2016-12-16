@@ -11,13 +11,13 @@ MAKEFILE      = Makefile.Release
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DUNICODE -DAPP_VERSION=\"0.1.1\" -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
+DEFINES       = -DUNICODE -DAPP_VERSION=\"0.1.1\" -DQT_NO_DEBUG -DQT_MULTIMEDIA_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
 CFLAGS        = -pipe -fno-keep-inline-dllexport -O2 -Wall -Wextra $(DEFINES)
 CXXFLAGS      = -pipe -fno-keep-inline-dllexport -O2 -std=gnu++11 -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
-INCPATH       = -I../src -I. -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -Irelease -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ 
+INCPATH       = -I../src -I. -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -Irelease -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-s -Wl,-subsystem,windows -mthreads
-LIBS        =        -lmingw32 -LC:/Qt/5.7/mingw53_32/lib C:/Qt/5.7/mingw53_32/lib/libqtmain.a -LC:/utils/postgresql/pgsql/lib -LC:/utils/my_sql/my_sql/lib -lshell32 C:/Qt/5.7/mingw53_32/lib/libQt5Core.a C:/Qt/5.7/mingw53_32/lib/libQt5PrintSupport.a C:/Qt/5.7/mingw53_32/lib/libQt5Widgets.a C:/Qt/5.7/mingw53_32/lib/libQt5Gui.a C:/Qt/5.7/mingw53_32/lib/libQt5Network.a C:/Qt/5.7/mingw53_32/lib/libQt5SerialPort.a C:/Qt/5.7/mingw53_32/lib/libQt5Core.a release/SinapseRecordingSoftware_resource_res.o 
+LIBS        =        -lmingw32 -LC:/Qt/5.7/mingw53_32/lib C:/Qt/5.7/mingw53_32/lib/libqtmain.a -LC:/utils/postgresql/pgsql/lib -LC:/utils/my_sql/my_sql/lib -lshell32 C:/Qt/5.7/mingw53_32/lib/libQt5Core.a C:/Qt/5.7/mingw53_32/lib/libQt5Multimedia.a C:/Qt/5.7/mingw53_32/lib/libQt5PrintSupport.a C:/Qt/5.7/mingw53_32/lib/libQt5Widgets.a C:/Qt/5.7/mingw53_32/lib/libQt5Gui.a C:/Qt/5.7/mingw53_32/lib/libQt5Network.a C:/Qt/5.7/mingw53_32/lib/libQt5SerialPort.a C:/Qt/5.7/mingw53_32/lib/libQt5Core.a release/SinapseRecordingSoftware_resource_res.o 
 QMAKE         = C:/Qt/5.7/mingw53_32/bin/qmake.exe
 IDC           = idc
 IDL           = midl
@@ -162,7 +162,7 @@ qmake: FORCE
 qmake_all: FORCE
 
 dist:
-	$(ZIP) SinapseRecordingSoftware.zip $(SOURCES) $(DIST) ../src/SinapseRecordingSoftware.pro C:/Qt/5.7/mingw53_32/mkspecs/features/spec_pre.prf C:/Qt/5.7/mingw53_32/mkspecs/qdevice.pri C:/Qt/5.7/mingw53_32/mkspecs/features/device_config.prf C:/Qt/5.7/mingw53_32/mkspecs/common/angle.conf C:/Qt/5.7/mingw53_32/mkspecs/qconfig.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_charts.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_charts_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_clucene_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_core.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_core_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_datavisualization.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_datavisualization_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_designer.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gui.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_help.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_help_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_location.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_location_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_network.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_network_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_platformsupport_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qml.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quick.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_script.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_script_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sql.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_svg.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xml.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri C:/Qt/5.7/mingw53_32/mkspecs/features/qt_functions.prf C:/Qt/5.7/mingw53_32/mkspecs/features/qt_config.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf C:/Qt/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf C:/Qt/5.7/mingw53_32/mkspecs/features/spec_post.prf C:/Qt/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf C:/Qt/5.7/mingw53_32/mkspecs/features/default_pre.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf C:/Qt/5.7/mingw53_32/mkspecs/features/resolve_config.prf C:/Qt/5.7/mingw53_32/mkspecs/features/exclusive_builds_post.prf C:/Qt/5.7/mingw53_32/mkspecs/features/default_post.prf C:/Qt/5.7/mingw53_32/mkspecs/features/build_pass.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/rtti.prf C:/Qt/5.7/mingw53_32/mkspecs/features/precompile_header.prf C:/Qt/5.7/mingw53_32/mkspecs/features/warn_on.prf C:/Qt/5.7/mingw53_32/mkspecs/features/qt.prf C:/Qt/5.7/mingw53_32/mkspecs/features/resources.prf C:/Qt/5.7/mingw53_32/mkspecs/features/moc.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/opengl.prf C:/Qt/5.7/mingw53_32/mkspecs/features/uic.prf C:/Qt/5.7/mingw53_32/mkspecs/features/file_copies.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/windows.prf C:/Qt/5.7/mingw53_32/mkspecs/features/testcase_targets.prf C:/Qt/5.7/mingw53_32/mkspecs/features/exceptions.prf C:/Qt/5.7/mingw53_32/mkspecs/features/yacc.prf C:/Qt/5.7/mingw53_32/mkspecs/features/lex.prf ../src/SinapseRecordingSoftware.pro C:/Qt/5.7/mingw53_32/lib/qtmain.prl C:/Qt/5.7/mingw53_32/lib/Qt5PrintSupport.prl C:/Qt/5.7/mingw53_32/lib/Qt5Widgets.prl C:/Qt/5.7/mingw53_32/lib/Qt5Gui.prl C:/Qt/5.7/mingw53_32/lib/Qt5Network.prl C:/Qt/5.7/mingw53_32/lib/Qt5SerialPort.prl C:/Qt/5.7/mingw53_32/lib/Qt5Core.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
+	$(ZIP) SinapseRecordingSoftware.zip $(SOURCES) $(DIST) ../src/SinapseRecordingSoftware.pro C:/Qt/5.7/mingw53_32/mkspecs/features/spec_pre.prf C:/Qt/5.7/mingw53_32/mkspecs/qdevice.pri C:/Qt/5.7/mingw53_32/mkspecs/features/device_config.prf C:/Qt/5.7/mingw53_32/mkspecs/common/angle.conf C:/Qt/5.7/mingw53_32/mkspecs/qconfig.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_charts.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_charts_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_clucene_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_core.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_core_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_datavisualization.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_datavisualization_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_designer.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gui.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_help.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_help_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_location.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_location_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_network.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_network_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_platformsupport_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qml.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quick.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_script.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_script_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sql.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_svg.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xml.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri C:/Qt/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri C:/Qt/5.7/mingw53_32/mkspecs/features/qt_functions.prf C:/Qt/5.7/mingw53_32/mkspecs/features/qt_config.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf C:/Qt/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf C:/Qt/5.7/mingw53_32/mkspecs/features/spec_post.prf C:/Qt/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf C:/Qt/5.7/mingw53_32/mkspecs/features/default_pre.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf C:/Qt/5.7/mingw53_32/mkspecs/features/resolve_config.prf C:/Qt/5.7/mingw53_32/mkspecs/features/exclusive_builds_post.prf C:/Qt/5.7/mingw53_32/mkspecs/features/default_post.prf C:/Qt/5.7/mingw53_32/mkspecs/features/build_pass.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/rtti.prf C:/Qt/5.7/mingw53_32/mkspecs/features/precompile_header.prf C:/Qt/5.7/mingw53_32/mkspecs/features/warn_on.prf C:/Qt/5.7/mingw53_32/mkspecs/features/qt.prf C:/Qt/5.7/mingw53_32/mkspecs/features/resources.prf C:/Qt/5.7/mingw53_32/mkspecs/features/moc.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/opengl.prf C:/Qt/5.7/mingw53_32/mkspecs/features/uic.prf C:/Qt/5.7/mingw53_32/mkspecs/features/file_copies.prf C:/Qt/5.7/mingw53_32/mkspecs/features/win32/windows.prf C:/Qt/5.7/mingw53_32/mkspecs/features/testcase_targets.prf C:/Qt/5.7/mingw53_32/mkspecs/features/exceptions.prf C:/Qt/5.7/mingw53_32/mkspecs/features/yacc.prf C:/Qt/5.7/mingw53_32/mkspecs/features/lex.prf ../src/SinapseRecordingSoftware.pro C:/Qt/5.7/mingw53_32/lib/qtmain.prl C:/Qt/5.7/mingw53_32/lib/Qt5Multimedia.prl C:/Qt/5.7/mingw53_32/lib/Qt5PrintSupport.prl C:/Qt/5.7/mingw53_32/lib/Qt5Widgets.prl C:/Qt/5.7/mingw53_32/lib/Qt5Gui.prl C:/Qt/5.7/mingw53_32/lib/Qt5Network.prl C:/Qt/5.7/mingw53_32/lib/Qt5SerialPort.prl C:/Qt/5.7/mingw53_32/lib/Qt5Core.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
 	-$(DEL_FILE) release/main.o release/mainwindow_ma.o release/data.o release/filenamedialog.o release/qcustomplot.o release/serialchannel.o release/serialportdialog.o release/signalchannel.o release/mainwindow_ka.o release/channel.o release/command.o release/commanddialog.o release/connectiondialog.o release/socketedison.o release/dataprocessor_ma.o release/dataprocessor_ka.o release/serialneutrino.o release/filter.o release/filterdialog.o release/moc_mainwindow_ma.o release/moc_filenamedialog.o release/moc_qcustomplot.o release/moc_serialchannel.o release/moc_serialportdialog.o release/moc_mainwindow_ka.o release/moc_commanddialog.o release/moc_connectiondialog.o release/moc_socketedison.o release/moc_serialneutrino.o release/moc_filterdialog.o
@@ -620,6 +620,13 @@ release/moc_mainwindow_ma.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindo
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/qcustomplot.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QPointer \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QWidget \
@@ -755,7 +762,7 @@ release/moc_mainwindow_ma.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindo
 		../src/filterdialog.h \
 		../src/mainwindow_ma.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/mainwindow_ma.h -o release/moc_mainwindow_ma.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/mainwindow_ma.h -o release/moc_mainwindow_ma.cpp
 
 release/moc_filenamedialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1189,11 +1196,18 @@ release/moc_filenamedialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/data.h \
 		../src/filter.h \
 		../src/filenamedialog.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/filenamedialog.h -o release/moc_filenamedialog.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/filenamedialog.h -o release/moc_filenamedialog.cpp
 
 release/moc_qcustomplot.cpp: C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qobject.h \
@@ -1671,7 +1685,7 @@ release/moc_qcustomplot.cpp: C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
 		C:/Qt/5.7/mingw53_32/include/QtPrintSupport/qtprintsupportversion.h \
 		../src/qcustomplot.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/qcustomplot.h -o release/moc_qcustomplot.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/qcustomplot.h -o release/moc_qcustomplot.cpp
 
 release/moc_serialchannel.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QGroupBox \
@@ -2104,12 +2118,19 @@ release/moc_serialchannel.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/dataprocessor_ma.h \
 		../src/data.h \
 		../src/filter.h \
 		../src/serialchannel.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/serialchannel.h -o release/moc_serialchannel.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/serialchannel.h -o release/moc_serialchannel.cpp
 
 release/moc_serialportdialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qdialog.h \
@@ -2543,13 +2564,20 @@ release/moc_serialportdialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/serialchannel.h \
 		../src/dataprocessor_ma.h \
 		../src/data.h \
 		../src/filter.h \
 		../src/serialportdialog.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/serialportdialog.h -o release/moc_serialportdialog.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/serialportdialog.h -o release/moc_serialportdialog.cpp
 
 release/moc_mainwindow_ka.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
@@ -2985,6 +3013,13 @@ release/moc_mainwindow_ka.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindo
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/command.h \
 		../src/channel.h \
 		../src/dataprocessor_ka.h \
@@ -3122,7 +3157,7 @@ release/moc_mainwindow_ka.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindo
 		../src/serialneutrino.h \
 		../src/mainwindow_ka.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/mainwindow_ka.h -o release/moc_mainwindow_ka.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/mainwindow_ka.h -o release/moc_mainwindow_ka.cpp
 
 release/moc_commanddialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qdialog.h \
@@ -3556,6 +3591,13 @@ release/moc_commanddialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/socketedison.h \
 		../src/command.h \
 		../src/channel.h \
@@ -3564,7 +3606,7 @@ release/moc_commanddialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		../src/filter.h \
 		../src/commanddialog.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/commanddialog.h -o release/moc_commanddialog.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/commanddialog.h -o release/moc_commanddialog.cpp
 
 release/moc_connectiondialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qdialog.h \
@@ -3998,6 +4040,13 @@ release/moc_connectiondialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/socketedison.h \
 		../src/command.h \
 		../src/channel.h \
@@ -4137,7 +4186,7 @@ release/moc_connectiondialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog
 		../src/serialneutrino.h \
 		../src/connectiondialog.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/connectiondialog.h -o release/moc_connectiondialog.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/connectiondialog.h -o release/moc_connectiondialog.cpp
 
 release/moc_socketedison.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QGroupBox \
@@ -4570,6 +4619,13 @@ release/moc_socketedison.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/command.h \
 		../src/channel.h \
 		../src/dataprocessor_ka.h \
@@ -4577,7 +4633,7 @@ release/moc_socketedison.cpp: ../src/qtincludes.h \
 		../src/filter.h \
 		../src/socketedison.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/socketedison.h -o release/moc_socketedison.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/socketedison.h -o release/moc_socketedison.cpp
 
 release/moc_serialneutrino.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QGroupBox \
@@ -5010,6 +5066,13 @@ release/moc_serialneutrino.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/dataprocessor_ka.h \
 		../src/data.h \
 		../src/filter.h \
@@ -5017,7 +5080,7 @@ release/moc_serialneutrino.cpp: ../src/qtincludes.h \
 		../src/command.h \
 		../src/serialneutrino.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/serialneutrino.h -o release/moc_serialneutrino.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/serialneutrino.h -o release/moc_serialneutrino.cpp
 
 release/moc_filterdialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qdialog.h \
@@ -5451,12 +5514,19 @@ release/moc_filterdialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/dataprocessor_ma.h \
 		../src/data.h \
 		../src/filter.h \
 		../src/filterdialog.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
-	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/filterdialog.h -o release/moc_filterdialog.cpp
+	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/lsilsc/Documents/GitHub/SinapseRecordingSoftware/src -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -I. ../src/filterdialog.h -o release/moc_filterdialog.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -5908,6 +5978,13 @@ release/main.o: ../src/main.cpp ../src/mainwindow_ma.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/qcustomplot.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QPointer \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QWidget \
@@ -6486,6 +6563,13 @@ release/mainwindow_ma.o: ../src/mainwindow_ma.cpp ../src/mainwindow_ma.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/qcustomplot.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QPointer \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QWidget \
@@ -7053,6 +7137,13 @@ release/data.o: ../src/data.cpp ../src/data.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/filter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/data.o ../src/data.cpp
 
@@ -7489,6 +7580,13 @@ release/filenamedialog.o: ../src/filenamedialog.cpp ../src/filenamedialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/data.h \
 		../src/filter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/filenamedialog.o ../src/filenamedialog.cpp
@@ -8402,6 +8500,13 @@ release/serialchannel.o: ../src/serialchannel.cpp ../src/serialchannel.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/dataprocessor_ma.h \
 		../src/data.h \
 		../src/filter.h
@@ -8840,6 +8945,13 @@ release/serialportdialog.o: ../src/serialportdialog.cpp ../src/serialportdialog.
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/serialchannel.h \
 		../src/dataprocessor_ma.h \
 		../src/data.h \
@@ -9277,7 +9389,14 @@ release/signalchannel.o: ../src/signalchannel.cpp ../src/signalchannel.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportglobal.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
-		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo
+		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/signalchannel.o ../src/signalchannel.cpp
 
 release/mainwindow_ka.o: ../src/mainwindow_ka.cpp ../src/mainwindow_ka.h \
@@ -9715,6 +9834,13 @@ release/mainwindow_ka.o: ../src/mainwindow_ka.cpp ../src/mainwindow_ka.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/command.h \
 		../src/channel.h \
 		../src/dataprocessor_ka.h \
@@ -10282,7 +10408,14 @@ release/channel.o: ../src/channel.cpp ../src/channel.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportglobal.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
-		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo
+		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/channel.o ../src/channel.cpp
 
 release/command.o: ../src/command.cpp ../src/command.h \
@@ -10717,6 +10850,13 @@ release/command.o: ../src/command.cpp ../src/command.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/channel.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/command.o ../src/command.cpp
 
@@ -11153,6 +11293,13 @@ release/commanddialog.o: ../src/commanddialog.cpp ../src/commanddialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/socketedison.h \
 		../src/command.h \
 		../src/channel.h \
@@ -11594,6 +11741,13 @@ release/connectiondialog.o: ../src/connectiondialog.cpp ../src/connectiondialog.
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/socketedison.h \
 		../src/command.h \
 		../src/channel.h \
@@ -12164,6 +12318,13 @@ release/socketedison.o: ../src/socketedison.cpp ../src/socketedison.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/command.h \
 		../src/channel.h \
 		../src/dataprocessor_ka.h \
@@ -12603,6 +12764,13 @@ release/dataprocessor_ma.o: ../src/dataprocessor_ma.cpp ../src/dataprocessor_ma.
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/data.h \
 		../src/filter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/dataprocessor_ma.o ../src/dataprocessor_ma.cpp
@@ -13039,6 +13207,13 @@ release/dataprocessor_ka.o: ../src/dataprocessor_ka.cpp ../src/dataprocessor_ka.
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/data.h \
 		../src/filter.h \
 		../src/channel.h
@@ -13476,6 +13651,13 @@ release/serialneutrino.o: ../src/serialneutrino.cpp ../src/serialneutrino.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/dataprocessor_ka.h \
 		../src/data.h \
 		../src/filter.h \
@@ -13914,7 +14096,14 @@ release/filter.o: ../src/filter.cpp ../src/filter.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportglobal.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
-		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo
+		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/filter.o ../src/filter.cpp
 
 release/filterdialog.o: ../src/filterdialog.cpp ../src/filterdialog.h \
@@ -14350,6 +14539,13 @@ release/filterdialog.o: ../src/filterdialog.cpp ../src/filterdialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qserialportinfo.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/qtserialportversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtSerialPort/QSerialPortInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioOutput \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiooutput.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
 		../src/dataprocessor_ma.h \
 		../src/data.h \
 		../src/filter.h
