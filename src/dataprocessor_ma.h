@@ -30,7 +30,8 @@ private:
     QIODevice *audioDevice;
 //    QDataStream *out3;
     QFile *file3;
-    QByteArray audioArray;
+    QByteArray audioBuffer1;
+    QByteArray audioBuffer2;
 private slots:
     void handleStateChanged(QAudio::State);
     void onNotify();

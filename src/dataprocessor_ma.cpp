@@ -6,21 +6,22 @@ DataProcessor_MA::DataProcessor_MA(QObject *parent) : QObject(parent = Q_NULLPTR
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     format = info.preferredFormat();
     format.setChannelCount(1);
-    format.setSampleRate(44100);
+    format.setSampleRate(22050);
     format.setSampleType(QAudioFormat::SignedInt);
     format.setSampleSize(16);
     //format.setByteOrder(QAudioFormat::BigEndian);
 
-//    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
-//    {
-//        qDebug() << "Supported Sample Rates: " << info.supportedSampleRates();
-//        qDebug() << "Supported Byte Orders: " << info.supportedByteOrders();
-//        qDebug() << "Supported Channel Counts: " << info.supportedChannelCounts();
-//        qDebug() << "Supported Sample Size: " << info.supportedSampleSizes();
-//        qDebug() << "Supported Sample Types: " << info.supportedSampleTypes();
-//        qDebug() << "Preferred Format: " << info.preferredFormat();
+    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+    {
+        qDebug() << "Device name: " << info.deviceName();
+        qDebug() << "Supported Sample Rates: " << info.supportedSampleRates();
+        qDebug() << "Supported Byte Orders: " << info.supportedByteOrders();
+        qDebug() << "Supported Channel Counts: " << info.supportedChannelCounts();
+        qDebug() << "Supported Sample Size: " << info.supportedSampleSizes();
+        qDebug() << "Supported Sample Types: " << info.supportedSampleTypes();
+        qDebug() << "Preferred Format: " << info.preferredFormat();
 
-//    }
+    }
 
     qDebug() << "Format set: " << format;
 
@@ -33,10 +34,7 @@ DataProcessor_MA::DataProcessor_MA(QObject *parent) : QObject(parent = Q_NULLPTR
     qDebug() << "Volume: " << audio->volume();
 
     audio->setNotifyInterval(128);
-    audioDevice->open(QIODevice::ReadWrite);
     audioDevice = audio->start();
-//    out3 = new QDataStream(audioDevice);
-    QDataStream out3(audioDevice);
     connect(audio, &QAudioOutput::stateChanged, this, &DataProcessor_MA::handleStateChanged);
     connect(audio, &QAudioOutput::notify, this, &DataProcessor_MA::onNotify);
 }
@@ -54,12 +52,16 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
         for(int i=0;i<lastFrameMarker-4;i=i+1){
             if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
+                audioBuffer1.append(rawData.at(i+2));
+                audioBuffer1.append(rawData.at(i+1));
                 if(RecordEnabled){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[0].append(fullWord_rawData*(0.000000195));
-                audioArray.append(fullWord_rawData);
+//                audioArray.append(fullWord_rawData);
                 fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
+                audioBuffer2.append(rawData.at(i+4));
+                audioBuffer2.append(rawData.at(i+3));
                 if(RecordEnabled){
                     RecordData(fullWord_rawData);
                 }
@@ -88,13 +90,10 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
-    if(audioArray.size() > 128){
-        qDebug() << (qint16) audioArray.at(0);
-//        for(int i=0; i<audioArray.size();i++){
-//            *out3<<audioArray;
-//        }
-        audioDevice->write(audioArray);
-        audioArray.clear();
+    if(audioBuffer1.size() > 2048){
+        audioDevice->write(audioBuffer1);
+        audioBuffer1.clear();
+        audioBuffer2.clear();
     }
 }
 
@@ -173,8 +172,8 @@ void DataProcessor_MA::handleStateChanged(QAudio::State newState)
 }
 
 void DataProcessor_MA::onNotify(){
-    if(audioArray.size() > 0){
+//    if(audioArray.size() > 0){
 //        qDebug() << "Notified";
 //        audioDevice->write(audioArray);
-    }
+//    }
 }

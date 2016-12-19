@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DAPP_VERSION=\"0.1.1\" -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
+DEFINES       = -DAPP_VERSION=\"0.1.1\" -DQT_NO_DEBUG -DQT_MULTIMEDIA_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../src -I. -I../../Qt/5.7/gcc_64/include -I../../Qt/5.7/gcc_64/include/QtPrintSupport -I../../Qt/5.7/gcc_64/include/QtWidgets -I../../Qt/5.7/gcc_64/include/QtGui -I../../Qt/5.7/gcc_64/include/QtNetwork -I../../Qt/5.7/gcc_64/include/QtSerialPort -I../../Qt/5.7/gcc_64/include/QtCore -I. -I../../Qt/5.7/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../src -I. -I../../Qt/5.7/gcc_64/include -I../../Qt/5.7/gcc_64/include/QtMultimedia -I../../Qt/5.7/gcc_64/include/QtPrintSupport -I../../Qt/5.7/gcc_64/include/QtWidgets -I../../Qt/5.7/gcc_64/include/QtGui -I../../Qt/5.7/gcc_64/include/QtNetwork -I../../Qt/5.7/gcc_64/include/QtSerialPort -I../../Qt/5.7/gcc_64/include/QtCore -I. -I../../Qt/5.7/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/sinapse/Qt/5.7/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = SinapseRecordingSoftware0.1.1
 DISTDIR = /home/sinapse/SinapseRecordingSoftware/build_release/.tmp/SinapseRecordingSoftware0.1.1
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath,/home/sinapse/Qt/5.7/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/sinapse/Qt/5.7/gcc_64/lib -lQt5PrintSupport -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Network -lQt5SerialPort -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/home/sinapse/Qt/5.7/gcc_64/lib -lQt5Multimedia -L/usr/lib64 -lQt5PrintSupport -lQt5Widgets -lQt5Gui -lQt5Network -lQt5SerialPort -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -452,6 +452,7 @@ Makefile: ../src/SinapseRecordingSoftware.pro ../../Qt/5.7/gcc_64/mkspecs/linux-
 		../../Qt/5.7/gcc_64/mkspecs/features/yacc.prf \
 		../../Qt/5.7/gcc_64/mkspecs/features/lex.prf \
 		../src/SinapseRecordingSoftware.pro \
+		../../Qt/5.7/gcc_64/lib/libQt5Multimedia.prl \
 		../../Qt/5.7/gcc_64/lib/libQt5PrintSupport.prl \
 		../../Qt/5.7/gcc_64/lib/libQt5Widgets.prl \
 		../../Qt/5.7/gcc_64/lib/libQt5Gui.prl \
@@ -608,6 +609,7 @@ Makefile: ../src/SinapseRecordingSoftware.pro ../../Qt/5.7/gcc_64/mkspecs/linux-
 ../../Qt/5.7/gcc_64/mkspecs/features/yacc.prf:
 ../../Qt/5.7/gcc_64/mkspecs/features/lex.prf:
 ../src/SinapseRecordingSoftware.pro:
+../../Qt/5.7/gcc_64/lib/libQt5Multimedia.prl:
 ../../Qt/5.7/gcc_64/lib/libQt5PrintSupport.prl:
 ../../Qt/5.7/gcc_64/lib/libQt5Widgets.prl:
 ../../Qt/5.7/gcc_64/lib/libQt5Gui.prl:
@@ -1025,6 +1027,13 @@ moc_mainwindow_ma.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -1221,7 +1230,7 @@ moc_mainwindow_ma.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../src/filterdialog.h \
 		../src/mainwindow_ma.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/mainwindow_ma.h -o moc_mainwindow_ma.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/mainwindow_ma.h -o moc_mainwindow_ma.cpp
 
 moc_filenamedialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtWidgets/qdialog.h \
@@ -1589,6 +1598,13 @@ moc_filenamedialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -1654,7 +1670,7 @@ moc_filenamedialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../src/filter.h \
 		../src/filenamedialog.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/filenamedialog.h -o moc_filenamedialog.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/filenamedialog.h -o moc_filenamedialog.cpp
 
 moc_qcustomplot.cpp: ../../Qt/5.7/gcc_64/include/QtCore/QObject \
 		../../Qt/5.7/gcc_64/include/QtCore/qobject.h \
@@ -2127,7 +2143,7 @@ moc_qcustomplot.cpp: ../../Qt/5.7/gcc_64/include/QtCore/QObject \
 		../../Qt/5.7/gcc_64/include/QtPrintSupport/qtprintsupportversion.h \
 		../src/qcustomplot.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/qcustomplot.h -o moc_qcustomplot.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/qcustomplot.h -o moc_qcustomplot.cpp
 
 moc_serialchannel.cpp: ../src/qtincludes.h \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QGroupBox \
@@ -2494,6 +2510,13 @@ moc_serialchannel.cpp: ../src/qtincludes.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -2560,7 +2583,7 @@ moc_serialchannel.cpp: ../src/qtincludes.h \
 		../src/filter.h \
 		../src/serialchannel.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/serialchannel.h -o moc_serialchannel.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/serialchannel.h -o moc_serialchannel.cpp
 
 moc_serialportdialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtWidgets/qdialog.h \
@@ -2928,6 +2951,13 @@ moc_serialportdialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -2995,7 +3025,7 @@ moc_serialportdialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../src/filter.h \
 		../src/serialportdialog.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/serialportdialog.h -o moc_serialportdialog.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/serialportdialog.h -o moc_serialportdialog.cpp
 
 moc_mainwindow_ka.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt/5.7/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -3365,6 +3395,13 @@ moc_mainwindow_ka.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -3563,7 +3600,7 @@ moc_mainwindow_ka.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../src/serialneutrino.h \
 		../src/mainwindow_ka.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/mainwindow_ka.h -o moc_mainwindow_ka.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/mainwindow_ka.h -o moc_mainwindow_ka.cpp
 
 moc_commanddialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtWidgets/qdialog.h \
@@ -3931,6 +3968,13 @@ moc_commanddialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -4000,7 +4044,7 @@ moc_commanddialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../src/filter.h \
 		../src/commanddialog.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/commanddialog.h -o moc_commanddialog.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/commanddialog.h -o moc_commanddialog.cpp
 
 moc_connectiondialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtWidgets/qdialog.h \
@@ -4368,6 +4412,13 @@ moc_connectiondialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -4568,7 +4619,7 @@ moc_connectiondialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../src/serialneutrino.h \
 		../src/connectiondialog.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/connectiondialog.h -o moc_connectiondialog.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/connectiondialog.h -o moc_connectiondialog.cpp
 
 moc_socketedison.cpp: ../src/qtincludes.h \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QGroupBox \
@@ -4935,6 +4986,13 @@ moc_socketedison.cpp: ../src/qtincludes.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -5003,7 +5061,7 @@ moc_socketedison.cpp: ../src/qtincludes.h \
 		../src/filter.h \
 		../src/socketedison.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/socketedison.h -o moc_socketedison.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/socketedison.h -o moc_socketedison.cpp
 
 moc_serialneutrino.cpp: ../src/qtincludes.h \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QGroupBox \
@@ -5370,6 +5428,13 @@ moc_serialneutrino.cpp: ../src/qtincludes.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -5438,7 +5503,7 @@ moc_serialneutrino.cpp: ../src/qtincludes.h \
 		../src/command.h \
 		../src/serialneutrino.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/serialneutrino.h -o moc_serialneutrino.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/serialneutrino.h -o moc_serialneutrino.cpp
 
 moc_filterdialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtWidgets/qdialog.h \
@@ -5806,6 +5871,13 @@ moc_filterdialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -5872,7 +5944,7 @@ moc_filterdialog.cpp: ../../Qt/5.7/gcc_64/include/QtWidgets/QDialog \
 		../src/filter.h \
 		../src/filterdialog.h \
 		../../Qt/5.7/gcc_64/bin/moc
-	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/filterdialog.h -o moc_filterdialog.cpp
+	/home/sinapse/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/sinapse/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/sinapse/SinapseRecordingSoftware/src -I/home/sinapse/Qt/5.7/gcc_64/include -I/home/sinapse/Qt/5.7/gcc_64/include/QtMultimedia -I/home/sinapse/Qt/5.7/gcc_64/include/QtPrintSupport -I/home/sinapse/Qt/5.7/gcc_64/include/QtWidgets -I/home/sinapse/Qt/5.7/gcc_64/include/QtGui -I/home/sinapse/Qt/5.7/gcc_64/include/QtNetwork -I/home/sinapse/Qt/5.7/gcc_64/include/QtSerialPort -I/home/sinapse/Qt/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/filterdialog.h -o moc_filterdialog.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -6256,6 +6328,13 @@ main.o: ../src/main.cpp ../src/mainwindow_ma.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -6829,6 +6908,13 @@ mainwindow_ma.o: ../src/mainwindow_ma.cpp ../src/mainwindow_ma.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -7391,6 +7477,13 @@ data.o: ../src/data.cpp ../src/data.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -7822,6 +7915,13 @@ filenamedialog.o: ../src/filenamedialog.cpp ../src/filenamedialog.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -8725,6 +8825,13 @@ serialchannel.o: ../src/serialchannel.cpp ../src/serialchannel.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -9158,6 +9265,13 @@ serialportdialog.o: ../src/serialportdialog.cpp ../src/serialportdialog.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -9591,6 +9705,13 @@ signalchannel.o: ../src/signalchannel.cpp ../src/signalchannel.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -10023,6 +10144,13 @@ mainwindow_ka.o: ../src/mainwindow_ka.cpp ../src/mainwindow_ka.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -10586,6 +10714,13 @@ channel.o: ../src/channel.cpp ../src/channel.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -11015,6 +11150,13 @@ command.o: ../src/command.cpp ../src/command.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -11446,6 +11588,13 @@ commanddialog.o: ../src/commanddialog.cpp ../src/commanddialog.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -11882,6 +12031,13 @@ connectiondialog.o: ../src/connectiondialog.cpp ../src/connectiondialog.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -12447,6 +12603,13 @@ socketedison.o: ../src/socketedison.cpp ../src/socketedison.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -12881,6 +13044,13 @@ dataprocessor_ma.o: ../src/dataprocessor_ma.cpp ../src/dataprocessor_ma.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -13312,6 +13482,13 @@ dataprocessor_ka.o: ../src/dataprocessor_ka.cpp ../src/dataprocessor_ka.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -13744,6 +13921,13 @@ serialneutrino.o: ../src/serialneutrino.cpp ../src/serialneutrino.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -14178,6 +14362,13 @@ filter.o: ../src/filter.cpp ../src/filter.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
@@ -14608,6 +14799,13 @@ filterdialog.o: ../src/filterdialog.cpp ../src/filterdialog.h \
 		../../Qt/5.7/gcc_64/include/QtCore/QElapsedTimer \
 		../../Qt/5.7/gcc_64/include/QtWidgets/QLayout \
 		../../Qt/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/QAudioOutput \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiooutput.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qtmultimediadefs.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qmultimedia.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudio.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudioformat.h \
+		../../Qt/5.7/gcc_64/include/QtMultimedia/qaudiodeviceinfo.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/QTcpSocket \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qtcpsocket.h \
 		../../Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
