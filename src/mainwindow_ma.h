@@ -54,6 +54,9 @@ private slots:
     void resetGraph2Range();
     void resetGraph3Range();
     void resetGraph4Range();
+    void on_graph1_clicked();
+    void on_graph2_clicked();
+    void on_graph3_clicked();
 
 private:
     int numDataPoints;
@@ -76,6 +79,7 @@ private:
     QMenu *timeFrameMenu;
     QMenu *voltageMenu;
     QMenu *helpMenu;
+    QMenu *audioOutputMenu;
 
     QCustomPlot *channelGraph[10];
 
@@ -96,6 +100,12 @@ private:
     QAction *timeFrame1000ms;
     QAction *timeFrame2000ms;
     QAction *timeFrame5000ms;
+
+    QAction *audio1;
+    QAction *audio2;
+    QAction *audio3;
+
+    QActionGroup *audioGroup;
 
     QActionGroup *timeFrameGroup;
 

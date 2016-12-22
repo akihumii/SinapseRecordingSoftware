@@ -1,17 +1,19 @@
 #include "data.h"
 
 Data::Data(){
-    File = new QFile("Edison.txt");
+    File = new QFile;
+    QString fileName = QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+    File->setFileName(fileName);
 }
 
 Data::~Data(){
 }
 
 QVector<double> Data::retrieveData(int ChannelIndex){
-        if(isFilterEnabled() && ChannelIndex != 3){
-            ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
-        }
-        return ChannelData[ChannelIndex];
+    if(isFilterEnabled() && ChannelIndex != 3){
+        ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
+    }
+    return ChannelData[ChannelIndex];
 }
 
 QVector<double> Data::retrieveXAxis(){
@@ -46,7 +48,14 @@ bool Data::isPlotEnabled(){
 
 void Data::setRecordEnabled(bool enableFlag){
     if(enableFlag){
-        File->open(QIODevice::WriteOnly|QIODevice::Text);
+        QString fileName = QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File opened";
+        }
+        else{
+            qDebug() << "File failed to open";
+        }
         out = new QTextStream(File);
         qDebug() << "setting Record Enabled";
     }
@@ -71,11 +80,11 @@ void Data::RecordData(int data){
 }
 
 void Data::setFileName(QString fileName){
-    if(fileName.contains(".txt")){
+    if(fileName.contains(".csv")){
         File->setFileName(fileName);
     }
     else{
-        File->setFileName(fileName+".txt");
+        File->setFileName(fileName+".csv");
     }
 }
 

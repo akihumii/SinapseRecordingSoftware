@@ -18,6 +18,7 @@ INPUT(
 ./debug/serialneutrino.o
 ./debug/filter.o
 ./debug/filterdialog.o
+./debug/signalaudio.o
 ./debug/moc_mainwindow_ma.o
 ./debug/moc_filenamedialog.o
 ./debug/moc_qcustomplot.o
@@ -29,4 +30,5 @@ INPUT(
 ./debug/moc_socketedison.o
 ./debug/moc_serialneutrino.o
 ./debug/moc_filterdialog.o
+./debug/moc_signalaudio.o
 );

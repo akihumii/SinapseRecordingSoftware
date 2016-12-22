@@ -12,8 +12,8 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor_MA *dataProcessor_) 
 }
 
 void SerialChannel::ReadImplantData(){
-    dataProcessor->parseFrameMarkers(implantPort->read(2000));
-    dataProcessor->sortADCData(ADCPort->read(2000));
+    dataProcessor->parseFrameMarkers(implantPort->read(500));
+    dataProcessor->sortADCData(ADCPort->read(500));
 }
 
 void SerialChannel::closeImplantPort(){

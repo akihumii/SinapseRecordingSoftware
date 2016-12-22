@@ -63,6 +63,8 @@
 #include <QtSerialPort/QtSerialPort>
 #include <QSerialPortInfo>
 #include <QMessageBox>
+#include <QDateTime>
+#include <QTime>
 #include <qmath.h>
 #include "math.h"
 

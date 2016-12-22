@@ -52,6 +52,9 @@ private:
     QFile *File;
     QTextStream *out;
 
+    QDateTime *date;
+    QTime time;
+
     bool PlotEnabled = false;
     int prevleftOverByteCount = 0;
 

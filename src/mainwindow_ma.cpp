@@ -6,10 +6,10 @@ MainWindow_MA::MainWindow_MA(){
 
     defaultRange = new QCPRange(-0.00050, 0.00100);
 
-    setWindowTitle(tr("Sinapse Recording Software V") + version);
+    setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version + " Beta");
     timer.start();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    data = new DataProcessor_MA(this);
+    data = new DataProcessor_MA;
     serialChannel = new SerialChannel(this, data);
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
@@ -49,20 +49,40 @@ void MainWindow_MA::createLayout(){
         mainLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(70,0,0,0));
+        channelGraph[i]->axisRect()->setMargins(QMargins(75,10,0,15));
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis2->setTickStep(0.1);
+        channelGraph[i]->yAxis->setAutoTickStep(false);
+        channelGraph[i]->xAxis->setAutoTickStep(false);
+        channelGraph[i]->xAxis->setTickStep(0.01);
+        channelGraph[i]->yAxis->setTickStep(0.0001);
     }
 
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
-    channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
-    channelGraph[3]->graph()->setPen(QPen(Qt::darkBlue));
+    connect(channelGraph[0], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph1_clicked()));
+    connect(channelGraph[1], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph2_clicked()));
+    connect(channelGraph[2], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph3_clicked()));
+
+    channelGraph[0]->yAxis->setLabel("Channel 1 (V)");
+    channelGraph[0]->yAxis->setLabelFont(QFont(font().family(), 11));
+    channelGraph[1]->yAxis->setLabel("Channel 2 (V)");
+    channelGraph[1]->yAxis->setLabelFont(QFont(font().family(), 11));
+    channelGraph[2]->yAxis->setLabel("Sync Pulse (V)");
+    channelGraph[2]->yAxis->setLabelPadding(35);
+    channelGraph[2]->yAxis->setLabelFont(QFont(font().family(), 11));
+    channelGraph[3]->yAxis->setLabel("Frame Marker");
+    channelGraph[3]->yAxis->setLabelPadding(35);
+    channelGraph[3]->yAxis->setLabelFont(QFont(font().family(), 11));
+
+    channelGraph[0]->graph()->setPen(QPen(Qt::red));
+    channelGraph[1]->graph()->setPen(QPen(Qt::black));
+    channelGraph[2]->graph()->setPen(QPen(Qt::black));
+    channelGraph[3]->graph()->setPen(QPen(Qt::darkGreen));
 
     channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    channelGraph[2]->yAxis->setTickStep(0.5);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
-    channelGraph[3]->axisRect()->setMargins(QMargins(70,0,0,15));
+    channelGraph[3]->yAxis->setTickStep(50);
+    channelGraph[3]->axisRect()->setMargins(QMargins(75,10,0,15));
 
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -129,6 +149,14 @@ void MainWindow_MA::createActions(){
     connect(voltage1000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage1000u_triggered()));
     connect(voltage2000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage2000u_triggered()));
     connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
+
+    audio1 = new QAction(tr("Channel 1 Audio Output"));
+    audio2 = new QAction(tr("Channel 2 Audio Output"));
+    audio3 = new QAction(tr("Sync Pulse Audio Output"));
+
+    connect(audio1, SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
+    connect(audio2, SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
+    connect(audio3, SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
 
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
@@ -204,6 +232,20 @@ void MainWindow_MA::createMenus(){
     voltageGroup->addAction(voltage2000u);
     voltageGroup->addAction(voltage5000u);
 
+    audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
+    audioOutputMenu->addAction(audio1);
+    audio1->setCheckable(true);
+    audioOutputMenu->addAction(audio2);
+    audio2->setCheckable(true);
+    audioOutputMenu->addAction(audio3);
+    audio3->setCheckable(true);
+
+    audioGroup = new QActionGroup(this);
+    audioGroup->addAction(audio1);
+    audio1->setChecked(true);
+    audioGroup->addAction(audio2);
+    audioGroup->addAction(audio3);
+
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
 }
@@ -222,7 +264,7 @@ MainWindow_MA::~MainWindow_MA(){
 
 void MainWindow_MA::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
-    if(X_axis.size() > data->getNumDataPoints()){
+    if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<4; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
@@ -313,51 +355,88 @@ void MainWindow_MA::resetGraph4Range(){
 void MainWindow_MA::on_timeFrame10_triggered(){
     data->setNumDataPoints(TimeFrames10ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.001);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame20_triggered(){
     data->setNumDataPoints(TimeFrames20ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.002);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame50_triggered(){
     data->setNumDataPoints(TimeFrames50ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.005);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame100_triggered(){
     data->setNumDataPoints(TimeFrames100ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.01);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame200_triggered(){
     data->setNumDataPoints(TimeFrames200ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.02);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame500_triggered(){
     data->setNumDataPoints(TimeFrames500ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.05);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame1000_triggered(){
     data->setNumDataPoints(TimeFrames1000ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.1);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame2000_triggered(){
     data->setNumDataPoints(TimeFrames2000ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.2);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_timeFrame5000_triggered(){
     data->setNumDataPoints(TimeFrames5000ms);
     data->clearallChannelData();
+    for(int i=0;i<4;i++){
+        channelGraph[i]->xAxis->setTickStep(0.5);
+        channelGraph[i]->replot();
+    }
 }
 
 void MainWindow_MA::on_voltage50u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.00001);
         channelGraph[i]->replot();
     }
 }
@@ -365,6 +444,7 @@ void MainWindow_MA::on_voltage50u_triggered(){
 void MainWindow_MA::on_voltage100u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.00002);
         channelGraph[i]->replot();
     }
 }
@@ -372,6 +452,7 @@ void MainWindow_MA::on_voltage100u_triggered(){
 void MainWindow_MA::on_voltage200u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.00004);
         channelGraph[i]->replot();
     }
 }
@@ -379,6 +460,7 @@ void MainWindow_MA::on_voltage200u_triggered(){
 void MainWindow_MA::on_voltage500u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0001);
         channelGraph[i]->replot();
     }
 }
@@ -386,6 +468,7 @@ void MainWindow_MA::on_voltage500u_triggered(){
 void MainWindow_MA::on_voltage1000u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0002);
         channelGraph[i]->replot();
     }
 }
@@ -393,6 +476,7 @@ void MainWindow_MA::on_voltage1000u_triggered(){
 void MainWindow_MA::on_voltage2000u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0004);
         channelGraph[i]->replot();
     }
 }
@@ -400,6 +484,7 @@ void MainWindow_MA::on_voltage2000u_triggered(){
 void MainWindow_MA::on_voltage5000u_triggered(){
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.001);
         channelGraph[i]->replot();
     }
 }
@@ -425,4 +510,33 @@ void MainWindow_MA::about()
                "GNU Lesser General Public License for more details."
                "<p>You should have received a copy of the GNU Lesser General Public License "
                "along with this program.  If not, see <i>http://www.gnu.org/licenses/</i>."));
+}
+
+void MainWindow_MA::on_graph1_clicked(){
+    channelGraph[0]->graph()->setPen(QPen(Qt::red));
+    channelGraph[1]->graph()->setPen(QPen(Qt::black));
+    channelGraph[2]->graph()->setPen(QPen(Qt::black));
+    data->setAudioChannel(0);
+    audio1->setChecked(true);
+    audio2->setChecked(false);
+    audio3->setChecked(false);
+}
+
+void MainWindow_MA::on_graph2_clicked(){
+    channelGraph[1]->graph()->setPen(QPen(Qt::red));
+    channelGraph[0]->graph()->setPen(QPen(Qt::black));
+    channelGraph[2]->graph()->setPen(QPen(Qt::black));
+    data->setAudioChannel(1);
+    audio1->setChecked(false);
+    audio2->setChecked(true);
+    audio3->setChecked(false);
+}
+void MainWindow_MA::on_graph3_clicked(){
+    channelGraph[2]->graph()->setPen(QPen(Qt::red));
+    channelGraph[0]->graph()->setPen(QPen(Qt::black));
+    channelGraph[1]->graph()->setPen(QPen(Qt::black));
+    data->setAudioChannel(2);
+    audio1->setChecked(false);
+    audio2->setChecked(false);
+    audio3->setChecked(true);
 }

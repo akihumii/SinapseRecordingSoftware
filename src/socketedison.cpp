@@ -34,6 +34,20 @@ void SocketEdison::disconnectedCommandSocket(){
 }
 
 void SocketEdison::ReadCommand(){
+    if(socketCommand->bytesAvailable() > maxSize-1 && wifiEnabled){
+        if(NeutrinoData->isPlotEnabled()){
+            if(Mode_8Bit == true){
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketCommand->read(maxSize)));
+            }
+            else if(Mode_8Bit == false){
+                QByteArray data_buf = socketCommand->read(maxSize);
+                if(data_buf.size()<maxSize){
+                    qDebug() << data_buf.size() << "Bytes Read";
+                }
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(data_buf));
+            }
+        }
+    }
 }
 
 void SocketEdison::doDisconnect(){

@@ -1,42 +1,7 @@
 #include "dataprocessor_ma.h"
 
-DataProcessor_MA::DataProcessor_MA(QObject *parent) : QObject(parent = Q_NULLPTR){
-    QAudioFormat format;
+DataProcessor_MA::DataProcessor_MA(){
 
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-    format = info.preferredFormat();
-    format.setChannelCount(1);
-    format.setSampleRate(22050);
-    format.setSampleType(QAudioFormat::SignedInt);
-    format.setSampleSize(16);
-    //format.setByteOrder(QAudioFormat::BigEndian);
-
-    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
-    {
-        qDebug() << "Device name: " << info.deviceName();
-        qDebug() << "Supported Sample Rates: " << info.supportedSampleRates();
-        qDebug() << "Supported Byte Orders: " << info.supportedByteOrders();
-        qDebug() << "Supported Channel Counts: " << info.supportedChannelCounts();
-        qDebug() << "Supported Sample Size: " << info.supportedSampleSizes();
-        qDebug() << "Supported Sample Types: " << info.supportedSampleTypes();
-        qDebug() << "Preferred Format: " << info.preferredFormat();
-
-    }
-
-    qDebug() << "Format set: " << format;
-
-    if (!info.isFormatSupported(format)) {
-        qDebug() << "Raw audio format not supported by backend, cannot play audio.";
-        return;
-    }
-
-    audio = new QAudioOutput(format, this);
-    qDebug() << "Volume: " << audio->volume();
-
-    audio->setNotifyInterval(128);
-    audioDevice = audio->start();
-    connect(audio, &QAudioOutput::stateChanged, this, &DataProcessor_MA::handleStateChanged);
-    connect(audio, &QAudioOutput::notify, this, &DataProcessor_MA::onNotify);
 }
 
 void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
@@ -49,26 +14,23 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
     firstFrameMarker = findfirstFrameMarkers(rawData);
     lastFrameMarker = findlastFrameMarkers(rawData);
     if(lastFrameMarker > 0){
-        for(int i=0;i<lastFrameMarker-4;i=i+1){
+        for(int i=0;i<lastFrameMarker;i=i+1){
             if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
-                audioBuffer1.append(rawData.at(i+2));
-                audioBuffer1.append(rawData.at(i+1));
+                appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
                 if(RecordEnabled){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[0].append(fullWord_rawData*(0.000000195));
-//                audioArray.append(fullWord_rawData);
                 fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
-                audioBuffer2.append(rawData.at(i+4));
-                audioBuffer2.append(rawData.at(i+3));
+                appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
                 if(RecordEnabled){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[1].append(fullWord_rawData*(0.000000195));
                 if(RecordEnabled){
                     if(ADC_Data.size()>0){
-                        RecordData(ADC_Data[0]);
+                        RecordData(ADC_Data.at(0));
                     }
                     else{
                         RecordData(0);
@@ -77,8 +39,7 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
                     RecordData(END_OF_LINE);
                 }
                 if(ADC_Data.size()>0){
-                    ChannelData[2].append(ADC_Data.at(0));
-                    //*out3 << (quint8) ADC_Data.at(0);
+                    ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
                     ADC_Data.remove(0, 1);
                 }
                 ChannelData[3].append((quint8) rawData.at(i));
@@ -90,15 +51,12 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
-    if(audioBuffer1.size() > 2048){
-        audioDevice->write(audioBuffer1);
-        audioBuffer1.clear();
-        audioBuffer2.clear();
-    }
+    playAudio(getAudioChannel());
 }
 
 bool DataProcessor_MA::checkNextFrameMarker(QByteArray data, int currentIndex){
-    if(data.at(currentIndex + 5) == data.at(currentIndex) + 1){
+    if((quint8) data.at(currentIndex + 5) == (quint8) data.at(currentIndex) + 1
+            || ((quint8) data.at(currentIndex) == 250 && (quint8) data.at(currentIndex + 5) == 0)){
         return true;
     }
     else{
@@ -140,40 +98,8 @@ int DataProcessor_MA::findlastFrameMarkers(QByteArray rawData){
 }
 
 void DataProcessor_MA::sortADCData(QByteArray adcData){
-    double temp;
     for(int i=0;i<adcData.size();i++){
-        temp = ((quint8)adcData.at(i)/ 256.0) * 2.5;
-        ADC_Data.append(temp);
+        audioBuffer[2].append(adcData.at(i));
+        ADC_Data.append(adcData.at(i));
     }
-}
-
-void DataProcessor_MA::handleStateChanged(QAudio::State newState)
-{
-    switch (newState) {
-        case QAudio::IdleState:
-            // Finished playing (no more data)
-            qDebug() << "Idled";
-//            audio->stop();
-//            delete audio;
-            break;
-
-        case QAudio::StoppedState:
-            // Stopped for other reasons
-            if (audio->error() != QAudio::NoError) {
-                // Error handling
-                qDebug() << "Error: " << audio->error();
-            }
-            break;
-
-        default:
-            // ... other cases as appropriate
-            break;
-    }
-}
-
-void DataProcessor_MA::onNotify(){
-//    if(audioArray.size() > 0){
-//        qDebug() << "Notified";
-//        audioDevice->write(audioArray);
-//    }
 }
