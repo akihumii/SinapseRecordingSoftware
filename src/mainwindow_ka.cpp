@@ -16,7 +16,7 @@ MainWindow_KA::MainWindow_KA(){
     setWindowTitle(tr("Sinapse Recording Software V") + version);
     timer.start();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(10);     //tick timer every XXX msec
+    dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
     create5x2Layout();
     createActions();
@@ -311,7 +311,7 @@ void MainWindow_KA::on_record_triggered(){
     }
     else if(NeutrinoData->isRecordEnabled()){
         NeutrinoData->setRecordEnabled(false);
-        statusBarLabel->setText("Recording stopped!!! File saved to ");
+        statusBarLabel->setText("Recording stopped!!! File saved to " + NeutrinoData->getFileName());
     }
 }
 

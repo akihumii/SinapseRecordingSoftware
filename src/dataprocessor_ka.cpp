@@ -148,7 +148,7 @@ void DataProcessor_KA::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint
                 }
             }
             if(isRecordEnabled()){
-                RecordData(1025);
+                RecordData(END_OF_LINE);
             }
             total_data_count = total_data_count+1;
             X_axis.append(total_data_count*0.000056);
