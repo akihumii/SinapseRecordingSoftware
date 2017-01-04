@@ -41,9 +41,9 @@ void SocketEdison::ReadCommand(){
             }
             else if(Mode_8Bit == false){
                 QByteArray data_buf = socketCommand->read(maxSize);
-                if(data_buf.size()<maxSize){
+//                if(data_buf.size()<maxSize){
                     qDebug() << data_buf.size() << "Bytes Read";
-                }
+//                }
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(data_buf));
             }
         }

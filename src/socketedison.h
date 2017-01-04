@@ -29,7 +29,7 @@ private:
     DataProcessor_KA *NeutrinoData;
 
 
-    qint64 maxSize = 8192;
+    qint64 maxSize = 20480;
     int numChannels;
     QByteArray lastSentCommand;
 

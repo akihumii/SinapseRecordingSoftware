@@ -18,13 +18,14 @@ QVector<quint16> DataProcessor_KA::ParseFrameMarkers10bits(QByteArray data_store
         leftOverData.clear();
     }
     int firstFrameMarker = first_10bitFrameMarker(data_store);
-    if (firstFrameMarker < 0){
-        data_store.clear();
-        qDebug() << "Can't find first frame marker..";
-        return Plot_Y_AllDataPoint;
-    }
+//    if (firstFrameMarker < 0){
+//        data_store.clear();
+//        qDebug() << "Can't find first frame marker..";
+//        return Plot_Y_AllDataPoint;
+//    }
     int lastFrameMarker = last_10bitFrameMarker(data_store);
-        for(int j = firstFrameMarker ; j < lastFrameMarker - (numChannels*2 + 4); j = j + 1){
+    qDebug() << lastFrameMarker;
+        for(int j = firstFrameMarker ; j < lastFrameMarker; j = j + 1){
             if((uint8_t)data_store.at(j) == FrameMarker10Bit_A
                 && (uint8_t)data_store.at(j+1) == FrameMarker10Bit_5
                 && (uint8_t)data_store.at(j+2) == FrameMarker10Bit_0
@@ -59,13 +60,13 @@ int DataProcessor_KA::first_10bitFrameMarker(QByteArray data){
 }
 
 int DataProcessor_KA::last_10bitFrameMarker(QByteArray data){
-    if(data.size()>4){
-        for(int i = data.size(); i > 4; i--){
-            if((uint8_t)data.at(i-4) == FrameMarker10Bit_A
-                && (uint8_t)data.at(i-3) == FrameMarker10Bit_5
-                && (uint8_t)data.at(i-2) == FrameMarker10Bit_0
-                && (uint8_t)data.at(i-1) == FrameMarker10Bit_F){
-                return i-4;
+    if(data.size()>3){
+        for(int i = data.size()-1; i > 3; i--){
+            if((uint8_t)data.at(i-3) == FrameMarker10Bit_A
+                && (uint8_t)data.at(i-2) == FrameMarker10Bit_5
+                && (uint8_t)data.at(i-1) == FrameMarker10Bit_0
+                && (uint8_t)data.at(i) == FrameMarker10Bit_F){
+                return i-3;
             }
         }
     }
@@ -85,7 +86,7 @@ QVector<quint16> DataProcessor_KA::ParseFrameMarkers8bits(QByteArray data_store)
     }
     int firstFrameMarker = first_8bitFrameMarker(data_store);
     int lastFrameMarker = last_8bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker - (numChannels + 2); j=j+1){
+    for(int j = firstFrameMarker ; j < lastFrameMarker; j=j+1){
         if((uint8_t)data_store.at(j) == FrameMarker8Bit_F0){
                 if((uint8_t)data_store.at(j+(numChannels + 1)) == FrameMarker8Bit_5A){
                     for(int i = 0; i < numChannels; i++){
@@ -125,7 +126,7 @@ void DataProcessor_KA::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint
     bool *channels = NeutrinoChannel->getChannelState_Bool();
     int numChannels = NeutrinoChannel->getNumChannels();
     if(!Plot_Y_AllDataPoint.isEmpty()){
-    for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + numChannels){
+        for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + numChannels){
             int k = 0;
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
@@ -144,7 +145,7 @@ void DataProcessor_KA::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint
                     if(isRecordEnabled()){
                         RecordData(0);
                     }
-                    ChannelData[ChannelIndex].append(0);
+                    ChannelData[ChannelIndex].append(-0.1);
                 }
             }
             if(isRecordEnabled()){

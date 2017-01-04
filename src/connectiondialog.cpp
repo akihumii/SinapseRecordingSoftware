@@ -16,10 +16,10 @@ ConnectionDialog::~ConnectionDialog()
 
 void ConnectionDialog::createLayout()
 {
-    IPAddress = new QLineEdit(tr("192.168.0.100"));
+    IPAddress = new QLineEdit(tr("192.168.42.1"));
     PortNumber = new QLineEdit(tr("8888"));
 
-    IPAddress->setInputMask("999.999.9.999");
+    IPAddress->setInputMask("999.999.999.999");
     IPAddress->setCursorPosition(10);
     QValidator *validator = new QIntValidator(0, 9999, this);
     PortNumber->setValidator(validator);

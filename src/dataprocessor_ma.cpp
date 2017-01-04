@@ -22,12 +22,14 @@ void DataProcessor_MA::parseFrameMarkers(QByteArray rawData){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[0].append(fullWord_rawData*(0.000000195));
+
                 fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
                 appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
                 if(RecordEnabled){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[1].append(fullWord_rawData*(0.000000195));
+
                 if(RecordEnabled){
                     if(ADC_Data.size()>0){
                         RecordData(ADC_Data.at(0));
