@@ -44,6 +44,7 @@
 #include <QtCore>
 #include <QFile>
 #include <QDir>
+#include <QStandardPaths>
 #include <QtGui>
 #include <QString>
 #include <QActionGroup>

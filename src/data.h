@@ -34,8 +34,10 @@ public:
     bool isPlotEnabled();
     void setRecordEnabled(bool enableFlag);
     bool isRecordEnabled();
-    void setFileName(QString fileName);
+    void setFileName(QString filename);
     QString getFileName();
+    void setDirectory(QString dir);
+    QString getDirectory();
     void setNumDataPoints(int timeFrames);
     int getNumDataPoints();
     double getSamplingRate();
@@ -51,6 +53,9 @@ protected:
 private:
     QFile *File;
     QTextStream *out;
+
+    QString fileName;
+    QString directory = QDir::homePath() + "/Desktop/";
 
     QDateTime *date;
     QTime time;
