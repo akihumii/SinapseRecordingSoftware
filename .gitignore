@@ -150,6 +150,7 @@ tmp/
 /src/tools/examplesscanner/examplesscanner
 /src/tools/qml/qmldump/qmldump
 /src/tools/valgrindfake/valgrind-fake
+/src/*.smp
 
 # Tests
 #------
