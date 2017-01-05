@@ -587,12 +587,6 @@ void MainWindow::on_record_triggered(){
 
 void MainWindow::on_recordFileName_triggered(){
     statusBarLabel->setText("Set your preferred file name");
-    QFileDialog fileDialog;
-//    fileDialog.setFileMode(QFileDialog::Directory);
-//    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
-//    data->setFileName(fileDialog.getSaveFileName(this, tr("Save As.."),
-//                                                   QDir::homePath() + "/Desktop/",
-//                                                   tr("csv files (*.csv)")));
     data->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                  QDir::homePath() + "/Desktop/",
                                                  QFileDialog::ShowDirsOnly
