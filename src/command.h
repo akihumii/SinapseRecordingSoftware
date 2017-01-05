@@ -4,32 +4,31 @@
 #include "qtincludes.h"
 #include "channel.h"
 
-#define MarkerA5 0B10100101
-#define Marker5A 0B01011010
+#define MARKER_A5 0B10100101
+#define MARKER_5A 0B01011010
 
-#define DigComLoopBack 0B00010100
-#define DCL_Enter 0B00010101
-#define DCL_Exit 0B00010110
+#define DIGCOMLOOPBACK 0B00010100
+#define DCL_ENTER 0B00010101
+#define DCL_EXIT 0B00010110
 
-#define ResetMode 0B00010000
-#define DataBERMode 0B00010110
+#define RESETMODE 0B00010000
+#define DATA_BER_MODE 0B00010110
 
-#define BitMode_8 0B00110100
-#define BitMode_10 0B10110100
+#define BITMODE_8 0B00110100
+#define BITMODE_10 0B10110100
 
-#define Channel_On 0B10011001
-#define Channel_Off 0B01100110
+#define CHANNEL_ON 0B10011001
+#define CHANNEL_OFF 0B01100110
 
-#define OSCCLKMode 0B00100100
+#define OSC_CLK_MODE 0B00100100
 
-#define AnalogMeasure_8Bit 0B00110101
-#define AnalogMeasure_10Bit 0B10110101
+#define ANALOG_MEASURE_8BIT 0B00110101
+#define ANALOG_MEASURE_10Bit 0B10110101
 
-#define BioImpMeasure_8Bit 0B01100101
-#define BioImpMeasure_10Bit 0B11100101
+#define BIOIMP_MEASURE_8BIT 0B01100101
+#define BIOIMP_MEASURE_10BIT 0B11100101
 
-#define PwrLvlMeasure 0B00010101
-
+#define PWR_LVL_MEASURE 0B00010101
 
 class Command
 {
@@ -54,7 +53,6 @@ public:
     bool havelastCommand();
     void setlastCommand(bool flag);
 
-
 private:
     Channel *NeutrinoChannel;
     quint8 ChipID = 0;
@@ -62,7 +60,7 @@ private:
 
     quint8 bioimp = 0;
     quint8 JTAGarray[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    quint8 DCL_Mode = DCL_Exit;
+    quint8 DCL_Mode = DCL_EXIT;
     bool ok;
     int BERbytesHex[8];
     bool lastCommandexist = false;

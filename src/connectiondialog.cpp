@@ -1,7 +1,5 @@
 #include "connectiondialog.h"
 
-bool ok;
-
 ConnectionDialog::ConnectionDialog(SocketEdison *socketEdison_)
 {
     socketEdison = socketEdison_;

@@ -4,7 +4,7 @@
 #include <QDialog>
 #include "qtincludes.h"
 #include "socketedison.h"
-#include "mainwindow_ka.h"
+#include "mainwindow.h"
 
 class SocketEdison;
 

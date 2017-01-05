@@ -359,10 +359,10 @@ void CommandDialog::on_BioImp_toggled(){
 
 void CommandDialog::on_DCL_toggled(){
     if(Enter->isChecked()){
-        NeutrinoCommand->setDCLMode(DCL_Enter);
+        NeutrinoCommand->setDCLMode(DCL_ENTER);
     }
     else if(Exit->isChecked()){
-        NeutrinoCommand->setDCLMode(DCL_Exit);
+        NeutrinoCommand->setDCLMode(DCL_EXIT);
     }
 }
 
@@ -379,7 +379,7 @@ void CommandDialog::loadlastCommand(){
     bool *lastSELCHN;
     lastSELCHN = NeutrinoChannel->getChannelState_Bool();
     quint8 lastJTAGarray[14];
-    if(NeutrinoCommand->getDCLMode() == DCL_Exit){
+    if(NeutrinoCommand->getDCLMode() == DCL_EXIT){
         Exit->setChecked(true);
         Enter->setChecked(false);
     }

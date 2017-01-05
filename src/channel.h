@@ -3,8 +3,8 @@
 
 #include "qtincludes.h"
 
-#define Channel_On 0B10011001
-#define Channel_Off 0B01100110
+#define CHANNEL_ON 0B10011001
+#define CHANNEL_OFF 0B01100110
 
 
 class Channel
