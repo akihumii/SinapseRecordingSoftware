@@ -1,11 +1,9 @@
 #include "dataprocessor.h"
 
 DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
-
     qDebug()<< "Compiling for NEUTRINO_II.. ";
     NeutrinoChannel = NeutrinoChannel_;
     File = new QFile("Edison.txt");
-
 }
 
 DataProcessor::DataProcessor(){

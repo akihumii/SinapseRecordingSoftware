@@ -26,7 +26,8 @@
 #define BitMode_10 0B10110100
 
 
-class DataProcessor : public SignalAudio, public Data{
+class DataProcessor : public SignalAudio, public Data
+{
 public:
     DataProcessor(Channel *NeutrinoChannel_);
     DataProcessor();

@@ -1,6 +1,5 @@
 #include "commanddialog.h"
 
-
 CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_){
     socketEdison = socketEdison_;
     NeutrinoChannel = NeutrinoChannel_;
