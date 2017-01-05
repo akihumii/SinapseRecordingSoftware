@@ -66,8 +66,6 @@ private:
     int first_8bitFrameMarker(QByteArray data);
     int last_8bitFrameMarker(QByteArray data);
 
-
-//    QVector<quint16> leftOverData;
     int prevleftOverByteCount = 0;
 
     double SamplingRate;

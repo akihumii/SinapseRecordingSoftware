@@ -2,8 +2,6 @@
 
 Data::Data(){
     File = new QFile;
-    QString fileName = QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
-    File->setFileName(fileName);
 }
 
 Data::~Data(){
@@ -48,7 +46,7 @@ bool Data::isPlotEnabled(){
 
 void Data::setRecordEnabled(bool enableFlag){
     if(enableFlag){
-        QString fileName = QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
         File->setFileName(fileName);
         if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
             qDebug()<< "File opened";
@@ -79,17 +77,19 @@ void Data::RecordData(int data){
     }
 }
 
-void Data::setFileName(QString fileName){
-    if(fileName.contains(".csv")){
-        File->setFileName(fileName);
-    }
-    else{
-        File->setFileName(fileName+".csv");
-    }
+void Data::setFileName(QString filename){
+    fileName = filename;
 }
 
 QString Data::getFileName(){
     return File->fileName();
+}
+
+void Data::setDirectory(QString dir){
+    directory = dir;
+}
+QString Data::getDirectory(){
+    return directory;
 }
 
 int Data::getNumDataPoints(){

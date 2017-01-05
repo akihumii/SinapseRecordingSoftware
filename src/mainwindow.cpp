@@ -174,7 +174,7 @@ void MainWindow::createActions(){
         connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 #endif //SYLPH CREATEACTIONS
 
-    recordFileNameAction = new QAction(tr("&Specify File Name"), this);
+    recordFileNameAction = new QAction(tr("&Save as.."), this);
     recordFileNameAction->setShortcut(tr("Ctrl+S"));
     connect(recordFileNameAction, SIGNAL(triggered()), this, SLOT(on_recordFileName_triggered()));
 
@@ -574,6 +574,33 @@ void MainWindow::on_timeFrame5000_triggered(){
 #endif
 }
 
+void MainWindow::on_record_triggered(){
+    if(!data->isRecordEnabled()){
+        data->setRecordEnabled(true);
+        statusBarLabel->setText("Recording...");
+    }
+    else if(data->isRecordEnabled()){
+        data->setRecordEnabled(false);
+        statusBarLabel->setText("Recording stopped!!! File saved to " + data->getFileName());
+    }
+}
+
+void MainWindow::on_recordFileName_triggered(){
+    statusBarLabel->setText("Set your preferred file name");
+    QFileDialog fileDialog;
+//    fileDialog.setFileMode(QFileDialog::Directory);
+//    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
+//    data->setFileName(fileDialog.getSaveFileName(this, tr("Save As.."),
+//                                                   QDir::homePath() + "/Desktop/",
+//                                                   tr("csv files (*.csv)")));
+    data->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                 QDir::homePath() + "/Desktop/",
+                                                 QFileDialog::ShowDirsOnly
+                                                 | QFileDialog::DontResolveSymlinks) + "/");
+
+    statusBarLabel->setText("File Name set to: " + data->getFileName());
+}
+
 #ifdef NEUTRINO_II
 void MainWindow::on_ConnectMenu_triggered(){
     statusBarLabel->setText("Connection Dialog Opened");
@@ -610,24 +637,6 @@ void MainWindow::on_tenby1_triggered(){
 
 void MainWindow::on_fiveby2_triggered(){
     create5x2Layout();
-}
-
-void MainWindow::on_record_triggered(){
-    if(!data->isRecordEnabled()){
-        data->setRecordEnabled(true);
-        statusBarLabel->setText("Recording...");
-    }
-    else if(data->isRecordEnabled()){
-        data->setRecordEnabled(false);
-        statusBarLabel->setText("Recording stopped!!! File saved to " + data->getFileName());
-    }
-}
-
-void MainWindow::on_recordFileName_triggered(){
-    statusBarLabel->setText("Set your preferred file name");
-    FileNameDialog fileNameDialog(data);
-    fileNameDialog.exec();
-    statusBarLabel->setText("File Name set to: " + data->getFileName());
 }
 
 void MainWindow::on_wifi_triggered(){
@@ -669,24 +678,6 @@ void MainWindow::on_wired_triggered(){
 void MainWindow::on_filterConfig_trigger(){
     FilterDialog filterDialog(data);
     filterDialog.exec();
-}
-
-void MainWindow::on_record_triggered(){
-    if(!data->isRecordEnabled()){
-        data->setRecordEnabled(true);
-        statusBarLabel->setText("Recording...");
-    }
-    else if(data->isRecordEnabled()){
-        data->setRecordEnabled(false);
-        statusBarLabel->setText("Recording stopped!!! File saved to " + data->getFileName());
-    }
-}
-
-void MainWindow::on_recordFileName_triggered(){
-    statusBarLabel->setText("Set your preferred file name");
-    FileNameDialog fileNameDialog(data);
-    fileNameDialog.exec();
-    statusBarLabel->setText("File Name set to: " + data->getFileName());
 }
 
 void MainWindow::on_resetRange_triggered(){

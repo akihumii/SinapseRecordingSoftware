@@ -11,7 +11,7 @@ MAKEFILE      = Makefile.Release
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DUNICODE -DAPP_VERSION=\"1.0\" -DNEUTRINO_II -DQT_NO_DEBUG -DQT_MULTIMEDIA_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
+DEFINES       = -DUNICODE -DAPP_VERSION=\"1.0\" -DSYLPH -DQT_NO_DEBUG -DQT_MULTIMEDIA_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
 CFLAGS        = -pipe -fno-keep-inline-dllexport -O2 -Wall -Wextra $(DEFINES)
 CXXFLAGS      = -pipe -fno-keep-inline-dllexport -O2 -std=gnu++11 -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
 INCPATH       = -I../src -I. -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtPrintSupport -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtSerialPort -IC:/Qt/5.7/mingw53_32/include/QtCore -Irelease -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ 
@@ -448,6 +448,7 @@ release/moc_filenamedialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -1372,6 +1373,7 @@ release/moc_serialchannel.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -1823,6 +1825,7 @@ release/moc_serialportdialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -2275,6 +2278,7 @@ release/moc_commanddialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -2727,6 +2731,7 @@ release/moc_connectiondialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -3311,6 +3316,7 @@ release/moc_socketedison.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -3762,6 +3768,7 @@ release/moc_filterdialog.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -4211,6 +4218,7 @@ release/moc_signalaudio.cpp: ../src/qtincludes.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -4658,6 +4666,7 @@ release/moc_mainwindow.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -5260,6 +5269,7 @@ release/main.o: ../src/main.cpp ../src/mainwindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -5841,6 +5851,7 @@ release/data.o: ../src/data.cpp ../src/data.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -6286,6 +6297,7 @@ release/filenamedialog.o: ../src/filenamedialog.cpp ../src/filenamedialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -7208,6 +7220,7 @@ release/serialchannel.o: ../src/serialchannel.cpp ../src/serialchannel.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -7658,6 +7671,7 @@ release/serialportdialog.o: ../src/serialportdialog.cpp ../src/serialportdialog.
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -8108,6 +8122,7 @@ release/signalchannel.o: ../src/signalchannel.cpp ../src/signalchannel.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -8551,6 +8566,7 @@ release/channel.o: ../src/channel.cpp ../src/channel.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -8994,6 +9010,7 @@ release/command.o: ../src/command.cpp ../src/command.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -9439,6 +9456,7 @@ release/commanddialog.o: ../src/commanddialog.cpp ../src/commanddialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -9890,6 +9908,7 @@ release/connectiondialog.o: ../src/connectiondialog.cpp ../src/connectiondialog.
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -10472,6 +10491,7 @@ release/socketedison.o: ../src/socketedison.cpp ../src/socketedison.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -10921,6 +10941,7 @@ release/filter.o: ../src/filter.cpp ../src/filter.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -11365,6 +11386,7 @@ release/filterdialog.o: ../src/filterdialog.cpp ../src/filterdialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -11813,6 +11835,7 @@ release/signalaudio.o: ../src/signalaudio.cpp ../src/signalaudio.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -12259,6 +12282,7 @@ release/mainwindow.o: ../src/mainwindow.cpp ../src/mainwindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
@@ -12839,6 +12863,7 @@ release/dataprocessor.o: ../src/dataprocessor.cpp ../src/dataprocessor.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qtcoreversion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QFile \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QDir \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QStandardPaths \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGui \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QtGuiDepends \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qaccessible.h \
