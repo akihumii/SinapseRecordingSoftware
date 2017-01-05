@@ -273,3 +273,5 @@ tmp/
 # qbs builds
 /*-debug/
 /*-release/
+/*_debug/
+/*_release/
