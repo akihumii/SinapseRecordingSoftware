@@ -8,7 +8,7 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Sylph
+TARGET = SINAPSE
 TEMPLATE = app
 
 # The application version
@@ -17,28 +17,28 @@ VERSION = 1.0
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
+# DEFINES += NEUTRINO_II
+DEFINES += SYLPH
+
 SOURCES += main.cpp\
-        mainwindow_ma.cpp \
     data.cpp \
     filenamedialog.cpp \
     qcustomplot.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
     signalchannel.cpp \
-    mainwindow_ka.cpp \
     channel.cpp \
     command.cpp \
     commanddialog.cpp \
     connectiondialog.cpp \
     socketedison.cpp \
-    dataprocessor_ma.cpp \
-    dataprocessor_ka.cpp \
-    serialneutrino.cpp \
     filter.cpp \
     filterdialog.cpp \
-    signalaudio.cpp
+    signalaudio.cpp \
+    mainwindow.cpp \
+    dataprocessor.cpp
 
-HEADERS  += mainwindow_ma.h \
+HEADERS  += \
     data.h \
     filenamedialog.h \
     qcustomplot.h \
@@ -46,18 +46,16 @@ HEADERS  += mainwindow_ma.h \
     serialchannel.h \
     serialportdialog.h \
     signalchannel.h \
-    mainwindow_ka.h \
     channel.h \
     command.h \
     commanddialog.h \
     connectiondialog.h \
     socketedison.h \
-    dataprocessor_ma.h \
-    dataprocessor_ka.h \
-    serialneutrino.h \
     filter.h \
     filterdialog.h \
-    signalaudio.h
+    signalaudio.h \
+    mainwindow.h \
+    dataprocessor.h
 
 FORMS +=
 

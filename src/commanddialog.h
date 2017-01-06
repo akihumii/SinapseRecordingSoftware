@@ -15,9 +15,8 @@ class CommandDialog : public QDialog
     Q_OBJECT
 
 public:
-    CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_);//, Data *NeutrinoData_);
+    CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_);
     ~CommandDialog();
-
 
 private slots:
     void on_sendCommand_clicked();

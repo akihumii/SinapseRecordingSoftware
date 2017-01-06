@@ -1,6 +1,6 @@
 #include "serialchannel.h"
 
-SerialChannel::SerialChannel(QObject *parent, DataProcessor_MA *dataProcessor_) : QObject(parent = Q_NULLPTR)
+SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : QObject(parent = Q_NULLPTR)
 {
     implantPort = new QSerialPort(this);
     ADCPort = new QSerialPort(this);
@@ -11,9 +11,21 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor_MA *dataProcessor_) 
     connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadADCData()));
 }
 
+SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent)
+{
+    serial = new QSerialPort(this);
+    NeutrinoCommand = NeutrinoCommand_;
+    NeutrinoData = NeutrinoData_;
+    NeutrinoChannel = NeutrinoChannel_;
+
+    connect(serial, SIGNAL(readyRead()), this, SLOT(ReadData()));
+}
+
 void SerialChannel::ReadImplantData(){
+#ifdef SYLPH
     dataProcessor->parseFrameMarkers(implantPort->read(500));
     dataProcessor->sortADCData(ADCPort->read(500));
+#endif
 }
 
 void SerialChannel::closeImplantPort(){
@@ -38,7 +50,6 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setReadBufferSize(2000);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
-
         return 1;
     }
     else{
@@ -64,4 +75,36 @@ bool SerialChannel::enableADCPort(QString portName){
     }
 }
 
+void SerialChannel::ReadData(){
+    qDebug() << NeutrinoChannel->getNumChannels();
+    if(serialenabled){
+        QByteArray buffer;
+        buffer = serial->read(2048);
+        for(int i=0;i<buffer.size();i++){
+                qDebug() << QString::number((uint8_t) buffer.at(i),2);
+        }
+        buffer.clear();
+    }
+}
 
+void SerialChannel::closePort(){
+    serial->close();
+}
+
+bool SerialChannel::doConnect(){
+    serial->setPortName("ttyUSB0");
+    serial->setBaudRate(3000000);
+    serial->setDataBits(QSerialPort::Data5);
+    serial->setParity(QSerialPort::NoParity);
+    serial->setStopBits(QSerialPort::OneStop);
+    serial->setFlowControl(QSerialPort::NoFlowControl);
+    serial->setReadBufferSize(128);
+
+    if (serial->open(QIODevice::ReadWrite)) {
+        qDebug() << "Connected via USB!";
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}

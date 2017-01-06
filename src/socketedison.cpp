@@ -1,11 +1,10 @@
 #include "socketedison.h"
 
-SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProcessor_KA *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent){
+SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent){
     socketCommand = new QTcpSocket(this);
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoData = NeutrinoData_;
     NeutrinoChannel = NeutrinoChannel_;
-    //serialNeutrino = serialNeutrino_;
 
     connect(socketCommand, SIGNAL(connected()), this, SLOT(connectedCommandSocket()));
     connect(socketCommand, SIGNAL(disconnected()), this, SLOT(disconnectedCommandSocket()));
@@ -15,7 +14,6 @@ SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProce
 void SocketEdison::doConnect(QString ipAddress, int port){
     qDebug() << "Connecting...";
 
-    //socketData->connectToHost(ipAddress, port); //change iP Address
     socketCommand->connectToHost(ipAddress, port);
 
     qDebug() << "Waiting...";
@@ -40,11 +38,7 @@ void SocketEdison::ReadCommand(){
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketCommand->read(maxSize)));
             }
             else if(Mode_8Bit == false){
-                QByteArray data_buf = socketCommand->read(maxSize);
-                if(data_buf.size()<maxSize){
-                    qDebug() << data_buf.size() << "Bytes Read";
-                }
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(data_buf));
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketCommand->read(maxSize)));
             }
         }
     }
@@ -104,7 +98,7 @@ QString SocketEdison::getError(){
 int SocketEdison::getNumChannels(QByteArray lastCommand){
     numChannels = 0;
     for(int i=7;i<17;i++){
-        if (lastCommand.at(i) == (const char) Channel_On){
+        if (lastCommand.at(i) == (const char) CHANNEL_ON){
             numChannels++;
         }
     }
