@@ -46,7 +46,7 @@ bool Data::isPlotEnabled(){
 
 void Data::setRecordEnabled(bool enableFlag){
     if(enableFlag){
-        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+        fileName = directory + QDateTime::currentDateTime().toString("d");
         File->setFileName(fileName);
         if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
             qDebug()<< "File opened";

@@ -9,14 +9,10 @@ MainWindow::MainWindow(){
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
     serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
-    portInfo = QSerialPortInfo::availablePorts();
-    if(portInfo.size()>0){
-        qDebug() << portInfo.at(0).portName();
-        QProcess::execute("sudo chmod a+rw /dev/" + portInfo.at(0).portName());
-    }
     socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
-    setWindowTitle(tr("Sinapse NeutrinoII Recording Software V") + version);
+    setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     create5x2Layout();
+    qDebug() << "Starting NEUTRINO II..";
 #endif //NEUTRINO_II MAINWINDOW
 
 #ifdef SYLPH
@@ -47,6 +43,7 @@ MainWindow::MainWindow(){
                                  "Please check Serial Devices connection and try again. \n"
                                  "Press Ctrl+E to open up Serial Port Configurations");
     }
+    qDebug() << "Starting SYLPH..";
 #endif //SYLPH MAINWAINDOW
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
@@ -101,7 +98,6 @@ void MainWindow::createLayout(){
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
 }
-
 #endif //SYLPH CREATELAYOUT
 
 void MainWindow::createActions(){
@@ -302,6 +298,7 @@ void MainWindow::create5x2Layout(){
 #endif //NEUTRINO_II CREATE10X1LAYOUT CREATE5X2LAYOUT
 
 void MainWindow::createMenus(){
+//--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
 
 #ifdef NEUTRINO_II
@@ -322,13 +319,17 @@ void MainWindow::createMenus(){
     fileMenu->addAction(recordFileNameAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
+//--------------------------- FILE MENU -----------------------------//
 
+//-------------------------- LAYOUT MENU ----------------------------//
 #ifdef NEUTRINO_II
     layoutMenu = menuBar()-> addMenu(tr("&Layout"));
     layoutMenu->addAction(tenby1Action);
     layoutMenu->addAction(fiveby2Action);
 #endif //NEUTRINO_II CREATEMENUA LAYOUTMENU
+//-------------------------- LAYOUT MENU ----------------------------//
 
+//------------------------- TIMEFRAME MENU --------------------------//
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
     timeFrameMenu->addAction(timeFrame10ms);
@@ -361,7 +362,9 @@ void MainWindow::createMenus(){
     timeFrameGroup->addAction(timeFrame1000ms);
     timeFrameGroup->addAction(timeFrame2000ms);
     timeFrameGroup->addAction(timeFrame5000ms);
+//------------------------- TIMEFRAME MENU --------------------------//
 
+//------------------------ CONNECTIVITY MENU ------------------------//
 #ifdef NEUTRINO_II
     connectivityMenu = menuBar()->addMenu(tr("Connection Mode"));
     connectivityGroup = new QActionGroup(this);
@@ -374,7 +377,11 @@ void MainWindow::createMenus(){
     connectivityGroup->addAction(wifiMode);
     connectivityGroup->addAction(wiredMode);
 #endif //NEUTRINO_II CREATEMENU CONNECTIVITYMENU
+//------------------------ CONNECTIVITY MENU ------------------------//
 
+//------------------------- VOLTAGE MENU ----------------------------//
+//----------------------- AUDIO OUTPUT MENU -------------------------//
+//--------------------------- HELP MENU -----------------------------//
 #ifdef SYLPH
     voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
     voltageMenu->addAction(voltage50u);
@@ -419,6 +426,10 @@ void MainWindow::createMenus(){
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
 #endif //SYLPH CREATEMENU VOLTAGEMENU AUDIOOUTPUTMENU HELPMENU
+
+//------------------------- VOLTAGE MENU ----------------------------//
+//----------------------- AUDIO OUTPUT MENU -------------------------//
+//--------------------------- HELP MENU -----------------------------//
 }
 
 void MainWindow::createStatusBar(){

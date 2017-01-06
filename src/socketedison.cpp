@@ -13,11 +13,8 @@ SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProce
 
 void SocketEdison::doConnect(QString ipAddress, int port){
     qDebug() << "Connecting...";
-
     socketCommand->connectToHost(ipAddress, port);
-
     qDebug() << "Waiting...";
-
     if(!socketCommand->waitForConnected(1000)){
         qDebug() << "Error: " << socketCommand->errorString();
     }
