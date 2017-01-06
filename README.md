@@ -31,3 +31,5 @@ Sylph Recording Software includes the following features:
 - For more information, refer to this [link](http://doc.qt.io/qt-5/windows-support.html) and this [link](http://doc.qt.io/qt-5/windows-deployment.html).
 - For ease of reference, please refer to the following picture:
 ![](https://cloud.githubusercontent.com/assets/19749458/21709617/578840e2-d41d-11e6-994d-b1a0833a9b35.png)
+- Build Settings should be as follows:
+![](https://cloud.githubusercontent.com/assets/19749458/21709673/eba4f0b8-d41d-11e6-89c4-8335f6bbe237.png)
