@@ -1,4 +1,4 @@
-# Sinapse Recording Software
+# **Sinapse Recording Software**
 
 Sinapse Recording Software is a Graphical User Interfaced designed with Qt Creator 4.1.0 based on Qt 5.7.0. 
 Its purpose is to acquire and display real time signals from Neutrino II and Sylph hardware via USB and/or WiFi.
