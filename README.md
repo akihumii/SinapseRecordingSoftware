@@ -4,7 +4,11 @@ Sinapse Recording Software is a Graphical User Interfaced designed with Qt Creat
 Its purpose is to acquire and display real time signals from Neutrino II and Sylph hardware via USB and/or WiFi.
 
 This program can be compiled for both Neutrino II and Sylph individually as of Version 1.0 
-by defining NEUTRINO_II or SYLPH in the .pro file respectively.
+by defining NEUTRINO_II or SYLPH in the .pro file respectively, as shown below (compiling for Neutrino II)
+'''
+DEFINES += NEUTRINO_II
+# DEFINES += SYLPH
+'''
 
 The following features are common for both Neutrino II and Sylph Recording Software:
 - Both GUIs are capable of recording data into a .csv file with the file name of 'data_'yyyyMMdd_HHmmss'.csv' format (e.g. data_20170106_102512.csv).
