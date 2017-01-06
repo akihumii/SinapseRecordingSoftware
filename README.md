@@ -25,3 +25,9 @@ Sylph Recording Software includes the following features:
 - High pass filter with a validator of 100 Hz to 7500 Hz.
 - Notch filter with the option of 50 Hz and 60 Hz.
 
+**Compiling on Windows**
+- Desktop Qt 5.7.0 MinGW 32bit kit should be used to compile Sinapse Recording Software.
+- Build directory should be of the same level with src.
+- For more information, refer to this [link](http://doc.qt.io/qt-5/windows-support.html) and this [link](http://doc.qt.io/qt-5/windows-deployment.html).
+- For ease of reference, please refer to the following picture:
+![](https://cloud.githubusercontent.com/assets/19749458/21709617/578840e2-d41d-11e6-994d-b1a0833a9b35.png)
