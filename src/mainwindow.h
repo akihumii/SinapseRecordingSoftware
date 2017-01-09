@@ -42,11 +42,9 @@ public:
 
 public slots:
 #ifdef NEUTRINO_II
-
 #endif //NEUTRINO_II PUBLIC SLOTS
 
 #ifdef SYLPH
-
 #endif //SYLPH PUBLIC SLOTS
 
 private:
@@ -76,7 +74,7 @@ private:
 
     QAction *exitAction;
     QAction *recordAction;
-    QAction *recordFileNameAction;
+    QAction *chooseDirectoryAction;
 
 
 #ifdef NEUTRINO_II
@@ -160,7 +158,7 @@ private slots:
     void on_timeFrame2000_triggered();
     void on_timeFrame5000_triggered();
     void on_record_triggered();
-    void on_recordFileName_triggered();
+    void on_chooseDirectory_triggered();
 
 #ifdef NEUTRINO_II
     void on_ConnectMenu_triggered();

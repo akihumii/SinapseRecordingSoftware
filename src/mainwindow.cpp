@@ -170,9 +170,9 @@ void MainWindow::createActions(){
         connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 #endif //SYLPH CREATEACTIONS
 
-    recordFileNameAction = new QAction(tr("&Save as.."), this);
-    recordFileNameAction->setShortcut(tr("Ctrl+S"));
-    connect(recordFileNameAction, SIGNAL(triggered()), this, SLOT(on_recordFileName_triggered()));
+    chooseDirectoryAction = new QAction(tr("&Save as.."), this);
+    chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
+    connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+X"));
@@ -316,7 +316,7 @@ void MainWindow::createMenus(){
 #endif //SYLPH CREATEMENU FILEMENU
 
     fileMenu->addAction(recordAction);
-    fileMenu->addAction(recordFileNameAction);
+    fileMenu->addAction(chooseDirectoryAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 //--------------------------- FILE MENU -----------------------------//
@@ -596,14 +596,14 @@ void MainWindow::on_record_triggered(){
     }
 }
 
-void MainWindow::on_recordFileName_triggered(){
-    statusBarLabel->setText("Set your preferred file name");
+void MainWindow::on_chooseDirectory_triggered(){
+    statusBarLabel->setText("Set your preferred save file directory");
     data->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                  QDir::homePath() + "/Desktop/",
                                                  QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks) + "/");
+                                                 | QFileDialog::DontResolveSymlinks));
 
-    statusBarLabel->setText("File Name set to: " + data->getFileName());
+    statusBarLabel->setText("Save directory set to: " + data->getDirectory());
 }
 
 #ifdef NEUTRINO_II

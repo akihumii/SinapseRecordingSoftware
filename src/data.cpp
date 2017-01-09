@@ -46,7 +46,7 @@ bool Data::isPlotEnabled(){
 
 void Data::setRecordEnabled(bool enableFlag){
     if(enableFlag){
-        fileName = directory + QDateTime::currentDateTime().toString("d");
+        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
         File->setFileName(fileName);
         if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
             qDebug()<< "File opened";
@@ -86,7 +86,12 @@ QString Data::getFileName(){
 }
 
 void Data::setDirectory(QString dir){
-    directory = dir;
+    if(dir == NULL){
+        directory = QDir::homePath() + "/Desktop/";
+    }
+    else{
+        directory = dir;
+    }
 }
 QString Data::getDirectory(){
     return directory;
