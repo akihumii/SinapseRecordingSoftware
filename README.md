@@ -9,6 +9,7 @@ by defining NEUTRINO_II or SYLPH in the .pro file respectively, as shown below (
 DEFINES += NEUTRINO_II
 # DEFINES += SYLPH
 ```
+### NOTE: If compiled for one (e.g. NEUTRINO_I) program, the project must be cleaned before it can be compiled for the other (in this case, SYLPH) by clicking Build -> Clean all in the menu.
 
 The following features are common for both Neutrino II and Sylph Recording Software:
 - Both GUIs are capable of recording data into a .csv file with the file name of 'data_'yyyyMMdd_HHmmss'.csv' format (e.g. data_20170106_102512.csv).
