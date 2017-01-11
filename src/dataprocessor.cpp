@@ -11,12 +11,19 @@ DataProcessor::DataProcessor(){
 QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
+    for(int i=0;i<data_store.size();i++){
+        quint8 temp = (quint8) data_store.at(i);
+        temp != temp;
+        temp &= 0B00011111;
+        qDebug() << temp;
+    }
     uint16_t combine_10bit;
     int numChannels = NeutrinoChannel->getNumChannels();
     if(leftOverData.size() > 0){
         for(int i=leftOverData.size()-1;i>=0;i--){
             data_store.prepend(leftOverData.at(i));
         }
+//        qDebug() << data_store.size();
         leftOverData.clear();
     }
     firstFrameMarker = first_10bitFrameMarker(data_store);
@@ -37,9 +44,9 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
             }
         }
     }
-    for(int i = lastFrameMarker; i < data_store.size(); i++){
-        leftOverData.append(data_store.at(i));
-    }
+//    for(int i = lastFrameMarker; i < data_store.size(); i++){
+//        leftOverData.append(data_store.at(i));
+//    }
     return Plot_Y_AllDataPoint;
 }
 
@@ -75,14 +82,14 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
     uint8_t current_8bit;
     int numChannels = NeutrinoChannel->getNumChannels();
     if(leftOverData.size() > 0){
-        for(int i=0;i<leftOverData.size();i++){
+        for(int i=leftOverData.size()-1;i>=0;i--){
             data_store.prepend(leftOverData.at(i));
         }
         leftOverData.clear();
     }
     firstFrameMarker = first_8bitFrameMarker(data_store);
     lastFrameMarker = last_8bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker; j=j+1){
+    for(int j = firstFrameMarker ; j < lastFrameMarker - numChannels - 1; j=j+1){
         if((uint8_t)data_store.at(j) == FrameMarker8Bit_F0){
                 if((uint8_t)data_store.at(j+(numChannels + 1)) == FrameMarker8Bit_5A){
                     for(int i = 0; i < numChannels; i++){
@@ -99,13 +106,15 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
 }
 
 int DataProcessor::last_8bitFrameMarker(QByteArray data){
-    for(int i= data.size(); i>2; i--){
-        if((uint8_t) data.at(i-1) == FrameMarker8Bit_F0
-            && (uint8_t)data.at(i-2) == FrameMarker8Bit_5A){
-            return i-2;
+    if(data.size()>1){
+        for(int i= data.size()-1; i>1; i--){
+            if((uint8_t) data.at(i) == FrameMarker8Bit_F0
+                && (uint8_t)data.at(i-1) == FrameMarker8Bit_5A){
+                return i-1;
+            }
         }
     }
-    return -1;
+    return 0;
 }
 
 int DataProcessor::first_8bitFrameMarker(QByteArray data){
@@ -115,7 +124,7 @@ int DataProcessor::first_8bitFrameMarker(QByteArray data){
             return i;
         }
     }
-    return -1;
+    return 0;
 }
 
 void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){

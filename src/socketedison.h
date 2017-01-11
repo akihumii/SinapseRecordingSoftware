@@ -19,6 +19,7 @@ public:
 
 private:
     QTcpSocket *socketCommand;
+    QTcpSocket *socketZentri;
     Channel *NeutrinoChannel;
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
@@ -35,6 +36,9 @@ private slots:
     void connectedCommandSocket();
     void disconnectedCommandSocket();
     void ReadCommand();
+    void connectedZentriSocket();
+    void disconnectedZentriSocket();
+    void ReadZentri();
 };
 
 #endif // SOCKETEDISON_H

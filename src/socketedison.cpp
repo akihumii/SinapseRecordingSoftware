@@ -2,6 +2,7 @@
 
 SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent){
     socketCommand = new QTcpSocket(this);
+    socketZentri = new QTcpSocket(this);
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoData = NeutrinoData_;
     NeutrinoChannel = NeutrinoChannel_;
@@ -9,14 +10,25 @@ SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProce
     connect(socketCommand, SIGNAL(connected()), this, SLOT(connectedCommandSocket()));
     connect(socketCommand, SIGNAL(disconnected()), this, SLOT(disconnectedCommandSocket()));
     connect(socketCommand, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
+
+    connect(socketZentri, SIGNAL(connected()), this, SLOT(connectedZentriSocket()));
+    connect(socketZentri, SIGNAL(disconnected()), this, SLOT(disconnectedZentriSocket()));
+    connect(socketZentri, SIGNAL(readyRead()), this, SLOT(ReadZentri()));
+
 }
 
 void SocketEdison::doConnect(QString ipAddress, int port){
-    qDebug() << "Connecting...";
+    qDebug() << "Connecting to Command...";
     socketCommand->connectToHost(ipAddress, port);
     qDebug() << "Waiting...";
     if(!socketCommand->waitForConnected(1000)){
         qDebug() << "Error: " << socketCommand->errorString();
+    }
+    qDebug() << "Connecting to Zentri...";
+    socketZentri->connectToHost("192.168.0.100", 3000);
+    qDebug() << "Waiting...";
+    if(!socketZentri->waitForConnected(1000)){
+        qDebug() << "Error: " << socketZentri->errorString();
     }
 }
 
@@ -26,6 +38,14 @@ void SocketEdison::connectedCommandSocket(){
 
 void SocketEdison::disconnectedCommandSocket(){
     qDebug() << "Command Socket Disconnected";
+}
+
+void SocketEdison::connectedZentriSocket(){
+    qDebug() << "Zentri Socket Connected!";
+}
+
+void SocketEdison::disconnectedZentriSocket(){
+    qDebug() << "Zentri Socket Disconnected";
 }
 
 void SocketEdison::ReadCommand(){
@@ -41,12 +61,32 @@ void SocketEdison::ReadCommand(){
     }
 }
 
+void SocketEdison::ReadZentri(){
+//    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketZentri->read(maxSize)));
+    if(socketZentri->bytesAvailable() > maxSize-1 && wifiEnabled){
+        if(NeutrinoData->isPlotEnabled()){
+            if(Mode_8Bit == true){
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketZentri->read(maxSize)));
+            }
+            else if(Mode_8Bit == false){
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketZentri->read(maxSize)));
+            }
+        }
+    }
+}
+
 void SocketEdison::doDisconnect(){
     if(socketCommand->state() == QAbstractSocket::ConnectedState){
         socketCommand->flush();
         socketCommand->disconnectFromHost();
         socketCommand->close();
-        qDebug()<<"Disconnect clicked";
+        qDebug()<<"Command Socket disconnected";
+    }
+    if(socketZentri->state() == QAbstractSocket::ConnectedState){
+        socketZentri->flush();
+        socketZentri->disconnectFromHost();
+        socketZentri->close();
+        qDebug()<<"Zentri Socket disconnected";
     }
 }
 
@@ -81,7 +121,7 @@ bool SocketEdison::writeCommand(QByteArray Command){
                 NeutrinoData->setPlotEnabled(false);
             }
         }
-        socketCommand->write(Command);         //write the command itself
+        socketCommand->write(Command);
         return socketCommand->waitForBytesWritten();
     }
     else
