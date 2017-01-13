@@ -151,6 +151,9 @@ tmp/
 /src/tools/qml/qmldump/qmldump
 /src/tools/valgrindfake/valgrind-fake
 /src/*.smp
+/src/*.smp.*
+/src/*.smproj
+/src/*.qmake.stash
 
 # Tests
 #------

@@ -42,11 +42,9 @@ public:
 
 public slots:
 #ifdef NEUTRINO_II
-
 #endif //NEUTRINO_II PUBLIC SLOTS
 
 #ifdef SYLPH
-
 #endif //SYLPH PUBLIC SLOTS
 
 private:

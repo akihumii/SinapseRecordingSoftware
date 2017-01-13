@@ -1,9 +1,7 @@
 #include "dataprocessor.h"
 
 DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
-    qDebug()<< "Compiling for NEUTRINO_II.. ";
     NeutrinoChannel = NeutrinoChannel_;
-    File = new QFile("Edison.txt");
 }
 
 DataProcessor::DataProcessor(){
@@ -21,33 +19,27 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
         }
         leftOverData.clear();
     }
-    int firstFrameMarker = first_10bitFrameMarker(data_store);
-//    if (firstFrameMarker < 0){
-//        data_store.clear();
-//        qDebug() << "Can't find first frame marker..";
-//        return Plot_Y_AllDataPoint;
-//    }
-    int lastFrameMarker = last_10bitFrameMarker(data_store);
-    qDebug() << lastFrameMarker;
-        for(int j = firstFrameMarker ; j < lastFrameMarker; j = j + 1){
-            if((uint8_t)data_store.at(j) == FrameMarker10Bit_A
-                && (uint8_t)data_store.at(j+1) == FrameMarker10Bit_5
-                && (uint8_t)data_store.at(j+2) == FrameMarker10Bit_0
-                && (uint8_t)data_store.at(j+3) == FrameMarker10Bit_F){
-                if((uint8_t)data_store.at(j+(numChannels*2 + 4)) == FrameMarker10Bit_A
-                    && (uint8_t)data_store.at(j+(numChannels*2 + 5)) == FrameMarker10Bit_5
-                    && (uint8_t)data_store.at(j+(numChannels*2 + 6)) == FrameMarker10Bit_0
-                    && (uint8_t)data_store.at(j+(numChannels*2 + 7)) == FrameMarker10Bit_F){
-                    for(int i = 0; i < numChannels; i++){
-                        combine_10bit = ((uint8_t)data_store.at(j+5+i*2) << 5) | (uint8_t)data_store.at(j+4+i*2);
-                        Plot_Y_AllDataPoint.append(combine_10bit);
-                    }
+    firstFrameMarker = first_10bitFrameMarker(data_store);
+    lastFrameMarker = last_10bitFrameMarker(data_store);
+    for(int j = firstFrameMarker ; j < lastFrameMarker; j = j + 1){
+        if((uint8_t)data_store.at(j) == FrameMarker10Bit_A
+            && (uint8_t)data_store.at(j+1) == FrameMarker10Bit_5
+            && (uint8_t)data_store.at(j+2) == FrameMarker10Bit_0
+            && (uint8_t)data_store.at(j+3) == FrameMarker10Bit_F){
+            if((uint8_t)data_store.at(j+(numChannels*2 + 4)) == FrameMarker10Bit_A
+                && (uint8_t)data_store.at(j+(numChannels*2 + 5)) == FrameMarker10Bit_5
+                && (uint8_t)data_store.at(j+(numChannels*2 + 6)) == FrameMarker10Bit_0
+                && (uint8_t)data_store.at(j+(numChannels*2 + 7)) == FrameMarker10Bit_F){
+                for(int i = 0; i < numChannels; i++){
+                    combine_10bit = ((uint8_t)data_store.at(j+5+i*2) << 5) | (uint8_t)data_store.at(j+4+i*2);
+                    Plot_Y_AllDataPoint.append(combine_10bit);
                 }
             }
         }
-        for(int i = lastFrameMarker; i < data_store.size(); i++){
-            leftOverData.append(data_store.at(i));
-        }
+    }
+    for(int i = lastFrameMarker; i < data_store.size(); i++){
+        leftOverData.append(data_store.at(i));
+    }
     return Plot_Y_AllDataPoint;
 }
 
@@ -88,8 +80,8 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
         }
         leftOverData.clear();
     }
-    int firstFrameMarker = first_8bitFrameMarker(data_store);
-    int lastFrameMarker = last_8bitFrameMarker(data_store);
+    firstFrameMarker = first_8bitFrameMarker(data_store);
+    lastFrameMarker = last_8bitFrameMarker(data_store);
     for(int j = firstFrameMarker ; j < lastFrameMarker; j=j+1){
         if((uint8_t)data_store.at(j) == FrameMarker8Bit_F0){
                 if((uint8_t)data_store.at(j+(numChannels + 1)) == FrameMarker8Bit_5A){
