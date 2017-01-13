@@ -3,7 +3,7 @@
 MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
-    createStatusBar();
+//    createStatusBar();
 #ifdef NEUTRINO_II
     NeutrinoChannel = new Channel;
     NeutrinoCommand = new Command(NeutrinoChannel);
@@ -24,7 +24,12 @@ MainWindow::MainWindow(){
     setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version + " Beta");
     data = new DataProcessor;
     serialChannel = new SerialChannel(this, data);
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    dataTimer.start(1);     //tick timer every XXX msec
+    createStatusBar();
     createLayout();
+    createActions();
+    createMenus();
     statusBarLabel->setText("Insufficient Serial Devices...");
     portInfo = QSerialPortInfo::availablePorts();
     if(portInfo.size()>1){
@@ -48,10 +53,10 @@ MainWindow::MainWindow(){
                                  "Press Ctrl+E to open up Serial Port Configurations");
     }
 #endif //SYLPH MAINWAINDOW
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
-    createActions();
-    createMenus();
+//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+//    dataTimer.start(1);     //tick timer every XXX msec
+//    createActions();
+//    createMenus();
 }
 
 #ifdef SYLPH
@@ -142,9 +147,13 @@ void MainWindow::createActions(){
         filterAction->setShortcut(tr("Ctrl+F"));
         connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
 
-        resetDefaultRange = new QAction(tr("Default Range"), this);
-        resetDefaultRange->setShortcut(tr("Ctrl+Space"));
-        connect(resetDefaultRange, SIGNAL(triggered()), this, SLOT(on_resetRange_triggered()));
+        resetDefaultX = new QAction(tr("Default Time Scale"), this);
+        resetDefaultX->setShortcut(tr("Ctrl+X"));
+        connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
+
+        resetDefaultY = new QAction(tr("Default Voltage Scale"), this);
+        resetDefaultY->setShortcut(tr("Ctrl+Y"));
+        connect(resetDefaultY, SIGNAL(triggered()), this, SLOT(on_resetY_triggered()));
 
         voltage50u = new QAction(tr("+/- 50uV"));
         voltage100u = new QAction(tr("+/- 100uV"));
@@ -174,15 +183,19 @@ void MainWindow::createActions(){
         connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 #endif //SYLPH CREATEACTIONS
 
-    recordFileNameAction = new QAction(tr("&Save as.."), this);
-    recordFileNameAction->setShortcut(tr("Ctrl+S"));
-    connect(recordFileNameAction, SIGNAL(triggered()), this, SLOT(on_recordFileName_triggered()));
+    chooseDirectoryAction = new QAction(tr("&Save as.."), this);
+    chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
+    connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+X"));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-    recordAction = new QAction(tr("&Record"), this);
+    pauseAction = new QAction(tr("Pause graph"), this);
+    pauseAction->setShortcut(tr("Ctrl+Space"));
+    connect(pauseAction, SIGNAL(triggered()), this, SLOT(on_playPause_triggered()));
+
+    recordAction = new QAction(tr("Start &Recording"), this);
     recordAction->setShortcut(tr("Ctrl+R"));
     connect(recordAction, SIGNAL(triggered()), this, SLOT(on_record_triggered()));
 
@@ -314,12 +327,18 @@ void MainWindow::createMenus(){
 #ifdef SYLPH
 //    fileMenu->addAction(serialPortAction);
     fileMenu->addAction(filterAction);
-    fileMenu->addAction(resetDefaultRange);
+//    fileMenu->addAction(resetDefaultRange);
+    fileMenu->addSeparator();
+
+    fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
 #endif //SYLPH CREATEMENU FILEMENU
 
+    fileMenu->addAction(pauseAction);
+    fileMenu->addSeparator();
+
     fileMenu->addAction(recordAction);
-    fileMenu->addAction(recordFileNameAction);
+    fileMenu->addAction(chooseDirectoryAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
@@ -362,6 +381,9 @@ void MainWindow::createMenus(){
     timeFrameGroup->addAction(timeFrame2000ms);
     timeFrameGroup->addAction(timeFrame5000ms);
 
+    timeFrameMenu->addSeparator();
+    timeFrameMenu->addAction(resetDefaultX);
+
 #ifdef NEUTRINO_II
     connectivityMenu = menuBar()->addMenu(tr("Connection Mode"));
     connectivityGroup = new QActionGroup(this);
@@ -401,6 +423,9 @@ void MainWindow::createMenus(){
     voltageGroup->addAction(voltage1000u);
     voltageGroup->addAction(voltage2000u);
     voltageGroup->addAction(voltage5000u);
+
+    voltageMenu->addSeparator();
+    voltageMenu->addAction(resetDefaultY);
 
     audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
     audioOutputMenu->addAction(audio1);
@@ -466,7 +491,9 @@ void MainWindow::updateData(){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*0.000048, Qt::AlignLeft);
-                channelGraph[i]->replot();
+                if(!pause){
+                    channelGraph[i]->replot();
+                }
                 data->clearChannelData(i);
             }
         }
@@ -578,21 +605,33 @@ void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
         statusBarLabel->setText("Recording...");
+        recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
         statusBarLabel->setText("Recording stopped!!! File saved to " + data->getFileName());
+        recordAction->setText("Start &Recording");
     }
 }
 
-void MainWindow::on_recordFileName_triggered(){
-    statusBarLabel->setText("Set your preferred file name");
+void MainWindow::on_playPause_triggered(){
+    if(pause){
+        pauseAction->setText("Pause graph");
+    }
+    else{
+        pauseAction->setText("Resume graph");
+    }
+    pause = !pause;
+}
+
+void MainWindow::on_chooseDirectory_triggered(){
+    statusBarLabel->setText("Set your preferred save file directory");
     data->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                  QDir::homePath() + "/Desktop/",
                                                  QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks) + "/");
+                                                 | QFileDialog::DontResolveSymlinks));
 
-    statusBarLabel->setText("File Name set to: " + data->getFileName());
+    statusBarLabel->setText("Save directory set to: " + data->getDirectory());
 }
 
 #ifdef NEUTRINO_II
@@ -674,7 +713,13 @@ void MainWindow::on_filterConfig_trigger(){
     filterDialog.exec();
 }
 
-void MainWindow::on_resetRange_triggered(){
+void MainWindow::on_resetX_triggered(){
+    data->setNumDataPoints(TimeFrames100ms);
+    data->clearallChannelData();
+    timeFrame100ms->setChecked(true);
+}
+
+void MainWindow::on_resetY_triggered(){
     for(int i=0;i<2;i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->replot();
@@ -683,10 +728,6 @@ void MainWindow::on_resetRange_triggered(){
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->replot();
     voltage500u->setChecked(true);
-
-    data->setNumDataPoints(TimeFrames100ms);
-    data->clearallChannelData();
-    timeFrame100ms->setChecked(true);
 }
 
 void MainWindow::resetGraph1Range(){

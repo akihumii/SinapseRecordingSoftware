@@ -10,7 +10,7 @@ public:
     bool notchFilterEnabled = false;
     bool lowpassFilterEnabled = false;
     bool highpassFilterEnabled = false;
-    double highpassFreq = 0;
+    double highpassFreq = 100;
     double lowpassFreq = 0;
     double notchFreq = 0;
     void setNotchFilter(double cutoffFreq, double bandwidth, double sampleFreq);

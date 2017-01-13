@@ -22,7 +22,7 @@ protected:
     bool playAudio(int ChannelIndex);
 private:
     void clearAudioBuffer();
-    int audioChannelSelected;
+    int audioChannelSelected = 0;
     int sampleRate = 44100;
     int sampleSize = 16;
 private slots:

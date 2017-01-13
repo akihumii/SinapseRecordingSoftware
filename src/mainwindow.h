@@ -76,7 +76,10 @@ private:
 
     QAction *exitAction;
     QAction *recordAction;
-    QAction *recordFileNameAction;
+    QAction *chooseDirectoryAction;
+
+    QAction *pauseAction;
+    bool pause = false;
 
 
 #ifdef NEUTRINO_II
@@ -145,7 +148,8 @@ private:
 
     QActionGroup *voltageGroup;
 
-    QAction *resetDefaultRange;
+    QAction *resetDefaultX;
+    QAction *resetDefaultY;
 #endif //SYLPH PRIVATE
 
 private slots:
@@ -160,7 +164,8 @@ private slots:
     void on_timeFrame2000_triggered();
     void on_timeFrame5000_triggered();
     void on_record_triggered();
-    void on_recordFileName_triggered();
+    void on_chooseDirectory_triggered();
+    void on_playPause_triggered();
 
 #ifdef NEUTRINO_II
     void on_ConnectMenu_triggered();
@@ -175,7 +180,8 @@ private slots:
 
 #ifdef SYLPH
     void on_filterConfig_trigger();
-    void on_resetRange_triggered();
+    void on_resetX_triggered();
+    void on_resetY_triggered();
     void on_voltage50u_triggered();
     void on_voltage100u_triggered();
     void on_voltage200u_triggered();

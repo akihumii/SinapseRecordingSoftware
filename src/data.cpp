@@ -86,7 +86,12 @@ QString Data::getFileName(){
 }
 
 void Data::setDirectory(QString dir){
-    directory = dir;
+    if(dir == NULL){
+        directory = QDir::homePath() + "/Desktop/";
+    }
+    else{
+        directory = dir;
+    }
 }
 QString Data::getDirectory(){
     return directory;
