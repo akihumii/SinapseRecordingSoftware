@@ -40,7 +40,7 @@ public:
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
 
     Data *data;
-    SignalAudio* signalAudio;
+    SignalAudio *signalAudio;
     void parseFrameMarkers(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int currentIndex);
     int findfirstFrameMarkers(QByteArray rawData);

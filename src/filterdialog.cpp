@@ -30,15 +30,15 @@ void FilterDialog::createLayout(){
     lownhighLayout = new QHBoxLayout;
 
     highpassLayout = new QVBoxLayout;
-    filterEnable[1] = new QCheckBox(tr("High pass"));
+    filterEnable[1] = new QCheckBox(tr("High pass Filter (Cutoff Freq in Hz)"));
     connect(filterEnable[1], SIGNAL(toggled(bool)), this, SLOT(on_highpassEnable_toggled(bool)));
-    cutoffLabel[1] = new QLabel("Cutoff Freq");
+    cutoffLabel[1] = new QLabel("Cutoff Freq (Hertz)");
     cutoffFreq[1] = new QLineEdit;
 
     cutoffFreq[1]->setEnabled(false);
     connect(cutoffFreq[1], SIGNAL(returnPressed()), this, SLOT(on_highpassFreq_changed()));
     highpassLayout->addWidget(filterEnable[1]);
-    highpassLayout->addWidget(cutoffLabel[1]);
+//    highpassLayout->addWidget(cutoffLabel[1]);
     highpassLayout->addWidget(cutoffFreq[1]);
 
 //    QValidator *lowpassValidator = new QIntValidator(0, 7500, this);
@@ -158,6 +158,7 @@ void FilterDialog::on_highpassEnable_toggled(bool enableFlag){
         cutoffFreq[1]->setEnabled(enableFlag);
         if(dataProcessor->currentHighpassFreq() != 0){
             cutoffFreq[1]->setText(QString::number(dataProcessor->currentHighpassFreq()));
+            dataProcessor->setHighpassFilter(dataProcessor->currentHighpassFreq(), 20000);
         }
         dataProcessor->setHighpassFilterEnabled(enableFlag);
 }

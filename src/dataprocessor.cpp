@@ -168,7 +168,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
     firstFrameMarker = findfirstFrameMarkers(rawData);
     lastFrameMarker = findlastFrameMarkers(rawData);
     if(lastFrameMarker > 0){
-        for(int i=0;i<lastFrameMarker;i=i+1){
+        for(int i=0;i<lastFrameMarker-3;i=i+1){
             if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
                 appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));

@@ -32,6 +32,8 @@
 #include <QStandardItemModel>
 #include <QStatusBar>
 #include <QAudioOutput>
+#include <QAudioFormat>
+#include <QAudioDeviceInfo>
 #include <QTcpSocket>
 #include <QTcpServer>
 #include <QHostAddress>
