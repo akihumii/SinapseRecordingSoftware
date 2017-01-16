@@ -94,7 +94,7 @@ void SerialChannel::closePort(){
 bool SerialChannel::doConnect(){
     serial->setPortName("ttyUSB0");
     serial->setBaudRate(3000000);
-    serial->setDataBits(QSerialPort::Data5);
+    serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
     serial->setStopBits(QSerialPort::OneStop);
     serial->setFlowControl(QSerialPort::NoFlowControl);

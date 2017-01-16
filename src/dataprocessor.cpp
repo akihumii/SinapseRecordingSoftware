@@ -13,37 +13,38 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     Plot_Y_AllDataPoint.clear();
     for(int i=0;i<data_store.size();i++){
         quint8 temp = (quint8) data_store.at(i);
-        temp != temp;
-        temp &= 0B00011111;
+//        temp = ~(temp);
+//        temp &= 0B00011111;
+//        temp = temp >>3;
         qDebug() << temp;
     }
-    uint16_t combine_10bit;
-    int numChannels = NeutrinoChannel->getNumChannels();
-    if(leftOverData.size() > 0){
-        for(int i=leftOverData.size()-1;i>=0;i--){
-            data_store.prepend(leftOverData.at(i));
-        }
-//        qDebug() << data_store.size();
-        leftOverData.clear();
-    }
-    firstFrameMarker = first_10bitFrameMarker(data_store);
-    lastFrameMarker = last_10bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker; j = j + 1){
-        if((uint8_t)data_store.at(j) == FrameMarker10Bit_A
-            && (uint8_t)data_store.at(j+1) == FrameMarker10Bit_5
-            && (uint8_t)data_store.at(j+2) == FrameMarker10Bit_0
-            && (uint8_t)data_store.at(j+3) == FrameMarker10Bit_F){
-            if((uint8_t)data_store.at(j+(numChannels*2 + 4)) == FrameMarker10Bit_A
-                && (uint8_t)data_store.at(j+(numChannels*2 + 5)) == FrameMarker10Bit_5
-                && (uint8_t)data_store.at(j+(numChannels*2 + 6)) == FrameMarker10Bit_0
-                && (uint8_t)data_store.at(j+(numChannels*2 + 7)) == FrameMarker10Bit_F){
-                for(int i = 0; i < numChannels; i++){
-                    combine_10bit = ((uint8_t)data_store.at(j+5+i*2) << 5) | (uint8_t)data_store.at(j+4+i*2);
-                    Plot_Y_AllDataPoint.append(combine_10bit);
-                }
-            }
-        }
-    }
+//    uint16_t combine_10bit;
+//    int numChannels = NeutrinoChannel->getNumChannels();
+//    if(leftOverData.size() > 0){
+//        for(int i=leftOverData.size()-1;i>=0;i--){
+//            data_store.prepend(leftOverData.at(i));
+//        }
+////        qDebug() << data_store.size();
+//        leftOverData.clear();
+//    }
+//    firstFrameMarker = first_10bitFrameMarker(data_store);
+//    lastFrameMarker = last_10bitFrameMarker(data_store);
+//    for(int j = firstFrameMarker ; j < lastFrameMarker; j = j + 1){
+//        if((uint8_t)data_store.at(j) == FrameMarker10Bit_A
+//            && (uint8_t)data_store.at(j+1) == FrameMarker10Bit_5
+//            && (uint8_t)data_store.at(j+2) == FrameMarker10Bit_0
+//            && (uint8_t)data_store.at(j+3) == FrameMarker10Bit_F){
+//            if((uint8_t)data_store.at(j+(numChannels*2 + 4)) == FrameMarker10Bit_A
+//                && (uint8_t)data_store.at(j+(numChannels*2 + 5)) == FrameMarker10Bit_5
+//                && (uint8_t)data_store.at(j+(numChannels*2 + 6)) == FrameMarker10Bit_0
+//                && (uint8_t)data_store.at(j+(numChannels*2 + 7)) == FrameMarker10Bit_F){
+//                for(int i = 0; i < numChannels; i++){
+//                    combine_10bit = ((uint8_t)data_store.at(j+5+i*2) << 5) | (uint8_t)data_store.at(j+4+i*2);
+//                    Plot_Y_AllDataPoint.append(combine_10bit);
+//                }
+//            }
+//        }
+//    }
 //    for(int i = lastFrameMarker; i < data_store.size(); i++){
 //        leftOverData.append(data_store.at(i));
 //    }

@@ -30,7 +30,7 @@ MainWindow::MainWindow(){
         else{
             connectionStatus.append("Connection to Implant Port failed |");
         }
-        if(serialChannel->enableADCPort(portInfo.at(0).portName())){
+        if(serialChannel->enableADCPort(portInfo.at(2).portName())){
             connectionStatus.append(" Connected to ADC Port");
         }
         else{
@@ -130,9 +130,9 @@ void MainWindow::createActions(){
 #endif //NEUTRINO_II CREATEACTIONS
 
 #ifdef SYLPH
-    //    serialPortAction = new QAction(tr("S&erial Port Configuration"), this);
-    //    serialPortAction->setShortcut(tr("Ctrl+E"));
-    //    connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
+        serialPortAction = new QAction(tr("S&erial Port Configuration"), this);
+        serialPortAction->setShortcut(tr("Ctrl+E"));
+        connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
 
         filterAction = new QAction(tr("Filter Configuration"), this);
         filterAction->setShortcut(tr("Ctrl+F"));
@@ -309,7 +309,7 @@ void MainWindow::createMenus(){
 #endif //NEUTRINO_II CREATEMENU FILEMENU
 
 #ifdef SYLPH
-//    fileMenu->addAction(serialPortAction);
+    fileMenu->addAction(serialPortAction);
     fileMenu->addAction(filterAction);
     fileMenu->addAction(resetDefaultRange);
     fileMenu->addSeparator();
@@ -663,22 +663,22 @@ void MainWindow::on_wired_triggered(){
 
 #ifdef SYLPH
 
-//void MainWindow::on_serialConfig_triggered(){
-//    SerialPortDialog serialPortDialog(serialChannel);
-//    serialPortDialog.exec();
-//    portInfo = QSerialPortInfo::availablePorts();
-//    qDebug() << "portInfo.size() = " << portInfo.size();
-//    if(portInfo.size()>1){
-//        if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
-//            QMessageBox::information(this, "Connected!", "Implant Port");
-//            statusBarLabel->setText("Connected Implant Port");
-//        }
-//        if(serialChannel->enableADCPort(portInfo.at(1).portName())){
-//            QMessageBox::information(this, "Connected!", "ADC Port");
-//            statusBarLabel->setText("Connected ADC Port");
-//        }
-//    }
-//}
+void MainWindow::on_serialConfig_triggered(){
+    SerialPortDialog serialPortDialog(serialChannel);
+    serialPortDialog.exec();
+    portInfo = QSerialPortInfo::availablePorts();
+    qDebug() << "portInfo.size() = " << portInfo.size();
+    if(portInfo.size()>1){
+        if(serialChannel->enableImplantPort(portInfo.at(0).portName())){
+            QMessageBox::information(this, "Connected!", "Implant Port");
+            statusBarLabel->setText("Connected Implant Port");
+        }
+        if(serialChannel->enableADCPort(portInfo.at(1).portName())){
+            QMessageBox::information(this, "Connected!", "ADC Port");
+            statusBarLabel->setText("Connected ADC Port");
+        }
+    }
+}
 
 void MainWindow::on_filterConfig_trigger(){
     FilterDialog filterDialog(data);

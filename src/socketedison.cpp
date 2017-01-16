@@ -69,7 +69,7 @@ void SocketEdison::ReadZentri(){
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketZentri->read(maxSize)));
             }
             else if(Mode_8Bit == false){
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketZentri->read(maxSize)));
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketZentri->read(2048)));
             }
         }
     }

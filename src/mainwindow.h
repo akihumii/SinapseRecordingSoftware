@@ -173,6 +173,7 @@ private slots:
 
 #ifdef SYLPH
     void on_filterConfig_trigger();
+    void on_serialConfig_triggered();
     void on_resetRange_triggered();
     void on_voltage50u_triggered();
     void on_voltage100u_triggered();
