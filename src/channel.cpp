@@ -8,10 +8,10 @@ QByteArray Channel::getChannelState(){
     QByteArray channelState;
     for(int i=0;i<10;i++){
         if(SELCHNarray[i]){
-            channelState.append((const char) CHANNEL_ON);
+            channelState.append((const char) CHANNELSTATE_ON);
         }
         else{
-            channelState.append((const char) CHANNEL_OFF);
+            channelState.append((const char) CHANNELSTATE_OFF);
         }
     }
     return channelState;

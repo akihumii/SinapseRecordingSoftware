@@ -23,6 +23,7 @@ class Data : public Filter
 public:
     Data();
     ~Data();
+    Filter* filter;
     QVector<double> retrieveData(int ChannelIndex);
     QVector<double> retrieveXAxis();
     QVector<quint16> sortData(QByteArray data_store);
@@ -41,7 +42,6 @@ public:
     void setNumDataPoints(int timeFrames);
     int getNumDataPoints();
     double getSamplingRate();
-    Filter* filter;
 protected:
     QVector<double> X_axis;
     QVector<double> ChannelData[10];
@@ -56,9 +56,6 @@ private:
 
     QString fileName;
     QString directory = QDir::homePath() + "/Desktop/";
-
-    QDateTime *date;
-    QTime time;
 
     bool PlotEnabled = false;
     int prevleftOverByteCount = 0;

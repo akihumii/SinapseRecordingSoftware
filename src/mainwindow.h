@@ -42,11 +42,9 @@ public:
 
 public slots:
 #ifdef NEUTRINO_II
-
 #endif //NEUTRINO_II PUBLIC SLOTS
 
 #ifdef SYLPH
-
 #endif //SYLPH PUBLIC SLOTS
 
 private:
@@ -81,6 +79,8 @@ private:
     QAction *pauseAction;
     bool pause = false;
 
+    QAction *resetDefaultX;
+    QAction *resetDefaultY;
 
 #ifdef NEUTRINO_II
     SocketEdison *socketEdison;
@@ -147,9 +147,6 @@ private:
     QAction *voltage5000u;
 
     QActionGroup *voltageGroup;
-
-    QAction *resetDefaultX;
-    QAction *resetDefaultY;
 #endif //SYLPH PRIVATE
 
 private slots:
@@ -166,6 +163,7 @@ private slots:
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
+    void on_resetX_triggered();
 
 #ifdef NEUTRINO_II
     void on_ConnectMenu_triggered();
@@ -173,14 +171,12 @@ private slots:
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();
-
     void on_wired_triggered();
     void on_wifi_triggered();
 #endif //NEUTRINO_II PRIVATE SLOTS
 
 #ifdef SYLPH
     void on_filterConfig_trigger();
-    void on_resetX_triggered();
     void on_resetY_triggered();
     void on_voltage50u_triggered();
     void on_voltage100u_triggered();

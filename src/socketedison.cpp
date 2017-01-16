@@ -64,7 +64,7 @@ bool SocketEdison::writeCommand(QByteArray Command){
     lastSentCommand = Command;
     if(socketCommand->state() == QAbstractSocket::ConnectedState){
         if(Command.size()>5){
-            if(Command.at(6) == (char) BitMode_8){
+            if(Command.at(6) == (char) WL_8){
                 Mode_8Bit = true;
                 NeutrinoData->setBitMode(true);
                 NeutrinoData->setPlotEnabled(true);
@@ -72,7 +72,7 @@ bool SocketEdison::writeCommand(QByteArray Command){
                 qDebug() << "8 Bit Mode";
                 NeutrinoChannel->setNumChannels(getNumChannels(Command));
             }
-            else if(Command.at(6) == (char) BitMode_10){
+            else if(Command.at(6) == (char) WL_10){
                 Mode_8Bit = false;
                 NeutrinoData->setBitMode(false);
                 NeutrinoData->setPlotEnabled(true);
