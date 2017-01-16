@@ -3,9 +3,10 @@
 
 #include "qtincludes.h"
 
-#define CHANNEL_ON 0B10011001
-#define CHANNEL_OFF 0B01100110
-
+typedef enum ChannelState{
+    CHANNELSTATE_ON = 0B10011001,
+    CHANNELSTATE_OFF = 0B01100110,
+} ChannelState;
 
 class Channel
 {

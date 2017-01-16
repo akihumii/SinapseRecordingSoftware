@@ -645,6 +645,12 @@ void MainWindow::on_chooseDirectory_triggered(){
     statusBarLabel->setText("Save directory set to: " + data->getDirectory());
 }
 
+void MainWindow::on_resetX_triggered(){
+    data->setNumDataPoints(TimeFrames100ms);
+    data->clearallChannelData();
+    timeFrame100ms->setChecked(true);
+}
+
 #ifdef NEUTRINO_II
 void MainWindow::on_ConnectMenu_triggered(){
     statusBarLabel->setText("Connection Dialog Opened");
@@ -722,12 +728,6 @@ void MainWindow::on_wired_triggered(){
 void MainWindow::on_filterConfig_trigger(){
     FilterDialog filterDialog(data);
     filterDialog.exec();
-}
-
-void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms);
-    data->clearallChannelData();
-    timeFrame100ms->setChecked(true);
 }
 
 void MainWindow::on_resetY_triggered(){
