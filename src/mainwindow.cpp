@@ -3,7 +3,7 @@
 MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
-//    createStatusBar();
+    createStatusBar();
 #ifdef NEUTRINO_II
     NeutrinoChannel = new Channel;
     NeutrinoCommand = new Command(NeutrinoChannel);
@@ -50,10 +50,10 @@ MainWindow::MainWindow(){
     }
     qDebug() << "Starting SYLPH..";
 #endif //SYLPH MAINWAINDOW
-//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-//    dataTimer.start(1);     //tick timer every XXX msec
-//    createActions();
-//    createMenus();
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    dataTimer.start(1);     //tick timer every XXX msec
+    createActions();
+    createMenus();
 }
 
 #ifdef SYLPH
@@ -143,10 +143,6 @@ void MainWindow::createActions(){
         filterAction->setShortcut(tr("Ctrl+F"));
         connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
 
-        resetDefaultX = new QAction(tr("Default Time Scale"), this);
-        resetDefaultX->setShortcut(tr("Ctrl+X"));
-        connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
-
         resetDefaultY = new QAction(tr("Default Voltage Scale"), this);
         resetDefaultY->setShortcut(tr("Ctrl+Y"));
         connect(resetDefaultY, SIGNAL(triggered()), this, SLOT(on_resetY_triggered()));
@@ -178,6 +174,10 @@ void MainWindow::createActions(){
         aboutAction = new QAction(tr("About SINAPSE Recording Software"));
         connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 #endif //SYLPH CREATEACTIONS
+
+    resetDefaultX = new QAction(tr("Default Time Scale"), this);
+    resetDefaultX->setShortcut(tr("Ctrl+X"));
+    connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
 
     chooseDirectoryAction = new QAction(tr("&Save as.."), this);
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));

@@ -76,14 +76,9 @@ bool SerialChannel::enableADCPort(QString portName){
 }
 
 void SerialChannel::ReadData(){
-    qDebug() << NeutrinoChannel->getNumChannels();
+//    qDebug() << NeutrinoChannel->getNumChannels();
     if(serialenabled){
-        QByteArray buffer;
-        buffer = serial->read(2048);
-        for(int i=0;i<buffer.size();i++){
-                qDebug() << QString::number((uint8_t) buffer.at(i),2);
-        }
-        buffer.clear();
+        NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serial->read(2048)));
     }
 }
 
@@ -92,13 +87,13 @@ void SerialChannel::closePort(){
 }
 
 bool SerialChannel::doConnect(){
-    serial->setPortName("ttyUSB0");
+    serial->setPortName("COM7");
     serial->setBaudRate(3000000);
-    serial->setDataBits(QSerialPort::Data5);
+    serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
     serial->setStopBits(QSerialPort::OneStop);
     serial->setFlowControl(QSerialPort::NoFlowControl);
-    serial->setReadBufferSize(128);
+    serial->setReadBufferSize(2048);
 
     if (serial->open(QIODevice::ReadWrite)) {
         qDebug() << "Connected via USB!";
