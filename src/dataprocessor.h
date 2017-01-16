@@ -49,7 +49,6 @@ public:
     QVector<quint8> ADC_Data;
 
 private:
-    QFile *File;
     QTextStream *out;
     Channel *NeutrinoChannel;
     bool is8BitMode;
