@@ -14,7 +14,7 @@ ConnectionDialog::~ConnectionDialog()
 
 void ConnectionDialog::createLayout()
 {
-    IPAddress = new QLineEdit(tr("192.168.0.102"));
+    IPAddress = new QLineEdit(tr("192.168.0.100"));
     PortNumber = new QLineEdit(tr("8888"));
 
     IPAddress->setInputMask("999.999.999.999");

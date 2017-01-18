@@ -101,14 +101,14 @@ private:
     QAction *tenby1Action;
     QAction *fiveby2Action;
 
-    QAction *connectAction;
-    QAction *disconnectAction;
+//    QAction *connectAction;
+//    QAction *disconnectAction;
     QAction *commandAction;
 
     QActionGroup *connectivityGroup;
 
-    QAction *wiredMode;
-    QAction *wifiMode;
+//    QAction *wiredMode;
+//    QAction *wifiMode;
 #endif //NEUTRINO_II PRIVATE
 
 #ifdef SYLPH
@@ -166,13 +166,13 @@ private slots:
     void on_resetX_triggered();
 
 #ifdef NEUTRINO_II
-    void on_ConnectMenu_triggered();
-    void on_DisconnectMenu_triggered();
+//    void on_ConnectMenu_triggered();
+//    void on_DisconnectMenu_triggered();
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();
-    void on_wired_triggered();
-    void on_wifi_triggered();
+//    void on_wired_triggered();
+//    void on_wifi_triggered();
 #endif //NEUTRINO_II PRIVATE SLOTS
 
 #ifdef SYLPH

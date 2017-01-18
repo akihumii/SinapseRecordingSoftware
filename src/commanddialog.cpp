@@ -1,9 +1,10 @@
 #include "commanddialog.h"
 
-CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_){
+CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_){
     socketEdison = socketEdison_;
     NeutrinoChannel = NeutrinoChannel_;
     NeutrinoCommand = NeutrinoCommand_;
+    NeutrinoSerial = NeutrinoSerial_;
     setWindowTitle(tr("Neutrino Command"));
     createLayout();
     if(NeutrinoCommand->havelastCommand()){
@@ -286,11 +287,18 @@ void CommandDialog::on_sendCommand_clicked(){
     if(socketEdison->isConnected()){
         socketEdison->writeCommand(NeutrinoCommand->constructCommand());
     }
-
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
 }
 
 void CommandDialog::on_chipReset_clicked(){
-    socketEdison->writeCommand(NeutrinoCommand->resetCommand());
+    if(socketEdison->isConnected()){
+        socketEdison->writeCommand(NeutrinoCommand->resetCommand());
+    }
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->resetCommand());
+    }
 }
 
 void CommandDialog::on_JTAG_toggled(){

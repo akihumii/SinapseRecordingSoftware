@@ -9,6 +9,7 @@ MainWindow::MainWindow(){
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
     serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
+    serialNeutrino->doConnect();
     socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     create5x2Layout();
@@ -26,7 +27,6 @@ MainWindow::MainWindow(){
     createLayout();
     createActions();
     createMenus();
-    statusBarLabel->setText("Insufficient Serial Devices...");
     portInfo = QSerialPortInfo::availablePorts();
     if(portInfo.size()>1){
         if(serialChannel->enableImplantPort(portInfo.at(1).portName())){
@@ -107,13 +107,13 @@ void MainWindow::createLayout(){
 
 void MainWindow::createActions(){
 #ifdef NEUTRINO_II
-    connectAction = new QAction(tr("&Connect"), this);
-    connectAction->setShortcut(tr("Ctrl+C"));
-    connect(connectAction, SIGNAL(triggered()), this, SLOT(on_ConnectMenu_triggered()));
+//    connectAction = new QAction(tr("&Connect"), this);
+//    connectAction->setShortcut(tr("Ctrl+C"));
+//    connect(connectAction, SIGNAL(triggered()), this, SLOT(on_ConnectMenu_triggered()));
 
-    disconnectAction = new QAction(tr("&Disconnect"), this);
-    disconnectAction->setShortcut(tr("Ctrl+D"));
-    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(on_DisconnectMenu_triggered()));
+//    disconnectAction = new QAction(tr("&Disconnect"), this);
+//    disconnectAction->setShortcut(tr("Ctrl+D"));
+//    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(on_DisconnectMenu_triggered()));
 
     commandAction = new QAction(tr("Comm&and"), this);
     commandAction->setShortcut(tr("Ctrl+A"));
@@ -127,11 +127,11 @@ void MainWindow::createActions(){
     fiveby2Action->setShortcut(tr("Ctrl+2"));
     connect(fiveby2Action, SIGNAL(triggered()),this,SLOT(on_fiveby2_triggered()));
 
-    wifiMode = new QAction(tr("Wireless Mode"));
-    wiredMode = new QAction(tr("Wired Mode"));
+//    wifiMode = new QAction(tr("Wireless Mode"));
+//    wiredMode = new QAction(tr("Wired Mode"));
 
-    connect(wifiMode, SIGNAL(triggered(bool)), this, SLOT(on_wifi_triggered()));
-    connect(wiredMode, SIGNAL(triggered(bool)), this, SLOT(on_wired_triggered()));
+//    connect(wifiMode, SIGNAL(triggered(bool)), this, SLOT(on_wifi_triggered()));
+//    connect(wiredMode, SIGNAL(triggered(bool)), this, SLOT(on_wired_triggered()));
 #endif //NEUTRINO_II CREATEACTIONS
 
 #ifdef SYLPH
@@ -315,8 +315,8 @@ void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
 
 #ifdef NEUTRINO_II
-    fileMenu->addAction(connectAction);
-    fileMenu->addAction(disconnectAction);
+//    fileMenu->addAction(connectAction);
+//    fileMenu->addAction(disconnectAction);
     fileMenu->addAction(commandAction);
     fileMenu->addSeparator();
 #endif //NEUTRINO_II CREATEMENU FILEMENU
@@ -388,16 +388,16 @@ void MainWindow::createMenus(){
 
   //------------------------ CONNECTIVITY MENU ------------------------//
 #ifdef NEUTRINO_II
-    connectivityMenu = menuBar()->addMenu(tr("Connection Mode"));
-    connectivityGroup = new QActionGroup(this);
-    connectivityMenu->addAction(wifiMode);
-    connectivityMenu->addAction(wiredMode);
-    wifiMode->setCheckable(true);
-    wifiMode->setChecked(true);
-    wiredMode->setCheckable(true);
+//    connectivityMenu = menuBar()->addMenu(tr("Connection Mode"));
+//    connectivityGroup = new QActionGroup(this);
+//    connectivityMenu->addAction(wifiMode);
+//    connectivityMenu->addAction(wiredMode);
+//    wifiMode->setCheckable(true);
+//    wifiMode->setChecked(true);
+//    wiredMode->setCheckable(true);
 
-    connectivityGroup->addAction(wifiMode);
-    connectivityGroup->addAction(wiredMode);
+//    connectivityGroup->addAction(wifiMode);
+//    connectivityGroup->addAction(wiredMode);
 #endif //NEUTRINO_II CREATEMENU CONNECTIVITYMENU
 //------------------------ CONNECTIVITY MENU ------------------------//
 
@@ -652,32 +652,32 @@ void MainWindow::on_resetX_triggered(){
 }
 
 #ifdef NEUTRINO_II
-void MainWindow::on_ConnectMenu_triggered(){
-    statusBarLabel->setText("Connection Dialog Opened");
-    ConnectionDialog connectionDialog(socketEdison);
-    connectionDialog.exec();
-    if(socketEdison->isConnected()){
-        statusBarLabel->setText("Connected!!");
-    }
-    else{
-        statusBarLabel->setText("Disconnected!!");
-    }
-}
+//void MainWindow::on_ConnectMenu_triggered(){
+//    statusBarLabel->setText("Connection Dialog Opened");
+//    ConnectionDialog connectionDialog(socketEdison);
+//    connectionDialog.exec();
+//    if(socketEdison->isConnected()){
+//        statusBarLabel->setText("Connected!!");
+//    }
+//    else{
+//        statusBarLabel->setText("Disconnected!!");
+//    }
+//}
 
-void MainWindow::on_DisconnectMenu_triggered(){
-    if(socketEdison->isConnected()){
-        qDebug() << "Disconnecting, please wait...";
-        socketEdison->writeCommand(QByteArray::number(255, 10));
-        socketEdison->doDisconnect();
-    }
-    if(!socketEdison->isConnected()){
-        statusBarLabel->setText("Disconnected!!");
-    }
-}
+//void MainWindow::on_DisconnectMenu_triggered(){
+//    if(socketEdison->isConnected()){
+//        qDebug() << "Disconnecting, please wait...";
+//        socketEdison->writeCommand(QByteArray::number(255, 10));
+//        socketEdison->doDisconnect();
+//    }
+//    if(!socketEdison->isConnected()){
+//        statusBarLabel->setText("Disconnected!!");
+//    }
+//}
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
-    CommandDialog commandDialog(socketEdison, NeutrinoCommand, NeutrinoChannel);
+    CommandDialog commandDialog(socketEdison, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
     commandDialog.exec();
 }
 
@@ -689,20 +689,20 @@ void MainWindow::on_fiveby2_triggered(){
     create5x2Layout();
 }
 
-void MainWindow::on_wifi_triggered(){
-    qDebug() << "ready via Wifi";
-    serialNeutrino->closePort();
-    serialNeutrino->serialenabled = false;
-    socketEdison->wifiEnabled = true;
-}
+//void MainWindow::on_wifi_triggered(){
+//    qDebug() << "ready via Wifi";
+//    serialNeutrino->closePort();
+//    serialNeutrino->serialenabled = false;
+//    socketEdison->wifiEnabled = true;
+//}
 
-void MainWindow::on_wired_triggered(){
-    serialNeutrino->serialenabled = true;
-    if(serialNeutrino->doConnect()){
-        qDebug() << "ready via USB";
-    }
-    socketEdison->wifiEnabled = false;
-}
+//void MainWindow::on_wired_triggered(){
+//    serialNeutrino->serialenabled = true;
+//    if(serialNeutrino->doConnect()){
+//        qDebug() << "ready via USB";
+//    }
+//    socketEdison->wifiEnabled = false;
+//}
 
 #endif //NEUTRINO_II
 
