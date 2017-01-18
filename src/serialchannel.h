@@ -21,6 +21,7 @@ public:
     bool doConnect();
     bool isConnected();
     bool writeCommand(QByteArray Command);
+    void swapPort();
 public slots:
     void ReadImplantData();
     void ReadADCData();
@@ -39,6 +40,7 @@ private:
     QList<QSerialPortInfo> portInfo;
     bool connected = false;
     int getNumChannels(QByteArray lastCommand);
+    int portOrder = 1;
 };
 
 #endif // SerialChannel_H

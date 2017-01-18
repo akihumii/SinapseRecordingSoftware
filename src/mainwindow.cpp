@@ -115,6 +115,10 @@ void MainWindow::createActions(){
 //    disconnectAction->setShortcut(tr("Ctrl+D"));
 //    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(on_DisconnectMenu_triggered()));
 
+    swapAction = new QAction(tr("Swap &Port"), this);
+    swapAction->setShortcut(tr("Ctrl+P"));
+    connect(swapAction, SIGNAL(triggered()), this, SLOT(on_swap_triggered()));
+
     commandAction = new QAction(tr("Comm&and"), this);
     commandAction->setShortcut(tr("Ctrl+A"));
     connect(commandAction, SIGNAL(triggered()), this, SLOT(on_CommandMenu_triggered()));
@@ -317,6 +321,7 @@ void MainWindow::createMenus(){
 #ifdef NEUTRINO_II
 //    fileMenu->addAction(connectAction);
 //    fileMenu->addAction(disconnectAction);
+    fileMenu->addAction(swapAction);
     fileMenu->addAction(commandAction);
     fileMenu->addSeparator();
 #endif //NEUTRINO_II CREATEMENU FILEMENU
@@ -487,7 +492,9 @@ void MainWindow::updateData(){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0), (data->getNumDataPoints())*0.000056, Qt::AlignLeft);
-                channelGraph[i]->replot();
+                if(!pause){
+                    channelGraph[i]->replot();
+                }
                 data->clearChannelData(i);
             }
         }
@@ -674,6 +681,11 @@ void MainWindow::on_resetX_triggered(){
 //        statusBarLabel->setText("Disconnected!!");
 //    }
 //}
+
+void MainWindow::on_swap_triggered(){
+    serialNeutrino->swapPort();
+    statusBarLabel->setText("Port swapped");
+}
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");

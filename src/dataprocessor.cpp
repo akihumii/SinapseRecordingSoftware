@@ -70,6 +70,7 @@ int DataProcessor::last_10bitFrameMarker(QByteArray data){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
+    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint8_t current_8bit;

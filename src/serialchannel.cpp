@@ -86,23 +86,28 @@ void SerialChannel::closePort(){
 
 bool SerialChannel::doConnect(){
     portInfo = QSerialPortInfo::availablePorts();
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        qDebug() << "Name : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
+    }
     for(int i = 0; i < portInfo.size(); i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            serialData->setPortName(portInfo.at(i+1).portName());
+            serialData->setPortName(portInfo.at(i).portName());
             serialData->setBaudRate(3000000);
             serialData->setDataBits(QSerialPort::Data8);
             serialData->setParity(QSerialPort::NoParity);
             serialData->setStopBits(QSerialPort::OneStop);
             serialData->setFlowControl(QSerialPort::NoFlowControl);
-            serialData->setReadBufferSize(2048);
+            serialData->setReadBufferSize(512);
 
-            serialCommand->setPortName(portInfo.at(i).portName());
+            serialCommand->setPortName(portInfo.at(i+1).portName());
             serialCommand->setBaudRate(19200);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
             serialCommand->setFlowControl(QSerialPort::NoFlowControl);
-            serialCommand->setReadBufferSize(2048);
+//            serialCommand->setReadBufferSize(2048);
             break;
         }
     }
@@ -157,4 +162,50 @@ int SerialChannel::getNumChannels(QByteArray lastCommand){
         }
     }
     return numChannels;
+}
+
+void SerialChannel::swapPort(){
+    serialCommand->close();
+    serialData->close();
+    portInfo = QSerialPortInfo::availablePorts();
+    for(int i = 0; i < portInfo.size(); i++){
+        if(portOrder == 1){
+            serialData->setPortName(portInfo.at(i+1).portName());
+            serialData->setBaudRate(3000000);
+            serialData->setDataBits(QSerialPort::Data8);
+            serialData->setParity(QSerialPort::NoParity);
+            serialData->setStopBits(QSerialPort::OneStop);
+            serialData->setFlowControl(QSerialPort::NoFlowControl);
+            serialData->setReadBufferSize(512);
+
+            serialCommand->setPortName(portInfo.at(i).portName());
+            serialCommand->setBaudRate(19200);
+            serialCommand->setDataBits(QSerialPort::Data8);
+            serialCommand->setParity(QSerialPort::EvenParity);
+            serialCommand->setStopBits(QSerialPort::OneStop);
+            serialCommand->setFlowControl(QSerialPort::NoFlowControl);
+            portOrder = 2;
+            break;
+        }
+        else if(portOrder == 2){
+            serialData->setPortName(portInfo.at(i).portName());
+            serialData->setBaudRate(3000000);
+            serialData->setDataBits(QSerialPort::Data8);
+            serialData->setParity(QSerialPort::NoParity);
+            serialData->setStopBits(QSerialPort::OneStop);
+            serialData->setFlowControl(QSerialPort::NoFlowControl);
+            serialData->setReadBufferSize(512);
+
+            serialCommand->setPortName(portInfo.at(i+1).portName());
+            serialCommand->setBaudRate(19200);
+            serialCommand->setDataBits(QSerialPort::Data8);
+            serialCommand->setParity(QSerialPort::EvenParity);
+            serialCommand->setStopBits(QSerialPort::OneStop);
+            serialCommand->setFlowControl(QSerialPort::NoFlowControl);
+            portOrder = 1;
+            break;
+        }
+    }
+    serialData->open(QIODevice::ReadWrite);
+    serialCommand->open(QIODevice::ReadWrite);
 }
