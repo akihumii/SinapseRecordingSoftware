@@ -93,21 +93,30 @@ bool SerialChannel::doConnect(){
     }
     for(int i = 0; i < portInfo.size(); i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            serialData->setPortName(portInfo.at(i).portName());
-            serialData->setBaudRate(3000000);
+            if(portInfo.at(i+1).portName().split("COM")[1].toInt() < portInfo.at(i).portName().split("COM")[1].toInt()){
+                serialData->setPortName(portInfo.at(i+1).portName());
+                serialData->setBaudRate(3000000);
+
+                serialCommand->setPortName(portInfo.at(i).portName());
+                serialCommand->setBaudRate(19200);
+            }
+            else{
+                serialData->setPortName(portInfo.at(i).portName());
+                serialData->setBaudRate(3000000);
+
+                serialCommand->setPortName(portInfo.at(i+1).portName());
+                serialCommand->setBaudRate(19200);
+            }
             serialData->setDataBits(QSerialPort::Data8);
             serialData->setParity(QSerialPort::NoParity);
             serialData->setStopBits(QSerialPort::OneStop);
             serialData->setFlowControl(QSerialPort::NoFlowControl);
-            serialData->setReadBufferSize(512);
+            serialData->setReadBufferSize(2048);
 
-            serialCommand->setPortName(portInfo.at(i+1).portName());
-            serialCommand->setBaudRate(19200);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
             serialCommand->setFlowControl(QSerialPort::NoFlowControl);
-//            serialCommand->setReadBufferSize(2048);
             break;
         }
     }

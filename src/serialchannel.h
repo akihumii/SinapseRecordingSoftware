@@ -40,7 +40,7 @@ private:
     QList<QSerialPortInfo> portInfo;
     bool connected = false;
     int getNumChannels(QByteArray lastCommand);
-    int portOrder = 1;
+    int portOrder =2;
 };
 
 #endif // SerialChannel_H

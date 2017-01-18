@@ -81,6 +81,10 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
         }
         leftOverData.clear();
     }
+    if(leftOverData.size() > 10*data_store.size())
+    {
+        leftOverData.clear();
+    }
     firstFrameMarker = first_8bitFrameMarker(data_store);
     lastFrameMarker = last_8bitFrameMarker(data_store);
     for(int j = firstFrameMarker ; j < lastFrameMarker; j=j+1){
