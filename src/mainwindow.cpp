@@ -228,12 +228,12 @@ void MainWindow::create10x1Layout(){
         mainLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(35,0,0,0));
+        channelGraph[i]->axisRect()->setMargins(QMargins(55,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep(0.000056);
-        connect(channelGraph[i]->yAxis, SIGNAL(rangeChanged(QCPRange)), channelGraph[i]->yAxis2, SLOT(setRange(QCPRange)));
-        connect(channelGraph[i]->xAxis, SIGNAL(rangeChanged(QCPRange)), channelGraph[i]->xAxis2, SLOT(setRange(QCPRange)));
+        channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
+        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 11));
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
@@ -247,7 +247,7 @@ void MainWindow::create10x1Layout(){
     channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
     channelGraph[9]->graph()->setPen(QPen(Qt::red));
 
-    channelGraph[9]->axisRect()->setMargins(QMargins(35,0,0,15));
+    channelGraph[9]->axisRect()->setMargins(QMargins(55,0,0,15));
 
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -261,14 +261,14 @@ void MainWindow::create5x2Layout(){
         leftLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(35,0,0,0));
+        channelGraph[i]->axisRect()->setMargins(QMargins(55,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
     }
     channelGraph[4] = new QCustomPlot;
     leftLayout->addWidget(channelGraph[4]);
     channelGraph[4]->xAxis->setVisible(true);
     channelGraph[4]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[4]->axisRect()->setMargins(QMargins(35,0,0,15));
+    channelGraph[4]->axisRect()->setMargins(QMargins(55,0,0,15));
     channelGraph[4]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
 
     QVBoxLayout *rightLayout = new QVBoxLayout;
@@ -277,21 +277,21 @@ void MainWindow::create5x2Layout(){
         rightLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(35,0,0,0));
+        channelGraph[i]->axisRect()->setMargins(QMargins(55,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
     }
     channelGraph[9] = new QCustomPlot;
     rightLayout->addWidget(channelGraph[9]);
     channelGraph[9]->xAxis->setVisible(true);
     channelGraph[9]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[9]->axisRect()->setMargins(QMargins(35,0,0,15));
+    channelGraph[9]->axisRect()->setMargins(QMargins(55,0,0,15));
     channelGraph[9]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
 
     for(int i=0;i<10;i++){
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep(0.000056);
-        connect(channelGraph[i]->yAxis, SIGNAL(rangeChanged(QCPRange)), channelGraph[i]->yAxis2, SLOT(setRange(QCPRange)));
-        connect(channelGraph[i]->xAxis, SIGNAL(rangeChanged(QCPRange)), channelGraph[i]->xAxis2, SLOT(setRange(QCPRange)));
+        channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
+        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 11));
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
