@@ -350,7 +350,7 @@ void MainWindow::createMenus(){
     layoutMenu = menuBar()-> addMenu(tr("&Layout"));
     layoutMenu->addAction(tenby1Action);
     layoutMenu->addAction(fiveby2Action);
-#endif //NEUTRINO_II CREATEMENUA LAYOUTMENU
+#endif //NEUTRINO_II CREATEMENU LAYOUTMENU
 //-------------------------- LAYOUT MENU ----------------------------//
 
 //------------------------- TIMEFRAME MENU --------------------------//

@@ -110,7 +110,7 @@ int DataProcessor::last_8bitFrameMarker(QByteArray data){
             return i-2;
         }
     }
-    return -1;
+    return 0;
 }
 
 int DataProcessor::first_8bitFrameMarker(QByteArray data){
@@ -120,7 +120,7 @@ int DataProcessor::first_8bitFrameMarker(QByteArray data){
             return i;
         }
     }
-    return -1;
+    return 0;
 }
 
 void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
@@ -173,7 +173,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
     firstFrameMarker = findfirstFrameMarkers(rawData);
     lastFrameMarker = findlastFrameMarkers(rawData);
     if(lastFrameMarker > 0){
-        for(int i=0;i<lastFrameMarker-3;i=i+1){
+        for(int i = 0; i < lastFrameMarker - 3; i = i + 1){
             if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
                 appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
@@ -226,7 +226,7 @@ bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
 }
 
 int DataProcessor::findfirstFrameMarkers(QByteArray rawData){
-    for(int i=0; i<rawData.size()-10;i++){
+    for(int i = 0; i < rawData.size()-10; i++){
         if((quint8)rawData.at(i+5) == (quint8)rawData.at(i)+1
                 && (quint8)rawData.at(i+10) == (quint8)rawData.at(i+5)+1){
             return i;
@@ -238,12 +238,12 @@ int DataProcessor::findfirstFrameMarkers(QByteArray rawData){
             return i;
         }
     }
-    return -1;
+    return 0;
 }
 
 int DataProcessor::findlastFrameMarkers(QByteArray rawData){
     if(rawData.size()>8){
-        for(int i=rawData.size()-1;i>9;i--){
+        for(int i = rawData.size()-1; i > 9; i--){
             if((quint8)rawData.at(i-5)+1 == (quint8)rawData.at(i) && (quint8)rawData.at(i-10)+1 == (quint8)rawData.at(i-5)){
                 return i;
             }
@@ -255,11 +255,11 @@ int DataProcessor::findlastFrameMarkers(QByteArray rawData){
             }
         }
     }
-    return -1;
+    return 0;
 }
 
 void DataProcessor::sortADCData(QByteArray adcData){
-    for(int i=0;i<adcData.size();i++){
+    for(int i = 0; i < adcData.size(); i++){
         audioBuffer[2].append(adcData.at(i));
         ADC_Data.append(adcData.at(i));
     }
