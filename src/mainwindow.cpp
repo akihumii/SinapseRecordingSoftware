@@ -620,92 +620,120 @@ void MainWindow::on_timeFrame5000_triggered(){
 void MainWindow::on_voltage50u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00001);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.0001, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.00001);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_voltage100u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00002);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.0002, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.00002);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_voltage200u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00004);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.0004, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.00004);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_voltage500u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0001);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.001, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0001);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_voltage1000u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0002);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.002, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0002);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_voltage2000u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0004);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.004, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0004);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_voltage5000u_triggered(){
 #ifdef SYLPH
     for(int i = 0; i < 2; i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.001);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i = 0; i < 10; i++){
+        channelGraph[i]->yAxis->setRange(0, 0.01, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.001);
+        channelGraph[i]->replot();
+    }
+#endif
 }
 
 void MainWindow::on_record_triggered(){
