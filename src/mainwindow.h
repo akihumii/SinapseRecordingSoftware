@@ -65,6 +65,7 @@ private:
     QStatusBar *statusBarMainWindow;
 
     QMenu *fileMenu;
+    QMenu *voltageMenu;
     QMenu *layoutMenu;
     QMenu *timeFrameMenu;
 
@@ -83,6 +84,16 @@ private:
     QAction *resetDefaultY;
     QAction *swapAction;
     QAction *filterAction;
+
+    QAction *voltage50u;
+    QAction *voltage100u;
+    QAction *voltage200u;
+    QAction *voltage500u;
+    QAction *voltage1000u;
+    QAction *voltage2000u;
+    QAction *voltage5000u;
+
+    QActionGroup *voltageGroup;
 
 #ifdef NEUTRINO_II
     SocketEdison *socketEdison;
@@ -124,7 +135,6 @@ private:
 
     void createLayout();
 
-    QMenu *voltageMenu;
     QMenu *helpMenu;
     QMenu *audioOutputMenu;
 
@@ -138,16 +148,6 @@ private:
     QAction *audio3;
 
     QActionGroup *audioGroup;
-
-    QAction *voltage50u;
-    QAction *voltage100u;
-    QAction *voltage200u;
-    QAction *voltage500u;
-    QAction *voltage1000u;
-    QAction *voltage2000u;
-    QAction *voltage5000u;
-
-    QActionGroup *voltageGroup;
 #endif //SYLPH PRIVATE
 
 private slots:
@@ -161,6 +161,14 @@ private slots:
     void on_timeFrame1000_triggered();
     void on_timeFrame2000_triggered();
     void on_timeFrame5000_triggered();
+    void on_resetY_triggered();
+    void on_voltage50u_triggered();
+    void on_voltage100u_triggered();
+    void on_voltage200u_triggered();
+    void on_voltage500u_triggered();
+    void on_voltage1000u_triggered();
+    void on_voltage2000u_triggered();
+    void on_voltage5000u_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
@@ -179,14 +187,6 @@ private slots:
 #endif //NEUTRINO_II PRIVATE SLOTS
 
 #ifdef SYLPH
-    void on_resetY_triggered();
-    void on_voltage50u_triggered();
-    void on_voltage100u_triggered();
-    void on_voltage200u_triggered();
-    void on_voltage500u_triggered();
-    void on_voltage1000u_triggered();
-    void on_voltage2000u_triggered();
-    void on_voltage5000u_triggered();
     void about();
     void resetGraph1Range();
     void resetGraph2Range();
