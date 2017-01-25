@@ -211,7 +211,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
-    playAudio(getAudioChannel());
+//    playAudio(getAudioChannel());
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){

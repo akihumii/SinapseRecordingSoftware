@@ -43,6 +43,16 @@ private:
 
     QComboBox *notchFilter;
 
+    int sylphSampleFreq = 20000;
+    int neutrinoSampleFreq = 17000;
+
+#ifdef SYLPH
+    int samplingFreq = sylphSampleFreq;
+#endif
+#ifdef NEUTRINO_II
+    int samplingFreq = neutrinoSampleFreq;
+#endif
+
 private slots:
 //    void on_channelFilter_toggled();
     void on_highpassEnable_toggled(bool);
