@@ -3,7 +3,6 @@
 MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
-    createStatusBar();
 #ifdef NEUTRINO_II
     NeutrinoChannel = new Channel;
     NeutrinoCommand = new Command(NeutrinoChannel);
@@ -12,7 +11,12 @@ MainWindow::MainWindow(){
     serialNeutrino->doConnect();
     socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
+    createStatusBar();
     create5x2Layout();
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    dataTimer.start(1);     //tick timer every XXX msec
+    createActions();
+    createMenus();
     qDebug() << "Starting NEUTRINO II..";
 #endif //NEUTRINO_II MAINWINDOW
 
@@ -29,13 +33,14 @@ MainWindow::MainWindow(){
     createMenus();
     portInfo = QSerialPortInfo::availablePorts();
     if(portInfo.size()>1){
-        if(serialChannel->enableImplantPort(portInfo.at(1).portName())){
+        serialChannel->connectSylph();
+        if(serialChannel->isImplantConnected()){
             connectionStatus.append("Connected to Implant Port |");
         }
         else{
             connectionStatus.append("Connection to Implant Port failed |");
         }
-        if(serialChannel->enableADCPort(portInfo.at(0).portName())){
+        if(serialChannel->isADCConnected()){
             connectionStatus.append(" Connected to ADC Port");
         }
         else{
@@ -45,15 +50,10 @@ MainWindow::MainWindow(){
     }
     else{
         QMessageBox::information(this, "Insufficient Serial Devices",
-                                 "Please check Serial Devices connection and try again. \n"
-                                 "Press Ctrl+E to open up Serial Port Configurations");
+                                 "Please check Serial Devices connection and try again. \n");
     }
     qDebug() << "Starting SYLPH..";
 #endif //SYLPH MAINWAINDOW
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
-    createActions();
-    createMenus();
 }
 
 #ifdef SYLPH
@@ -115,10 +115,6 @@ void MainWindow::createActions(){
 //    disconnectAction->setShortcut(tr("Ctrl+D"));
 //    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(on_DisconnectMenu_triggered()));
 
-    swapAction = new QAction(tr("Swap &Port"), this);
-    swapAction->setShortcut(tr("Ctrl+P"));
-    connect(swapAction, SIGNAL(triggered()), this, SLOT(on_swap_triggered()));
-
     commandAction = new QAction(tr("Comm&and"), this);
     commandAction->setShortcut(tr("Ctrl+A"));
     connect(commandAction, SIGNAL(triggered()), this, SLOT(on_CommandMenu_triggered()));
@@ -179,6 +175,10 @@ void MainWindow::createActions(){
         connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 #endif //SYLPH CREATEACTIONS
 
+    swapAction = new QAction(tr("Swap &Port"), this);
+    swapAction->setShortcut(tr("Ctrl+P"));
+    connect(swapAction, SIGNAL(triggered()), this, SLOT(on_swap_triggered()));
+
     resetDefaultX = new QAction(tr("Default Time Scale"), this);
     resetDefaultX->setShortcut(tr("Ctrl+X"));
     connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
@@ -233,7 +233,7 @@ void MainWindow::create10x1Layout(){
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep(0.000056);
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
-        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 11));
+        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
@@ -291,7 +291,7 @@ void MainWindow::create5x2Layout(){
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep(0.000056);
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
-        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 11));
+        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
@@ -317,11 +317,11 @@ void MainWindow::create5x2Layout(){
 void MainWindow::createMenus(){
 //--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
+//    fileMenu->addAction(swapAction);
 
 #ifdef NEUTRINO_II
 //    fileMenu->addAction(connectAction);
 //    fileMenu->addAction(disconnectAction);
-    fileMenu->addAction(swapAction);
     fileMenu->addAction(commandAction);
     fileMenu->addSeparator();
 #endif //NEUTRINO_II CREATEMENU FILEMENU
@@ -622,12 +622,13 @@ void MainWindow::on_timeFrame5000_triggered(){
 void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
-        statusBarLabel->setText("Recording...");
+        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 5> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
-        statusBarLabel->setText("Recording stopped!!! File saved to " + data->getFileName());
+        //statusBarLabel->setStyleSheet();
+        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 5> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
 }
@@ -658,6 +659,17 @@ void MainWindow::on_resetX_triggered(){
     timeFrame100ms->setChecked(true);
 }
 
+void MainWindow::on_swap_triggered(){
+#ifdef NEUTRINO_II
+    serialNeutrino->swapPort();
+    statusBarLabel->setText("Port swapped");
+#endif
+#ifdef SYLPH
+    serialChannel->swapPort();
+    statusBarLabel->setText("Port swapped");
+#endif
+}
+
 #ifdef NEUTRINO_II
 //void MainWindow::on_ConnectMenu_triggered(){
 //    statusBarLabel->setText("Connection Dialog Opened");
@@ -682,10 +694,6 @@ void MainWindow::on_resetX_triggered(){
 //    }
 //}
 
-void MainWindow::on_swap_triggered(){
-    serialNeutrino->swapPort();
-    statusBarLabel->setText("Port swapped");
-}
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");

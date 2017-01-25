@@ -81,6 +81,7 @@ private:
 
     QAction *resetDefaultX;
     QAction *resetDefaultY;
+    QAction *swapAction;
 
 #ifdef NEUTRINO_II
     SocketEdison *socketEdison;
@@ -100,8 +101,6 @@ private:
 
     QAction *tenby1Action;
     QAction *fiveby2Action;
-
-    QAction *swapAction;
 
 //    QAction *connectAction;
 //    QAction *disconnectAction;
@@ -166,11 +165,11 @@ private slots:
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
     void on_resetX_triggered();
+    void on_swap_triggered();
 
 #ifdef NEUTRINO_II
 //    void on_ConnectMenu_triggered();
 //    void on_DisconnectMenu_triggered();
-    void on_swap_triggered();
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();

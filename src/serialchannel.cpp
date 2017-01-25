@@ -68,7 +68,6 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setReadBufferSize(2000);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
-
         return 1;
     }
     else{
@@ -82,6 +81,52 @@ void SerialChannel::ReadData(){
 
 void SerialChannel::closePort(){
     serialData->close();
+}
+
+void SerialChannel::connectSylph(){
+    portInfo = QSerialPortInfo::availablePorts();
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        qDebug() << "Name : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
+    }
+    for(int i = 0; i < portInfo.size(); i++){
+        if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
+            if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
+                implantPort->setPortName(portInfo.at(i+1).portName());
+                implantPort->setBaudRate(1333333);
+
+                ADCPort->setPortName(portInfo.at(i).portName());
+                ADCPort->setBaudRate(1333333);
+            }
+            else{
+                implantPort->setPortName(portInfo.at(i).portName());
+                implantPort->setBaudRate(1333333);
+
+                ADCPort->setPortName(portInfo.at(i+1).portName());
+                ADCPort->setBaudRate(1333333);
+            }
+            implantPort->setDataBits(QSerialPort::Data8);
+            implantPort->setParity(QSerialPort::NoParity);
+            implantPort->setStopBits(QSerialPort::OneStop);
+            implantPort->setFlowControl(QSerialPort::NoFlowControl);
+            implantPort->setReadBufferSize(2048);
+
+            ADCPort->setDataBits(QSerialPort::Data8);
+            ADCPort->setParity(QSerialPort::NoParity);
+            ADCPort->setStopBits(QSerialPort::OneStop);
+            ADCPort->setFlowControl(QSerialPort::NoFlowControl);
+            break;
+        }
+    }
+    if (implantPort->open(QIODevice::ReadWrite)){
+        implantConnected = true;
+        qDebug() << "Implant Port connnected!";
+    }
+    if (ADCPort->open(QIODevice::ReadWrite)){
+        ADCConnected = true;
+        qDebug() << "ADC Port connnected!";
+    }
 }
 
 bool SerialChannel::doConnect(){
@@ -120,7 +165,6 @@ bool SerialChannel::doConnect(){
             break;
         }
     }
-
     if (serialData->open(QIODevice::ReadWrite) && serialCommand->open(QIODevice::ReadWrite)) {
         connected = true;
         qDebug() << "Connected via USB!";
@@ -129,6 +173,14 @@ bool SerialChannel::doConnect(){
     else{
         return 0;
     }
+
+}
+bool SerialChannel::isImplantConnected(){
+    return implantConnected;
+}
+
+bool SerialChannel::isADCConnected(){
+    return ADCConnected;
 }
 
 bool SerialChannel::isConnected(){
@@ -174,6 +226,7 @@ int SerialChannel::getNumChannels(QByteArray lastCommand){
 }
 
 void SerialChannel::swapPort(){
+#ifdef NEUTRINO_II
     serialCommand->close();
     serialData->close();
     portInfo = QSerialPortInfo::availablePorts();
@@ -217,4 +270,53 @@ void SerialChannel::swapPort(){
     }
     serialData->open(QIODevice::ReadWrite);
     serialCommand->open(QIODevice::ReadWrite);
+#endif
+
+#ifdef SYLPH
+    implantPort->close();
+    ADCPort->close();
+    portInfo = QSerialPortInfo::availablePorts();
+    for(int i = 0; i < portInfo.size(); i++){
+        if(portOrder == 1){
+            ADCPort->setPortName(portInfo.at(i+1).portName());
+            ADCPort->setBaudRate(1333333);
+            ADCPort->setDataBits(QSerialPort::Data8);
+            ADCPort->setParity(QSerialPort::NoParity);
+            ADCPort->setStopBits(QSerialPort::OneStop);
+            ADCPort->setFlowControl(QSerialPort::NoFlowControl);
+            ADCPort->setReadBufferSize(2048);
+
+            implantPort->setPortName(portInfo.at(i).portName());
+            implantPort->setBaudRate(1333333);
+            implantPort->setDataBits(QSerialPort::Data8);
+            implantPort->setParity(QSerialPort::NoParity);
+            implantPort->setStopBits(QSerialPort::OneStop);
+            implantPort->setFlowControl(QSerialPort::NoFlowControl);
+            implantPort->setReadBufferSize(2048);
+            portOrder = 2;
+            break;
+        }
+        else if(portOrder == 2){
+            ADCPort->setPortName(portInfo.at(i).portName());
+            ADCPort->setBaudRate(1333333);
+            ADCPort->setDataBits(QSerialPort::Data8);
+            ADCPort->setParity(QSerialPort::NoParity);
+            ADCPort->setStopBits(QSerialPort::OneStop);
+            ADCPort->setFlowControl(QSerialPort::NoFlowControl);
+            ADCPort->setReadBufferSize(2048);
+
+            implantPort->setPortName(portInfo.at(i+1).portName());
+            implantPort->setBaudRate(1333333);
+            implantPort->setDataBits(QSerialPort::Data8);
+            implantPort->setParity(QSerialPort::NoParity);
+            implantPort->setStopBits(QSerialPort::OneStop);
+            implantPort->setFlowControl(QSerialPort::NoFlowControl);
+            implantPort->setReadBufferSize(2048);
+            portOrder = 1;
+            break;
+        }
+    }
+    ADCPort->open(QIODevice::ReadWrite);
+    implantPort->open(QIODevice::ReadWrite);
+#endif
 }

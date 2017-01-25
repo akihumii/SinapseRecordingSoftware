@@ -90,7 +90,7 @@ void Data::setDirectory(QString dir){
         directory = QDir::homePath() + "/Desktop/";
     }
     else{
-        directory = dir;
+        directory = dir + "/";
     }
 }
 QString Data::getDirectory(){
