@@ -82,6 +82,7 @@ private:
     QAction *resetDefaultX;
     QAction *resetDefaultY;
     QAction *swapAction;
+    QAction *filterAction;
 
 #ifdef NEUTRINO_II
     SocketEdison *socketEdison;
@@ -130,7 +131,6 @@ private:
     QCustomPlot *channelGraph[10];
 
     QAction *serialPortAction;
-    QAction *filterAction;
     QAction *aboutAction;
 
     QAction *audio1;
@@ -166,6 +166,7 @@ private slots:
     void on_playPause_triggered();
     void on_resetX_triggered();
     void on_swap_triggered();
+    void on_filterConfig_trigger();
 
 #ifdef NEUTRINO_II
 //    void on_ConnectMenu_triggered();
@@ -178,7 +179,6 @@ private slots:
 #endif //NEUTRINO_II PRIVATE SLOTS
 
 #ifdef SYLPH
-    void on_filterConfig_trigger();
     void on_resetY_triggered();
     void on_voltage50u_triggered();
     void on_voltage100u_triggered();

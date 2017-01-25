@@ -139,10 +139,6 @@ void MainWindow::createActions(){
     //    serialPortAction->setShortcut(tr("Ctrl+E"));
     //    connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
 
-        filterAction = new QAction(tr("Filter Configuration"), this);
-        filterAction->setShortcut(tr("Ctrl+F"));
-        connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
-
         resetDefaultY = new QAction(tr("Default Voltage Scale"), this);
         resetDefaultY->setShortcut(tr("Ctrl+Y"));
         connect(resetDefaultY, SIGNAL(triggered()), this, SLOT(on_resetY_triggered()));
@@ -174,6 +170,9 @@ void MainWindow::createActions(){
         aboutAction = new QAction(tr("About SINAPSE Recording Software"));
         connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 #endif //SYLPH CREATEACTIONS
+    filterAction = new QAction(tr("Filter Configuration"), this);
+    filterAction->setShortcut(tr("Ctrl+F"));
+    connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
 
     swapAction = new QAction(tr("Swap &Port"), this);
     swapAction->setShortcut(tr("Ctrl+P"));
@@ -318,24 +317,18 @@ void MainWindow::createMenus(){
 //--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
 //    fileMenu->addAction(swapAction);
-
+    fileMenu->addAction(filterAction);
+    fileMenu->addSeparator();
 #ifdef NEUTRINO_II
 //    fileMenu->addAction(connectAction);
 //    fileMenu->addAction(disconnectAction);
     fileMenu->addAction(commandAction);
-    fileMenu->addSeparator();
 #endif //NEUTRINO_II CREATEMENU FILEMENU
 
 #ifdef SYLPH
 //    fileMenu->addAction(serialPortAction);
-    fileMenu->addAction(filterAction);
 //    fileMenu->addAction(resetDefaultRange);
-    fileMenu->addSeparator();
-
-    fileMenu->addAction(pauseAction);
-    fileMenu->addSeparator();
 #endif //SYLPH CREATEMENU FILEMENU
-
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
 
@@ -487,7 +480,7 @@ MainWindow::~MainWindow(){
 void MainWindow::updateData(){
 #ifdef NEUTRINO_II
     QVector<double> X_axis = data->retrieveXAxis();
-    if(data->isPlotEnabled() && X_axis.size() > (data->getNumDataPoints())){
+    if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
         for(int i=0; i<10; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
@@ -622,13 +615,13 @@ void MainWindow::on_timeFrame5000_triggered(){
 void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
-        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 5> Recording...</b>");
+        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
         //statusBarLabel->setStyleSheet();
-        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 5> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
+        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
 }
@@ -668,6 +661,11 @@ void MainWindow::on_swap_triggered(){
     serialChannel->swapPort();
     statusBarLabel->setText("Port swapped");
 #endif
+}
+
+void MainWindow::on_filterConfig_trigger(){
+    FilterDialog filterDialog(data);
+    filterDialog.exec();
 }
 
 #ifdef NEUTRINO_II
@@ -744,11 +742,6 @@ void MainWindow::on_fiveby2_triggered(){
 //        }
 //    }
 //}
-
-void MainWindow::on_filterConfig_trigger(){
-    FilterDialog filterDialog(data);
-    filterDialog.exec();
-}
 
 void MainWindow::on_resetY_triggered(){
     for(int i=0;i<2;i++){

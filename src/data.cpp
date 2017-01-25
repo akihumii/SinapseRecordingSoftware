@@ -8,7 +8,12 @@ Data::~Data(){
 }
 
 QVector<double> Data::retrieveData(int ChannelIndex){
+#ifdef SYLPH
     if(isFilterEnabled() && ChannelIndex != 3){
+#endif
+#ifdef NEUTRINO_II
+    if(isFilterEnabled()){
+#endif
         ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
     }
     return ChannelData[ChannelIndex];

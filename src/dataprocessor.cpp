@@ -70,7 +70,6 @@ int DataProcessor::last_10bitFrameMarker(QByteArray data){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
-    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint8_t current_8bit;
@@ -87,7 +86,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
     }
     firstFrameMarker = first_8bitFrameMarker(data_store);
     lastFrameMarker = last_8bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker; j=j+1){
+    for(int j = firstFrameMarker ; j < lastFrameMarker - numChannels; j=j+1){
         if((uint8_t)data_store.at(j) == FM_F0){
                 if((uint8_t)data_store.at(j+(numChannels + 1)) == FM_5A){
                     for(int i = 0; i < numChannels; i++){
@@ -173,7 +172,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
     firstFrameMarker = findfirstFrameMarkers(rawData);
     lastFrameMarker = findlastFrameMarkers(rawData);
     if(lastFrameMarker > 0){
-        for(int i = 0; i < lastFrameMarker - 3; i = i + 1){
+        for(int i = 0; i < lastFrameMarker - 4; i = i + 1){
             if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
                 appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
