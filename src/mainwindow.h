@@ -65,6 +65,7 @@ private:
     QStatusBar *statusBarMainWindow;
 
     QMenu *fileMenu;
+    QMenu *voltageMenu;
     QMenu *layoutMenu;
     QMenu *timeFrameMenu;
 
@@ -81,6 +82,18 @@ private:
 
     QAction *resetDefaultX;
     QAction *resetDefaultY;
+    QAction *swapAction;
+    QAction *filterAction;
+
+    QAction *voltage50u;
+    QAction *voltage100u;
+    QAction *voltage200u;
+    QAction *voltage500u;
+    QAction *voltage1000u;
+    QAction *voltage2000u;
+    QAction *voltage5000u;
+
+    QActionGroup *voltageGroup;
 
 #ifdef NEUTRINO_II
     SocketEdison *socketEdison;
@@ -101,14 +114,14 @@ private:
     QAction *tenby1Action;
     QAction *fiveby2Action;
 
-    QAction *connectAction;
-    QAction *disconnectAction;
+//    QAction *connectAction;
+//    QAction *disconnectAction;
     QAction *commandAction;
 
     QActionGroup *connectivityGroup;
 
-    QAction *wiredMode;
-    QAction *wifiMode;
+//    QAction *wiredMode;
+//    QAction *wifiMode;
 #endif //NEUTRINO_II PRIVATE
 
 #ifdef SYLPH
@@ -122,14 +135,12 @@ private:
 
     void createLayout();
 
-    QMenu *voltageMenu;
     QMenu *helpMenu;
     QMenu *audioOutputMenu;
 
     QCustomPlot *channelGraph[10];
 
     QAction *serialPortAction;
-    QAction *filterAction;
     QAction *aboutAction;
 
     QAction *audio1;
@@ -137,16 +148,6 @@ private:
     QAction *audio3;
 
     QActionGroup *audioGroup;
-
-    QAction *voltage50u;
-    QAction *voltage100u;
-    QAction *voltage200u;
-    QAction *voltage500u;
-    QAction *voltage1000u;
-    QAction *voltage2000u;
-    QAction *voltage5000u;
-
-    QActionGroup *voltageGroup;
 #endif //SYLPH PRIVATE
 
 private slots:
@@ -160,23 +161,6 @@ private slots:
     void on_timeFrame1000_triggered();
     void on_timeFrame2000_triggered();
     void on_timeFrame5000_triggered();
-    void on_record_triggered();
-    void on_chooseDirectory_triggered();
-    void on_playPause_triggered();
-    void on_resetX_triggered();
-
-#ifdef NEUTRINO_II
-    void on_ConnectMenu_triggered();
-    void on_DisconnectMenu_triggered();
-    void on_CommandMenu_triggered();
-    void on_tenby1_triggered();
-    void on_fiveby2_triggered();
-    void on_wired_triggered();
-    void on_wifi_triggered();
-#endif //NEUTRINO_II PRIVATE SLOTS
-
-#ifdef SYLPH
-    void on_filterConfig_trigger();
     void on_resetY_triggered();
     void on_voltage50u_triggered();
     void on_voltage100u_triggered();
@@ -185,6 +169,24 @@ private slots:
     void on_voltage1000u_triggered();
     void on_voltage2000u_triggered();
     void on_voltage5000u_triggered();
+    void on_record_triggered();
+    void on_chooseDirectory_triggered();
+    void on_playPause_triggered();
+    void on_resetX_triggered();
+    void on_swap_triggered();
+    void on_filterConfig_trigger();
+
+#ifdef NEUTRINO_II
+//    void on_ConnectMenu_triggered();
+//    void on_DisconnectMenu_triggered();
+    void on_CommandMenu_triggered();
+    void on_tenby1_triggered();
+    void on_fiveby2_triggered();
+//    void on_wired_triggered();
+//    void on_wifi_triggered();
+#endif //NEUTRINO_II PRIVATE SLOTS
+
+#ifdef SYLPH
     void about();
     void resetGraph1Range();
     void resetGraph2Range();

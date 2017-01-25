@@ -5,6 +5,7 @@
 #include "qtincludes.h"
 #include "socketedison.h"
 #include "command.h"
+#include "serialchannel.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ class CommandDialog : public QDialog
     Q_OBJECT
 
 public:
-    CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_);
+    CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_);
     ~CommandDialog();
 
 private slots:
@@ -37,6 +38,7 @@ private:
     SocketEdison *socketEdison;
     Command *NeutrinoCommand;
     Channel *NeutrinoChannel;
+    SerialChannel *NeutrinoSerial;
     void createLayout();
     void createJTAGLayout();
     void loadlastCommand();

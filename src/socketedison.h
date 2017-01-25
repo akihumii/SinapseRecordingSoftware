@@ -14,7 +14,7 @@ public:
     bool isConnected();
     void doDisconnect();
     QString getError();
-    bool wifiEnabled = true;
+    bool wifiEnabled = false;
     QByteArray getlastCommand();
 
 private:

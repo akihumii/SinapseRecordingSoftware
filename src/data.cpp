@@ -8,7 +8,12 @@ Data::~Data(){
 }
 
 QVector<double> Data::retrieveData(int ChannelIndex){
+#ifdef SYLPH
     if(isFilterEnabled() && ChannelIndex != 3){
+#endif
+#ifdef NEUTRINO_II
+    if(isFilterEnabled()){
+#endif
         ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
     }
     return ChannelData[ChannelIndex];
@@ -90,7 +95,7 @@ void Data::setDirectory(QString dir){
         directory = QDir::homePath() + "/Desktop/";
     }
     else{
-        directory = dir;
+        directory = dir + "/";
     }
 }
 QString Data::getDirectory(){
@@ -102,6 +107,40 @@ int Data::getNumDataPoints(){
 }
 
 void Data::setNumDataPoints(int timeFrames){
+#ifdef NEUTRINO_II
+    switch(timeFrames){
+    case TimeFrames10ms:
+        numDataPoints = 178;
+        break;
+    case TimeFrames20ms:
+        numDataPoints = 357;
+        break;
+    case TimeFrames50ms:
+        numDataPoints = 892;
+        break;
+    case TimeFrames100ms:
+        numDataPoints = 1785;
+        break;
+    case TimeFrames200ms:
+        numDataPoints = 3571;
+        break;
+    case TimeFrames500ms:
+        numDataPoints = 8928;
+        break;
+    case TimeFrames1000ms:
+        numDataPoints = 17857;
+        break;
+    case TimeFrames2000ms:
+        numDataPoints = 35714;
+        break;
+    case TimeFrames5000ms:
+        numDataPoints = 89285;
+        break;
+    default:
+        numDataPoints = 1785;
+    }
+#endif
+#ifdef SYLPH
     switch(timeFrames){
     case TimeFrames10ms:
         numDataPoints = 208;
@@ -131,7 +170,8 @@ void Data::setNumDataPoints(int timeFrames){
         numDataPoints = 104110;
         break;
     default:
-        numDataPoints = 1041;
+        numDataPoints = 2082;
     }
+#endif
 }
 

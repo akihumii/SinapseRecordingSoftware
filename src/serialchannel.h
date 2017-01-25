@@ -16,15 +16,22 @@ public:
     void closeADCPort();
     bool enableImplantPort(QString portName);
     bool enableADCPort(QString portName);
-    bool serialenabled = false;
+    bool serialenabled = true;
     void closePort();
     bool doConnect();
+    bool isConnected();
+    bool writeCommand(QByteArray Command);
+    void swapPort();
+    void connectSylph();
+    bool isImplantConnected();
+    bool isADCConnected();
 public slots:
     void ReadImplantData();
     void ReadADCData();
     void ReadData();
 private:
-    QSerialPort *serial;
+    QSerialPort *serialData;
+    QSerialPort *serialCommand;
     QSerialPort *implantPort;
     QSerialPort *ADCPort;
     DataProcessor *dataProcessor;
@@ -33,7 +40,12 @@ private:
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-
+    QList<QSerialPortInfo> portInfo;
+    bool connected = false;
+    bool implantConnected = false;
+    bool ADCConnected = false;
+    int getNumChannels(QByteArray lastCommand);
+    int portOrder =2;
 };
 
 #endif // SerialChannel_H
