@@ -16,6 +16,7 @@
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "filterdialog.h"
+#include "dataanalyzer.h"
 
 
 class QComboBox;

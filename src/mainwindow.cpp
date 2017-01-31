@@ -789,6 +789,10 @@ void MainWindow::on_resetX_triggered(){
     data->setNumDataPoints(TimeFrames100ms);
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
+
+    DataAnalyzer dataAnalyzer;
+    dataAnalyzer.showMaximized();
+    dataAnalyzer.exec();
 }
 
 void MainWindow::on_swap_triggered(){

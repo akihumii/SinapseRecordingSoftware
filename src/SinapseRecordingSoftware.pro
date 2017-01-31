@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     filterdialog.cpp \
     signalaudio.cpp \
     mainwindow.cpp \
-    dataprocessor.cpp
+    dataprocessor.cpp \
+    dataanalyzer.cpp
 
 HEADERS  += \
     data.h \
@@ -53,7 +54,8 @@ HEADERS  += \
     filterdialog.h \
     signalaudio.h \
     mainwindow.h \
-    dataprocessor.h
+    dataprocessor.h \
+    dataanalyzer.h
 
 FORMS +=
 
