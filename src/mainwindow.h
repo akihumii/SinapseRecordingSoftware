@@ -8,7 +8,6 @@
 #include "qcustomplot.h"
 #include "connectiondialog.h"
 #include "commanddialog.h"
-#include "filenamedialog.h"
 #include "dataprocessor.h"
 #include "channel.h"
 #include "data.h"

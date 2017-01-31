@@ -162,10 +162,6 @@ void MainWindow::createActions(){
     resetDefaultX->setShortcut(tr("Ctrl+X"));
     connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
 
-    resetDefaultX = new QAction(tr("Default Time Scale"), this);
-    resetDefaultX->setShortcut(tr("Ctrl+X"));
-    connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
-
     chooseDirectoryAction = new QAction(tr("&Save as.."), this);
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
@@ -205,7 +201,7 @@ void MainWindow::createActions(){
     resetDefaultY = new QAction(tr("Default Voltage Scale"), this);
     resetDefaultY->setShortcut(tr("Ctrl+Y"));
     connect(resetDefaultY, SIGNAL(triggered()), this, SLOT(on_resetY_triggered()));
-
+#ifdef SYLPH
     voltage50u = new QAction(tr("+/- 50uV"));
     voltage100u = new QAction(tr("+/- 100uV"));
     voltage200u = new QAction(tr("+/- 200uV"));
@@ -213,6 +209,17 @@ void MainWindow::createActions(){
     voltage1000u = new QAction(tr("+/- 1000uV"));
     voltage2000u = new QAction(tr("+/- 2000uV"));
     voltage5000u = new QAction(tr("+/- 5000uV"));
+#endif
+
+#ifdef NEUTRINO_II
+    voltage50u = new QAction(tr("+/- 10mV"));
+    voltage100u = new QAction(tr("+/- 20mV"));
+    voltage200u = new QAction(tr("+/- 50mV"));
+    voltage500u = new QAction(tr("+/- 100mV"));
+    voltage1000u = new QAction(tr("+/- 200mV"));
+    voltage2000u = new QAction(tr("+/- 500mV"));
+    voltage5000u = new QAction(tr("+/- 700mV"));
+#endif
 
     connect(voltage50u, SIGNAL(triggered(bool)), this, SLOT(on_voltage50u_triggered()));
     connect(voltage100u, SIGNAL(triggered(bool)), this, SLOT(on_voltage100u_triggered()));
@@ -231,8 +238,8 @@ void MainWindow::create10x1Layout(){
         mainLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(55,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
+        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
+        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep(0.000056);
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
@@ -250,7 +257,7 @@ void MainWindow::create10x1Layout(){
     channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
     channelGraph[9]->graph()->setPen(QPen(Qt::red));
 
-    channelGraph[9]->axisRect()->setMargins(QMargins(55,0,0,15));
+    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
 
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -264,15 +271,15 @@ void MainWindow::create5x2Layout(){
         leftLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(55,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
+        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
+        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
     }
     channelGraph[4] = new QCustomPlot;
     leftLayout->addWidget(channelGraph[4]);
     channelGraph[4]->xAxis->setVisible(true);
     channelGraph[4]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[4]->axisRect()->setMargins(QMargins(55,0,0,15));
-    channelGraph[4]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
+    channelGraph[4]->axisRect()->setMargins(QMargins(75,0,0,15));
+    channelGraph[4]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
 
     QVBoxLayout *rightLayout = new QVBoxLayout;
     for(int i=5;i<9;i++){
@@ -280,21 +287,25 @@ void MainWindow::create5x2Layout(){
         rightLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(55,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
+        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
+        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
     }
     channelGraph[9] = new QCustomPlot;
     rightLayout->addWidget(channelGraph[9]);
     channelGraph[9]->xAxis->setVisible(true);
     channelGraph[9]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[9]->axisRect()->setMargins(QMargins(55,0,0,15));
-    channelGraph[9]->yAxis->setRange(-0.01, 1.21, Qt::AlignLeft);
+    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
+    channelGraph[9]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
 
     for(int i=0;i<10;i++){
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep(0.000056);
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
+        channelGraph[i]->yAxis->setAutoTickStep(false);
+        channelGraph[i]->yAxis->setTickStep(0.1);
+        channelGraph[i]->setInteractions(QCP::iRangeDrag);
+        channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
     }
 
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
@@ -411,10 +422,15 @@ void MainWindow::createMenus(){
     voltageGroup->addAction(voltage100u);
     voltageGroup->addAction(voltage200u);
     voltageGroup->addAction(voltage500u);
+#ifdef SYLPH
     voltage500u->setChecked(true);
+#endif
     voltageGroup->addAction(voltage1000u);
     voltageGroup->addAction(voltage2000u);
     voltageGroup->addAction(voltage5000u);
+#ifdef NEUTRINO_II
+    voltage5000u->setChecked(true);
+#endif
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
@@ -627,8 +643,8 @@ void MainWindow::on_voltage50u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.0001, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.00001);
+        channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.0025);
         channelGraph[i]->replot();
     }
 #endif
@@ -644,8 +660,8 @@ void MainWindow::on_voltage100u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.0002, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.00002);
+        channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.005);
         channelGraph[i]->replot();
     }
 #endif
@@ -661,8 +677,8 @@ void MainWindow::on_voltage200u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.0004, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.00004);
+        channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.01);
         channelGraph[i]->replot();
     }
 #endif
@@ -678,8 +694,8 @@ void MainWindow::on_voltage500u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.001, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.0001);
+        channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.02);
         channelGraph[i]->replot();
     }
 #endif
@@ -695,8 +711,8 @@ void MainWindow::on_voltage1000u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.002, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.0002);
+        channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.05);
         channelGraph[i]->replot();
     }
 #endif
@@ -712,8 +728,8 @@ void MainWindow::on_voltage2000u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.004, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.0004);
+        channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.1);
         channelGraph[i]->replot();
     }
 #endif
@@ -729,8 +745,8 @@ void MainWindow::on_voltage5000u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0, 0.01, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.001);
+        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.1);
         channelGraph[i]->replot();
     }
 #endif
@@ -744,7 +760,6 @@ void MainWindow::on_record_triggered(){
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
-        //statusBarLabel->setStyleSheet();
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
@@ -795,19 +810,24 @@ void MainWindow::on_filterConfig_trigger(){
 void MainWindow::on_resetY_triggered(){
 #ifdef SYLPH
     for(int i=0;i<2;i++){
-#endif
-#ifdef NEUTRINO_II
-    for(int i=0;i<10;i++){
-#endif
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
+#endif
+#ifdef NEUTRINO_II
+    for(int i=0;i<10;i++){
+        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(0.1);
+        channelGraph[i]->replot();
+    }
+    voltage5000u->setChecked(true);
+#endif
 #ifdef SYLPH
     channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->replot();
-#endif
     voltage500u->setChecked(true);
+#endif
 }
 
 #ifdef NEUTRINO_II

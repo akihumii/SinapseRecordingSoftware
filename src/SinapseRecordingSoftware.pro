@@ -17,12 +17,11 @@ VERSION = 1.0.1
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
-# DEFINES += NEUTRINO_II
-DEFINES += SYLPH
+DEFINES += NEUTRINO_II
+# DEFINES += SYLPH
 
 SOURCES += main.cpp\
     data.cpp \
-    filenamedialog.cpp \
     qcustomplot.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
@@ -40,7 +39,6 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     data.h \
-    filenamedialog.h \
     qcustomplot.h \
     qtincludes.h \
     serialchannel.h \
