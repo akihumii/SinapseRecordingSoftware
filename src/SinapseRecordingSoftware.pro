@@ -38,6 +38,7 @@ SOURCES += main.cpp\
     dataprocessor.cpp \
     dataanalyzer.cpp
 
+
 HEADERS  += \
     data.h \
     qcustomplot.h \
