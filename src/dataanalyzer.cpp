@@ -39,6 +39,7 @@ void DataAnalyzer::createLayout(){
 void DataAnalyzer::createMenu(){
 }
 
+
 void DataAnalyzer::on_openFile_triggered(){
     QStringList items;
     items << tr("Channel 1")
@@ -60,8 +61,7 @@ void DataAnalyzer::on_openFile_triggered(){
                                             "Open Document",
                                             QDir::currentPath(),
                                             "All files (*.*)");
-    if( !filename.isNull() )
-    {
+    if(!filename.isNull()){
         openFileLineEdit->setText(filename.toUtf8());
         QFile rawData(filename);
         if(rawData.open(QIODevice::ReadOnly)){
