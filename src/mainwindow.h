@@ -16,6 +16,7 @@
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "filterdialog.h"
+#include "dataanalyzer.h"
 
 
 class QComboBox;
@@ -83,6 +84,7 @@ private:
     QAction *resetDefaultY;
     QAction *swapAction;
     QAction *filterAction;
+    QAction *dataAnalyzerAction;
 
     QAction *voltage50u;
     QAction *voltage100u;
@@ -178,6 +180,7 @@ private slots:
 #ifdef NEUTRINO_II
 //    void on_ConnectMenu_triggered();
 //    void on_DisconnectMenu_triggered();
+    void on_dataAnalyzer_triggered();
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();

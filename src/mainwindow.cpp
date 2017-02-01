@@ -127,6 +127,10 @@ void MainWindow::createActions(){
     fiveby2Action->setShortcut(tr("Ctrl+2"));
     connect(fiveby2Action, SIGNAL(triggered()),this,SLOT(on_fiveby2_triggered()));
 
+    dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
+    dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
+    connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
+
 //    wifiMode = new QAction(tr("Wireless Mode"));
 //    wiredMode = new QAction(tr("Wired Mode"));
 
@@ -303,7 +307,7 @@ void MainWindow::create5x2Layout(){
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
         channelGraph[i]->yAxis->setAutoTickStep(false);
-        channelGraph[i]->yAxis->setTickStep(0.1);
+        channelGraph[i]->yAxis->setTickStep(0.25);
         channelGraph[i]->setInteractions(QCP::iRangeDrag);
         channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
     }
@@ -335,6 +339,8 @@ void MainWindow::createMenus(){
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
 #ifdef NEUTRINO_II
+    fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addSeparator();
 //    fileMenu->addAction(connectAction);
 //    fileMenu->addAction(disconnectAction);
     fileMenu->addAction(commandAction);
@@ -643,7 +649,12 @@ void MainWindow::on_voltage50u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.0105, 0.021, Qt::AlignLeft);
+        }
         channelGraph[i]->yAxis->setTickStep(0.0025);
         channelGraph[i]->replot();
     }
@@ -660,7 +671,12 @@ void MainWindow::on_voltage100u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.021, 0.042, Qt::AlignLeft);
+        }
         channelGraph[i]->yAxis->setTickStep(0.005);
         channelGraph[i]->replot();
     }
@@ -677,7 +693,12 @@ void MainWindow::on_voltage200u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.051, 0.102, Qt::AlignLeft);
+        }
         channelGraph[i]->yAxis->setTickStep(0.01);
         channelGraph[i]->replot();
     }
@@ -694,7 +715,12 @@ void MainWindow::on_voltage500u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.101, 0.202, Qt::AlignLeft);
+        }
         channelGraph[i]->yAxis->setTickStep(0.02);
         channelGraph[i]->replot();
     }
@@ -711,7 +737,12 @@ void MainWindow::on_voltage1000u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.21, 0.42, Qt::AlignLeft);
+        }
         channelGraph[i]->yAxis->setTickStep(0.05);
         channelGraph[i]->replot();
     }
@@ -728,7 +759,12 @@ void MainWindow::on_voltage2000u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.51, 1.02, Qt::AlignLeft);
+        }
         channelGraph[i]->yAxis->setTickStep(0.1);
         channelGraph[i]->replot();
     }
@@ -745,8 +781,13 @@ void MainWindow::on_voltage5000u_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i = 0; i < 10; i++){
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.1);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft);
+        }
+        channelGraph[i]->yAxis->setTickStep(0.25);
         channelGraph[i]->replot();
     }
 #endif
@@ -816,8 +857,13 @@ void MainWindow::on_resetY_triggered(){
 #endif
 #ifdef NEUTRINO_II
     for(int i=0;i<10;i++){
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(0.1);
+        if(!data->isFilterEnabled()){
+            channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+        }
+        else{
+            channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft);
+        }
+        channelGraph[i]->yAxis->setTickStep(0.25);
         channelGraph[i]->replot();
     }
     voltage5000u->setChecked(true);
@@ -854,6 +900,11 @@ void MainWindow::on_resetY_triggered(){
 //    }
 //}
 
+void MainWindow::on_dataAnalyzer_triggered(){
+    DataAnalyzer dataAnalyzer;
+    dataAnalyzer.showMaximized();
+    dataAnalyzer.exec();
+}
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
