@@ -158,7 +158,7 @@ void FilterDialog::on_highpassEnable_toggled(bool enableFlag){
         cutoffFreq[1]->setEnabled(enableFlag);
         if(dataProcessor->currentHighpassFreq() != 0){
             cutoffFreq[1]->setText(QString::number(dataProcessor->currentHighpassFreq()));
-            dataProcessor->setHighpassFilter(dataProcessor->currentHighpassFreq(), 20000);
+            dataProcessor->setHighpassFilter(dataProcessor->currentHighpassFreq(), samplingFreq);
         }
         dataProcessor->setHighpassFilterEnabled(enableFlag);
 }
@@ -170,17 +170,17 @@ void FilterDialog::on_notchFilter_changed(int Index){
         else{
             dataProcessor->setNotchFilterEnabled(true);
             if(Index == 1){
-                dataProcessor->setNotchFilter(50.0, 20.0, 19000.0);
+                dataProcessor->setNotchFilter(50.0, 20.0, samplingFreq);
             }
             if(Index == 2){
-                dataProcessor->setNotchFilter(60.0, 20.0, 19000.0);
+                dataProcessor->setNotchFilter(60.0, 20.0, samplingFreq);
             }
         }
 }
 
 void FilterDialog::on_highpassFreq_changed(){
     if(cutoffFreq[1]->text().toInt() > 99 && cutoffFreq[1]->text().toInt() < 7501){
-        dataProcessor->setHighpassFilter(cutoffFreq[1]->text().toDouble(), 20000);
+        dataProcessor->setHighpassFilter(cutoffFreq[1]->text().toDouble(), samplingFreq);
         qDebug() << cutoffFreq[1]->text().toInt();
     }
     else{

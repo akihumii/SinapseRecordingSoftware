@@ -8,11 +8,11 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = SINAPSE
+TARGET = SIRE
 TEMPLATE = app
 
 # The application version
-VERSION = 1.0
+VERSION = 1.0.1
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -22,7 +22,6 @@ DEFINES += NEUTRINO_II
 
 SOURCES += main.cpp\
     data.cpp \
-    filenamedialog.cpp \
     qcustomplot.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
@@ -36,11 +35,12 @@ SOURCES += main.cpp\
     filterdialog.cpp \
     signalaudio.cpp \
     mainwindow.cpp \
-    dataprocessor.cpp
+    dataprocessor.cpp \
+    dataanalyzer.cpp
+
 
 HEADERS  += \
     data.h \
-    filenamedialog.h \
     qcustomplot.h \
     qtincludes.h \
     serialchannel.h \
@@ -55,7 +55,8 @@ HEADERS  += \
     filterdialog.h \
     signalaudio.h \
     mainwindow.h \
-    dataprocessor.h
+    dataprocessor.h \
+    dataanalyzer.h
 
 FORMS +=
 
