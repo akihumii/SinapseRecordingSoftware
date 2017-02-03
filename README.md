@@ -6,8 +6,8 @@ Its purpose is to acquire and display real time signals from Neutrino II and Syl
 ~~This program can be compiled for both Neutrino II and Sylph individually as of Version 1.0 
 by defining NEUTRINO_II or SYLPH in the .pro file respectively, as shown below (compiling for Neutrino II)~~
 ```
-~~DEFINES += NEUTRINO_II
-# DEFINES += SYLPH~~
+~~DEFINES += NEUTRINO_II~~
+~~# DEFINES += SYLPH~~
 ```
 ~~### NOTE: If compiled for one (e.g. NEUTRINO_I) program, the project must be cleaned before it can be compiled for the other (in this case, SYLPH) by clicking Build -> Clean all in the menu.~~
 
