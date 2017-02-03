@@ -9,7 +9,10 @@ QT       += core gui network serialport multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = SIRE
-TEMPLATE = app
+TEMPLATE = subdirs
+
+SUBDIRS = DataAnalyzer/DataAnalyzer.pro \
+    Sylph
 
 # The application version
 VERSION = 1.0.1
@@ -36,7 +39,29 @@ SOURCES += main.cpp\
     signalaudio.cpp \
     mainwindow.cpp \
     dataprocessor.cpp \
-    dataanalyzer.cpp
+    dataanalyzer.cpp \
+    common/data.cpp \
+    common/filter.cpp \
+    common/filterdialog.cpp \
+    common/qcustomplot.cpp \
+    Neutrino/channel.cpp \
+    Neutrino/command.cpp \
+    Neutrino/commanddialog.cpp \
+    Neutrino/connectiondialog.cpp \
+    Neutrino/dataprocessor.cpp \
+    Neutrino/main.cpp \
+    Neutrino/mainwindow.cpp \
+    Neutrino/serialchannel.cpp \
+    Neutrino/serialportdialog.cpp \
+    Neutrino/signalaudio.cpp \
+    Neutrino/signalchannel.cpp \
+    Neutrino/socketedison.cpp \
+    Sylph/dataprocessor.cpp \
+    Sylph/main.cpp \
+    Sylph/mainwindow.cpp \
+    Sylph/serialchannel.cpp \
+    Sylph/serialportdialog.cpp \
+    Sylph/signalaudio.cpp
 
 
 HEADERS  += \
@@ -56,7 +81,28 @@ HEADERS  += \
     signalaudio.h \
     mainwindow.h \
     dataprocessor.h \
-    dataanalyzer.h
+    dataanalyzer.h \
+    common/data.h \
+    common/filter.h \
+    common/filterdialog.h \
+    common/qcustomplot.h \
+    common/qtincludes.h \
+    Neutrino/channel.h \
+    Neutrino/command.h \
+    Neutrino/commanddialog.h \
+    Neutrino/connectiondialog.h \
+    Neutrino/dataprocessor.h \
+    Neutrino/mainwindow.h \
+    Neutrino/serialchannel.h \
+    Neutrino/serialportdialog.h \
+    Neutrino/signalaudio.h \
+    Neutrino/signalchannel.h \
+    Neutrino/socketedison.h \
+    Sylph/dataprocessor.h \
+    Sylph/mainwindow.h \
+    Sylph/serialchannel.h \
+    Sylph/serialportdialog.h \
+    Sylph/signalaudio.h
 
 FORMS +=
 
