@@ -4,7 +4,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
     defaultRange = new QCPRange(-0.00050, 0.00100);
-    setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version + " Beta");
+    setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version);
     data = new DataProcessor;
     serialChannel = new SerialChannel(this, data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
@@ -221,10 +221,10 @@ void MainWindow::createMenus(){
     timeFrameGroup->addAction(timeFrame1000ms);
     timeFrameGroup->addAction(timeFrame2000ms);
     timeFrameGroup->addAction(timeFrame5000ms);
-//------------------------- TIMEFRAME MENU --------------------------//
   
     timeFrameMenu->addSeparator();
     timeFrameMenu->addAction(resetDefaultX);
+//------------------------- TIMEFRAME MENU --------------------------//
 
 //------------------------- TIMEFRAME MENU --------------------------//
     voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
@@ -506,7 +506,6 @@ void MainWindow::on_resetY_triggered(){
     voltage500u->setChecked(true);
 }
 
-#ifdef SYLPH
 //void MainWindow::on_serialConfig_triggered(){
 //    SerialPortDialog serialPortDialog(serialChannel);
 //    serialPortDialog.exec();
@@ -595,5 +594,3 @@ void MainWindow::on_graph3_clicked(){
     audio2->setChecked(false);
     audio3->setChecked(true);
 }
-
-#endif //SYLPH

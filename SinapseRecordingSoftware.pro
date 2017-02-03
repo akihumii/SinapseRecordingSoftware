@@ -15,19 +15,15 @@ SUBDIRS +=   \
     src/common \
     src/Neutrino \
     src/Sylph \
+    src/DataAnalyzer \
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
 Sylph.subdir = src/Sylph
+DataAnalyzer  = src/DataAnalyzer
 
-Sylph.depends = common
 Neutrino.depends = common
-
-# The application version
-VERSION = 1.0.1
-
-# Define the preprocessor macro to get the application version in our application.
-DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+Sylph.depends = common
 
 FORMS +=
 
