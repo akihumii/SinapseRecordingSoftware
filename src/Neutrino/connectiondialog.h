@@ -2,7 +2,7 @@
 #define CONNECTIONDIALOG_H
 
 #include <QDialog>
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 #include "socketedison.h"
 #include "mainwindow.h"
 

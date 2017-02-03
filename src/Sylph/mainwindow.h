@@ -2,21 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "socketedison.h"
-#include "command.h"
-#include "qtincludes.h"
-#include "qcustomplot.h"
-#include "connectiondialog.h"
-#include "commanddialog.h"
+#include "../common/qtincludes.h"
+#include "../common/qcustomplot.h"
 #include "dataprocessor.h"
-#include "channel.h"
-#include "data.h"
-#include "filter.h"
-#include "signalchannel.h"
+#include "../common/data.h"
+#include "../common/filter.h"
 #include "serialportdialog.h"
 #include "serialchannel.h"
-#include "filterdialog.h"
-#include "dataanalyzer.h"
+#include "../common/filterdialog.h"
 
 
 class QComboBox;
@@ -31,21 +24,10 @@ public:
     ~MainWindow();
     QLabel *statusBarLabel;
 
-#ifdef NEUTRINO_II
-
-#endif //NEUTRINO_II PUBLIC
-
-#ifdef SYLPH
     SerialChannel *serialChannel;
     DataProcessor *data;
-#endif //SYLPH PUBLIC
 
 public slots:
-#ifdef NEUTRINO_II
-#endif //NEUTRINO_II PUBLIC SLOTS
-
-#ifdef SYLPH
-#endif //SYLPH PUBLIC SLOTS
 
 private:
     QElapsedTimer timer;
@@ -96,36 +78,6 @@ private:
 
     QActionGroup *voltageGroup;
 
-#ifdef NEUTRINO_II
-    SocketEdison *socketEdison;
-    SerialChannel *serialNeutrino;
-    Command *NeutrinoCommand;
-    DataProcessor *data;
-    Channel *NeutrinoChannel;
-
-    QList<QSerialPortInfo> portInfo;
-
-    void create10x1Layout();
-    void create5x2Layout();
-
-    QMenu *connectivityMenu;
-
-    QCustomPlot *channelGraph[10];
-
-    QAction *tenby1Action;
-    QAction *fiveby2Action;
-
-//    QAction *connectAction;
-//    QAction *disconnectAction;
-    QAction *commandAction;
-
-    QActionGroup *connectivityGroup;
-
-//    QAction *wiredMode;
-//    QAction *wifiMode;
-#endif //NEUTRINO_II PRIVATE
-
-#ifdef SYLPH
     int numDataPoints;
 
     QList<QSerialPortInfo> portInfo;
@@ -149,7 +101,6 @@ private:
     QAction *audio3;
 
     QActionGroup *audioGroup;
-#endif //SYLPH PRIVATE
 
 private slots:
     void updateData();
@@ -177,18 +128,6 @@ private slots:
     void on_swap_triggered();
     void on_filterConfig_trigger();
 
-#ifdef NEUTRINO_II
-//    void on_ConnectMenu_triggered();
-//    void on_DisconnectMenu_triggered();
-    void on_dataAnalyzer_triggered();
-    void on_CommandMenu_triggered();
-    void on_tenby1_triggered();
-    void on_fiveby2_triggered();
-//    void on_wired_triggered();
-//    void on_wifi_triggered();
-#endif //NEUTRINO_II PRIVATE SLOTS
-
-#ifdef SYLPH
     void about();
     void resetGraph1Range();
     void resetGraph2Range();
@@ -197,8 +136,6 @@ private slots:
     void on_graph1_clicked();
     void on_graph2_clicked();
     void on_graph3_clicked();
-#endif //SYLPH PRIVATE SLOTS
-
 };
 
 #endif // MainWindow_H

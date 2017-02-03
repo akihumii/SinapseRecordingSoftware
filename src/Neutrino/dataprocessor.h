@@ -1,8 +1,8 @@
 #ifndef DATAPROCESSOR_H
 #define DATAPROCESSOR_H
 
-#include "qtincludes.h"
-#include "data.h"
+#include "../common/qtincludes.h"
+#include "../common/data.h"
 #include "channel.h"
 #include "signalaudio.h"
 
@@ -23,7 +23,6 @@ class DataProcessor : public SignalAudio, public Data
 {
 public:
     DataProcessor(Channel *NeutrinoChannel_);
-    DataProcessor();
 
     void setBitMode(bool BitMode);
 
@@ -32,13 +31,10 @@ public:
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
 
+private:
+    QTextStream *out;
     Data *data;
-    SignalAudio *signalAudio;
-    void parseFrameMarkers(QByteArray rawData);
-    bool checkNextFrameMarker(QByteArray data, int currentIndex);
-    int findfirstFrameMarkers(QByteArray rawData);
-    int findlastFrameMarkers(QByteArray rawData);
-    void sortADCData(QByteArray adcData);
+    Channel *NeutrinoChannel;
 
     int firstFrameMarker;
     quint8 currentFrameMarker;
@@ -48,9 +44,6 @@ public:
     QByteArray leftOverData;
     QVector<quint8> ADC_Data;
 
-private:
-    QTextStream *out;
-    Channel *NeutrinoChannel;
     bool is8BitMode;
 
     int first_10bitFrameMarker(QByteArray data);

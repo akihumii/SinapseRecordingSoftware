@@ -1,7 +1,7 @@
 #ifndef SOCKETEDISON_H
 #define SOCKETEDISON_H
 
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 #include "command.h"
 #include "dataprocessor.h"
 

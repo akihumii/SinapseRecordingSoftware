@@ -1,7 +1,7 @@
 #ifndef SIGNALCHANNEL_H
 #define SIGNALCHANNEL_H
 
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 
 enum SignalType{
     ImplantSignal,

@@ -8,14 +8,6 @@ Data::~Data(){
 }
 
 QVector<double> Data::retrieveData(int ChannelIndex){
-#ifdef SYLPH
-    if(isFilterEnabled() && ChannelIndex != 3){
-#endif
-#ifdef NEUTRINO_II
-    if(isFilterEnabled()){
-#endif
-        ChannelData[ChannelIndex] = filterData(ChannelData[ChannelIndex], ChannelIndex);
-    }
     return ChannelData[ChannelIndex];
 }
 
@@ -106,72 +98,37 @@ int Data::getNumDataPoints(){
     return numDataPoints;
 }
 
-void Data::setNumDataPoints(int timeFrames){
-#ifdef NEUTRINO_II
+void Data::setNumDataPoints(int timeFrames, double sampleFreq){
     switch(timeFrames){
     case TimeFrames10ms:
-        numDataPoints = 178;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames20ms:
-        numDataPoints = 357;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames50ms:
-        numDataPoints = 892;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames100ms:
-        numDataPoints = 1785;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames200ms:
-        numDataPoints = 3571;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames500ms:
-        numDataPoints = 8928;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames1000ms:
-        numDataPoints = 17857;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames2000ms:
-        numDataPoints = 35714;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     case TimeFrames5000ms:
-        numDataPoints = 89285;
-        break;
-    default:
-        numDataPoints = 1785;
-    }
-#endif
-#ifdef SYLPH
-    switch(timeFrames){
-    case TimeFrames10ms:
-        numDataPoints = 208;
-        break;
-    case TimeFrames20ms:
-        numDataPoints = 416;
-        break;
-    case TimeFrames50ms:
-        numDataPoints = 1041;
-        break;
-    case TimeFrames100ms:
-        numDataPoints = 2082;
-        break;
-    case TimeFrames200ms:
-        numDataPoints = 4164;
-        break;
-    case TimeFrames500ms:
-        numDataPoints = 10411;
-        break;
-    case TimeFrames1000ms:
-        numDataPoints = 20822;
-        break;
-    case TimeFrames2000ms:
-        numDataPoints = 41644;
-        break;
-    case TimeFrames5000ms:
-        numDataPoints = 104110;
+        numDataPoints = 0.01*1/sampleFreq;
         break;
     default:
         numDataPoints = 2082;
     }
-#endif
 }
 

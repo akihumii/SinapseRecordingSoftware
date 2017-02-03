@@ -1,7 +1,7 @@
 #ifndef SIGNALAUDIO_H
 #define SIGNALAUDIO_H
 
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 
 class SignalAudio : public QObject {
     Q_OBJECT
