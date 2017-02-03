@@ -8,7 +8,7 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Sylph
+TARGET = Neutrino
 TEMPLATE = app
 
 # The application version
@@ -18,16 +18,28 @@ VERSION = 1.0.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 HEADERS += \
+    channel.h \
+    command.h \
+    commanddialog.h \
+    connectiondialog.h \
     dataprocessor.h \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    signalaudio.h
+    signalaudio.h \
+    signalchannel.h \
+    socketedison.h
 
 SOURCES += \
+    channel.cpp \
+    command.cpp \
+    commanddialog.cpp \
+    connectiondialog.cpp \
     dataprocessor.cpp \
     main.cpp \
     mainwindow.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
-    signalaudio.cpp
+    signalaudio.cpp \
+    signalchannel.cpp \
+    socketedison.cpp
