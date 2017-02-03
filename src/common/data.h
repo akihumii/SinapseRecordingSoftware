@@ -39,7 +39,7 @@ public:
     QString getFileName();
     void setDirectory(QString dir);
     QString getDirectory();
-    void setNumDataPoints(int timeFrames);
+    void setNumDataPoints(int timeFrames, double sampleFreq);
     int getNumDataPoints();
     double getSamplingRate();
 protected:

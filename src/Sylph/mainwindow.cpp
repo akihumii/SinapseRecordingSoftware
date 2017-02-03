@@ -3,24 +3,6 @@
 MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
-#ifdef NEUTRINO_II
-    NeutrinoChannel = new Channel;
-    NeutrinoCommand = new Command(NeutrinoChannel);
-    data = new DataProcessor(NeutrinoChannel);
-    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
-    serialNeutrino->doConnect();
-    socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
-    setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
-    createStatusBar();
-    create5x2Layout();
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
-    createActions();
-    createMenus();
-    qDebug() << "Starting NEUTRINO II..";
-#endif //NEUTRINO_II MAINWINDOW
-
-#ifdef SYLPH
     defaultRange = new QCPRange(-0.00050, 0.00100);
     setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version + " Beta");
     data = new DataProcessor;
@@ -53,10 +35,8 @@ MainWindow::MainWindow(){
                                  "Please check Serial Devices connection and try again. \n");
     }
     qDebug() << "Starting SYLPH..";
-#endif //SYLPH MAINWAINDOW
 }
 
-#ifdef SYLPH
 void MainWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     for(int i=0;i<4;i++){
@@ -103,57 +83,23 @@ void MainWindow::createLayout(){
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
 }
-#endif //SYLPH CREATELAYOUT
 
 void MainWindow::createActions(){
-#ifdef NEUTRINO_II
-//    connectAction = new QAction(tr("&Connect"), this);
-//    connectAction->setShortcut(tr("Ctrl+C"));
-//    connect(connectAction, SIGNAL(triggered()), this, SLOT(on_ConnectMenu_triggered()));
-
-//    disconnectAction = new QAction(tr("&Disconnect"), this);
-//    disconnectAction->setShortcut(tr("Ctrl+D"));
-//    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(on_DisconnectMenu_triggered()));
-
-    commandAction = new QAction(tr("Comm&and"), this);
-    commandAction->setShortcut(tr("Ctrl+A"));
-    connect(commandAction, SIGNAL(triggered()), this, SLOT(on_CommandMenu_triggered()));
-
-    tenby1Action = new QAction(tr("10x&1 Layout"), this);
-    tenby1Action->setShortcut(tr("Ctrl+1"));
-    connect(tenby1Action, SIGNAL(triggered()),this,SLOT(on_tenby1_triggered()));
-
-    fiveby2Action = new QAction(tr("5x&2 Layout"), this);
-    fiveby2Action->setShortcut(tr("Ctrl+2"));
-    connect(fiveby2Action, SIGNAL(triggered()),this,SLOT(on_fiveby2_triggered()));
-
-    dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
-    dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
-    connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
-
-//    wifiMode = new QAction(tr("Wireless Mode"));
-//    wiredMode = new QAction(tr("Wired Mode"));
-
-//    connect(wifiMode, SIGNAL(triggered(bool)), this, SLOT(on_wifi_triggered()));
-//    connect(wiredMode, SIGNAL(triggered(bool)), this, SLOT(on_wired_triggered()));
-#endif //NEUTRINO_II CREATEACTIONS
-
-#ifdef SYLPH
     //    serialPortAction = new QAction(tr("S&erial Port Configuration"), this);
     //    serialPortAction->setShortcut(tr("Ctrl+E"));
     //    connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
 
-        audio1 = new QAction(tr("Channel 1 Audio Output"));
-        audio2 = new QAction(tr("Channel 2 Audio Output"));
-        audio3 = new QAction(tr("Sync Pulse Audio Output"));
+    audio1 = new QAction(tr("Channel 1 Audio Output"));
+    audio2 = new QAction(tr("Channel 2 Audio Output"));
+    audio3 = new QAction(tr("Sync Pulse Audio Output"));
 
-        connect(audio1, SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
-        connect(audio2, SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
-        connect(audio3, SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
+    connect(audio1, SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
+    connect(audio2, SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
+    connect(audio3, SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
 
-        aboutAction = new QAction(tr("About SINAPSE Recording Software"));
-        connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
-#endif //SYLPH CREATEACTIONS
+    aboutAction = new QAction(tr("About SINAPSE Recording Software"));
+    connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
+
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
     connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
@@ -205,7 +151,7 @@ void MainWindow::createActions(){
     resetDefaultY = new QAction(tr("Default Voltage Scale"), this);
     resetDefaultY->setShortcut(tr("Ctrl+Y"));
     connect(resetDefaultY, SIGNAL(triggered()), this, SLOT(on_resetY_triggered()));
-#ifdef SYLPH
+
     voltage50u = new QAction(tr("+/- 50uV"));
     voltage100u = new QAction(tr("+/- 100uV"));
     voltage200u = new QAction(tr("+/- 200uV"));
@@ -213,17 +159,6 @@ void MainWindow::createActions(){
     voltage1000u = new QAction(tr("+/- 1000uV"));
     voltage2000u = new QAction(tr("+/- 2000uV"));
     voltage5000u = new QAction(tr("+/- 5000uV"));
-#endif
-
-#ifdef NEUTRINO_II
-    voltage50u = new QAction(tr("+/- 10mV"));
-    voltage100u = new QAction(tr("+/- 20mV"));
-    voltage200u = new QAction(tr("+/- 50mV"));
-    voltage500u = new QAction(tr("+/- 100mV"));
-    voltage1000u = new QAction(tr("+/- 200mV"));
-    voltage2000u = new QAction(tr("+/- 500mV"));
-    voltage5000u = new QAction(tr("+/- 700mV"));
-#endif
 
     connect(voltage50u, SIGNAL(triggered(bool)), this, SLOT(on_voltage50u_triggered()));
     connect(voltage100u, SIGNAL(triggered(bool)), this, SLOT(on_voltage100u_triggered()));
@@ -234,123 +169,16 @@ void MainWindow::createActions(){
     connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
 }
 
-#ifdef NEUTRINO_II
-void MainWindow::create10x1Layout(){
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    for(int i=0;i<10;i++){
-        channelGraph[i] = new QCustomPlot;
-        mainLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
-        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-        channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep(0.000056);
-        channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
-        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
-    }
-
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
-    channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
-    channelGraph[3]->graph()->setPen(QPen(Qt::darkCyan));
-    channelGraph[4]->graph()->setPen(QPen(Qt::blue));
-    channelGraph[5]->graph()->setPen(QPen(Qt::darkBlue));
-    channelGraph[6]->graph()->setPen(QPen(Qt::darkMagenta));
-    channelGraph[7]->graph()->setPen(QPen(Qt::darkYellow));
-    channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
-    channelGraph[9]->graph()->setPen(QPen(Qt::red));
-
-    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
-
-    QWidget *mainWidget = new QWidget;
-    mainWidget->setLayout(mainLayout);
-    setCentralWidget(mainWidget);
-}
-
-void MainWindow::create5x2Layout(){
-    QVBoxLayout *leftLayout = new QVBoxLayout;
-    for(int i=0;i<4;i++){
-        channelGraph[i] = new QCustomPlot;
-        leftLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
-        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-    }
-    channelGraph[4] = new QCustomPlot;
-    leftLayout->addWidget(channelGraph[4]);
-    channelGraph[4]->xAxis->setVisible(true);
-    channelGraph[4]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[4]->axisRect()->setMargins(QMargins(75,0,0,15));
-    channelGraph[4]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-
-    QVBoxLayout *rightLayout = new QVBoxLayout;
-    for(int i=5;i<9;i++){
-        channelGraph[i] = new QCustomPlot;
-        rightLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
-        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-    }
-    channelGraph[9] = new QCustomPlot;
-    rightLayout->addWidget(channelGraph[9]);
-    channelGraph[9]->xAxis->setVisible(true);
-    channelGraph[9]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
-    channelGraph[9]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-
-    for(int i=0;i<10;i++){
-        channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep(0.000056);
-        channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
-        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
-        channelGraph[i]->yAxis->setAutoTickStep(false);
-        channelGraph[i]->yAxis->setTickStep(0.25);
-        channelGraph[i]->setInteractions(QCP::iRangeDrag);
-        channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
-    }
-
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
-    channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
-    channelGraph[3]->graph()->setPen(QPen(Qt::darkCyan));
-    channelGraph[4]->graph()->setPen(QPen(Qt::blue));
-    channelGraph[5]->graph()->setPen(QPen(Qt::darkBlue));
-    channelGraph[6]->graph()->setPen(QPen(Qt::darkMagenta));
-    channelGraph[7]->graph()->setPen(QPen(Qt::darkYellow));
-    channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
-    channelGraph[9]->graph()->setPen(QPen(Qt::red));
-
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    QWidget *mainWidget = new QWidget;
-    mainLayout->addLayout(leftLayout);
-    mainLayout->addLayout(rightLayout);
-    mainWidget->setLayout(mainLayout);
-    setCentralWidget(mainWidget);
-}
-#endif //NEUTRINO_II CREATE10X1LAYOUT CREATE5X2LAYOUT
-
 void MainWindow::createMenus(){
 //--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
 //    fileMenu->addAction(swapAction);
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
-#ifdef NEUTRINO_II
-    fileMenu->addAction(dataAnalyzerAction);
-    fileMenu->addSeparator();
-//    fileMenu->addAction(connectAction);
-//    fileMenu->addAction(disconnectAction);
-    fileMenu->addAction(commandAction);
-#endif //NEUTRINO_II CREATEMENU FILEMENU
 
-#ifdef SYLPH
 //    fileMenu->addAction(serialPortAction);
 //    fileMenu->addAction(resetDefaultRange);
 
-#endif //SYLPH CREATEMENU FILEMENU
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
 
@@ -359,14 +187,6 @@ void MainWindow::createMenus(){
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 //--------------------------- FILE MENU -----------------------------//
-
-//-------------------------- LAYOUT MENU ----------------------------//
-#ifdef NEUTRINO_II
-    layoutMenu = menuBar()-> addMenu(tr("&Layout"));
-    layoutMenu->addAction(tenby1Action);
-    layoutMenu->addAction(fiveby2Action);
-#endif //NEUTRINO_II CREATEMENU LAYOUTMENU
-//-------------------------- LAYOUT MENU ----------------------------//
 
 //------------------------- TIMEFRAME MENU --------------------------//
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
@@ -428,38 +248,17 @@ void MainWindow::createMenus(){
     voltageGroup->addAction(voltage100u);
     voltageGroup->addAction(voltage200u);
     voltageGroup->addAction(voltage500u);
-#ifdef SYLPH
     voltage500u->setChecked(true);
-#endif
     voltageGroup->addAction(voltage1000u);
     voltageGroup->addAction(voltage2000u);
     voltageGroup->addAction(voltage5000u);
-#ifdef NEUTRINO_II
-    voltage5000u->setChecked(true);
-#endif
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
 //------------------------- TIMEFRAME MENU --------------------------//
 
-//------------------------ CONNECTIVITY MENU ------------------------//
-#ifdef NEUTRINO_II
-//    connectivityMenu = menuBar()->addMenu(tr("Connection Mode"));
-//    connectivityGroup = new QActionGroup(this);
-//    connectivityMenu->addAction(wifiMode);
-//    connectivityMenu->addAction(wiredMode);
-//    wifiMode->setCheckable(true);
-//    wifiMode->setChecked(true);
-//    wiredMode->setCheckable(true);
-
-//    connectivityGroup->addAction(wifiMode);
-//    connectivityGroup->addAction(wiredMode);
-#endif //NEUTRINO_II CREATEMENU CONNECTIVITYMENU
-//------------------------ CONNECTIVITY MENU ------------------------//
-
 //----------------------- AUDIO OUTPUT MENU -------------------------//
 //--------------------------- HELP MENU -----------------------------//
-#ifdef SYLPH
     audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
     audioOutputMenu->addAction(audio1);
     audio1->setCheckable(true);
@@ -476,7 +275,6 @@ void MainWindow::createMenus(){
 
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
-#endif //SYLPH CREATEMENU AUDIOOUTPUTMENU HELPMENU
 
 //----------------------- AUDIO OUTPUT MENU -------------------------//
 //--------------------------- HELP MENU -----------------------------//
@@ -490,39 +288,11 @@ void MainWindow::createStatusBar(){
 }
 
 MainWindow::~MainWindow(){
-#ifdef NEUTRINO_II
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(QByteArray::number(255, 10));
-        socketEdison->doDisconnect();
-    }
-    serialNeutrino->closePort();
-#endif //NEUTRINO_II ~MAINWINDOW
-
-#ifdef SYLPH
     serialChannel->closeADCPort();
     serialChannel->closeImplantPort();
-#endif //SYLPH ~MAINWINDOW
 }
 
 void MainWindow::updateData(){
-#ifdef NEUTRINO_II
-    QVector<double> X_axis = data->retrieveXAxis();
-    if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
-        for(int i=0; i<10; i++){
-            if(!data->isEmpty(i)){
-                channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), (data->getNumDataPoints())*0.000056, Qt::AlignLeft);
-                if(!pause){
-                    channelGraph[i]->replot();
-                }
-                data->clearChannelData(i);
-            }
-        }
-        data->removeXAxis();
-    }
-#endif
-
-#ifdef SYLPH
     QVector<double> X_axis = data->retrieveXAxis();
     if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<4; i++){
@@ -537,260 +307,143 @@ void MainWindow::updateData(){
         }
         data->removeXAxis();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame10_triggered(){
-    data->setNumDataPoints(TimeFrames10ms);
+    data->setNumDataPoints(TimeFrames10ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.001);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame20_triggered(){
-    data->setNumDataPoints(TimeFrames20ms);
+    data->setNumDataPoints(TimeFrames20ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.002);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame50_triggered(){
-    data->setNumDataPoints(TimeFrames50ms);
+    data->setNumDataPoints(TimeFrames50ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.005);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame100_triggered(){
-    data->setNumDataPoints(TimeFrames100ms);
+    data->setNumDataPoints(TimeFrames100ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.01);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame200_triggered(){
-    data->setNumDataPoints(TimeFrames200ms);
+    data->setNumDataPoints(TimeFrames200ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.02);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame500_triggered(){
-    data->setNumDataPoints(TimeFrames500ms);
+    data->setNumDataPoints(TimeFrames500ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.05);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame1000_triggered(){
-    data->setNumDataPoints(TimeFrames1000ms);
+    data->setNumDataPoints(TimeFrames1000ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.1);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame2000_triggered(){
-    data->setNumDataPoints(TimeFrames2000ms);
+    data->setNumDataPoints(TimeFrames2000ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.2);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_timeFrame5000_triggered(){
-    data->setNumDataPoints(TimeFrames5000ms);
+    data->setNumDataPoints(TimeFrames5000ms, 20864.0);
     data->clearallChannelData();
-#ifdef SYLPH
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(0.5);
         channelGraph[i]->replot();
     }
-#endif
 }
 
 void MainWindow::on_voltage50u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00001);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.0105, 0.021, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.0025);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_voltage100u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00002);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.021, 0.042, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.005);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_voltage200u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00004);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.051, 0.102, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.01);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_voltage500u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0001);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.101, 0.202, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.02);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_voltage1000u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0002);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.21, 0.42, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.05);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_voltage2000u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0004);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.51, 1.02, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.1);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_voltage5000u_triggered(){
-#ifdef SYLPH
     for(int i = 0; i < 2; i++){
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.001);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.25);
-        channelGraph[i]->replot();
-    }
-#endif
 }
 
 void MainWindow::on_record_triggered(){
@@ -827,20 +480,14 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms);
+    data->setNumDataPoints(TimeFrames100ms, 20864.0);
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
 
 void MainWindow::on_swap_triggered(){
-#ifdef NEUTRINO_II
-    serialNeutrino->swapPort();
-    statusBarLabel->setText("Port swapped");
-#endif
-#ifdef SYLPH
     serialChannel->swapPort();
     statusBarLabel->setText("Port swapped");
-#endif
 }
 
 void MainWindow::on_filterConfig_trigger(){
@@ -849,93 +496,15 @@ void MainWindow::on_filterConfig_trigger(){
 }
 
 void MainWindow::on_resetY_triggered(){
-#ifdef SYLPH
     for(int i=0;i<2;i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
-#endif
-#ifdef NEUTRINO_II
-    for(int i=0;i<10;i++){
-        if(!data->isFilterEnabled()){
-            channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-        }
-        else{
-            channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft);
-        }
-        channelGraph[i]->yAxis->setTickStep(0.25);
-        channelGraph[i]->replot();
-    }
-    voltage5000u->setChecked(true);
-#endif
-#ifdef SYLPH
     channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->replot();
     voltage500u->setChecked(true);
-#endif
 }
-
-#ifdef NEUTRINO_II
-//void MainWindow::on_ConnectMenu_triggered(){
-//    statusBarLabel->setText("Connection Dialog Opened");
-//    ConnectionDialog connectionDialog(socketEdison);
-//    connectionDialog.exec();
-//    if(socketEdison->isConnected()){
-//        statusBarLabel->setText("Connected!!");
-//    }
-//    else{
-//        statusBarLabel->setText("Disconnected!!");
-//    }
-//}
-
-//void MainWindow::on_DisconnectMenu_triggered(){
-//    if(socketEdison->isConnected()){
-//        qDebug() << "Disconnecting, please wait...";
-//        socketEdison->writeCommand(QByteArray::number(255, 10));
-//        socketEdison->doDisconnect();
-//    }
-//    if(!socketEdison->isConnected()){
-//        statusBarLabel->setText("Disconnected!!");
-//    }
-//}
-
-void MainWindow::on_dataAnalyzer_triggered(){
-    DataAnalyzer dataAnalyzer;
-    dataAnalyzer.showMaximized();
-    dataAnalyzer.exec();
-}
-
-void MainWindow::on_CommandMenu_triggered(){
-    statusBarLabel->setText("Command Dialog Opened");
-    CommandDialog commandDialog(socketEdison, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
-    commandDialog.exec();
-}
-
-void MainWindow::on_tenby1_triggered(){
-    create10x1Layout();
-}
-
-void MainWindow::on_fiveby2_triggered(){
-    create5x2Layout();
-}
-
-//void MainWindow::on_wifi_triggered(){
-//    qDebug() << "ready via Wifi";
-//    serialNeutrino->closePort();
-//    serialNeutrino->serialenabled = false;
-//    socketEdison->wifiEnabled = true;
-//}
-
-//void MainWindow::on_wired_triggered(){
-//    serialNeutrino->serialenabled = true;
-//    if(serialNeutrino->doConnect()){
-//        qDebug() << "ready via USB";
-//    }
-//    socketEdison->wifiEnabled = false;
-//}
-
-#endif //NEUTRINO_II
 
 #ifdef SYLPH
 //void MainWindow::on_serialConfig_triggered(){

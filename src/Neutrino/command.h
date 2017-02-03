@@ -1,7 +1,7 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 #include "channel.h"
 
 #define MARKER_A5 0B10100101

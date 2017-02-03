@@ -1,7 +1,7 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 
 typedef enum ChannelState{
     CHANNELSTATE_ON = 0B10011001,

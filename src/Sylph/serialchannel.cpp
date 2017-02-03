@@ -12,10 +12,8 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-#ifdef SYLPH
     dataProcessor->parseFrameMarkers(implantPort->read(500));
     dataProcessor->sortADCData(ADCPort->read(500));
-#endif
 }
 
 void SerialChannel::closeImplantPort(){
@@ -123,7 +121,6 @@ bool SerialChannel::isConnected(){
 }
 
 void SerialChannel::swapPort(){
-#ifdef SYLPH
     implantPort->close();
     ADCPort->close();
     portInfo = QSerialPortInfo::availablePorts();
@@ -169,5 +166,4 @@ void SerialChannel::swapPort(){
     }
     ADCPort->open(QIODevice::ReadWrite);
     implantPort->open(QIODevice::ReadWrite);
-#endif
 }

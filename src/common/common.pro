@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = common
 TEMPLATE = lib
 
+CONFIG += staticlib
+
 # The application version
 VERSION = 1.0.1
 

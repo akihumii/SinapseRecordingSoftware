@@ -2,7 +2,7 @@
 #define SERIALPORTDIALOG_H
 
 #include <QDialog>
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 #include "serialchannel.h"
 
 namespace Ui {

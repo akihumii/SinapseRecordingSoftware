@@ -2,7 +2,7 @@
 #define COMMANDDIALOG_H
 
 #include <QDialog>
-#include "qtincludes.h"
+#include "../common/qtincludes.h"
 #include "socketedison.h"
 #include "command.h"
 #include "serialchannel.h"

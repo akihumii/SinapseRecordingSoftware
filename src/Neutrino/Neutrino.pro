@@ -17,6 +17,16 @@ VERSION = 1.0.1
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
+DEFINES += NEUTRINO_II
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../common/release/ -lcommon
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../common/debug/ -lcommon
+else:unix: LIBS += -L$$OUT_PWD/../common/ -lcommon
+
+INCLUDEPATH += $$PWD../common
+
+DEPENDPATH += $$PWD../common
+
 HEADERS += \
     channel.h \
     command.h \
@@ -28,7 +38,8 @@ HEADERS += \
     serialportdialog.h \
     signalaudio.h \
     signalchannel.h \
-    socketedison.h
+    socketedison.h \
+    qtincludes.h
 
 SOURCES += \
     channel.cpp \

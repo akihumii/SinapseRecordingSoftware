@@ -19,12 +19,21 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 DEFINES += SYLPH
 
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../common/release/ -lcommon
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../common/debug/ -lcommon
+else:unix: LIBS += -L$$OUT_PWD/../common/ -lcommon
+
+INCLUDEPATH += $$PWD../common
+
+DEPENDPATH += $$PWD../common
+
 HEADERS += \
     dataprocessor.h \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    signalaudio.h
+    signalaudio.h \
+    qtincludes.h
 
 SOURCES += \
     dataprocessor.cpp \
