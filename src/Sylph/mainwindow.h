@@ -2,21 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "socketedison.h"
-#include "command.h"
-#include "qtincludes.h"
-#include "qcustomplot.h"
-#include "connectiondialog.h"
-#include "commanddialog.h"
+#include "../common/qtincludes.h"
+#include "../common/qcustomplot.h"
 #include "dataprocessor.h"
-#include "channel.h"
-#include "data.h"
-#include "filter.h"
-#include "signalchannel.h"
+#include "../common/data.h"
+#include "../common/filter.h"
 #include "serialportdialog.h"
 #include "serialchannel.h"
-#include "filterdialog.h"
-#include "dataanalyzer.h"
+#include "../common/filterdialog.h"
 
 
 class QComboBox;
