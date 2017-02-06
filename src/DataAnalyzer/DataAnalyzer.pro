@@ -29,9 +29,11 @@ FORMS +=
 
 HEADERS += \
     mainwindow.h \
-    qtincludes.h
+    qtincludes.h \
+    graphdialog.h
 
 SOURCES += \
     mainwindow.cpp \
-    main.cpp
+    main.cpp \
+    graphdialog.cpp
 
