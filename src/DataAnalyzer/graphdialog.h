@@ -12,14 +12,20 @@ class GraphDialog : public QDialog
 public:
     GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, QWidget *parent = 0);
     GraphDialog(QComboBox *A[], QComboBox *B[], QCheckBox *diffEnable[], QVector<double> *channelData, int X_axis, QWidget *parent = 0);
-    GraphDialog(int preThreshold, int postThreshold, double threshold, QVector<double> *channelData, int channelSelected, QWidget *parent = 0);
+    GraphDialog(int preThreshold, int postThreshold, int greaterlesser, int maxSpikes, double threshold, QVector<double> *channelData, int channelSelected, QWidget *parent = 0);
     ~GraphDialog();
 
 private:
     void createGraph(int i);
-    int indices[30];
+    int count = 0;
     QCustomPlot *dataGraph[10];
+    bool graphExist[10] = {false, false, false, false, false, false, false, false, false, false};
     QVector<double> extractData(int numPreThreshold, int numPostThreshold, QVector<double> data, int Index);
+    QVector<double> averageData(QVector<double> *allData, int size);
+
+private slots:
+    void selectionChanged();
+    void mouseWheel();
 };
 
 #endif // GRAPHDIALOG_H

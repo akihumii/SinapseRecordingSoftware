@@ -34,6 +34,7 @@ private:
 
     QLineEdit *beforeLineEdit;
     QLineEdit *afterLineEdit;
+    QComboBox *maxSpikesCombo;
 
     QVector<double> channelData[10];
 

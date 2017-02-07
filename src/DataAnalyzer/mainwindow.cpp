@@ -118,8 +118,6 @@ void MainWindow::createTabs(){
         channelSelect->addItem("Channel " + QString::number(i+1, 10));
     }
 
-    channelSelect->setCurrentIndex(3);
-
     QHBoxLayout *thresholdLimitLayout = new QHBoxLayout;
     QLabel *thresholdLimitLabel = new QLabel("Threshold: ");
     QLabel *uV = new QLabel("uV");
@@ -155,6 +153,15 @@ void MainWindow::createTabs(){
     afterLayout->addWidget(afterLineEdit);
     afterLayout->addWidget(ms2);
 
+    QHBoxLayout *maxSpikesLayout = new QHBoxLayout;
+    QLabel *maxSpikesLabel = new QLabel("Maximum plots:");
+    maxSpikesCombo = new QComboBox;
+    for(int i = 0; i < 5; i++){
+        maxSpikesCombo->addItem(QString::number((i+1)*10, 10) + "plots");
+    }
+    maxSpikesLayout->addWidget(maxSpikesLabel);
+    maxSpikesLayout->addWidget(maxSpikesCombo);
+
     processThresholdButton = new QPushButton(tr("Process"));
     connect(processThresholdButton, SIGNAL(clicked(bool)), this, SLOT(on_startThresholdProcessing()));
 
@@ -162,6 +169,7 @@ void MainWindow::createTabs(){
     thresholdLayout->addLayout(thresholdLimitLayout);
     thresholdLayout->addLayout(beforeLayout);
     thresholdLayout->addLayout(afterLayout);
+    thresholdLayout->addLayout(maxSpikesLayout);
     thresholdLayout->addWidget(processThresholdButton);
 
     thresholdMode->setLayout(thresholdLayout);
@@ -212,7 +220,9 @@ void MainWindow::on_startThresholdProcessing(){
     int postThreshold = afterLineEdit->text().toInt();
     double threshold = thresholdLineEdit->text().toDouble();
     int channelSelected = channelSelect->currentIndex();
-    GraphDialog graphDialog(preThreshold, postThreshold, threshold, channelData, channelSelected, this);
+    int greaterlesser = lessmore->currentIndex();
+    int maxSpikes = (maxSpikesCombo->currentIndex()+1)*10;
+    GraphDialog graphDialog(preThreshold, postThreshold, greaterlesser, maxSpikes, threshold, channelData, channelSelected, this);
     graphDialog.setMinimumSize(1366,768);
     graphDialog.showMaximized();
     graphDialog.exec();
