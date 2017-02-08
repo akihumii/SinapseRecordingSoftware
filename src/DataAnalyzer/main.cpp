@@ -10,8 +10,8 @@ int main(int argc, char *argv[]){
                                                 QDir::currentPath(),
                                                 "All files (*.*)");
     MainWindow w(filename);
-    w.setMinimumSize(1366,768);
-    w.showMaximized();
+//    w.setMinimumSize(1366,768);
+    w.show();
 
     return a.exec();
 }

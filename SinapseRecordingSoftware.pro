@@ -24,6 +24,7 @@ DataAnalyzer  = src/DataAnalyzer
 
 Neutrino.depends = common
 Sylph.depends = common
+DataAnalyzer.depends = common
 
 FORMS +=
 

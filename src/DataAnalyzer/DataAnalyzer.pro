@@ -12,7 +12,7 @@ TARGET = DataAnalyzer
 TEMPLATE = app
 
 # The application version
-VERSION = 1.0.1
+VERSION = 1.0.2
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -29,9 +29,11 @@ FORMS +=
 
 HEADERS += \
     mainwindow.h \
-    qtincludes.h
+    qtincludes.h \
+    graphdialog.h
 
 SOURCES += \
     mainwindow.cpp \
-    main.cpp
+    main.cpp \
+    graphdialog.cpp
 
