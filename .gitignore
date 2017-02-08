@@ -279,3 +279,14 @@ tmp/
 /*-release/
 /*_debug/
 /*_release/
+/build*/
+/build*
+/src/*.pro.user
+/src/common/debug/
+/src/common/release/
+/src/DataAnalyzer/debug/
+/src/DataAnalyzer/release/
+/src/Neutrino/debug/
+/src/Neutrino/release/
+/src/Sylph/debug/
+/src/Sylph/release/
