@@ -17,7 +17,13 @@ GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X
     setLayout(mainLayout);
 }
 
-GraphDialog::GraphDialog(QComboBox *A[5], QComboBox *B[5], QCheckBox *diffEnable[5], QVector<double> *channelData, int X_axis, QWidget *parent) : QDialog(parent){
+GraphDialog::GraphDialog(QComboBox *A[5],
+                            QComboBox *B[5],
+                            QCheckBox *diffEnable[5],
+                            QVector<double> *channelData,
+                            int X_axis,
+                            QWidget *parent) : QDialog(parent)
+{
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QVector<double> x;
     for(int i = 0; i < X_axis; i++){
@@ -46,7 +52,8 @@ GraphDialog::GraphDialog(int preThreshold,
                          double threshold,
                          QVector<double> *channelData,
                          int channelSelected,
-                         QWidget *parent) : QDialog(parent){
+                         QWidget *parent) : QDialog(parent)
+{
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QVector<double> x;
     int timeFrameMS = postThreshold - preThreshold;
