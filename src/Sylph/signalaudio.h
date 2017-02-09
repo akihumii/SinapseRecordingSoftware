@@ -17,7 +17,7 @@ public:
 protected:
     QAudioOutput* audio; // class member
     QIODevice *audioDevice;
-    QByteArray audioBuffer[3];
+    QByteArray audioBuffer[11];
     void appendAudioBuffer(int ChannelIndex, char MSB, char LSB);
     bool playAudio(int ChannelIndex);
 private:
