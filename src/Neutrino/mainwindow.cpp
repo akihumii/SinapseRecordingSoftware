@@ -357,9 +357,9 @@ void MainWindow::updateData(){
         data->removeXAxis();
     }
     if(NeutrinoCommand->getOPMode() == 1){
-        statusBarLabel->setText("<FONT SIZE = 10> Incorrect data count: " + QString::number(data->getIncorrectCount(), 10)
-                               + "  Total data count: " + QString::number(data->getTotalCount(), 10)
-                               + "  Dropped data count: " + QString::number(data->getDroppedCount(), 10));
+        statusBarLabel->setText("<FONT SIZE = 10> Incorrect data count (bits): " + QString::number(data->getIncorrectCount(), 10)
+                               + "  Total data count (bits): " + QString::number(data->getTotalCount()*8, 10)
+                               + "  Dropped data count (bytes): " + QString::number(data->getDroppedCount(), 10));
     }
 }
 
