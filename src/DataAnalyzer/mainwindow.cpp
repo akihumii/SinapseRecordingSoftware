@@ -26,7 +26,7 @@ MainWindow::MainWindow(QString filename){
             while(!in.atEnd()){
                 QString line = in.readLine();
                 for(int i = 0; i < numChannels; i++){
-                    channelData[i].append(line.split(" ,")[i].toInt()*1.2/256);
+                    channelData[i].append(line.split(" ,")[i].toInt()*0.000000195);
                 }
                 total_data_points++;
                 progress.setValue(total_data_points);

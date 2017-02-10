@@ -68,6 +68,7 @@ void MainWindow::createLayout(){
     for(int i = 0; i < 10; i ++){
         channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
     }
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
     channelGraph[10]->yAxis->setLabelPadding(35);
@@ -79,10 +80,6 @@ void MainWindow::createLayout(){
     channelGraph[11]->setFixedHeight(100);
 
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
-    for(int i = 1; i < 10; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-    }
-
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
 
     channelGraph[10]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
@@ -161,6 +158,10 @@ void MainWindow::createActions(){
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
+    dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
+    dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
+    connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
+
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+X"));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
@@ -223,6 +224,9 @@ void MainWindow::createMenus(){
 
 //    fileMenu->addAction(serialPortAction);
 //    fileMenu->addAction(resetDefaultRange);
+
+    fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addSeparator();
 
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
@@ -542,6 +546,12 @@ void MainWindow::on_resetY_triggered(){
     channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[11]->replot();
     voltage500u->setChecked(true);
+}
+
+void MainWindow::on_dataAnalyzer_triggered(){
+    QProcess *process = new QProcess(this);
+    QString file = QDir::currentPath() + QDir::separator() + "DataAnalyzer.exe";
+    process->start(file);
 }
 
 //void MainWindow::on_serialConfig_triggered(){

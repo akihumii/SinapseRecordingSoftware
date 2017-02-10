@@ -24,10 +24,12 @@ HEADERS += \
     filter.h \
     filterdialog.h \
     qcustomplot.h \
-    qtincludes.h
+    qtincludes.h \
+    signalaudio.h
 
 SOURCES += \
     data.cpp \
     filter.cpp \
     filterdialog.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    signalaudio.cpp

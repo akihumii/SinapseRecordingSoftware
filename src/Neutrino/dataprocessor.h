@@ -4,7 +4,7 @@
 #include "../common/qtincludes.h"
 #include "../common/data.h"
 #include "channel.h"
-#include "signalaudio.h"
+#include "../common/signalaudio.h"
 
 #define END_OF_LINE 2779058
 

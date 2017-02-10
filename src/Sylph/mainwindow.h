@@ -96,10 +96,6 @@ private:
     QAction *serialPortAction;
     QAction *aboutAction;
 
-    QAction *audio1;
-    QAction *audio2;
-    QAction *audio3;
-
     QAction *audio[11];
 
     QActionGroup *audioGroup;
@@ -123,6 +119,7 @@ private slots:
     void on_voltage1000u_triggered();
     void on_voltage2000u_triggered();
     void on_voltage5000u_triggered();
+    void on_dataAnalyzer_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();

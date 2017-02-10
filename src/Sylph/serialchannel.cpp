@@ -12,7 +12,6 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-//    qDebug() << implantPort->bytesAvailable();
     if(implantPort->bytesAvailable() > 500){
         dataProcessor->parseFrameMarkers(implantPort->read(2000));
 

@@ -26,6 +26,7 @@ private:
 private slots:
     void selectionChanged();
     void mouseWheel();
+    void setAllRange(QCPRange range);
 };
 
 #endif // GRAPHDIALOG_H

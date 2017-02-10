@@ -6,7 +6,7 @@ GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X
     for(int i = 0; i < X_axis; i++){
         x.append(i*0.000056);
     }
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 12; i++){
         if(dataSelected[i]){
             createGraph(i);
             mainLayout->addWidget(dataGraph[i]);
@@ -27,10 +27,10 @@ GraphDialog::GraphDialog(QComboBox *A[5],
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QVector<double> x;
     for(int i = 0; i < X_axis; i++){
-        x.append(i*0.000056);
+        x.append(i*0.000202);
     }
-    QVector<double> diffData[5];
-    for(int i = 0; i < 5; i++){
+    QVector<double> diffData[6];
+    for(int i = 0; i < 6; i++){
         if(diffEnable[i]->isChecked()){
             for(int j = 0; j < X_axis; j++){
                 diffData[i].append(channelData[(A[i]->currentIndex())].at(j)
@@ -57,10 +57,10 @@ GraphDialog::GraphDialog(int preThreshold,
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QVector<double> x;
     int timeFrameMS = postThreshold - preThreshold;
-    int numPreThreshold =  preThreshold/0.056;
-    int numPostThreshold = postThreshold/0.056;
-    for(int i = 0; i < (int) timeFrameMS/0.056; i++){
-        x.append(i*0.000056);
+    int numPreThreshold =  preThreshold/0.202;
+    int numPostThreshold = postThreshold/0.202;
+    for(int i = 0; i < (int) timeFrameMS/0.202; i++){
+        x.append(i*0.000202);
     }
     int indices[maxSpikes];
     count = 0;
@@ -85,14 +85,14 @@ GraphDialog::GraphDialog(int preThreshold,
     for(int i = 0; i < count; i++){
         allData[i] = extractData(numPreThreshold, numPostThreshold, channelData[channelSelected], indices[i]);
         dataGraph[0]->graph()->setData(x, allData[i]);
-        dataGraph[0]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+        dataGraph[0]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         dataGraph[0]->xAxis->setRange(0, (double) timeFrameMS/1000.0, Qt::AlignLeft);
         dataGraph[0]->replot();
         dataGraph[0]->addGraph();
     }
     if(count > 0){
         dataGraph[0]->graph()->setData(x, averageData(allData, count));
-        dataGraph[0]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+        dataGraph[0]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         dataGraph[0]->xAxis->setRange(0, (double) timeFrameMS/1000.0, Qt::AlignLeft);
         QPen avgPen;
         avgPen.setColor(Qt::red);
@@ -125,7 +125,8 @@ void GraphDialog::createGraph(int i){
     dataGraph[i]->addGraph();
     dataGraph[i]->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes);
     dataGraph[i]->axisRect()->setRangeDrag(Qt::Horizontal);
-    dataGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+    connect(dataGraph[i]->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(setAllRange(QCPRange)));
+    dataGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
     connect(dataGraph[i], SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
     connect(dataGraph[i], SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 }
@@ -145,7 +146,7 @@ QVector<double> GraphDialog::averageData(QVector<double> *allData, int size){
 }
 
 void GraphDialog::selectionChanged(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 12; i++){
         if(graphExist[i]){
             // make top and bottom axes be selected synchronously, and handle axis and tick labels as one selectable object:
             if (dataGraph[i]->xAxis->selectedParts().testFlag(QCPAxis::spAxis) || dataGraph[i]->xAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
@@ -168,7 +169,7 @@ void GraphDialog::selectionChanged(){
 void GraphDialog::mouseWheel(){
   // if an axis is selected, only allow the direction of that axis to be zoomed
   // if no axis is selected, both directions may be zoomed
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 12; i++){
         if(graphExist[i]){
             if (dataGraph[i]->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
             dataGraph[i]->axisRect()->setRangeZoom(dataGraph[i]->xAxis->orientation());
@@ -176,6 +177,16 @@ void GraphDialog::mouseWheel(){
             dataGraph[i]->axisRect()->setRangeZoom(dataGraph[i]->yAxis->orientation());
             else
             dataGraph[i]->axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
+        }
+    }
+}
+
+void GraphDialog::setAllRange(QCPRange range){
+    for(int i = 0; i < 12; i++){
+        if(graphExist[i]){
+            qDebug() << "Setting range: " << i;
+            dataGraph[i]->xAxis->setRange(range);
+            dataGraph[i]->replot();
         }
     }
 }

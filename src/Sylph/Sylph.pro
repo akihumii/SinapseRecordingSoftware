@@ -30,7 +30,6 @@ HEADERS += \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    signalaudio.h \
     qtincludes.h
 
 SOURCES += \
@@ -38,5 +37,4 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     serialchannel.cpp \
-    serialportdialog.cpp \
-    signalaudio.cpp
+    serialportdialog.cpp

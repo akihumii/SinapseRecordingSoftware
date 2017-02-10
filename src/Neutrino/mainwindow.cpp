@@ -584,9 +584,6 @@ void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
     QString file = QDir::currentPath() + QDir::separator() + "DataAnalyzer.exe";
     process->start(file);
-//    DataAnalyzer dataAnalyzer;
-//    dataAnalyzer.showMaximized();
-//    dataAnalyzer.exec();
 }
 
 void MainWindow::on_CommandMenu_triggered(){
