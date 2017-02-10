@@ -47,6 +47,7 @@ public:
     quint8 getJTAG(int Index);
     quint8 getDCLMode();
     quint8 getChipID();
+    quint8 *getBERbyte();
     void setJTAGbit(int Index);
     void clearJTAGbit(int Index);
     void setDCLMode(quint8 newDCL_Mode);
@@ -63,7 +64,7 @@ private:
     quint8 JTAGarray[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     quint8 DCL_Mode = DCL_EXIT;
     bool ok;
-    int BERbytesHex[8];
+    quint8 BERbytesHex[8];
     bool lastCommandexist = false;
 };
 

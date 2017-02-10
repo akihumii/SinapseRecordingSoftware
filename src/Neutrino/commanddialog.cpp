@@ -14,6 +14,7 @@ CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoComma
         loadDefault();
         Exit->setChecked(true);
     }
+    on_BER_textEdited();
 }
 
 CommandDialog::~CommandDialog(){
@@ -63,6 +64,8 @@ void CommandDialog::createLayout(){
     BioImpLayout->addWidget(BioImpLabel);
     BioImpLayout->addWidget(SendCommand);
 
+    BERReset = new QPushButton(tr("Reset BER"));
+    connect(BERReset, SIGNAL(clicked(bool)), this, SLOT(on_BER_reset()));
 
     QVBoxLayout *DCL = new QVBoxLayout;
     DigComLoopback = new QLabel;
@@ -77,6 +80,7 @@ void CommandDialog::createLayout(){
     ChipReset = new QPushButton(tr("Chip Reset"));
     connect(ChipReset, SIGNAL(clicked(bool)), this, SLOT(on_chipReset_clicked()));
 
+    DCL->addWidget(BERReset);
     DCL->addWidget(DigComLoopback);
     DCL->addWidget(Exit);
     DCL->addWidget(Enter);
@@ -101,7 +105,7 @@ void CommandDialog::createLayout(){
 
     QHBoxLayout *BERLayout = new QHBoxLayout;
     for (int i=0;i<8;i++){
-        BER_byte[i] = new QLineEdit;
+        BER_byte[i] = new QLineEdit("FF");
         BER_byte[i]->setInputMask("HH");
         BER_byte[i]->setMaximumWidth(35);
         BER_byte[i]->setAlignment(Qt::AlignHCenter);
@@ -412,6 +416,10 @@ void CommandDialog::loadlastCommand(){
             SELCHN[i]->setChecked(true);
         }
     }
+}
+
+void CommandDialog::on_BER_reset(){
+    NeutrinoSerial->restartBER();
 }
 
 void CommandDialog::loadDefault(){

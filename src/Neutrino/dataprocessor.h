@@ -30,6 +30,14 @@ public:
     QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
+    QByteArray lockBERstream(quint8 *actualData, QByteArray rawData);
+    void processBER(quint8 *actualData, QByteArray rawData);
+    void compareData(quint8 *actualData, QByteArray rawData);
+    bool isBERlocked();
+    quint64 getIncorrectCount();
+    quint64 getTotalCount();
+    quint64 getDroppedCount();
+    void resetBER();
 
 private:
     QTextStream *out;
@@ -42,9 +50,11 @@ private:
     qint16 fullWord_rawData;
     int lastFrameMarker;
     QByteArray leftOverData;
+    QByteArray berLeftOver;
     QVector<quint8> ADC_Data;
 
     bool is8BitMode;
+    bool BERlocked = false;
 
     int first_10bitFrameMarker(QByteArray data);
     int last_10bitFrameMarker(QByteArray data);
@@ -55,6 +65,10 @@ private:
     int prevleftOverByteCount = 0;
 
     double SamplingRate;
+
+    quint64 incorrectCount = 0;
+    quint64 totalCount = 0;
+    quint64 droppedCount = 0;
 };
 
 #endif // DATAPROCESSOR_KA_H

@@ -12,7 +12,22 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
 }
 
 void SerialChannel::ReadData(){
-    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+    if(NeutrinoCommand->getOPMode() == 2 || NeutrinoCommand->getOPMode() == 3 && !readBER){
+        NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+    }
+    else if (NeutrinoCommand->getOPMode() == 1 && readBER){
+        if(!NeutrinoData->isBERlocked()){
+            NeutrinoData->processBER(NeutrinoCommand->getBERbyte(),
+                                     NeutrinoData->lockBERstream(NeutrinoCommand->getBERbyte(),
+                                                                 serialData->read(2048)));
+        }
+        else{
+            NeutrinoData->processBER(NeutrinoCommand->getBERbyte(), serialData->read(2048));
+        }
+    }
+    else{
+        serialData->read(2048);
+    }
 }
 
 void SerialChannel::closePort(){
@@ -43,7 +58,7 @@ bool SerialChannel::doConnect(){
                 serialCommand->setBaudRate(19200);
             }
             serialData->setDataBits(QSerialPort::Data8);
-            serialData->setParity(QSerialPort::NoParity);
+            serialData->setParity(QSerialPort::EvenParity);
             serialData->setStopBits(QSerialPort::OneStop);
             serialData->setFlowControl(QSerialPort::NoFlowControl);
             serialData->setReadBufferSize(2048);
@@ -78,6 +93,7 @@ bool SerialChannel::writeCommand(QByteArray Command){
                 NeutrinoData->clearallChannelData();
                 qDebug() << "8 Bit Mode";
                 NeutrinoChannel->setNumChannels(getNumChannels(Command));
+                readBER = false;
             }
             else if(Command.at(6) == (char) WL_10){
                 NeutrinoData->setBitMode(false);
@@ -85,9 +101,17 @@ bool SerialChannel::writeCommand(QByteArray Command){
                 NeutrinoData->clearallChannelData();
                 qDebug() << "10 Bit Mode";
                 NeutrinoChannel->setNumChannels(getNumChannels(Command));
+                readBER = false;
+            }
+            else if(Command.at(6) == (char) DATA_BER_MODE){
+                readBER = true;
+                // Invoke BER Counter Dialog here //
+//                BERDialog berDialog(NeutrinoData);
+//                berDialog.exec();
             }
             else {
                 NeutrinoData->setPlotEnabled(false);
+                readBER = false;
             }
         }
         serialCommand->write(Command);         //write the command itself
@@ -151,4 +175,8 @@ void SerialChannel::swapPort(){
     }
     serialData->open(QIODevice::ReadWrite);
     serialCommand->open(QIODevice::ReadWrite);
+}
+
+void SerialChannel::restartBER(){
+    NeutrinoData->resetBER();
 }

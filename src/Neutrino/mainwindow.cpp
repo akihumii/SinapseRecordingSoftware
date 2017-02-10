@@ -356,6 +356,11 @@ void MainWindow::updateData(){
         }
         data->removeXAxis();
     }
+    if(NeutrinoCommand->getOPMode() == 1){
+        statusBarLabel->setText("<FONT SIZE = 10> Incorrect data count: " + QString::number(data->getIncorrectCount(), 10)
+                               + "  Total data count: " + QString::number(data->getTotalCount(), 10)
+                               + "  Dropped data count: " + QString::number(data->getDroppedCount(), 10));
+    }
 }
 
 void MainWindow::on_timeFrame10_triggered(){

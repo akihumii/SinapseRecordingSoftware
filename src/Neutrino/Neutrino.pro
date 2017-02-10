@@ -37,7 +37,8 @@ HEADERS += \
     signalaudio.h \
     signalchannel.h \
     socketedison.h \
-    qtincludes.h
+    qtincludes.h \
+    berdialog.h
 
 SOURCES += \
     channel.cpp \
@@ -51,4 +52,7 @@ SOURCES += \
     serialportdialog.cpp \
     signalaudio.cpp \
     signalchannel.cpp \
-    socketedison.cpp
+    socketedison.cpp \
+    berdialog.cpp
+
+FORMS +=

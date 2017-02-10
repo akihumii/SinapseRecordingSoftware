@@ -136,7 +136,11 @@ quint8 Command::getDCLMode(){
 }
 
 void Command::updateBER(int Index, QString newBER){
-    BERbytesHex[Index] = newBER.toInt(&ok,16);
+    BERbytesHex[Index] = newBER.toUInt(&ok,16);
+}
+
+quint8 *Command::getBERbyte(){
+    return BERbytesHex;
 }
 
 bool Command::havelastCommand(){
@@ -146,5 +150,3 @@ bool Command::havelastCommand(){
 void Command::setlastCommand(bool flag){
     lastCommandexist = flag;
 }
-
-

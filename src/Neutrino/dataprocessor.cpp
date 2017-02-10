@@ -157,3 +157,118 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
 void DataProcessor::setBitMode(bool BitMode){
     is8BitMode = BitMode;
 }
+
+QByteArray DataProcessor::lockBERstream(quint8 *actualData, QByteArray rawData){
+    QByteArray dataPacket;
+    for(int i = 0; i < 10; i++){
+        dataPacket.append((const char) 0B10100101);
+    }
+    dataPacket.append((const char) 0);
+    for(int i = 0; i < 8; i++){
+        dataPacket.append((const char) actualData[i]);
+    }
+    dataPacket.append((const char) 90);
+    while(!rawData.isEmpty()){
+        for(int j = 0; j < 20; j++){
+            if((quint8)dataPacket.at(j) != (quint8)rawData.at(j)){
+                qDebug() << "Data removed";
+                for(int i = j; i < 20; i++){
+                    if((quint8) rawData.at(i) == 90){
+                        rawData = rawData.remove(0,i);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        BERlocked = true;
+        return rawData;
+    }
+}
+
+bool DataProcessor::isBERlocked(){
+    return BERlocked;
+}
+
+void DataProcessor::processBER(quint8 *actualData, QByteArray rawData){
+    for(int i = 0; i < rawData.size(); i++){
+        totalCount++;
+//        qDebug() << "Total     count : " << totalCount;
+    }
+    compareData(actualData, rawData);
+}
+
+
+// Compare data and return number of bit error //
+void DataProcessor::compareData(quint8 *actualData, QByteArray rawData){
+    if(berLeftOver.size()>0){
+        for(int i = berLeftOver.size()-1; i>=0;i--){
+            rawData.prepend(berLeftOver.at(i));
+        }
+        berLeftOver.clear();
+    }
+    QByteArray dataPacket;
+    for(int i = 0; i < 10; i++){
+        dataPacket.append((const char) 0B10100101);
+    }
+    dataPacket.append((const char) 0);
+    for(int i = 0; i < 8; i++){
+        dataPacket.append((const char) actualData[i]);
+    }
+    dataPacket.append((const char) 90);
+    while(rawData.size() > 19){
+        if((quint8)rawData.at(0) == 165
+                && (quint8)rawData.at(1) == 165
+                && (quint8)rawData.at(2) == 165
+                && (quint8)rawData.at(3) == 165
+                && (quint8)rawData.at(4) == 165
+                && (quint8)rawData.at(5) == 165
+                && (quint8)rawData.at(6) == 165
+                && (quint8)rawData.at(7) == 165
+                && (quint8)rawData.at(8) == 165
+                && (quint8)rawData.at(9) == 165){
+            for(int j = 0; j < 8; j++){
+//                qDebug() << actualData[j] << "   " << (quint8) rawData.at(11+j);
+                if((actualData[j] ^ (quint8) rawData.at(11+j)) != 0){
+                    quint8 temp = actualData[j] ^ (quint8) rawData.at(11+j);
+                    for(int k = 0; k < 8; k++){
+                        if(((temp && 1<<k) >> k) == 1){
+                            incorrectCount++;
+                            qDebug() << "Incorrect count : " << incorrectCount;
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            droppedCount++;
+            qDebug() << "Dropped data count: " << droppedCount;
+            rawData.remove(0,1);
+        }
+        rawData = rawData.remove(0,20);
+        if(rawData.size() < 20){
+            for(int i = 0; i < rawData.size(); i++){
+                berLeftOver.append(rawData.at(i));
+            }
+            rawData.clear();
+        }
+    }
+}
+
+quint64 DataProcessor::getIncorrectCount(){
+    return incorrectCount;
+}
+
+quint64 DataProcessor::getTotalCount(){
+    return totalCount;
+}
+
+quint64 DataProcessor::getDroppedCount(){
+    return droppedCount;
+}
+
+void DataProcessor::resetBER(){
+    incorrectCount = 0;
+    totalCount = 0;
+    droppedCount = 0;
+}

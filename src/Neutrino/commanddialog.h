@@ -33,6 +33,7 @@ private slots:
     void on_BioImp_toggled();
     void on_DCL_toggled();
     void on_BER_textEdited();
+    void on_BER_reset();
 
 private:
     SocketEdison *socketEdison;
@@ -78,6 +79,7 @@ private:
 
     QPushButton *SendCommand;
     QPushButton *ChipReset;
+    QPushButton *BERReset;
 
     QPushButton *JTAGextension;
     QPushButton *JTAGreset;

@@ -5,6 +5,7 @@
 #include "dataprocessor.h"
 #include "command.h"
 #include "channel.h"
+#include "berdialog.h"
 
 
 class SerialChannel : public QObject{
@@ -17,6 +18,7 @@ public:
     bool isConnected();
     bool writeCommand(QByteArray Command);
     void swapPort();
+    void restartBER();
 public slots:
     void ReadData();
 private:
@@ -32,6 +34,7 @@ private:
     bool connected = false;
     int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
+    bool readBER;
 };
 
 #endif // SerialChannel_H
