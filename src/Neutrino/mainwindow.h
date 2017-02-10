@@ -11,7 +11,7 @@
 #include "dataprocessor.h"
 #include "channel.h"
 #include "../common/data.h"
-#include "filter.h"
+#include "../common/filter.h"
 #include "signalchannel.h"
 #include "serialportdialog.h"
 #include "serialchannel.h"

@@ -91,7 +91,7 @@ private:
     QMenu *helpMenu;
     QMenu *audioOutputMenu;
 
-    QCustomPlot *channelGraph[10];
+    QCustomPlot *channelGraph[12];
 
     QAction *serialPortAction;
     QAction *aboutAction;
@@ -99,6 +99,8 @@ private:
     QAction *audio1;
     QAction *audio2;
     QAction *audio3;
+
+    QAction *audio[11];
 
     QActionGroup *audioGroup;
 
@@ -136,6 +138,13 @@ private slots:
     void on_graph1_clicked();
     void on_graph2_clicked();
     void on_graph3_clicked();
+    void on_graph4_clicked();
+    void on_graph5_clicked();
+    void on_graph6_clicked();
+    void on_graph7_clicked();
+    void on_graph8_clicked();
+    void on_graph9_clicked();
+    void on_graph10_clicked();
 };
 
 #endif // MainWindow_H

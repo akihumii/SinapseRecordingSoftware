@@ -61,9 +61,9 @@ bool SignalAudio::playAudio(int ChannelIndex){
 }
 
 void SignalAudio::clearAudioBuffer(){
-    audioBuffer[0].clear();
-    audioBuffer[1].clear();
-    audioBuffer[2].clear();
+    for(int i = 0; i < 11; i++){
+        audioBuffer[i].clear();
+    }
 }
 
 void SignalAudio::handleStateChanged(QAudio::State newState)

@@ -39,12 +39,11 @@ MainWindow::MainWindow(){
 
 void MainWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i] = new QCustomPlot;
-        mainLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,10,0,15));
+        channelGraph[i]->axisRect()->setMargins(QMargins(85,10,0,15));
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->addGraph();
         channelGraph[i]->yAxis->setAutoTickStep(false);
@@ -56,32 +55,68 @@ void MainWindow::createLayout(){
     connect(channelGraph[0], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph1_clicked()));
     connect(channelGraph[1], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph2_clicked()));
     connect(channelGraph[2], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph3_clicked()));
+    connect(channelGraph[3], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph4_clicked()));
+    connect(channelGraph[4], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph5_clicked()));
+    connect(channelGraph[5], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph6_clicked()));
+    connect(channelGraph[6], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph7_clicked()));
+    connect(channelGraph[7], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph8_clicked()));
+    connect(channelGraph[8], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph9_clicked()));
+    connect(channelGraph[9], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph10_clicked()));
+    connect(channelGraph[10], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph11_clicked()));
 
-    channelGraph[0]->yAxis->setLabel("Channel 1 (V)");
-    channelGraph[0]->yAxis->setLabelFont(QFont(font().family(), 11));
-    channelGraph[1]->yAxis->setLabel("Channel 2 (V)");
-    channelGraph[1]->yAxis->setLabelFont(QFont(font().family(), 11));
-    channelGraph[2]->yAxis->setLabel("Sync Pulse (V)");
-    channelGraph[2]->yAxis->setLabelPadding(35);
-    channelGraph[2]->yAxis->setLabelFont(QFont(font().family(), 11));
-    channelGraph[3]->yAxis->setLabel("Frame Marker");
-    channelGraph[3]->yAxis->setLabelPadding(35);
-    channelGraph[3]->yAxis->setLabelFont(QFont(font().family(), 11));
+
+    for(int i = 0; i < 10; i ++){
+        channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (V)");
+        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
+    }
+    channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
+    channelGraph[10]->yAxis->setLabelPadding(35);
+    channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 10));
+    channelGraph[10]->setFixedHeight(100);
+    channelGraph[11]->yAxis->setLabel("Frame Marker");
+    channelGraph[11]->yAxis->setLabelPadding(35);
+    channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 10));
+    channelGraph[11]->setFixedHeight(100);
 
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
-    channelGraph[1]->graph()->setPen(QPen(Qt::black));
-    channelGraph[2]->graph()->setPen(QPen(Qt::black));
-    channelGraph[3]->graph()->setPen(QPen(Qt::darkGreen));
+    for(int i = 1; i < 10; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+    }
 
-    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
-    channelGraph[2]->yAxis->setTickStep(0.5);
-    channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
-    channelGraph[3]->yAxis->setTickStep(50);
-    channelGraph[3]->axisRect()->setMargins(QMargins(75,10,0,15));
+    channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
+
+    channelGraph[10]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    channelGraph[10]->yAxis->setTickStep(0.5);
+    channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[11]->yAxis->setTickStep(50);
+    channelGraph[11]->axisRect()->setMargins(QMargins(75,10,0,15));
+
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+    for(int i = 0; i < 5; i++){
+        leftLayout->addWidget(channelGraph[i]);
+    }
+
+    QVBoxLayout *rightLayout = new QVBoxLayout;
+    for(int i = 5; i < 10; i++){
+        rightLayout->addWidget(channelGraph[i]);
+    }
+
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    topLayout->addLayout(leftLayout);
+    topLayout->addLayout(rightLayout);
+
+    QVBoxLayout *bottomLayout = new QVBoxLayout;
+    for(int i = 10; i < 12; i++){
+        bottomLayout->addWidget(channelGraph[i]);
+    }
+
+    mainLayout->addLayout(topLayout);
+    mainLayout->addLayout(bottomLayout);
 
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
+    on_timeFrame100_triggered();
 }
 
 void MainWindow::createActions(){
@@ -295,10 +330,10 @@ MainWindow::~MainWindow(){
 void MainWindow::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
     if(X_axis.size() >= data->getNumDataPoints()){
-        for(int i=0; i<4; i++){
+        for(int i=0; i<12; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*0.000048, Qt::AlignLeft);
+                channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*0.000202, Qt::AlignLeft);
                 if(!pause){
                     channelGraph[i]->replot();
                 }
@@ -310,88 +345,88 @@ void MainWindow::updateData(){
 }
 
 void MainWindow::on_timeFrame10_triggered(){
-    data->setNumDataPoints(TimeFrames10ms, 20864.0);
+    data->setNumDataPoints(TimeFrames10ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.001);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame20_triggered(){
-    data->setNumDataPoints(TimeFrames20ms, 20864.0);
+    data->setNumDataPoints(TimeFrames20ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.002);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame50_triggered(){
-    data->setNumDataPoints(TimeFrames50ms, 20864.0);
+    data->setNumDataPoints(TimeFrames50ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.005);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame100_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 20864.0);
+    data->setNumDataPoints(TimeFrames100ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.01);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame200_triggered(){
-    data->setNumDataPoints(TimeFrames200ms, 20864.0);
+    data->setNumDataPoints(TimeFrames200ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.02);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame500_triggered(){
-    data->setNumDataPoints(TimeFrames500ms, 20864.0);
+    data->setNumDataPoints(TimeFrames500ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.05);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame1000_triggered(){
-    data->setNumDataPoints(TimeFrames1000ms, 20864.0);
+    data->setNumDataPoints(TimeFrames1000ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.1);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame2000_triggered(){
-    data->setNumDataPoints(TimeFrames2000ms, 20864.0);
+    data->setNumDataPoints(TimeFrames2000ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.2);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_timeFrame5000_triggered(){
-    data->setNumDataPoints(TimeFrames5000ms, 20864.0);
+    data->setNumDataPoints(TimeFrames5000ms, 4960.0);
     data->clearallChannelData();
-    for(int i=0;i<4;i++){
+    for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.5);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_voltage50u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.000050, 0.0001, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00001);
         channelGraph[i]->replot();
@@ -399,7 +434,7 @@ void MainWindow::on_voltage50u_triggered(){
 }
 
 void MainWindow::on_voltage100u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.0001, 0.0002, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00002);
         channelGraph[i]->replot();
@@ -407,7 +442,7 @@ void MainWindow::on_voltage100u_triggered(){
 }
 
 void MainWindow::on_voltage200u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.0002, 0.0004, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.00004);
         channelGraph[i]->replot();
@@ -415,7 +450,7 @@ void MainWindow::on_voltage200u_triggered(){
 }
 
 void MainWindow::on_voltage500u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.001, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0001);
         channelGraph[i]->replot();
@@ -423,7 +458,7 @@ void MainWindow::on_voltage500u_triggered(){
 }
 
 void MainWindow::on_voltage1000u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.001, 0.002, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0002);
         channelGraph[i]->replot();
@@ -431,7 +466,7 @@ void MainWindow::on_voltage1000u_triggered(){
 }
 
 void MainWindow::on_voltage2000u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.002, 0.004, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.0004);
         channelGraph[i]->replot();
@@ -439,7 +474,7 @@ void MainWindow::on_voltage2000u_triggered(){
 }
 
 void MainWindow::on_voltage5000u_triggered(){
-    for(int i = 0; i < 2; i++){
+    for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(0.001);
         channelGraph[i]->replot();
@@ -480,7 +515,7 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 20864.0);
+    data->setNumDataPoints(TimeFrames100ms, 4960.0);
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
@@ -496,13 +531,10 @@ void MainWindow::on_filterConfig_trigger(){
 }
 
 void MainWindow::on_resetY_triggered(){
-    for(int i=0;i<2;i++){
-        channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
-        channelGraph[i]->replot();
-    }
-    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
-    channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
-    channelGraph[3]->replot();
+    on_voltage500u_triggered();
+    channelGraph[10]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
+    channelGraph[11]->replot();
     voltage500u->setChecked(true);
 }
 
@@ -594,3 +626,33 @@ void MainWindow::on_graph3_clicked(){
     audio2->setChecked(false);
     audio3->setChecked(true);
 }
+
+void MainWindow::on_graph4_clicked(){
+
+}
+
+void MainWindow::on_graph5_clicked(){
+
+}
+
+void MainWindow::on_graph6_clicked(){
+
+}
+
+void MainWindow::on_graph7_clicked(){
+
+}
+
+void MainWindow::on_graph8_clicked(){
+
+}
+
+void MainWindow::on_graph9_clicked(){
+
+}
+
+void MainWindow::on_graph10_clicked(){
+
+}
+
+

@@ -8,12 +8,16 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
     dataProcessor = dataProcessor_;
 
     connect(implantPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
-    connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadADCData()));
+    connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadImplatData()));
 }
 
 void SerialChannel::ReadImplantData(){
-    dataProcessor->parseFrameMarkers(implantPort->read(500));
-    dataProcessor->sortADCData(ADCPort->read(500));
+//    qDebug() << implantPort->bytesAvailable();
+    if(implantPort->bytesAvailable() > 500){
+        dataProcessor->parseFrameMarkers(implantPort->read(2000));
+
+        dataProcessor->sortADCData(ADCPort->read(2000));
+    }
 }
 
 void SerialChannel::closeImplantPort(){
@@ -35,7 +39,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setParity(QSerialPort::NoParity);
     implantPort->setStopBits(QSerialPort::OneStop);
     implantPort->setFlowControl(QSerialPort::NoFlowControl);
-    implantPort->setReadBufferSize(2000);
+//    implantPort->setReadBufferSize(2000);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -52,7 +56,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-    ADCPort->setReadBufferSize(2000);
+//    ADCPort->setReadBufferSize(2000);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -71,7 +75,7 @@ void SerialChannel::connectSylph(){
     }
     for(int i = 0; i < portInfo.size(); i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
+            if(portInfo.at(i+1).portName().split("ttyUSB")[1].toInt() > portInfo.at(i).portName().split("ttyUSB")[1].toInt()){
                 implantPort->setPortName(portInfo.at(i+1).portName());
                 implantPort->setBaudRate(1333333);
 
