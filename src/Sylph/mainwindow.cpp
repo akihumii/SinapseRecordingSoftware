@@ -124,13 +124,23 @@ void MainWindow::createActions(){
     //    serialPortAction->setShortcut(tr("Ctrl+E"));
     //    connect(serialPortAction, SIGNAL(triggered()), this, SLOT(on_serialConfig_triggered()));
 
-    audio1 = new QAction(tr("Channel 1 Audio Output"));
-    audio2 = new QAction(tr("Channel 2 Audio Output"));
-    audio3 = new QAction(tr("Sync Pulse Audio Output"));
+    for(int i = 0; i < 10; i++){
+        audio[i] = new QAction("Channel " + QString::number(i+1, 10)+ " Audio Output");
+    }
+    audio[10] = new QAction(tr("Sync Pulse Audio Output"));
 
-    connect(audio1, SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
-    connect(audio2, SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
-    connect(audio3, SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
+    connect(audio[0], SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
+    connect(audio[1], SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
+    connect(audio[2], SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
+    connect(audio[3], SIGNAL(triggered(bool)), this, SLOT(on_graph4_clicked()));
+    connect(audio[4], SIGNAL(triggered(bool)), this, SLOT(on_graph5_clicked()));
+    connect(audio[5], SIGNAL(triggered(bool)), this, SLOT(on_graph6_clicked()));
+    connect(audio[6], SIGNAL(triggered(bool)), this, SLOT(on_graph7_clicked()));
+    connect(audio[7], SIGNAL(triggered(bool)), this, SLOT(on_graph8_clicked()));
+    connect(audio[8], SIGNAL(triggered(bool)), this, SLOT(on_graph9_clicked()));
+    connect(audio[9], SIGNAL(triggered(bool)), this, SLOT(on_graph10_clicked()));
+    connect(audio[10], SIGNAL(triggered(bool)), this, SLOT(on_graph11_clicked()));
+
 
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
@@ -295,18 +305,14 @@ void MainWindow::createMenus(){
 //----------------------- AUDIO OUTPUT MENU -------------------------//
 //--------------------------- HELP MENU -----------------------------//
     audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
-    audioOutputMenu->addAction(audio1);
-    audio1->setCheckable(true);
-    audioOutputMenu->addAction(audio2);
-    audio2->setCheckable(true);
-    audioOutputMenu->addAction(audio3);
-    audio3->setCheckable(true);
-
     audioGroup = new QActionGroup(this);
-    audioGroup->addAction(audio1);
-    audio1->setChecked(true);
-    audioGroup->addAction(audio2);
-    audioGroup->addAction(audio3);
+
+    for(int i = 0; i < 11; i++){
+        audioOutputMenu->addAction(audio[i]);
+        audio[i]->setCheckable(true);
+        audioGroup->addAction(audio[i]);
+    }
+    audio[0]->setChecked(true);
 
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
@@ -599,60 +605,110 @@ void MainWindow::about()
 }
 
 void MainWindow::on_graph1_clicked(){
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
-    channelGraph[1]->graph()->setPen(QPen(Qt::black));
-    channelGraph[2]->graph()->setPen(QPen(Qt::black));
     data->setAudioChannel(0);
-    audio1->setChecked(true);
-    audio2->setChecked(false);
-    audio3->setChecked(false);
+    audio[0]->setChecked(true);
 }
 
 void MainWindow::on_graph2_clicked(){
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
     channelGraph[1]->graph()->setPen(QPen(Qt::red));
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[2]->graph()->setPen(QPen(Qt::black));
     data->setAudioChannel(1);
-    audio1->setChecked(false);
-    audio2->setChecked(true);
-    audio3->setChecked(false);
+    audio[1]->setChecked(true);
 }
 void MainWindow::on_graph3_clicked(){
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
     channelGraph[2]->graph()->setPen(QPen(Qt::red));
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[1]->graph()->setPen(QPen(Qt::black));
     data->setAudioChannel(2);
-    audio1->setChecked(false);
-    audio2->setChecked(false);
-    audio3->setChecked(true);
+    audio[2]->setChecked(true);
 }
 
 void MainWindow::on_graph4_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[3]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(3);
+    audio[3]->setChecked(true);
 }
 
 void MainWindow::on_graph5_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[4]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(4);
+    audio[4]->setChecked(true);
 }
 
 void MainWindow::on_graph6_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[5]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(5);
+    audio[5]->setChecked(true);
 }
 
 void MainWindow::on_graph7_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[6]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(6);
+    audio[6]->setChecked(true);
 }
 
 void MainWindow::on_graph8_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[7]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(7);
+    audio[7]->setChecked(true);
 }
 
 void MainWindow::on_graph9_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[8]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(8);
+    audio[8]->setChecked(true);
 }
 
 void MainWindow::on_graph10_clicked(){
-
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[9]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(9);
+    audio[9]->setChecked(true);
 }
 
-
+void MainWindow::on_graph11_clicked(){
+    for(int i = 0; i < 11; i++){
+        channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        audio[i]->setChecked(false);
+    }
+    channelGraph[10]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(10);
+    audio[10]->setChecked(true);
+}

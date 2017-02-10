@@ -6,7 +6,7 @@ SignalAudio::SignalAudio(){
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     format = info.preferredFormat();
     format.setChannelCount(1);
-    format.setSampleRate(16000);
+    format.setSampleRate(8000);
     format.setSampleType(QAudioFormat::SignedInt);
     format.setSampleSize(sampleSize);
 
@@ -31,9 +31,9 @@ SignalAudio::SignalAudio(){
 
     audio = new QAudioOutput(format, this);
 
-    audio->setBufferSize(8000);
+    audio->setBufferSize(1000);
     audioDevice = audio->start();
-    audio->setVolume(0.1);
+    audio->setVolume(0.00000000001);
     connect(audio, &QAudioOutput::stateChanged, this, &SignalAudio::handleStateChanged);
 }
 
@@ -47,7 +47,7 @@ void SignalAudio::appendAudioBuffer(int ChannelIndex, char MSB, char LSB){
 }
 
 bool SignalAudio::playAudio(int ChannelIndex){
-    if(audioBuffer[ChannelIndex].size() >= 2000 && audioBuffer[ChannelIndex].size()%2 == 0){
+    if(audioBuffer[ChannelIndex].size() >= 50 && audioBuffer[ChannelIndex].size()%2 == 0){
         if(audioDevice->write(audioBuffer[ChannelIndex])>0){
             clearAudioBuffer();
             return true;

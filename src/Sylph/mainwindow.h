@@ -145,6 +145,7 @@ private slots:
     void on_graph8_clicked();
     void on_graph9_clicked();
     void on_graph10_clicked();
+    void on_graph11_clicked();
 };
 
 #endif // MainWindow_H

@@ -8,7 +8,7 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
     dataProcessor = dataProcessor_;
 
     connect(implantPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
-    connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadImplatData()));
+    connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
 }
 
 void SerialChannel::ReadImplantData(){
@@ -75,7 +75,7 @@ void SerialChannel::connectSylph(){
     }
     for(int i = 0; i < portInfo.size(); i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            if(portInfo.at(i+1).portName().split("ttyUSB")[1].toInt() > portInfo.at(i).portName().split("ttyUSB")[1].toInt()){
+            if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
                 implantPort->setPortName(portInfo.at(i+1).portName());
                 implantPort->setBaudRate(1333333);
 

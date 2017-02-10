@@ -102,42 +102,33 @@ void Data::setNumDataPoints(int timeFrames, double sampleFreq){
     switch(timeFrames){
     case TimeFrames10ms:
         numDataPoints = 0.01/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames20ms:
         numDataPoints = 0.02/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames50ms:
         numDataPoints = 0.05/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames100ms:
         numDataPoints = 0.1/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames200ms:
         numDataPoints = 0.2/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames500ms:
         numDataPoints = 0.5/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames1000ms:
         numDataPoints = 1/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames2000ms:
         numDataPoints = 2/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     case TimeFrames5000ms:
         numDataPoints = 5/(1/sampleFreq);
-        qDebug() << numDataPoints;
         break;
     default:
-        numDataPoints = 2082;
+        numDataPoints = 0.1/(1/sampleFreq);
     }
 }
 
