@@ -43,10 +43,10 @@ private:
     QWidget *differentialMode;
     QWidget *thresholdMode;
 
-    bool dataSelected[12];
+    bool dataSelected[12] = {false, false, false, false, false, false, false, false, false, false, false, false};
     bool firstLoad[12] = {true, true, true, true, true, true, true, true, true, true, true, true};
 
-    int numChannels = 0;
+    int numChannels = 1;
     int total_data_points = 0;
 
 private slots:

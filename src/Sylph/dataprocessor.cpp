@@ -1,6 +1,7 @@
 #include "dataprocessor.h"
 
 DataProcessor::DataProcessor(){
+    File = new QFile;
 
 }
 
@@ -38,18 +39,19 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
                     ChannelData[j+8].append(fullWord_rawData*(0.000000195));
                 }
                 if(RecordEnabled){
-                    if(ADC_Data.size()>0){
-                        RecordData(ADC_Data.at(0));
-                    }
-                    else{
-                        RecordData(0);
-                    }
                     RecordData((quint8) rawData.at(i));
-                    RecordData(END_OF_LINE);
                 }
-                if(ADC_Data.size()>0){
+                if(ADC_Data.size()>4){
                     ChannelData[10].append(ADC_Data.at(0)/ 256.0 * 2.5);
-                    ADC_Data.remove(0, 1);
+                    if(RecordEnabled){
+                        for(int i = 0; i < 5; i++){
+                            *out << ADC_Data.at(i) << " \n";
+                        }
+                    }
+                    ADC_Data.remove(0, 5);
+                }
+                if(RecordEnabled){
+                    RecordData(END_OF_LINE);
                 }
                 ChannelData[11].append((quint8) rawData.at(i));
                 total_data_count = total_data_count+1;
@@ -110,5 +112,24 @@ void DataProcessor::sortADCData(QByteArray adcData){
     for(int i = 0; i < adcData.size(); i++){
         audioBuffer[10].append(adcData.at(i));
         ADC_Data.append(adcData.at(i));
+    }
+}
+
+void DataProcessor::setADCRecordEnabled(bool enableFlag){
+    if(enableFlag){
+        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File ADC opened";
+        }
+        else{
+            qDebug() << "File ADC failed to open";
+        }
+        out = new QTextStream(File);
+        qDebug() << "setting Record Enabled";
+    }
+    else{
+        File->close();
+        qDebug() << "setting Record disabled";
     }
 }

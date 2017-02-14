@@ -494,11 +494,13 @@ void MainWindow::on_voltage5000u_triggered(){
 void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
+        data->setADCRecordEnabled(true);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
+        data->setADCRecordEnabled(false);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }

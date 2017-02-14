@@ -4,6 +4,7 @@
 #include "../common/qtincludes.h"
 #include "../common/data.h"
 #include "../common/signalaudio.h"
+#include "time.h"
 
 #define END_OF_LINE 2779058
 
@@ -32,6 +33,7 @@ public:
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
     void sortADCData(QByteArray adcData);
+    void setADCRecordEnabled(bool enableFlag);
 
     int firstFrameMarker;
     quint8 currentFrameMarker;
@@ -42,7 +44,11 @@ public:
     QVector<quint8> ADC_Data;
 
 private:
+    QFile *File;
     QTextStream *out;
+
+    QString fileName;
+    QString directory = QDir::homePath() + "/Desktop/";
     bool is8BitMode;
 
     int prevleftOverByteCount = 0;

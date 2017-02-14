@@ -18,8 +18,8 @@ public:
 private:
     void createGraph(int i);
     int count = 0;
-    QCustomPlot *dataGraph[10];
-    bool graphExist[10] = {false, false, false, false, false, false, false, false, false, false};
+    QCustomPlot *dataGraph[12];
+    bool graphExist[12] = {false, false, false, false, false, false, false, false, false, false, false, false};
     QVector<double> extractData(int numPreThreshold, int numPostThreshold, QVector<double> data, int Index);
     QVector<double> averageData(QVector<double> *allData, int size);
 

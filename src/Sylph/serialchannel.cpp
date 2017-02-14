@@ -8,14 +8,12 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
     dataProcessor = dataProcessor_;
 
     connect(implantPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
-    connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
+    connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadADCData()));
 }
 
 void SerialChannel::ReadImplantData(){
     if(implantPort->bytesAvailable() > 500){
-        dataProcessor->parseFrameMarkers(implantPort->read(2000));
-
-        dataProcessor->sortADCData(ADCPort->read(2000));
+        dataProcessor->parseFrameMarkers(implantPort->read(500));
     }
 }
 
@@ -28,7 +26,9 @@ void SerialChannel::closeADCPort(){
 }
 
 void SerialChannel::ReadADCData(){
-
+    if(ADCPort->bytesAvailable()>2000){
+        dataProcessor->sortADCData(ADCPort->read(2000));
+    }
 }
 
 bool SerialChannel::enableImplantPort(QString portName){

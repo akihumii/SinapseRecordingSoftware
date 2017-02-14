@@ -11,7 +11,6 @@
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
 
-
 class QComboBox;
 class QCustomPlot;
 
