@@ -191,10 +191,7 @@ bool DataProcessor::isBERlocked(){
 }
 
 void DataProcessor::processBER(quint8 *actualData, QByteArray rawData){
-    for(int i = 0; i < rawData.size(); i++){
-        totalCount++;
-//        qDebug() << "Total     count : " << totalCount;
-    }
+    totalCount += rawData.size();
     compareData(actualData, rawData);
 }
 
@@ -217,16 +214,16 @@ void DataProcessor::compareData(quint8 *actualData, QByteArray rawData){
     }
     dataPacket.append((const char) 90);
     while(rawData.size() > 19){
-        if((quint8)rawData.at(0) == 165
-                && (quint8)rawData.at(1) == 165
-                && (quint8)rawData.at(2) == 165
-                && (quint8)rawData.at(3) == 165
+        if((quint8)rawData.at(3) == 165
                 && (quint8)rawData.at(4) == 165
                 && (quint8)rawData.at(5) == 165
                 && (quint8)rawData.at(6) == 165
                 && (quint8)rawData.at(7) == 165
                 && (quint8)rawData.at(8) == 165
-                && (quint8)rawData.at(9) == 165){
+                && (quint8)rawData.at(9) == 165
+                && (quint8)rawData.at(10) != 165
+                && (quint8)rawData.at(11) != 165
+                && (quint8)rawData.at(12) != 165){
             for(int j = 0; j < 8; j++){
 //                qDebug() << actualData[j] << "   " << (quint8) rawData.at(11+j);
                 if((actualData[j] ^ (quint8) rawData.at(11+j)) != 0){
