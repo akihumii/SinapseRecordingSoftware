@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "qtincludes.h"
 #include "graphdialog.h"
+#include "chunkprocessor.h"
+#include <QMetaType>
 
 class MainWindow : public QMainWindow
 {
@@ -36,7 +38,7 @@ private:
     QLineEdit *afterLineEdit;
     QComboBox *maxSpikesCombo;
 
-    QVector<double> channelData[10];
+    QVector<QVector<double>> channelData;
 
     QTabWidget *modeTabWidget;
     QWidget *singleEndMode;
@@ -47,14 +49,17 @@ private:
     bool firstLoad[10] = {true, true, true, true, true, true, true, true, true, true};
 
     int numChannels = 0;
+    int dataAppended = 0;
     int total_data_points = 0;
 
+    QFuture<QVector<double>> future[10];
 private slots:
     void on_dataSelected();
     void on_startSingleEndProcessing();
     void on_startDiffProcessing();
     void on_startThresholdProcessing();
     void on_diffEnable_changed();
+    void readingFinished(QVector<QVector<double>> parsedData, int tid);
 };
 
 #endif // MAINWINDOW_H

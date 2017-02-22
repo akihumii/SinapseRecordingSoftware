@@ -47,6 +47,7 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QTime>
+#include <QtConcurrent/QtConcurrent>
 #include <QThread>
 #include <qmath.h>
 #include "math.h"

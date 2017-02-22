@@ -46,6 +46,7 @@
 #include <QSerialPortInfo>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QtConcurrent/QtConcurrent>
 #include <QTime>
 #include <qmath.h>
 #include "math.h"

@@ -30,10 +30,12 @@ FORMS +=
 HEADERS += \
     mainwindow.h \
     qtincludes.h \
-    graphdialog.h
+    graphdialog.h \
+    chunkprocessor.h
 
 SOURCES += \
     mainwindow.cpp \
     main.cpp \
-    graphdialog.cpp
+    graphdialog.cpp \
+    chunkprocessor.cpp
 
