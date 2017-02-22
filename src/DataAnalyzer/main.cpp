@@ -6,7 +6,7 @@ int main(int argc, char *argv[]){
     QApplication a(argc, argv);
     QString filename =  QFileDialog::getOpenFileName(
                                                 Q_NULLPTR,
-                                                "Open Document",
+                                                "Open Implant Data",
                                                 QDir::currentPath(),
                                                 "All files (*.*)");
     MainWindow w(filename);
