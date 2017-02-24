@@ -191,28 +191,19 @@ bool DataProcessor::isBERlocked(){
 }
 
 void DataProcessor::processBER(quint8 *actualData, QByteArray rawData){
-    totalCount += rawData.size();
+//    totalCount += rawData.size();
     compareData(actualData, rawData);
 }
 
 
 // Compare data and return number of bit error //
 void DataProcessor::compareData(quint8 *actualData, QByteArray rawData){
-    if(berLeftOver.size()>0){
-        for(int i = berLeftOver.size()-1; i>=0;i--){
+    if(berLeftOver.size() > 0){
+        for(int i = berLeftOver.size() - 1; i >= 0; i--){
             rawData.prepend(berLeftOver.at(i));
         }
         berLeftOver.clear();
     }
-    QByteArray dataPacket;
-    for(int i = 0; i < 10; i++){
-        dataPacket.append((const char) 0B10100101);
-    }
-    dataPacket.append((const char) 0);
-    for(int i = 0; i < 8; i++){
-        dataPacket.append((const char) actualData[i]);
-    }
-    dataPacket.append((const char) 90);
     while(rawData.size() > 19){
         if((quint8)rawData.at(3) == 165
                 && (quint8)rawData.at(4) == 165
@@ -225,11 +216,12 @@ void DataProcessor::compareData(quint8 *actualData, QByteArray rawData){
                 && (quint8)rawData.at(11) != 165
                 && (quint8)rawData.at(12) != 165){
             for(int j = 0; j < 8; j++){
+                totalCount++;
 //                qDebug() << actualData[j] << "   " << (quint8) rawData.at(11+j);
                 if((actualData[j] ^ (quint8) rawData.at(11+j)) != 0){
                     quint8 temp = actualData[j] ^ (quint8) rawData.at(11+j);
                     for(int k = 0; k < 8; k++){
-                        if(((temp && 1<<k) >> k) == 1){
+                        if(((temp && 1 << k) >> k) == 1){
                             incorrectCount++;
                             qDebug() << "Incorrect count : " << incorrectCount;
                         }

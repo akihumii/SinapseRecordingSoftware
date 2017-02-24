@@ -114,7 +114,7 @@ void CommandDialog::createLayout(){
     }
 
     DataBERLabel = new QLabel;
-    DataBERLabel->setText("Data BER Assessment");
+    DataBERLabel->setText("Data BER Assessment (No A5 for first 2 bytes)");
 
     QVBoxLayout *DataBERLayout = new QVBoxLayout;
     DataBERLayout->addLayout(LabelComboLayout);
