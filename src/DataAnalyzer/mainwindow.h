@@ -17,6 +17,11 @@ private:
     void createLayout();
     void createTabs();
 
+    QLabel *syncPulseLabel[3];
+    QLineEdit *syncPulsePara[2];
+    QComboBox *syncPulseResolution;
+    QPushButton *addFileButton;
+
     QCheckBox *dataEnable[12];
     QPushButton *processSingleButton;
     QPushButton *processDiffButton;
@@ -39,6 +44,7 @@ private:
     QVector<double> channelData[12];
 
     QTabWidget *modeTabWidget;
+    QWidget *addFileMode;
     QWidget *singleEndMode;
     QWidget *differentialMode;
     QWidget *thresholdMode;
@@ -46,8 +52,13 @@ private:
     bool dataSelected[12] = {false, false, false, false, false, false, false, false, false, false, false, false};
     bool firstLoad[12] = {true, true, true, true, true, true, true, true, true, true, true, true};
 
-    int numChannels = 1;
+    int ADCnumChannels = 0;
+    int numChannels = 0;
     int total_data_points = 0;
+    int total_ADC_points = 0;
+    double ADC_ySteps;
+    double ADC_xSteps;
+    double vpp;
 
 private slots:
     void on_dataSelected();
@@ -55,6 +66,7 @@ private slots:
     void on_startDiffProcessing();
     void on_startThresholdProcessing();
     void on_diffEnable_changed();
+    void on_openSyncPulse();
 };
 
 #endif // MAINWINDOW_H

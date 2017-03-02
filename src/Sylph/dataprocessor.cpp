@@ -45,7 +45,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
                     ChannelData[10].append(ADC_Data.at(0)/ 256.0 * 2.5);
                     if(RecordEnabled){
                         for(int i = 0; i < 5; i++){
-                            *out << ADC_Data.at(i) << " \n";
+                            *out << ADC_Data.at(i) << " , \n";
                         }
                     }
                     ADC_Data.remove(0, 5);

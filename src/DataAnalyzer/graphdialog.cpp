@@ -1,10 +1,10 @@
 #include "graphdialog.h"
 
-GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, QWidget *parent) : QDialog(parent){
+GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, double xSteps, QWidget *parent) : QDialog(parent){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QVector<double> x;
     for(int i = 0; i < X_axis; i++){
-        x.append(i*0.000056);
+        x.append(i*xSteps);
     }
     for(int i = 0; i < 12; i++){
         if(dataSelected[i]){
@@ -13,6 +13,35 @@ GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X
             dataGraph[i]->graph()->setData(x, channelData[i]);
             dataGraph[i]->replot();
         }
+    }
+    setLayout(mainLayout);
+}
+
+GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, int ADC_xAxis, QWidget *parent) : QDialog(parent){
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QVector<double> x;
+    for(int i = 0; i < X_axis; i++){
+        x.append(i*0.000202);
+    }
+    for(int i = 0; i < 11; i++){
+        if(dataSelected[i]){
+            createGraph(i);
+            mainLayout->addWidget(dataGraph[i]);
+            dataGraph[i]->graph()->setData(x, channelData[i]);
+            dataGraph[i]->replot();
+            dataGraph[10]->yAxis->setRange(0, 250, Qt::AlignLeft);
+        }
+    }
+    QVector<double> ADCx;
+    for(int i = 0; i < ADC_xAxis; i++){
+        ADCx.append(i*0.000049);
+    }
+    if(dataSelected[11]){
+        createGraph(11);
+        mainLayout->addWidget(dataGraph[11]);
+        dataGraph[11]->graph()->setData(ADCx, channelData[11]);
+        dataGraph[11]->yAxis->setRange(-2.5, 5, Qt::AlignLeft);
+        dataGraph[11]->replot();
     }
     setLayout(mainLayout);
 }
@@ -184,7 +213,6 @@ void GraphDialog::mouseWheel(){
 void GraphDialog::setAllRange(QCPRange range){
     for(int i = 0; i < 12; i++){
         if(graphExist[i]){
-            qDebug() << "Setting range: " << i;
             dataGraph[i]->xAxis->setRange(range);
             dataGraph[i]->replot();
         }
