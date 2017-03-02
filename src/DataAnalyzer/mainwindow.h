@@ -54,8 +54,8 @@ private:
 
     int ADCnumChannels = 0;
     int numChannels = 0;
-    int total_data_points = 0;
-    int total_ADC_points = 0;
+    quint64 total_data_points = 0;
+    quint64 total_ADC_points = 0;
     double ADC_ySteps;
     double ADC_xSteps;
     double vpp;

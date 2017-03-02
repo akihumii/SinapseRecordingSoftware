@@ -17,10 +17,10 @@ GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X
     setLayout(mainLayout);
 }
 
-GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, int ADC_xAxis, QWidget *parent) : QDialog(parent){
+GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, quint64 X_axis, quint64 ADC_xAxis, QWidget *parent) : QDialog(parent){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QVector<double> x;
-    for(int i = 0; i < X_axis; i++){
+    for(quint64 i = 0; i < X_axis; i++){
         x.append(i*0.000202);
     }
     for(int i = 0; i < 11; i++){
@@ -29,12 +29,12 @@ GraphDialog::GraphDialog(bool *dataSelected, QVector<double> *channelData, int X
             mainLayout->addWidget(dataGraph[i]);
             dataGraph[i]->graph()->setData(x, channelData[i]);
             dataGraph[i]->replot();
-            dataGraph[10]->yAxis->setRange(0, 250, Qt::AlignLeft);
         }
     }
+    dataGraph[10]->yAxis->setRange(0, 250.0, Qt::AlignLeft);
     QVector<double> ADCx;
-    for(int i = 0; i < ADC_xAxis; i++){
-        ADCx.append(i*0.000049);
+    for(quint64 i = 0; i < ADC_xAxis; i++){
+        ADCx.append(i*0.00004995);
     }
     if(dataSelected[11]){
         createGraph(11);
@@ -156,6 +156,8 @@ void GraphDialog::createGraph(int i){
     dataGraph[i]->axisRect()->setRangeDrag(Qt::Horizontal);
     connect(dataGraph[i]->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(setAllRange(QCPRange)));
     dataGraph[i]->yAxis->setRange(-0.005, 0.01, Qt::AlignLeft);
+    dataGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
+    dataGraph[i]->axisRect()->setMargins(QMargins(75,0,0,15));
     connect(dataGraph[i], SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
     connect(dataGraph[i], SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 }

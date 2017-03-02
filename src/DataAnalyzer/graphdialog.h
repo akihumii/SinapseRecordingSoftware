@@ -11,7 +11,7 @@ class GraphDialog : public QDialog
 
 public:
     GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, double xSteps, QWidget *parent = 0);
-    GraphDialog(bool *dataSelected, QVector<double> *channelData, int X_axis, int ADC_xAxis, QWidget *parent = 0);
+    GraphDialog(bool *dataSelected, QVector<double> *channelData, quint64 X_axis, quint64 ADC_xAxis, QWidget *parent = 0);
     GraphDialog(QComboBox *A[], QComboBox *B[], QCheckBox *diffEnable[], QVector<double> *channelData, int X_axis, QWidget *parent = 0);
     GraphDialog(int preThreshold, int postThreshold, int greaterlesser, int maxSpikes, double threshold, QVector<double> *channelData, int channelSelected, QWidget *parent = 0);
     ~GraphDialog();

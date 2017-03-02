@@ -37,27 +37,9 @@ MainWindow::MainWindow(QString filename){
             }
             progress.setValue(rawData.size()/firstLine.size());
         }
-    }
-    else{
-        exit(1);
-    }
-    QString ADCfilename =  QFileDialog::getOpenFileName(
-                                                Q_NULLPTR,
-                                                "Open ADC Data",
-                                                QDir::currentPath(),
-                                                "All files (*.*)");
-    while(!ADCfilename.endsWith(".csv")){
-        if(ADCfilename.isNull())
-            break;
-        QMessageBox::information(this, "Wrong file selected!",
-                                 "Please load .csv file. \n");
-        ADCfilename =  QFileDialog::getOpenFileName(Q_NULLPTR,
-                                                "Open ADC Data",
-                                                QDir::currentPath(),
-                                                "All files (*.*)");
-    }
-    if(!ADCfilename.isNull()){
-        QFile rawADCData(ADCfilename);
+        filename.replace(filename.size() - 4, 4, "ADC.csv");
+        qDebug() << filename;
+        QFile rawADCData(filename);
         if(rawADCData.open(QIODevice::ReadOnly)){
             QTextStream in(&rawADCData);
             QString firstLine = in.readLine();
@@ -75,10 +57,14 @@ MainWindow::MainWindow(QString filename){
         }
         setWindowTitle(tr("Data Analyzer"));
         createLayout();
+        qDebug() << numChannels;
         GraphDialog graphDialog(firstLoad, channelData, total_data_points, total_ADC_points, this);
-        graphDialog.setMinimumSize(1366,768);
+//        graphDialog.setMinimumSize(1366,768);
         graphDialog.showMaximized();
         graphDialog.exec();
+    }
+    else{
+        exit(1);
     }
 }
 
@@ -273,7 +259,7 @@ void MainWindow::on_diffEnable_changed(){
 }
 
 void MainWindow::on_startSingleEndProcessing(){
-    GraphDialog graphDialog(dataSelected, channelData, total_data_points, 0.000056, this);
+    GraphDialog graphDialog(dataSelected, channelData, total_data_points, total_ADC_points, this);
     graphDialog.setMinimumSize(1366,768);
     graphDialog.showMaximized();
     graphDialog.exec();

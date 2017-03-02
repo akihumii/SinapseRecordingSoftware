@@ -9,6 +9,7 @@ int main(int argc, char *argv[]){
                                                 "Open Implant Data",
                                                 QDir::currentPath(),
                                                 "All files (*.*)");
+    qDebug() << filename;
     MainWindow w(filename);
 //    w.setMinimumSize(1366,768);
     w.show();
