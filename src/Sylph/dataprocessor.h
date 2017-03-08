@@ -44,6 +44,7 @@ public:
 private:
     QTextStream *out;
     bool is8BitMode;
+    bool ADCEnabled = false;
 
     int prevleftOverByteCount = 0;
 

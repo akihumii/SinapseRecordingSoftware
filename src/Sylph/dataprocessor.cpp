@@ -1,7 +1,6 @@
 #include "dataprocessor.h"
 
 DataProcessor::DataProcessor(){
-
 }
 
 void DataProcessor::setBitMode(bool BitMode){
@@ -33,7 +32,6 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[1].append(fullWord_rawData*(0.000000195));
-
                 if(RecordEnabled){
                     if(ADC_Data.size()>0){
                         RecordData(ADC_Data.at(0));

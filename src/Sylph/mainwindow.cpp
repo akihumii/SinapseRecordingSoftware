@@ -104,6 +104,9 @@ void MainWindow::createActions(){
     filterAction->setShortcut(tr("Ctrl+F"));
     connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
 
+    restartAction = new QAction(tr("Restart serial port"));
+    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
+
     swapAction = new QAction(tr("Swap &Port"), this);
     swapAction->setShortcut(tr("Ctrl+P"));
     connect(swapAction, SIGNAL(triggered()), this, SLOT(on_swap_triggered()));
@@ -184,6 +187,8 @@ void MainWindow::createMenus(){
 
     fileMenu->addAction(recordAction);
     fileMenu->addAction(chooseDirectoryAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(restartAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 //--------------------------- FILE MENU -----------------------------//
@@ -522,6 +527,25 @@ void MainWindow::on_resetY_triggered(){
 //        }
 //    }
 //}
+
+void MainWindow::on_restart_triggered(){
+    if(data->isADCRecordEnabled()){
+        data->setADCRecordEnabled(false);
+        data->setADCRecordEnabled(true);
+    }
+    if(data->isRecordEnabled()){
+        data->setRecordEnabled(false);
+        data->setRecordEnabled(true);
+    }
+    if(serialChannel->isADCConnected()){
+        serialChannel->closeADCPort();
+    }
+    if(serialChannel->isImplantConnected()){
+        serialChannel->closeImplantPort();
+    }
+    data->clearAllData();
+    serialChannel->connectSylph();
+}
 
 void MainWindow::resetGraph1Range(){
     channelGraph[0]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
