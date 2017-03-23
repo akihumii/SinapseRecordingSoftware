@@ -14,7 +14,7 @@ public:
     bool isConnected();
     void doDisconnect();
     QString getError();
-    bool wifiEnabled = false;
+    bool wifiEnabled = true;
     QByteArray getlastCommand();
 
 private:
@@ -23,11 +23,11 @@ private:
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 2048;
+    qint64 maxSize = 40960;
     int numChannels;
     QByteArray lastSentCommand;
 
-    bool Mode_8Bit;
+    bool Mode_8Bit = false;
 
     int getNumChannels(QByteArray lastCommand);
 

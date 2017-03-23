@@ -129,14 +129,12 @@ GraphDialog::GraphDialog(int preThreshold,
         dataGraph[0]->graph()->setPen(avgPen);
         dataGraph[0]->replot();
     }
-
     mainLayout->addWidget(dataGraph[0]);
     setLayout(mainLayout);
 }
 
 QVector<double> GraphDialog::extractData(int numPreThreshold, int numPostThreshold, QVector<double> data, int Index){
     QVector<double> extractedData;
-
     for(int i = (Index + numPreThreshold); i < (Index + numPostThreshold); i++){
         if(i > 0 && i < data.size()){
             extractedData.append(data.at(i));
@@ -168,7 +166,6 @@ QVector<double> GraphDialog::averageData(QVector<double> *allData, int size){
         double temp = 0;
         for(int i = 0; i < size; i++){
             temp += allData[i].at(j);
-
         }
         temp = temp / size;
         averagedData.append(temp);

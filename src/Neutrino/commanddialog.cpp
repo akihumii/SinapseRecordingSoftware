@@ -284,18 +284,12 @@ void CommandDialog::on_sendCommand_clicked(){
             NeutrinoChannel->setChannelState(i, false);
         }
     }
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(NeutrinoCommand->constructCommand());
-    }
     if(NeutrinoSerial->isConnected()){
         NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
     }
 }
 
 void CommandDialog::on_chipReset_clicked(){
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(NeutrinoCommand->resetCommand());
-    }
     if(NeutrinoSerial->isConnected()){
         NeutrinoSerial->writeCommand(NeutrinoCommand->resetCommand());
     }

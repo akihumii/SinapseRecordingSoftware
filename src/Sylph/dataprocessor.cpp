@@ -1,8 +1,6 @@
 #include "dataprocessor.h"
 
 DataProcessor::DataProcessor(){
-    File = new QFile;
-
 }
 
 void DataProcessor::setBitMode(bool BitMode){
