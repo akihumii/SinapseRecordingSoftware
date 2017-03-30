@@ -5,7 +5,7 @@ DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
-//    qDebug() << data_store.size();
+    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint16_t combine_10bit;

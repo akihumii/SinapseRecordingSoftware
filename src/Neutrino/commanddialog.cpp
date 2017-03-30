@@ -14,6 +14,7 @@ CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoComma
         loadDefault();
         Exit->setChecked(true);
     }
+    on_SELALL_clicked();
 }
 
 CommandDialog::~CommandDialog(){
@@ -34,6 +35,9 @@ void CommandDialog::createLayout(){
     ModeComboBox->addItem("Bioimpedance Measurement (8-bit)");
     ModeComboBox->addItem("Bioimpedance Measurement (10-bit)");
     ModeComboBox->addItem("Power Level Measurement");
+
+    ModeComboBox->setCurrentIndex(3);
+    on_Mode_Changed(3);
 
     connect(ModeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Mode_Changed(int)));
 
@@ -284,14 +288,14 @@ void CommandDialog::on_sendCommand_clicked(){
             NeutrinoChannel->setChannelState(i, false);
         }
     }
-    if(NeutrinoSerial->isConnected()){
-        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    if(socketEdison->isConnected()){
+        socketEdison->writeCommand(NeutrinoCommand->constructCommand());
     }
 }
 
 void CommandDialog::on_chipReset_clicked(){
-    if(NeutrinoSerial->isConnected()){
-        NeutrinoSerial->writeCommand(NeutrinoCommand->resetCommand());
+    if(socketEdison->isConnected()){
+        socketEdison->writeCommand(NeutrinoCommand->resetCommand());
     }
 }
 
