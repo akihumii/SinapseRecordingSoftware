@@ -6,34 +6,36 @@ MainWindow::MainWindow(){
     defaultRange = new QCPRange(-0.00050, 0.00100);
     setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version);
     data = new DataProcessor;
-    serialChannel = new SerialChannel(this, data);
+//    serialChannel = new SerialChannel(this, data);
+    socketSylph = new SocketEdison(this, data);
+    socketSylph->doConnect("10.10.10.1", 30000);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
-    portInfo = QSerialPortInfo::availablePorts();
-    if(portInfo.size()>1){
-        serialChannel->connectSylph();
-        if(serialChannel->isImplantConnected()){
-            connectionStatus.append("Connected to Implant Port |");
-        }
-        else{
-            connectionStatus.append("Connection to Implant Port failed |");
-        }
-        if(serialChannel->isADCConnected()){
-            connectionStatus.append(" Connected to ADC Port");
-        }
-        else{
-            connectionStatus.append(" Connection to ADC Port failed");
-        }
-        statusBarLabel->setText(connectionStatus);
-    }
-    else{
-        QMessageBox::information(this, "Insufficient Serial Devices",
-                                 "Please check Serial Devices connection and try again. \n");
-    }
+//    portInfo = QSerialPortInfo::availablePorts();
+//    if(portInfo.size()>1){
+//        serialChannel->connectSylph();
+//        if(serialChannel->isImplantConnected()){
+//            connectionStatus.append("Connected to Implant Port |");
+//        }
+//        else{
+//            connectionStatus.append("Connection to Implant Port failed |");
+//        }
+//        if(serialChannel->isADCConnected()){
+//            connectionStatus.append(" Connected to ADC Port");
+//        }
+//        else{
+//            connectionStatus.append(" Connection to ADC Port failed");
+//        }
+//        statusBarLabel->setText(connectionStatus);
+//    }
+//    else{
+//        QMessageBox::information(this, "Insufficient Serial Devices",
+//                                 "Please check Serial Devices connection and try again. \n");
+//    }
     qDebug() << "Starting SYLPH..";
 }
 
@@ -158,8 +160,8 @@ void MainWindow::createActions(){
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
-    restartAction = new QAction(tr("Restart serial port"), this);
-    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
+//    restartAction = new QAction(tr("Restart serial port"), this);
+//    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
 
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
@@ -237,8 +239,8 @@ void MainWindow::createMenus(){
     fileMenu->addAction(recordAction);
     fileMenu->addAction(chooseDirectoryAction);
     fileMenu->addSeparator();
-    fileMenu->addAction(restartAction);
-    fileMenu->addSeparator();
+//    fileMenu->addAction(restartAction);
+//    fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 //--------------------------- FILE MENU -----------------------------//
 
@@ -338,8 +340,9 @@ void MainWindow::createStatusBar(){
 }
 
 MainWindow::~MainWindow(){
-    serialChannel->closeADCPort();
-    serialChannel->closeImplantPort();
+//    serialChannel->closeADCPort();
+//    serialChannel->closeImplantPort();
+    socketSylph->doDisconnect();
 }
 
 void MainWindow::updateData(){
@@ -538,8 +541,8 @@ void MainWindow::on_resetX_triggered(){
 }
 
 void MainWindow::on_swap_triggered(){
-    serialChannel->swapPort();
-    statusBarLabel->setText("Port swapped");
+//    serialChannel->swapPort();
+//    statusBarLabel->setText("Port swapped");
 }
 
 void MainWindow::on_filterConfig_trigger(){
@@ -731,15 +734,15 @@ void MainWindow::on_graph11_clicked(){
 }
 
 void MainWindow::on_restart_triggered(){
-    if(serialChannel->isADCConnected()){
-        serialChannel->closeADCPort();
-    }
-    if(serialChannel->isImplantConnected()){
-        serialChannel->closeImplantPort();
-    }
-    if(!serialChannel->isConnected()){
-        serialChannel->connectSylph();
-    }
+//    if(serialChannel->isADCConnected()){
+//        serialChannel->closeADCPort();
+//    }
+//    if(serialChannel->isImplantConnected()){
+//        serialChannel->closeImplantPort();
+//    }
+//    if(!serialChannel->isConnected()){
+//        serialChannel->connectSylph();
+//    }
     if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
         data->setADCRecordEnabled(false);

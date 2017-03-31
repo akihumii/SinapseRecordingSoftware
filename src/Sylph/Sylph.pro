@@ -30,11 +30,13 @@ HEADERS += \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    qtincludes.h
+    qtincludes.h \
+    socketedison.h
 
 SOURCES += \
     dataprocessor.cpp \
     main.cpp \
     mainwindow.cpp \
     serialchannel.cpp \
-    serialportdialog.cpp
+    serialportdialog.cpp \
+    socketedison.cpp

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "socketedison.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
 #include "dataprocessor.h"
@@ -92,6 +93,7 @@ private:
     QMenu *audioOutputMenu;
 
     QCustomPlot *channelGraph[12];
+    SocketEdison *socketSylph;
 
     QAction *serialPortAction;
     QAction *aboutAction;
