@@ -126,6 +126,7 @@ private slots:
     void on_resetX_triggered();
     void on_swap_triggered();
     void on_filterConfig_trigger();
+    void on_restart_triggered();
 
     void about();
     void resetGraph1Range();

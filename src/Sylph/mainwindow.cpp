@@ -158,6 +158,9 @@ void MainWindow::createActions(){
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
+    restartAction = new QAction(tr("Restart serial port"), this);
+    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
+
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
@@ -233,6 +236,8 @@ void MainWindow::createMenus(){
 
     fileMenu->addAction(recordAction);
     fileMenu->addAction(chooseDirectoryAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(restartAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 //--------------------------- FILE MENU -----------------------------//
@@ -723,4 +728,22 @@ void MainWindow::on_graph11_clicked(){
     channelGraph[10]->graph()->setPen(QPen(Qt::red));
     data->setAudioChannel(10);
     audio[10]->setChecked(true);
+}
+
+void MainWindow::on_restart_triggered(){
+    if(serialChannel->isADCConnected()){
+        serialChannel->closeADCPort();
+    }
+    if(serialChannel->isImplantConnected()){
+        serialChannel->closeImplantPort();
+    }
+    if(!serialChannel->isConnected()){
+        serialChannel->connectSylph();
+    }
+    if(data->isRecordEnabled()){
+        data->setRecordEnabled(false);
+        data->setADCRecordEnabled(false);
+        data->setRecordEnabled(true);
+        data->setADCRecordEnabled(true);
+    }
 }
