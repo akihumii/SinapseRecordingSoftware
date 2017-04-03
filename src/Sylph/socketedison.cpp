@@ -29,7 +29,7 @@ void SocketEdison::disconnectedCommandSocket(){
 }
 
 void SocketEdison::ReadCommand(){
-    if(socketCommand->bytesAvailable() > 9*maxSize/10){
+    if(socketCommand->bytesAvailable() > 5*maxSize/10){
         dataProcessor->parseFrameMarkers(socketCommand->read(maxSize));
     }
 }

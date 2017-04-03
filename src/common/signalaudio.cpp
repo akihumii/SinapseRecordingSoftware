@@ -33,7 +33,7 @@ SignalAudio::SignalAudio(){
 
     audio->setBufferSize(1000);
     audioDevice = audio->start();
-    audio->setVolume(0.00000000001);
+    audio->setVolume(0.1);
     connect(audio, &QAudioOutput::stateChanged, this, &SignalAudio::handleStateChanged);
 }
 

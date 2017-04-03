@@ -221,7 +221,6 @@ void MainWindow::createActions(){
 }
 
 void MainWindow::createMenus(){
-//--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
 //    fileMenu->addAction(swapAction);
     fileMenu->addAction(filterAction);
@@ -242,9 +241,7 @@ void MainWindow::createMenus(){
 //    fileMenu->addAction(restartAction);
 //    fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
-//--------------------------- FILE MENU -----------------------------//
 
-//------------------------- TIMEFRAME MENU --------------------------//
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
     timeFrameMenu->addAction(timeFrame10ms);
@@ -280,9 +277,7 @@ void MainWindow::createMenus(){
   
     timeFrameMenu->addSeparator();
     timeFrameMenu->addAction(resetDefaultX);
-//------------------------- TIMEFRAME MENU --------------------------//
 
-//------------------------- TIMEFRAME MENU --------------------------//
     voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
     voltageMenu->addAction(voltage50u);
     voltage50u->setCheckable(true);
@@ -311,10 +306,7 @@ void MainWindow::createMenus(){
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
-//------------------------- TIMEFRAME MENU --------------------------//
 
-//----------------------- AUDIO OUTPUT MENU -------------------------//
-//--------------------------- HELP MENU -----------------------------//
     audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
     audioGroup = new QActionGroup(this);
 
@@ -327,9 +319,6 @@ void MainWindow::createMenus(){
 
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
-
-//----------------------- AUDIO OUTPUT MENU -------------------------//
-//--------------------------- HELP MENU -----------------------------//
 }
 
 void MainWindow::createStatusBar(){
@@ -340,8 +329,6 @@ void MainWindow::createStatusBar(){
 }
 
 MainWindow::~MainWindow(){
-//    serialChannel->closeADCPort();
-//    serialChannel->closeImplantPort();
     socketSylph->doDisconnect();
 }
 
