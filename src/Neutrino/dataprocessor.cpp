@@ -5,19 +5,24 @@ DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
+    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint16_t combine_10bit;
     int numChannels = NeutrinoChannel->getNumChannels();
     if(leftOverData.size() > 0){
-        for(int i=leftOverData.size()-1;i>=0;i--){
+        for(int i=0;i<leftOverData.size();i++){
             data_store.prepend(leftOverData.at(i));
         }
         leftOverData.clear();
     }
+    if(leftOverData.size() > 10*data_store.size())
+    {
+        leftOverData.clear();
+    }
     firstFrameMarker = first_10bitFrameMarker(data_store);
     lastFrameMarker = last_10bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker; j = j + 1){
+    for(int j = firstFrameMarker ; j < lastFrameMarker - (numChannels*2); j = j + 1){
         if((uint8_t)data_store.at(j) == FM_A
             && (uint8_t)data_store.at(j+1) == FM_5
             && (uint8_t)data_store.at(j+2) == FM_0
@@ -66,6 +71,7 @@ int DataProcessor::last_10bitFrameMarker(QByteArray data){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
+    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint8_t current_8bit;

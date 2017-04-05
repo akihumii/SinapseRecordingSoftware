@@ -57,7 +57,7 @@ private:
     QString fileName;
     QString directory = QDir::homePath() + "/Desktop/";
 
-    bool PlotEnabled = false;
+    bool PlotEnabled = true;
     int prevleftOverByteCount = 0;
 
     int numDataPoints = 2082;

@@ -12,11 +12,13 @@ SocketEdison::SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProce
 }
 
 void SocketEdison::doConnect(QString ipAddress, int port){
-    qDebug() << "Connecting...";
-    socketCommand->connectToHost(ipAddress, port);
-    qDebug() << "Waiting...";
-    if(!socketCommand->waitForConnected(1000)){
-        qDebug() << "Error: " << socketCommand->errorString();
+    while(socketCommand->state() != QAbstractSocket::ConnectedState){
+        qDebug() << "Connecting...";
+        socketCommand->connectToHost(ipAddress, port);
+        qDebug() << "Waiting...";
+        if(!socketCommand->waitForConnected(5000)){
+            qDebug() << "Error: " << socketCommand->errorString();
+        }
     }
 }
 
@@ -29,16 +31,25 @@ void SocketEdison::disconnectedCommandSocket(){
 }
 
 void SocketEdison::ReadCommand(){
-    if(socketCommand->bytesAvailable() > maxSize-1 && wifiEnabled){
+//    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketCommand->read(maxSize)));
+    if(socketCommand->bytesAvailable() > 5*maxSize/10 && wifiEnabled){
         if(NeutrinoData->isPlotEnabled()){
             if(Mode_8Bit == true){
+                qDebug() << "Got 8 bit data";
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketCommand->read(maxSize)));
             }
             else if(Mode_8Bit == false){
+                qDebug() << "Got 10 bit data";
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketCommand->read(maxSize)));
             }
         }
     }
+//    if(socketCommand->bytesAvailable() > maxSize-1){
+//        QByteArray temp = socketCommand->read(maxSize);
+//        for(int i = 0; i < temp.size(); i ++){
+//                qDebug() << ((quint8) temp.at(1+i*2) << 5 | (quint8)temp.at(2*i));
+//        }
+//    }
 }
 
 void SocketEdison::doDisconnect(){

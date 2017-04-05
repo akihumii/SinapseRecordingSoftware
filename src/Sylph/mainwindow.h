@@ -58,6 +58,7 @@ private:
     QAction *exitAction;
     QAction *recordAction;
     QAction *chooseDirectoryAction;
+    QAction *restartAction;
 
     QAction *pauseAction;
     bool pause = false;

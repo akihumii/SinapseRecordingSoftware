@@ -1,7 +1,6 @@
 #include "dataprocessor.h"
 
 DataProcessor::DataProcessor(){
-
 }
 
 void DataProcessor::setBitMode(bool BitMode){

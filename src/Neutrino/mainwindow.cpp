@@ -6,9 +6,10 @@ MainWindow::MainWindow(){
     NeutrinoChannel = new Channel;
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
-    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
-    serialNeutrino->doConnect();
+//    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
+//    serialNeutrino->doConnect();
     socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
+    socketEdison->doConnect("192.168.42.1", 8888);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     createStatusBar();
     create5x2Layout();

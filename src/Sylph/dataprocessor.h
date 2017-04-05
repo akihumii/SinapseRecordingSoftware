@@ -32,7 +32,6 @@ public:
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
     void sortADCData(QByteArray adcData);
-
     int firstFrameMarker;
     quint8 currentFrameMarker;
     int currentFrameMarkerIndex;
@@ -44,6 +43,7 @@ public:
 private:
     QTextStream *out;
     bool is8BitMode;
+    bool ADCEnabled = false;
 
     int prevleftOverByteCount = 0;
 

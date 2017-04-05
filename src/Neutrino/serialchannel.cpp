@@ -12,7 +12,7 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
 }
 
 void SerialChannel::ReadData(){
-    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+//    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
 }
 
 void SerialChannel::closePort(){
@@ -25,23 +25,17 @@ bool SerialChannel::doConnect(){
         qDebug() << "Name : " << info.portName();
         qDebug() << "Description : " << info.description();
         qDebug() << "Manufacturer: " << info.manufacturer();
+        qDebug() << "Serial Number: " << info.serialNumber();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            if(portInfo.at(i+1).portName().split("COM")[1].toInt() < portInfo.at(i).portName().split("COM")[1].toInt()){
-                serialData->setPortName(portInfo.at(i+1).portName());
-                serialData->setBaudRate(3000000);
+        if(portInfo.at(i).serialNumber() == "FTVN9Z5BA" && portInfo.at(i+1).serialNumber() == "FTVN9Z5BB"){
+            serialData->setPortName(portInfo.at(i).portName());
+            serialData->setBaudRate(3000000);
+            qDebug() << "Data connected to " << portInfo.at(i).portName();
 
-                serialCommand->setPortName(portInfo.at(i).portName());
-                serialCommand->setBaudRate(19200);
-            }
-            else{
-                serialData->setPortName(portInfo.at(i).portName());
-                serialData->setBaudRate(3000000);
-
-                serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(19200);
-            }
+            serialCommand->setPortName(portInfo.at(i+1).portName());
+            serialCommand->setBaudRate(19200);
+            qDebug() << "Command connected to " << portInfo.at(i+1).portName();
             serialData->setDataBits(QSerialPort::Data8);
             serialData->setParity(QSerialPort::NoParity);
             serialData->setStopBits(QSerialPort::OneStop);

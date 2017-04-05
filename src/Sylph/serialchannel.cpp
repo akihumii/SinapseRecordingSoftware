@@ -17,10 +17,12 @@ void SerialChannel::ReadImplantData(){
 }
 
 void SerialChannel::closeImplantPort(){
+    implantPort->flush();
     implantPort->close();
 }
 
 void SerialChannel::closeADCPort(){
+    ADCPort->flush();
     ADCPort->close();
 }
 
