@@ -3,8 +3,8 @@
 
 #include "../common/qtincludes.h"
 #include "../common/data.h"
-#include "channel.h"
 #include "../common/signalaudio.h"
+#include "time.h"
 
 #define END_OF_LINE 2779058
 
@@ -22,20 +22,19 @@ typedef enum FrameMarkers{
 class DataProcessor : public SignalAudio, public Data
 {
 public:
-    DataProcessor(Channel *NeutrinoChannel_);
+    DataProcessor();
 
     void setBitMode(bool BitMode);
 
-    QVector<quint16> ParseFrameMarkers10bits(QByteArray data_store);
-    QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
-    QVector<double> getChannelData(int ChannelIndex);
-    void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
-
-private:
-    QTextStream *out;
     Data *data;
-    Channel *NeutrinoChannel;
-
+    SignalAudio *signalAudio;
+    void parseFrameMarkers(QByteArray rawData);
+    bool checkNextFrameMarker(QByteArray data, int currentIndex);
+    int findfirstFrameMarkers(QByteArray rawData);
+    int findlastFrameMarkers(QByteArray rawData);
+    void sortADCData(QByteArray adcData);
+    void setADCRecordEnabled(bool enableFlag);
+    bool isADCRecordEnabled();
     int firstFrameMarker;
     quint8 currentFrameMarker;
     int currentFrameMarkerIndex;
@@ -44,13 +43,15 @@ private:
     QByteArray leftOverData;
     QVector<quint8> ADC_Data;
 
+private:
+    QFile *File;
+    QTextStream *out;
+
+    QString fileName;
+    QString directory = QDir::homePath() + "/Desktop/";
     bool is8BitMode;
-
-    int first_10bitFrameMarker(QByteArray data);
-    int last_10bitFrameMarker(QByteArray data);
-
-    int first_8bitFrameMarker(QByteArray data);
-    int last_8bitFrameMarker(QByteArray data);
+    bool ADCEnabled = false;
+    bool ADCRecordEnabled = false;
 
     int prevleftOverByteCount = 0;
 

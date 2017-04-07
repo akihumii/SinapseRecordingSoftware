@@ -55,7 +55,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
-//    playAudio(getAudioChannel());
+    playAudio(getAudioChannel());
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
@@ -107,3 +107,28 @@ void DataProcessor::sortADCData(QByteArray adcData){
         ADC_Data.append(adcData.at(i));
     }
 }
+
+void DataProcessor::setADCRecordEnabled(bool enableFlag){
+    ADCRecordEnabled = enableFlag;
+    if(enableFlag){
+        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File ADC opened";
+        }
+        else{
+            qDebug() << "File ADC failed to open";
+        }
+        out = new QTextStream(File);
+        qDebug() << "setting Record Enabled";
+    }
+    else{
+        File->close();
+        qDebug() << "setting Record disabled";
+    }
+}
+
+bool DataProcessor::isADCRecordEnabled(){
+    return ADCRecordEnabled;
+}
+

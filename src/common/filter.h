@@ -33,10 +33,10 @@ private:
     double a0_lp, a1_lp, a2_lp, b1_lp, b2_lp;        // coefficients for 2nd order high pass butterworth filter
     double a0_n, a1_n, a2_n, b1_n, b2_n;             // coefficients for notch filter
     double TWO_PI = 6.28318530718;
-    QVector<double> filteredData[10];
-    QVector<double> filteredData_hp[10];
-    QVector<double> filteredData_n[10];
-    QVector<double> prevRawData[10];
+    QVector<double> filteredData[12];
+    QVector<double> filteredData_hp[12];
+    QVector<double> filteredData_n[12];
+    QVector<double> prevRawData[12];
     QVector<double> hipassFilter(QVector<double> rawData, int ChannelIndex);
     QVector<double> lopassFilter(QVector<double> rawData, int ChannelIndex);
     QVector<double> notchFilter(QVector<double> rawData, int ChannelIndex);

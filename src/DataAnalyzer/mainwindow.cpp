@@ -1,6 +1,19 @@
 #include "mainwindow.h"
 
+extern QVector<double> loadData(QFile *rawData, int channelIndex, int numChannels){
+    QTextStream in(rawData);
+    QVector<double> loadedData;
+    while(!in.atEnd()){
+        QString line = in.readLine();
+        qDebug() << line;//.split(",", QString::SkipEmptyParts)[1].toInt()*1.2/256;
+//        loadedData.append(line.split(" ,")[channelIndex].toInt()*1.2/256);
+    }
+    return loadedData;
+}
+
 MainWindow::MainWindow(QString filename){
+    typedef QVector<QVector<double>> dataArray;
+    double parsedData = qRegisterMetaType<dataArray>("dataArray");
     while(!filename.endsWith(".csv")){
         if(filename.isNull())
             break;
@@ -16,35 +29,65 @@ MainWindow::MainWindow(QString filename){
         if(rawData.open(QIODevice::ReadOnly)){
             QTextStream in(&rawData);
             QString firstLine = in.readLine();
-            QProgressDialog progress("Loading data, please wait...", "Cancel", 0, rawData.size()/firstLine.size(), this);
-            progress.setWindowModality(Qt::WindowModal);
             for(int i = 0; i < firstLine.size(); i++){
                 if(firstLine.at(i) == ','){
                     numChannels++;
                 }
             }
+            channelData.resize(numChannels);
+            qDebug() << "Started reading";
+            QStringList *loadedData = new QStringList;
+            int count = 0;
+            int tid = 0;
             while(!in.atEnd()){
-                QString line = in.readLine();
-                for(int i = 0; i < numChannels; i++){
-                    channelData[i].append(line.split(" ,")[i].toInt()*1.2/256);
+                loadedData->append(in.readLine());
+                ++count;
+                if(count > 99999){
+                    ChunkProcessor *chunkprocessor = new ChunkProcessor(loadedData, numChannels, tid);
+                    QThreadPool::globalInstance()->start(chunkprocessor);
+                    connect(chunkprocessor, SIGNAL(finishedChunk(QVector<QVector<double>>, int)), this, SLOT(readingFinished(QVector<QVector<double>>, int)));
+                    loadedData = new QStringList;
+                    count = 0;
+                    qDebug() << "Thread " << tid;
+                    ++tid;
                 }
-                total_data_points++;
-                progress.setValue(total_data_points);
-                if (progress.wasCanceled())
-                    break;
             }
-            progress.setValue(rawData.size()/firstLine.size());
+            QThreadPool::globalInstance()->waitForDone();
+            qDebug() << "Done reading";
             setWindowTitle(tr("Data Analyzer"));
             createLayout();
-            GraphDialog graphDialog(firstLoad, channelData, total_data_points, this);
-            graphDialog.setMinimumSize(1366,768);
-            graphDialog.showMaximized();
-            graphDialog.exec();
+//            GraphDialog graphDialog(firstLoad, channelData, total_data_points, this);
+//            graphDialog.setMinimumSize(1366,768);
+//            graphDialog.showMaximized();
+//            graphDialog.exec();
         }
     }
     else{
         exit(1);
     }
+}
+
+void MainWindow::readingFinished(QVector<QVector<double>> parsedData, int tid){
+//    qDebug() << "Handling Thread " << tid;
+//    if(dataAppended >= tid){
+        for(int i = 0; i < parsedData.size(); i++){
+            channelData[i].append(parsedData.at(i));
+        }
+//    }
+//    else{
+//        for(int i = 0; i < parsedData.size(); i++){
+//            for(int j = parsedData.at(i).size() - 1; j >= 0 ; j--){
+//                channelData[i].prepend(parsedData.at(i).at(j));
+//            }
+//        }
+//    }
+//    qDebug() << "Data block appended : " << dataAppended;
+//    dataAppended++;
+//    for(int i = 0; i < parsedData.size(); i++){
+//        for(int j = 0; j < parsedData[i].size(); j++){
+//            qDebug() << parsedData[i][j];
+//        }
+//    }
 }
 
 MainWindow::~MainWindow(){
@@ -202,17 +245,17 @@ void MainWindow::on_diffEnable_changed(){
 }
 
 void MainWindow::on_startSingleEndProcessing(){
-    GraphDialog graphDialog(dataSelected, channelData, total_data_points, this);
-    graphDialog.setMinimumSize(1366,768);
-    graphDialog.showMaximized();
-    graphDialog.exec();
+//    GraphDialog graphDialog(dataSelected, channelData, total_data_points, this);
+//    graphDialog.setMinimumSize(1366,768);
+//    graphDialog.showMaximized();
+//    graphDialog.exec();
 }
 
 void MainWindow::on_startDiffProcessing(){
-    GraphDialog graphDialog(&A[0], &B[0], &diffEnable[0], channelData, total_data_points, this);
-    graphDialog.setMinimumSize(1366,768);
-    graphDialog.showMaximized();
-    graphDialog.exec();
+//    GraphDialog graphDialog(&A[0], &B[0], &diffEnable[0], channelData, total_data_points, this);
+//    graphDialog.setMinimumSize(1366,768);
+//    graphDialog.showMaximized();
+//    graphDialog.exec();
 }
 
 void MainWindow::on_startThresholdProcessing(){
@@ -222,8 +265,8 @@ void MainWindow::on_startThresholdProcessing(){
     int channelSelected = channelSelect->currentIndex();
     int greaterlesser = lessmore->currentIndex();
     int maxSpikes = (maxSpikesCombo->currentIndex()+1)*10;
-    GraphDialog graphDialog(preThreshold, postThreshold, greaterlesser, maxSpikes, threshold, channelData, channelSelected, this);
-    graphDialog.setMinimumSize(1366,768);
-    graphDialog.showMaximized();
-    graphDialog.exec();
+//    GraphDialog graphDialog(preThreshold, postThreshold, greaterlesser, maxSpikes, threshold, channelData, channelSelected, this);
+//    graphDialog.setMinimumSize(1366,768);
+//    graphDialog.showMaximized();
+//    graphDialog.exec();
 }

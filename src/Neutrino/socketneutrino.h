@@ -1,33 +1,33 @@
-#ifndef SOCKETEDISON_H
-#define SOCKETEDISON_H
+#ifndef SOCKETNEUTRINO_H
+#define SOCKETNEUTRINO_H
 
 #include "../common/qtincludes.h"
 #include "command.h"
 #include "dataprocessor.h"
 
-class SocketEdison : public QObject {
+class SocketNeutrino : public QObject {
     Q_OBJECT
 public:
-    SocketEdison(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
+    SocketNeutrino(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
     void doConnect(QString ipAddress, int port);
     bool writeCommand(QByteArray Command);
     bool isConnected();
     void doDisconnect();
     QString getError();
-    bool wifiEnabled = false;
+    bool wifiEnabled = true;
     QByteArray getlastCommand();
 
 private:
-    QTcpSocket *socketCommand;
+    QTcpSocket *socketNeutrino;
     Channel *NeutrinoChannel;
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 2048;
+    qint64 maxSize = 40960;
     int numChannels;
     QByteArray lastSentCommand;
 
-    bool Mode_8Bit;
+    bool Mode_8Bit = false;
 
     int getNumChannels(QByteArray lastCommand);
 
@@ -37,4 +37,4 @@ private slots:
     void ReadCommand();
 };
 
-#endif // SOCKETEDISON_H
+#endif // SocketNeutrino_H

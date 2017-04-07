@@ -47,6 +47,11 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QTime>
+<<<<<<< HEAD:src/DataAnalyzer/qtincludes.h
+#include <QtConcurrent/QtConcurrent>
+#include <QThread>
+=======
+>>>>>>> sylphemg_develop:src/SylphX/qtincludes.h
 #include <qmath.h>
 #include "math.h"
 
