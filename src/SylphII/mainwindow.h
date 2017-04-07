@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "socketedison.h"
+#include "socketsylph.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
 #include "dataprocessor.h"
@@ -11,6 +11,7 @@
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
+
 
 class QComboBox;
 class QCustomPlot;
@@ -54,6 +55,8 @@ private:
     void createStatusBar();
     void createActions();
     void createMenus();
+    void createLayout();
+    void connectSylph();
 
     QAction *exitAction;
     QAction *recordAction;
@@ -87,18 +90,18 @@ private:
 
     QCPRange *defaultRange;
 
-    void createLayout();
-
     QMenu *helpMenu;
     QMenu *audioOutputMenu;
 
-    QCustomPlot *channelGraph[12];
-    SocketEdison *socketSylph;
+    QCustomPlot *channelGraph[10];
+    SocketSylph *socketSylph;
 
     QAction *serialPortAction;
     QAction *aboutAction;
 
-    QAction *audio[11];
+    QAction *audio1;
+    QAction *audio2;
+    QAction *audio3;
 
     QActionGroup *audioGroup;
 
@@ -138,14 +141,6 @@ private slots:
     void on_graph1_clicked();
     void on_graph2_clicked();
     void on_graph3_clicked();
-    void on_graph4_clicked();
-    void on_graph5_clicked();
-    void on_graph6_clicked();
-    void on_graph7_clicked();
-    void on_graph8_clicked();
-    void on_graph9_clicked();
-    void on_graph10_clicked();
-    void on_graph11_clicked();
 };
 
 #endif // MainWindow_H

@@ -34,6 +34,7 @@ public:
     int findlastFrameMarkers(QByteArray rawData);
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
+    bool isADCRecordEnabled();
     int firstFrameMarker;
     quint8 currentFrameMarker;
     int currentFrameMarkerIndex;
@@ -50,6 +51,7 @@ private:
     QString directory = QDir::homePath() + "/Desktop/";
     bool is8BitMode;
     bool ADCEnabled = false;
+    bool ADCRecordEnabled = false;
 
     int prevleftOverByteCount = 0;
 

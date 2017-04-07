@@ -8,11 +8,11 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Sylph
+TARGET = SylphII
 TEMPLATE = app
 
 # The application version
-VERSION = 1.0.3
+VERSION = 1.1.0
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -30,8 +30,9 @@ HEADERS += \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
+    signalaudio.h \
     qtincludes.h \
-    socketedison.h
+    socketsylph.h
 
 SOURCES += \
     dataprocessor.cpp \
@@ -39,4 +40,5 @@ SOURCES += \
     mainwindow.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
-    socketedison.cpp
+    signalaudio.cpp \
+    socketsylph.cpp

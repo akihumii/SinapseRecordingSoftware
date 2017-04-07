@@ -1,13 +1,13 @@
-#ifndef SOCKETEDISON_H
-#define SOCKETEDISON_H
+#ifndef SOCKETSYLPH_H
+#define SOCKETSYLPH_H
 
 #include "../common/qtincludes.h"
 #include "dataprocessor.h"
 
-class SocketEdison : public QObject {
+class SocketSylph : public QObject {
     Q_OBJECT
 public:
-    SocketEdison(QObject *parent, DataProcessor *dataProcessor_);
+    SocketSylph(QObject *parent, DataProcessor *dataProcessor_);
     void doConnect(QString ipAddress, int port);
     bool isConnected();
     void doDisconnect();
@@ -15,7 +15,7 @@ public:
     bool wifiEnabled = true;
 
 private:
-    QTcpSocket *socketCommand;
+    QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
 
     qint64 maxSize = 40960;
@@ -26,4 +26,4 @@ private slots:
     void ReadCommand();
 };
 
-#endif // SOCKETEDISON_H
+#endif // SOCKETSYLPH_H
