@@ -20,7 +20,7 @@ void Data::clearChannelData(int ChannelIndex){
 }
 
 void Data::clearallChannelData(){
-    for(int i=0; i<4; i++){
+    for(int i=0; i<12; i++){
         ChannelData[i].remove(0,ChannelData[i].size());
     }
 }

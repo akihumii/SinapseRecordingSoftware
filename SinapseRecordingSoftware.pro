@@ -14,14 +14,17 @@ TEMPLATE = subdirs
 SUBDIRS +=   \
     src/common \
     src/Neutrino \
-    src/Sylph \
+    src/SylphII \
+    src/SylphX \
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
-Sylph.subdir = src/Sylph
+SylphII.subdir = src/SylphII
+SylphX.subdir = src/SylphX
 
 Neutrino.depends = common
-Sylph.depends = common
+SylphII.depends = common
+SylphX.depends = common
 
 FORMS +=
 

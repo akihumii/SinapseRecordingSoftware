@@ -586,9 +586,6 @@ void MainWindow::on_dataAnalyzer_triggered(){
     QString file = QDir::currentPath() + "/DataAnalyzer.exe";
     statusBarLabel->setText("Opening: " + file);
     process->start(file);
-//    DataAnalyzer dataAnalyzer;
-//    dataAnalyzer.showMaximized();
-//    dataAnalyzer.exec();
 }
 
 void MainWindow::on_CommandMenu_triggered(){

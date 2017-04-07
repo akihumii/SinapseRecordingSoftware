@@ -1,6 +1,6 @@
 #include "filterdialog.h"
 
-FilterDialog::FilterDialog(DataProcessor *_dataProcessor){
+FilterDialog::FilterDialog(Data *_dataProcessor){
     dataProcessor = _dataProcessor;
     createLayout();
 //    on_channelFilter_toggled();

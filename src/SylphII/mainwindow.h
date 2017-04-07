@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "socketsylph.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
 #include "dataprocessor.h"
@@ -54,6 +55,8 @@ private:
     void createStatusBar();
     void createActions();
     void createMenus();
+    void createLayout();
+    void connectSylph();
 
     QAction *exitAction;
     QAction *recordAction;
@@ -87,12 +90,11 @@ private:
 
     QCPRange *defaultRange;
 
-    void createLayout();
-
     QMenu *helpMenu;
     QMenu *audioOutputMenu;
 
     QCustomPlot *channelGraph[10];
+    SocketSylph *socketSylph;
 
     QAction *serialPortAction;
     QAction *aboutAction;
@@ -122,12 +124,14 @@ private slots:
     void on_voltage1000u_triggered();
     void on_voltage2000u_triggered();
     void on_voltage5000u_triggered();
+    void on_dataAnalyzer_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
     void on_resetX_triggered();
     void on_swap_triggered();
     void on_filterConfig_trigger();
+    void on_restart_triggered();
 
     void about();
     void resetGraph1Range();

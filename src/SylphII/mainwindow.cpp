@@ -7,33 +7,14 @@ MainWindow::MainWindow(){
     setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version);
     data = new DataProcessor;
     serialChannel = new SerialChannel(this, data);
+    socketSylph = new SocketSylph(this, data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
-    portInfo = QSerialPortInfo::availablePorts();
-    if(portInfo.size()>1){
-        serialChannel->connectSylph();
-        if(serialChannel->isImplantConnected()){
-            connectionStatus.append("Connected to Implant Port |");
-        }
-        else{
-            connectionStatus.append("Connection to Implant Port failed |");
-        }
-        if(serialChannel->isADCConnected()){
-            connectionStatus.append(" Connected to ADC Port");
-        }
-        else{
-            connectionStatus.append(" Connection to ADC Port failed");
-        }
-        statusBarLabel->setText(connectionStatus);
-    }
-    else{
-        QMessageBox::information(this, "Insufficient Serial Devices",
-                                 "Please check Serial Devices connection and try again. \n");
-    }
+    connectSylph();
     qDebug() << "Starting SYLPH..";
 }
 
@@ -104,6 +85,13 @@ void MainWindow::createActions(){
     filterAction->setShortcut(tr("Ctrl+F"));
     connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
 
+    restartAction = new QAction(tr("Restart serial port"));
+    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
+
+    dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
+    dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
+    connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
+
     swapAction = new QAction(tr("Swap &Port"), this);
     swapAction->setShortcut(tr("Ctrl+P"));
     connect(swapAction, SIGNAL(triggered()), this, SLOT(on_swap_triggered()));
@@ -170,7 +158,6 @@ void MainWindow::createActions(){
 }
 
 void MainWindow::createMenus(){
-//--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
 //    fileMenu->addAction(swapAction);
     fileMenu->addAction(filterAction);
@@ -179,16 +166,19 @@ void MainWindow::createMenus(){
 //    fileMenu->addAction(serialPortAction);
 //    fileMenu->addAction(resetDefaultRange);
 
+    fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addSeparator();
+
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
 
     fileMenu->addAction(recordAction);
     fileMenu->addAction(chooseDirectoryAction);
     fileMenu->addSeparator();
+    fileMenu->addAction(restartAction);
+    fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
-//--------------------------- FILE MENU -----------------------------//
 
-//------------------------- TIMEFRAME MENU --------------------------//
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
     timeFrameMenu->addAction(timeFrame10ms);
@@ -224,9 +214,7 @@ void MainWindow::createMenus(){
   
     timeFrameMenu->addSeparator();
     timeFrameMenu->addAction(resetDefaultX);
-//------------------------- TIMEFRAME MENU --------------------------//
 
-//------------------------- TIMEFRAME MENU --------------------------//
     voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
     voltageMenu->addAction(voltage50u);
     voltage50u->setCheckable(true);
@@ -255,10 +243,7 @@ void MainWindow::createMenus(){
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
-//------------------------- TIMEFRAME MENU --------------------------//
 
-//----------------------- AUDIO OUTPUT MENU -------------------------//
-//--------------------------- HELP MENU -----------------------------//
     audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
     audioOutputMenu->addAction(audio1);
     audio1->setCheckable(true);
@@ -275,9 +260,6 @@ void MainWindow::createMenus(){
 
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
-
-//----------------------- AUDIO OUTPUT MENU -------------------------//
-//--------------------------- HELP MENU -----------------------------//
 }
 
 void MainWindow::createStatusBar(){
@@ -286,6 +268,34 @@ void MainWindow::createStatusBar(){
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
 }
+
+void MainWindow::connectSylph(){
+    portInfo = QSerialPortInfo::availablePorts();
+    if(portInfo.size()>1){
+        serialChannel->connectSylph();
+        if(serialChannel->isImplantConnected()){
+            connectionStatus.append("Connected to Implant Port |");
+        }
+        else{
+            connectionStatus.append("Connection to Implant Port failed |");
+        }
+        if(serialChannel->isADCConnected()){
+            connectionStatus.append(" Connected to ADC Port");
+        }
+        else{
+            connectionStatus.append(" Connection to ADC Port failed");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
+    else{
+        do{
+            socketSylph->doConnect("10.10.10.1", 30000);
+        }while(!socketSylph->isConnected());
+        connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+        statusBarLabel->setText(connectionStatus);
+    }
+}
+
 
 MainWindow::~MainWindow(){
     serialChannel->closeADCPort();
@@ -449,11 +459,13 @@ void MainWindow::on_voltage5000u_triggered(){
 void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
+        data->setADCRecordEnabled(true);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
+        data->setADCRecordEnabled(false);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
@@ -506,6 +518,12 @@ void MainWindow::on_resetY_triggered(){
     voltage500u->setChecked(true);
 }
 
+void MainWindow::on_dataAnalyzer_triggered(){
+    QProcess *process = new QProcess(this);
+    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzer.exe";
+    process->start(file);
+}
+
 //void MainWindow::on_serialConfig_triggered(){
 //    SerialPortDialog serialPortDialog(serialChannel);
 //    serialPortDialog.exec();
@@ -522,6 +540,25 @@ void MainWindow::on_resetY_triggered(){
 //        }
 //    }
 //}
+
+void MainWindow::on_restart_triggered(){
+    if(data->isADCRecordEnabled()){
+        data->setADCRecordEnabled(false);
+        data->setADCRecordEnabled(true);
+    }
+    if(data->isRecordEnabled()){
+        data->setRecordEnabled(false);
+        data->setRecordEnabled(true);
+    }
+    if(serialChannel->isADCConnected()){
+        serialChannel->closeADCPort();
+    }
+    if(serialChannel->isImplantConnected()){
+        serialChannel->closeImplantPort();
+    }
+    data->clearallChannelData();
+    connectSylph();
+}
 
 void MainWindow::resetGraph1Range(){
     channelGraph[0]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);

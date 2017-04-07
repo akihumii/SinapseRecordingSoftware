@@ -44,7 +44,7 @@ public:
     double getSamplingRate();
 protected:
     QVector<double> X_axis;
-    QVector<double> ChannelData[10];
+    QVector<double> ChannelData[12];
 
     quint64 total_data_count = 0;
     bool RecordEnabled = false;

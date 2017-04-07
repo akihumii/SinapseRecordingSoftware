@@ -2,21 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "socketneutrino.h"
-#include "command.h"
+#include "socketsylph.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
-#include "connectiondialog.h"
-#include "commanddialog.h"
 #include "dataprocessor.h"
-#include "channel.h"
 #include "../common/data.h"
 #include "../common/filter.h"
-#include "signalchannel.h"
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
-
 
 class QComboBox;
 class QCustomPlot;
@@ -30,9 +24,10 @@ public:
     ~MainWindow();
     QLabel *statusBarLabel;
 
+    SerialChannel *serialChannel;
+    DataProcessor *data;
 
 public slots:
-
 
 private:
     QElapsedTimer timer;
@@ -59,10 +54,13 @@ private:
     void createStatusBar();
     void createActions();
     void createMenus();
+    void createLayout();
+    void connectSylph();
 
     QAction *exitAction;
     QAction *recordAction;
     QAction *chooseDirectoryAction;
+    QAction *restartAction;
 
     QAction *pauseAction;
     bool pause = false;
@@ -83,32 +81,26 @@ private:
 
     QActionGroup *voltageGroup;
 
-    SocketNeutrino *socketNeutrino;
-    SerialChannel *serialNeutrino;
-    Command *NeutrinoCommand;
-    DataProcessor *data;
-    Channel *NeutrinoChannel;
+    int numDataPoints;
 
     QList<QSerialPortInfo> portInfo;
 
-    void create10x1Layout();
-    void create5x2Layout();
+    QString connectionStatus;
 
-    QMenu *connectivityMenu;
+    QCPRange *defaultRange;
 
-    QCustomPlot *channelGraph[10];
+    QMenu *helpMenu;
+    QMenu *audioOutputMenu;
 
-    QAction *tenby1Action;
-    QAction *fiveby2Action;
+    QCustomPlot *channelGraph[12];
+    SocketSylph *socketSylph;
 
-//    QAction *connectAction;
-//    QAction *disconnectAction;
-    QAction *commandAction;
+    QAction *serialPortAction;
+    QAction *aboutAction;
 
-    QActionGroup *connectivityGroup;
+    QAction *audio[11];
 
-//    QAction *wiredMode;
-//    QAction *wifiMode;
+    QActionGroup *audioGroup;
 
 private slots:
     void updateData();
@@ -129,22 +121,31 @@ private slots:
     void on_voltage1000u_triggered();
     void on_voltage2000u_triggered();
     void on_voltage5000u_triggered();
+    void on_dataAnalyzer_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
     void on_resetX_triggered();
     void on_swap_triggered();
     void on_filterConfig_trigger();
+    void on_restart_triggered();
 
-//    void on_ConnectMenu_triggered();
-//    void on_DisconnectMenu_triggered();
-    void on_dataAnalyzer_triggered();
-    void on_CommandMenu_triggered();
-    void on_tenby1_triggered();
-    void on_fiveby2_triggered();
-//    void on_wired_triggered();
-//    void on_wifi_triggered();
-
+    void about();
+    void resetGraph1Range();
+    void resetGraph2Range();
+    void resetGraph3Range();
+    void resetGraph4Range();
+    void on_graph1_clicked();
+    void on_graph2_clicked();
+    void on_graph3_clicked();
+    void on_graph4_clicked();
+    void on_graph5_clicked();
+    void on_graph6_clicked();
+    void on_graph7_clicked();
+    void on_graph8_clicked();
+    void on_graph9_clicked();
+    void on_graph10_clicked();
+    void on_graph11_clicked();
 };
 
 #endif // MainWindow_H
