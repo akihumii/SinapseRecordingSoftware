@@ -114,6 +114,7 @@ void DataProcessor::sortADCData(QByteArray adcData){
 }
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){
+    ADCRecordEnabled = enableFlag;
     if(enableFlag){
         fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
         File->setFileName(fileName);
@@ -130,4 +131,8 @@ void DataProcessor::setADCRecordEnabled(bool enableFlag){
         File->close();
         qDebug() << "setting Record disabled";
     }
+}
+
+bool DataProcessor::isADCRecordEnabled(){
+    return ADCRecordEnabled;
 }
