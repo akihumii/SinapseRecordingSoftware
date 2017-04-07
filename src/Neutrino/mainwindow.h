@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "socketedison.h"
+#include "socketneutrino.h"
 #include "command.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
@@ -83,7 +83,7 @@ private:
 
     QActionGroup *voltageGroup;
 
-    SocketEdison *socketEdison;
+    SocketNeutrino *socketNeutrino;
     SerialChannel *serialNeutrino;
     Command *NeutrinoCommand;
     DataProcessor *data;

@@ -1,8 +1,8 @@
 #include "connectiondialog.h"
 
-ConnectionDialog::ConnectionDialog(SocketEdison *socketEdison_)
+ConnectionDialog::ConnectionDialog(SocketNeutrino *socketNeutrino_)
 {
-    socketEdison = socketEdison_;
+    socketNeutrino = socketNeutrino_;
     setWindowTitle(tr("Enter IP and Port Number"));
     createLayout();
 }
@@ -38,7 +38,7 @@ void ConnectionDialog::createLayout()
     Connect = new QPushButton(tr("Connect"));
     Cancel = new QPushButton(tr("Cancel"));
 
-    if (socketEdison->isConnected()){
+    if (socketNeutrino->isConnected()){
         Cancel->setText("Disconnect");
     }
 
@@ -58,21 +58,21 @@ void ConnectionDialog::createLayout()
 }
 
 void ConnectionDialog::on_ConnectButton_clicked(){
-    socketEdison->doConnect(IPAddress->text(), PortNumber->text().toInt());
-    if (socketEdison->isConnected()){
+    socketNeutrino->doConnect(IPAddress->text(), PortNumber->text().toInt());
+    if (socketNeutrino->isConnected()){
         setWindowTitle(tr("Connected!!"));
         QThread::msleep(1000);
         ConnectionDialog::close();
     }
     else{
-        setWindowTitle(socketEdison->getError());
+        setWindowTitle(socketNeutrino->getError());
     }
 }
 
 void ConnectionDialog::on_CancelButton_clicked(){
-    if (socketEdison->isConnected()){
-        socketEdison->writeCommand(QByteArray::number(255, 10));
-        socketEdison->doDisconnect();
+    if (socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(QByteArray::number(255, 10));
+        socketNeutrino->doDisconnect();
         setWindowTitle(tr("Disconnected!!"));
         QThread::msleep(1000);
         ConnectionDialog::close();

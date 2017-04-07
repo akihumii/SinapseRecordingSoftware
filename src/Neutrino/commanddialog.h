@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "../common/qtincludes.h"
-#include "socketedison.h"
+#include "socketneutrino.h"
 #include "command.h"
 #include "serialchannel.h"
 
@@ -16,7 +16,7 @@ class CommandDialog : public QDialog
     Q_OBJECT
 
 public:
-    CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_);
+    CommandDialog(SocketNeutrino *socketNeutrino_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_);
     ~CommandDialog();
 
 private slots:
@@ -35,7 +35,7 @@ private slots:
     void on_BER_textEdited();
 
 private:
-    SocketEdison *socketEdison;
+    SocketNeutrino *socketNeutrino;
     Command *NeutrinoCommand;
     Channel *NeutrinoChannel;
     SerialChannel *NeutrinoSerial;

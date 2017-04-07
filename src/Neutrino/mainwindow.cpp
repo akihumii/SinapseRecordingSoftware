@@ -8,8 +8,8 @@ MainWindow::MainWindow(){
     data = new DataProcessor(NeutrinoChannel);
 //    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
 //    serialNeutrino->doConnect();
-    socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
-    socketEdison->doConnect("192.168.42.1", 8888);
+    socketNeutrino = new SocketNeutrino(this, NeutrinoCommand, data, NeutrinoChannel);
+    socketNeutrino->doConnect("10.10.10.1", 30000);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     createStatusBar();
     create5x2Layout();
@@ -335,9 +335,9 @@ void MainWindow::createStatusBar(){
 }
 
 MainWindow::~MainWindow(){
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(QByteArray::number(255, 10));
-        socketEdison->doDisconnect();
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(QByteArray::number(255, 10));
+        socketNeutrino->doDisconnect();
     }
     serialNeutrino->closePort();
 }
@@ -560,9 +560,9 @@ void MainWindow::on_resetY_triggered(){
 
 //void MainWindow::on_ConnectMenu_triggered(){
 //    statusBarLabel->setText("Connection Dialog Opened");
-//    ConnectionDialog connectionDialog(socketEdison);
+//    ConnectionDialog connectionDialog(socketNeutrino);
 //    connectionDialog.exec();
-//    if(socketEdison->isConnected()){
+//    if(socketNeutrino->isConnected()){
 //        statusBarLabel->setText("Connected!!");
 //    }
 //    else{
@@ -571,12 +571,12 @@ void MainWindow::on_resetY_triggered(){
 //}
 
 //void MainWindow::on_DisconnectMenu_triggered(){
-//    if(socketEdison->isConnected()){
+//    if(socketNeutrino->isConnected()){
 //        qDebug() << "Disconnecting, please wait...";
-//        socketEdison->writeCommand(QByteArray::number(255, 10));
-//        socketEdison->doDisconnect();
+//        socketNeutrino->writeCommand(QByteArray::number(255, 10));
+//        socketNeutrino->doDisconnect();
 //    }
-//    if(!socketEdison->isConnected()){
+//    if(!socketNeutrino->isConnected()){
 //        statusBarLabel->setText("Disconnected!!");
 //    }
 //}
@@ -593,7 +593,7 @@ void MainWindow::on_dataAnalyzer_triggered(){
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
-    CommandDialog commandDialog(socketEdison, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
+    CommandDialog commandDialog(socketNeutrino, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
     commandDialog.exec();
 }
 
@@ -609,7 +609,7 @@ void MainWindow::on_fiveby2_triggered(){
 //    qDebug() << "ready via Wifi";
 //    serialNeutrino->closePort();
 //    serialNeutrino->serialenabled = false;
-//    socketEdison->wifiEnabled = true;
+//    socketNeutrino->wifiEnabled = true;
 //}
 
 //void MainWindow::on_wired_triggered(){
@@ -617,5 +617,5 @@ void MainWindow::on_fiveby2_triggered(){
 //    if(serialNeutrino->doConnect()){
 //        qDebug() << "ready via USB";
 //    }
-//    socketEdison->wifiEnabled = false;
+//    socketNeutrino->wifiEnabled = false;
 //}

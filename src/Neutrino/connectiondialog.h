@@ -3,10 +3,10 @@
 
 #include <QDialog>
 #include "../common/qtincludes.h"
-#include "socketedison.h"
+#include "socketneutrino.h"
 #include "mainwindow.h"
 
-class SocketEdison;
+class SocketNeutrino;
 
 using namespace std;
 
@@ -15,7 +15,7 @@ class ConnectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionDialog(SocketEdison *socketEdison_);
+    ConnectionDialog(SocketNeutrino *socketNeutrino_);
     ~ConnectionDialog();
 
 private slots:
@@ -25,7 +25,7 @@ private slots:
 private:
     void createLayout();
 
-    SocketEdison *socketEdison;
+    SocketNeutrino *socketNeutrino;
 
     QLabel *IPLabel;
     QLabel *PortLabel;

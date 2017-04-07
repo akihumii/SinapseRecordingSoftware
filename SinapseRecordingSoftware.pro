@@ -15,16 +15,13 @@ SUBDIRS +=   \
     src/common \
     src/Neutrino \
     src/Sylph \
-    src/DataAnalyzer \
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
 Sylph.subdir = src/Sylph
-DataAnalyzer  = src/DataAnalyzer
 
 Neutrino.depends = common
 Sylph.depends = common
-DataAnalyzer.depends = common
 
 FORMS +=
 

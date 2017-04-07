@@ -36,8 +36,8 @@ HEADERS += \
     serialportdialog.h \
     signalaudio.h \
     signalchannel.h \
-    socketedison.h \
-    qtincludes.h
+    qtincludes.h \
+    socketneutrino.h
 
 SOURCES += \
     channel.cpp \
@@ -51,4 +51,4 @@ SOURCES += \
     serialportdialog.cpp \
     signalaudio.cpp \
     signalchannel.cpp \
-    socketedison.cpp
+    socketneutrino.cpp
