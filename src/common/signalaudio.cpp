@@ -71,7 +71,7 @@ void SignalAudio::handleStateChanged(QAudio::State newState)
     switch (newState) {
         case QAudio::IdleState:
             // Finished playing (no more data)
-            qDebug() << "Idled";
+//            qDebug() << "Idled";
             break;
 
         case QAudio::StoppedState:

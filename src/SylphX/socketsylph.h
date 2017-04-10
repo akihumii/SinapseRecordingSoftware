@@ -18,7 +18,7 @@ private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
 
-    qint64 maxSize = 40960;
+    qint64 maxSize = 21000;
 
 private slots:
     void connectedCommandSocket();

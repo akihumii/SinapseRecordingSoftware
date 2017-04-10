@@ -88,13 +88,10 @@ void MainWindow::createActions(){
     restartAction = new QAction(tr("Restart serial port"));
     connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
 
-<<<<<<< HEAD:src/Sylph/mainwindow.cpp
-=======
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
 
->>>>>>> data_analyzer:src/SylphII/mainwindow.cpp
     swapAction = new QAction(tr("Swap &Port"), this);
     swapAction->setShortcut(tr("Ctrl+P"));
     connect(swapAction, SIGNAL(triggered()), this, SLOT(on_swap_triggered()));
@@ -559,13 +556,8 @@ void MainWindow::on_restart_triggered(){
     if(serialChannel->isImplantConnected()){
         serialChannel->closeImplantPort();
     }
-<<<<<<< HEAD:src/Sylph/mainwindow.cpp
-    data->clearAllData();
-    serialChannel->connectSylph();
-=======
     data->clearallChannelData();
     connectSylph();
->>>>>>> data_analyzer:src/SylphII/mainwindow.cpp
 }
 
 void MainWindow::resetGraph1Range(){

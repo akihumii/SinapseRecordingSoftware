@@ -8,7 +8,7 @@ void DataProcessor::setBitMode(bool BitMode){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-//    qDebug() << rawData.size();
+    qDebug() << rawData.size();
     if(leftOverData.size() > 0){
         for(int i=leftOverData.size()-1;i>=0;i--){
             rawData.prepend(leftOverData.at(i));

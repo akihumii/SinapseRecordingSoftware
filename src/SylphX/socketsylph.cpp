@@ -29,7 +29,7 @@ void SocketSylph::disconnectedCommandSocket(){
 }
 
 void SocketSylph::ReadCommand(){
-    if(socketSylph->bytesAvailable() > 5*maxSize/10){
+    if(socketSylph->bytesAvailable() >= 10*maxSize/10){
         dataProcessor->parseFrameMarkers(socketSylph->read(maxSize));
     }
 }
