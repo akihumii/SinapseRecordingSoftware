@@ -8,52 +8,85 @@ void DataProcessor::setBitMode(bool BitMode){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-    if(leftOverData.size() > 0){
-        for(int i=leftOverData.size()-1;i>=0;i--){
-            rawData.prepend(leftOverData.at(i));
-        }
-        leftOverData.clear();
-    }
-    firstFrameMarker = findfirstFrameMarkers(rawData);
-    lastFrameMarker = findlastFrameMarkers(rawData);
-    if(lastFrameMarker > 0){
-        for(int i = 0; i < lastFrameMarker - 4; i = i + 1){
-            if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
-                fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
-                appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
-                if(RecordEnabled){
-                    RecordData(fullWord_rawData);
-                }
-                ChannelData[0].append(fullWord_rawData*(0.000000195));
+//    if(leftOverData.size() > 0){
+//        for(int i=leftOverData.size()-1;i>=0;i--){
+//            rawData.prepend(leftOverData.at(i));
+//        }
+//        leftOverData.clear();
+//    }
+//    firstFrameMarker = findfirstFrameMarkers(rawData);
+//    lastFrameMarker = findlastFrameMarkers(rawData);
+//    if(lastFrameMarker > 0){
+//        for(int i = 0; i < lastFrameMarker - 4; i = i + 1){
+//            if (i%5 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
+//                fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
+//                appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
+//                if(RecordEnabled){
+//                    RecordData(fullWord_rawData);
+//                }
+//                ChannelData[0].append(fullWord_rawData*(0.000000195));
 
-                fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
-                appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
-                if(RecordEnabled){
-                    RecordData(fullWord_rawData);
-                }
-                ChannelData[1].append(fullWord_rawData*(0.000000195));
-                if(RecordEnabled){
-                    if(ADC_Data.size()>0){
-                        RecordData(ADC_Data.at(0));
-                    }
-                    else{
-                        RecordData(0);
-                    }
-                    RecordData((quint8) rawData.at(i));
-                    RecordData(END_OF_LINE);
-                }
-                if(ADC_Data.size()>0){
-                    ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
-                    ADC_Data.remove(0, 1);
-                }
-                ChannelData[3].append((quint8) rawData.at(i));
-                total_data_count = total_data_count+1;
-                X_axis.append(total_data_count*0.000048);
+//                fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
+//                appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
+//                if(RecordEnabled){
+//                    RecordData(fullWord_rawData);
+//                }
+//                ChannelData[1].append(fullWord_rawData*(0.000000195));
+//                if(RecordEnabled){
+//                    if(ADC_Data.size()>0){
+//                        RecordData(ADC_Data.at(0));
+//                    }
+//                    else{
+//                        RecordData(0);
+//                    }
+//                    RecordData((quint8) rawData.at(i));
+//                    RecordData(END_OF_LINE);
+//                }
+//                if(ADC_Data.size()>0){
+//                    ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
+//                    ADC_Data.remove(0, 1);
+//                }
+//                ChannelData[3].append((quint8) rawData.at(i));
+//                total_data_count = total_data_count+1;
+//                X_axis.append(total_data_count*0.000048);
+//            }
+//        }
+//        for(int i = lastFrameMarker; i < rawData.size(); i++){
+//            leftOverData.append(rawData.at(i));
+//        }
+//    }
+    qDebug() << rawData.size();
+    for(int i = 0; i < rawData.size(); i = i + 5){
+        fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
+        appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
+        if(RecordEnabled){
+            RecordData(fullWord_rawData);
+        }
+        ChannelData[0].append(fullWord_rawData*(0.000000195));
+
+        fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
+        appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
+        if(RecordEnabled){
+            RecordData(fullWord_rawData);
+        }
+        ChannelData[1].append(fullWord_rawData*(0.000000195));
+        if(RecordEnabled){
+            if(ADC_Data.size()>0){
+                RecordData(ADC_Data.at(0));
             }
+            else{
+                RecordData(0);
+            }
+            RecordData((quint8) rawData.at(i));
+            RecordData(END_OF_LINE);
         }
-        for(int i = lastFrameMarker; i < rawData.size(); i++){
-            leftOverData.append(rawData.at(i));
+        if(ADC_Data.size()>0){
+            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
+            ADC_Data.remove(0, 1);
         }
+        ChannelData[3].append((quint8) rawData.at(i));
+        total_data_count = total_data_count+1;
+        X_axis.append(total_data_count*0.000048);
     }
     playAudio(getAudioChannel());
 }
@@ -112,6 +145,7 @@ void DataProcessor::setADCRecordEnabled(bool enableFlag){
     ADCRecordEnabled = enableFlag;
     if(enableFlag){
         fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
+        File = new QFile;
         File->setFileName(fileName);
         if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
             qDebug()<< "File ADC opened";

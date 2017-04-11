@@ -47,6 +47,8 @@ private:
     QFile *File;
     QTextStream *out;
 
+    bool checked = false;
+
     QString fileName;
     QString directory = QDir::homePath() + "/Desktop/";
     bool is8BitMode;

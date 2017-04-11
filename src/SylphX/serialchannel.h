@@ -28,6 +28,8 @@ private:
     QSerialPort *ADCPort;
     DataProcessor *dataProcessor;
 
+    bool checked = false;
+
     QList<QSerialPortInfo> portInfo;
     bool connected = false;
     bool implantConnected = false;

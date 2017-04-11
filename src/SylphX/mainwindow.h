@@ -33,6 +33,8 @@ private:
     QElapsedTimer timer;
     QTimer dataTimer;
 
+    int restartCount = 0;
+
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
     QAction *timeFrame50ms;

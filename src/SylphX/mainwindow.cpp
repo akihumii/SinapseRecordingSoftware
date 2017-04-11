@@ -4,7 +4,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
     defaultRange = new QCPRange(-0.00050, 0.00100);
-    setWindowTitle(tr("SINAPSE Sylph Recording Software V") + version);
+    setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     data = new DataProcessor;
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(this, data);
@@ -140,6 +140,7 @@ void MainWindow::createActions(){
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
     restartAction = new QAction(tr("Restart serial port"), this);
+    restartAction->setShortcut(tr("Ctrl+A"));
     connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
 
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
@@ -309,6 +310,7 @@ void MainWindow::createStatusBar(){
 
 void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
+    connectionStatus.clear();
     if(portInfo.size()>1){
         serialChannel->connectSylph();
         if(serialChannel->isImplantConnected()){
@@ -326,10 +328,15 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(connectionStatus);
     }
     else{
-        do{
-            socketSylph->doConnect("10.10.10.1", 30000);
-        }while(!socketSylph->isConnected());
-        connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+        socketSylph->doConnect("10.10.10.1", 30000);
+        if(socketSylph->isConnected()){
+            connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+        }
+        else{
+            connectionStatus.append("Failed to connect...");
+            QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
+                                                                 "Check your connections and run the program again..");
+        }
         statusBarLabel->setText(connectionStatus);
     }
 }
@@ -339,6 +346,11 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::updateData(){
+    if(restartCount < 2 && serialChannel->isConnected()){
+        on_restart_triggered();
+        restartCount++;
+//        qDebug() << restartCount;
+    }
     QVector<double> X_axis = data->retrieveXAxis();
     if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<12; i++){

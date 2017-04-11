@@ -20,6 +20,8 @@ private:
 
     qint64 maxSize = 40960;
 
+    bool checked = false;
+
 private slots:
     void connectedCommandSocket();
     void disconnectedCommandSocket();

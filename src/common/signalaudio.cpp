@@ -41,9 +41,9 @@ SignalAudio::~SignalAudio(){
 
 }
 
-void SignalAudio::appendAudioBuffer(int ChannelIndex, char MSB, char LSB){
-    audioBuffer[ChannelIndex].append(MSB);
+void SignalAudio::appendAudioBuffer(int ChannelIndex, char LSB, char MSB){
     audioBuffer[ChannelIndex].append(LSB);
+    audioBuffer[ChannelIndex].append(MSB);
 }
 
 bool SignalAudio::playAudio(int ChannelIndex){
