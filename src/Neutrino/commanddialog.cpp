@@ -288,6 +288,9 @@ void CommandDialog::on_sendCommand_clicked(){
             NeutrinoChannel->setChannelState(i, false);
         }
     }
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
@@ -296,6 +299,9 @@ void CommandDialog::on_sendCommand_clicked(){
 void CommandDialog::on_chipReset_clicked(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(NeutrinoCommand->resetCommand());
+    }
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->resetCommand());
     }
 }
 

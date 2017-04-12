@@ -39,8 +39,9 @@ void SocketSylph::disconnectedCommandSocket(){
 }
 
 void SocketSylph::ReadCommand(){
-    if(socketSylph->bytesAvailable() >= 25200 && checked){
-        dataProcessor->parseFrameMarkers(socketSylph->read(26100));
+    if(/*socketSylph->bytesAvailable() >= maxSize &&*/ checked){
+        qDebug() << "Reading data";
+        dataProcessor->parseFrameMarkers(socketSylph->read(maxSize));
     }
     else if(socketSylph->bytesAvailable() >= 106 && !checked){
         qDebug() << "checking";

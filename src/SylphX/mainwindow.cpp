@@ -327,7 +327,7 @@ void MainWindow::connectSylph(){
         }
         statusBarLabel->setText(connectionStatus);
     }
-    else{
+    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
         socketSylph->doConnect("10.10.10.1", 30000);
         if(socketSylph->isConnected()){
             connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");

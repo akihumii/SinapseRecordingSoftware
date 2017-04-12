@@ -12,7 +12,7 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
 }
 
 void SerialChannel::ReadData(){
-//    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
 }
 
 void SerialChannel::closePort(){
