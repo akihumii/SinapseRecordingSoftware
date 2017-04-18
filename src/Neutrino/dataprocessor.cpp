@@ -154,7 +154,7 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                 RecordData(END_OF_LINE);
             }
             total_data_count = total_data_count+1;
-            X_axis.append(total_data_count*0.000056);
+            X_axis.append(total_data_count*((14.0*(numChannels+2.0)/3000000.0)));
         }
     }
     Plot_Y_AllDataPoint.clear();

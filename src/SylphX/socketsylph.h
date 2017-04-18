@@ -13,6 +13,7 @@ public:
     void doDisconnect();
     QString getError();
     bool wifiEnabled = true;
+    void discardData();
 
 private:
     QTcpSocket *socketSylph;
@@ -21,6 +22,7 @@ private:
     qint64 maxSize = 25200;
 
     bool checked = false;
+    int initCount = 0;
 
 private slots:
     void connectedCommandSocket();

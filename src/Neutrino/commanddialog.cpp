@@ -36,8 +36,8 @@ void CommandDialog::createLayout(){
     ModeComboBox->addItem("Bioimpedance Measurement (10-bit)");
     ModeComboBox->addItem("Power Level Measurement");
 
-    ModeComboBox->setCurrentIndex(3);
-    on_Mode_Changed(3);
+    ModeComboBox->setCurrentIndex(2);
+    on_Mode_Changed(2);
 
     connect(ModeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Mode_Changed(int)));
 

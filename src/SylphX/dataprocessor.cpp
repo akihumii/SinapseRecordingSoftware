@@ -8,7 +8,7 @@ void DataProcessor::setBitMode(bool BitMode){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-    qDebug() << rawData.size();
+//    qDebug() << rawData.size();
     for(int i = 0; i < rawData.size(); i = i + 21){
         for(int j = 2; j < 10; j++){
             fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;

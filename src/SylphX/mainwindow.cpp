@@ -45,12 +45,12 @@ void MainWindow::createLayout(){
     connect(channelGraph[9], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph10_clicked()));
     connect(channelGraph[10], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph11_clicked()));
 
-
     for(int i = 0; i < 10; i ++){
         channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
     }
+
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
     channelGraph[10]->yAxis->setLabelPadding(35);
     channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 10));
@@ -313,6 +313,7 @@ void MainWindow::connectSylph(){
     connectionStatus.clear();
     if(portInfo.size()>1){
         serialChannel->connectSylph();
+        connectionStatus.clear();
         if(serialChannel->isImplantConnected()){
             connectionStatus.append("Connected to Implant Port |");
         }
@@ -330,6 +331,7 @@ void MainWindow::connectSylph(){
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
         socketSylph->doConnect("10.10.10.1", 30000);
         if(socketSylph->isConnected()){
+            connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
         }
         else{
@@ -346,7 +348,7 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::updateData(){
-    if(restartCount < 2 && serialChannel->isConnected()){
+    if(restartCount < 15 && serialChannel->isConnected()){
         on_restart_triggered();
         restartCount++;
 //        qDebug() << restartCount;
@@ -368,7 +370,7 @@ void MainWindow::updateData(){
 }
 
 void MainWindow::on_timeFrame10_triggered(){
-    data->setNumDataPoints(TimeFrames10ms, 4960.0);
+    data->setNumDataPoints(TimeFrames10ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.001);
@@ -377,7 +379,7 @@ void MainWindow::on_timeFrame10_triggered(){
 }
 
 void MainWindow::on_timeFrame20_triggered(){
-    data->setNumDataPoints(TimeFrames20ms, 4960.0);
+    data->setNumDataPoints(TimeFrames20ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.002);
@@ -386,7 +388,7 @@ void MainWindow::on_timeFrame20_triggered(){
 }
 
 void MainWindow::on_timeFrame50_triggered(){
-    data->setNumDataPoints(TimeFrames50ms, 4960.0);
+    data->setNumDataPoints(TimeFrames50ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.005);
@@ -395,7 +397,7 @@ void MainWindow::on_timeFrame50_triggered(){
 }
 
 void MainWindow::on_timeFrame100_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 4960.0);
+    data->setNumDataPoints(TimeFrames100ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.01);
@@ -404,7 +406,7 @@ void MainWindow::on_timeFrame100_triggered(){
 }
 
 void MainWindow::on_timeFrame200_triggered(){
-    data->setNumDataPoints(TimeFrames200ms, 4960.0);
+    data->setNumDataPoints(TimeFrames200ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.02);
@@ -413,7 +415,7 @@ void MainWindow::on_timeFrame200_triggered(){
 }
 
 void MainWindow::on_timeFrame500_triggered(){
-    data->setNumDataPoints(TimeFrames500ms, 4960.0);
+    data->setNumDataPoints(TimeFrames500ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.05);
@@ -422,7 +424,7 @@ void MainWindow::on_timeFrame500_triggered(){
 }
 
 void MainWindow::on_timeFrame1000_triggered(){
-    data->setNumDataPoints(TimeFrames1000ms, 4960.0);
+    data->setNumDataPoints(TimeFrames1000ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.1);
@@ -431,7 +433,7 @@ void MainWindow::on_timeFrame1000_triggered(){
 }
 
 void MainWindow::on_timeFrame2000_triggered(){
-    data->setNumDataPoints(TimeFrames2000ms, 4960.0);
+    data->setNumDataPoints(TimeFrames2000ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.2);
@@ -440,7 +442,7 @@ void MainWindow::on_timeFrame2000_triggered(){
 }
 
 void MainWindow::on_timeFrame5000_triggered(){
-    data->setNumDataPoints(TimeFrames5000ms, 4960.0);
+    data->setNumDataPoints(TimeFrames5000ms, samplingRate);
     data->clearallChannelData();
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setTickStep(0.5);
@@ -540,7 +542,7 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 4960.0);
+    data->setNumDataPoints(TimeFrames100ms, samplingRate);
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
@@ -603,6 +605,9 @@ void MainWindow::on_restart_triggered(){
     }
     data->clearallChannelData();
     connectSylph();
+    if(socketSylph->isConnected()){
+        socketSylph->discardData();
+    }
 }
 
 
@@ -632,128 +637,72 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About SINAPSE Recording Software"),
             tr("<h2>Singapore Institute for Neurotechnology</h2>"
                "<p>Version 1.0"
-               "<p>Copyright &copy; 2016-2018 SINAPSE"
-               "<p>This biopotential recording application controls the RHD2000 "
-               "USB Interface Board from Intan Technologies.  The C++/Qt source code "
-               "for this application is freely available from Intan Technologies. "
-               "For more information visit <i>http://www.intantech.com</i>."
-               "<p>This program is free software: you can redistribute it and/or modify "
-               "it under the terms of the GNU Lesser General Public License as published "
-               "by the Free Software Foundation, either version 3 of the License, or "
-               "(at your option) any later version."
-               "<p>This program is distributed in the hope that it will be useful, "
-               "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-               "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
-               "GNU Lesser General Public License for more details."
-               "<p>You should have received a copy of the GNU Lesser General Public License "
-               "along with this program.  If not, see <i>http://www.gnu.org/licenses/</i>."));
+               "<p>Copyright &copy; 2016-2018 SINAPSE"));
 }
 
 void MainWindow::on_graph1_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[0]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(0);
-    audio[0]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(0);
 }
 
 void MainWindow::on_graph2_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[1]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(1);
-    audio[1]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(1);
 }
 void MainWindow::on_graph3_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[2]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(2);
-    audio[2]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(2);
 }
 
 void MainWindow::on_graph4_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[3]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(3);
-    audio[3]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(3);
 }
 
 void MainWindow::on_graph5_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[4]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(4);
-    audio[4]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(4);
 }
 
 void MainWindow::on_graph6_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[5]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(5);
-    audio[5]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(5);
 }
 
 void MainWindow::on_graph7_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[6]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(6);
-    audio[6]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(6);
 }
 
 void MainWindow::on_graph8_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[7]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(7);
-    audio[7]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(7);
 }
 
 void MainWindow::on_graph9_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[8]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(8);
-    audio[8]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(8);
 }
 
 void MainWindow::on_graph10_clicked(){
-    for(int i = 0; i < 11; i++){
-        channelGraph[i]->graph()->setPen(QPen(Qt::black));
-        audio[i]->setChecked(false);
-    }
-    channelGraph[9]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(9);
-    audio[9]->setChecked(true);
+    setDefaultGraph();
+    activateChannelGraph(9);
 }
 
 void MainWindow::on_graph11_clicked(){
+    setDefaultGraph();
+    activateChannelGraph(10);
+}
+
+void MainWindow::setDefaultGraph(){
     for(int i = 0; i < 11; i++){
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
         audio[i]->setChecked(false);
     }
-    channelGraph[10]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(10);
-    audio[10]->setChecked(true);
+}
+
+void MainWindow::activateChannelGraph(int index){
+    channelGraph[index]->graph()->setPen(QPen(Qt::red));
+    data->setAudioChannel(index);
+    audio[index]->setChecked(true);
 }

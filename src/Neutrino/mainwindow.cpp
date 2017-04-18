@@ -130,7 +130,7 @@ void MainWindow::create10x1Layout(){
         channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep(0.000056);
+        channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
     }
@@ -188,7 +188,7 @@ void MainWindow::create5x2Layout(){
 
     for(int i=0;i<10;i++){
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep(0.000056);
+        channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
         channelGraph[i]->yAxis->setAutoTickStep(false);
@@ -237,11 +237,9 @@ void MainWindow::createMenus(){
 //--------------------------- FILE MENU -----------------------------//
 
 //-------------------------- LAYOUT MENU ----------------------------//
-#ifdef NEUTRINO_II
     layoutMenu = menuBar()-> addMenu(tr("&Layout"));
     layoutMenu->addAction(tenby1Action);
     layoutMenu->addAction(fiveby2Action);
-#endif //NEUTRINO_II CREATEMENU LAYOUTMENU
 //-------------------------- LAYOUT MENU ----------------------------//
 
 //------------------------- TIMEFRAME MENU --------------------------//
@@ -348,7 +346,9 @@ void MainWindow::updateData(){
         for(int i=0; i<10; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), (data->getNumDataPoints())*0.000056, Qt::AlignLeft);
+                channelGraph[i]->xAxis->setRange(X_axis.at(0),
+                                                 (data->getNumDataPoints())*(14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0),
+                                                 Qt::AlignLeft);
                 if(!pause){
                     channelGraph[i]->replot();
                 }
@@ -360,47 +360,47 @@ void MainWindow::updateData(){
 }
 
 void MainWindow::on_timeFrame10_triggered(){
-    data->setNumDataPoints(TimeFrames10ms, 17000.0);
+    data->setNumDataPoints(TimeFrames10ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame20_triggered(){
-    data->setNumDataPoints(TimeFrames20ms, 17000.0);
+    data->setNumDataPoints(TimeFrames20ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame50_triggered(){
-    data->setNumDataPoints(TimeFrames50ms, 17000.0);
+    data->setNumDataPoints(TimeFrames50ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame100_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 17000.0);
+    data->setNumDataPoints(TimeFrames100ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame200_triggered(){
-    data->setNumDataPoints(TimeFrames200ms, 17000.0);
+    data->setNumDataPoints(TimeFrames200ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame500_triggered(){
-    data->setNumDataPoints(TimeFrames500ms, 17000.0);
+    data->setNumDataPoints(TimeFrames500ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame1000_triggered(){
-    data->setNumDataPoints(TimeFrames1000ms, 17000.0);
+    data->setNumDataPoints(TimeFrames1000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame2000_triggered(){
-    data->setNumDataPoints(TimeFrames2000ms, 17000.0);
+    data->setNumDataPoints(TimeFrames2000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame5000_triggered(){
-    data->setNumDataPoints(TimeFrames5000ms, 17000.0);
+    data->setNumDataPoints(TimeFrames5000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
@@ -529,7 +529,7 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 17000);
+    data->setNumDataPoints(TimeFrames100ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
@@ -592,6 +592,7 @@ void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
     CommandDialog commandDialog(socketNeutrino, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
     commandDialog.exec();
+
 }
 
 void MainWindow::on_tenby1_triggered(){

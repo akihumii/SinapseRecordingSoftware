@@ -22,8 +22,10 @@ void SocketSylph::doConnect(QString ipAddress, int port){
         if(connectionTries>2)
             return;
     }
-    for(int i = 0; i < 10; i++){
-        socketSylph->flush();
+}
+
+void SocketSylph::discardData(){
+    for(int i = 0; i < 50; i++){
         socketSylph->read(48000);
         qDebug() << "Discarding";
     }
@@ -39,8 +41,12 @@ void SocketSylph::disconnectedCommandSocket(){
 }
 
 void SocketSylph::ReadCommand(){
-    if(/*socketSylph->bytesAvailable() >= maxSize &&*/ checked){
-        qDebug() << "Reading data";
+    if(initCount < 100){
+        discardData();
+        initCount++;
+    }
+    else if(socketSylph->bytesAvailable() >= maxSize && checked){
+//        qDebug() << "Reading data";
         dataProcessor->parseFrameMarkers(socketSylph->read(maxSize));
     }
     else if(socketSylph->bytesAvailable() >= 106 && !checked){

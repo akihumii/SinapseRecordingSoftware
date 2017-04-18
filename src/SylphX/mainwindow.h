@@ -34,6 +34,7 @@ private:
     QTimer dataTimer;
 
     int restartCount = 0;
+    float samplingRate = 4190;
 
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
@@ -58,6 +59,8 @@ private:
     void createMenus();
     void createLayout();
     void connectSylph();
+    void setDefaultGraph();
+    void activateChannelGraph(int index);
 
     QAction *exitAction;
     QAction *recordAction;

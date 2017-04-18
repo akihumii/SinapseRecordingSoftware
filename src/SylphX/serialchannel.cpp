@@ -40,7 +40,7 @@ void SerialChannel::ReadADCData(){
 
 bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setPortName(portName);
-    implantPort->setBaudRate(1500000);
+    implantPort->setBaudRate(1333333);
     implantPort->setDataBits(QSerialPort::Data8);
     implantPort->setParity(QSerialPort::NoParity);
     implantPort->setStopBits(QSerialPort::OneStop);
@@ -57,7 +57,7 @@ bool SerialChannel::enableImplantPort(QString portName){
 
 bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setPortName(portName);
-    ADCPort->setBaudRate(1500000);
+    ADCPort->setBaudRate(1333333);
     ADCPort->setDataBits(QSerialPort::Data8);
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
@@ -83,17 +83,17 @@ void SerialChannel::connectSylph(){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
             if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
                 implantPort->setPortName(portInfo.at(i+1).portName());
-                implantPort->setBaudRate(1500000);
+                implantPort->setBaudRate(1333333);
 
                 ADCPort->setPortName(portInfo.at(i).portName());
-                ADCPort->setBaudRate(1500000);
+                ADCPort->setBaudRate(1333333);
             }
             else{
                 implantPort->setPortName(portInfo.at(i).portName());
-                implantPort->setBaudRate(1500000);
+                implantPort->setBaudRate(1333333);
 
                 ADCPort->setPortName(portInfo.at(i+1).portName());
-                ADCPort->setBaudRate(1500000);
+                ADCPort->setBaudRate(1333333);
             }
             implantPort->setDataBits(QSerialPort::Data8);
             implantPort->setParity(QSerialPort::NoParity);
@@ -116,12 +116,12 @@ void SerialChannel::connectSylph(){
         ADCConnected = true;
         qDebug() << "ADC Port connnected!";
     }
-//    implantPort->flush();
-    for(int i = 0; i < 30; i++){
-        implantPort->read(4800);
-//        qDebug() << "Discarding";
+    if(implantConnected){
+        for(int i = 0; i < 30; i++){
+            implantPort->read(4800);
+        }
+        checked = false;
     }
-    checked = false;
 }
 
 bool SerialChannel::isImplantConnected(){
@@ -143,7 +143,7 @@ void SerialChannel::swapPort(){
     for(int i = 0; i < portInfo.size(); i++){
         if(portOrder == 1){
             ADCPort->setPortName(portInfo.at(i+1).portName());
-            ADCPort->setBaudRate(1500000);
+            ADCPort->setBaudRate(1333333);
             ADCPort->setDataBits(QSerialPort::Data8);
             ADCPort->setParity(QSerialPort::NoParity);
             ADCPort->setStopBits(QSerialPort::OneStop);
@@ -151,7 +151,7 @@ void SerialChannel::swapPort(){
             ADCPort->setReadBufferSize(2100);
 
             implantPort->setPortName(portInfo.at(i).portName());
-            implantPort->setBaudRate(1500000);
+            implantPort->setBaudRate(1333333);
             implantPort->setDataBits(QSerialPort::Data8);
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
@@ -162,7 +162,7 @@ void SerialChannel::swapPort(){
         }
         else if(portOrder == 2){
             ADCPort->setPortName(portInfo.at(i).portName());
-            ADCPort->setBaudRate(1500000);
+            ADCPort->setBaudRate(1333333);
             ADCPort->setDataBits(QSerialPort::Data8);
             ADCPort->setParity(QSerialPort::NoParity);
             ADCPort->setStopBits(QSerialPort::OneStop);
@@ -170,7 +170,7 @@ void SerialChannel::swapPort(){
             ADCPort->setReadBufferSize(2100);
 
             implantPort->setPortName(portInfo.at(i+1).portName());
-            implantPort->setBaudRate(1500000);
+            implantPort->setBaudRate(1333333);
             implantPort->setDataBits(QSerialPort::Data8);
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
