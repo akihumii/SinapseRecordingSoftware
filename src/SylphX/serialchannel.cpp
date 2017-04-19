@@ -12,8 +12,15 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-    if(implantPort->bytesAvailable() >= 2100){
+    if(implantPort->bytesAvailable() >= 2100 && checked){
         dataProcessor->parseFrameMarkers(implantPort->read(2100));
+    }
+    else if(implantPort->bytesAvailable() >= 106 && !checked){
+        qDebug() << "checking";
+        if(dataProcessor->checkNextFrameMarker(implantPort->read(106), 0)){
+            checked = true;
+            qDebug() << "checked is true";
+        }
     }
 }
 
@@ -28,9 +35,7 @@ void SerialChannel::closeADCPort(){
 }
 
 void SerialChannel::ReadADCData(){
-//    if(ADCPort->bytesAvailable()>2100){
         dataProcessor->sortADCData(ADCPort->read(2100));
-//    }
 }
 
 bool SerialChannel::enableImplantPort(QString portName){
@@ -40,7 +45,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setParity(QSerialPort::NoParity);
     implantPort->setStopBits(QSerialPort::OneStop);
     implantPort->setFlowControl(QSerialPort::NoFlowControl);
-//    implantPort->setReadBufferSize(2000);
+    implantPort->setReadBufferSize(2100);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -57,7 +62,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-//    ADCPort->setReadBufferSize(2000);
+    ADCPort->setReadBufferSize(2100);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -105,6 +110,10 @@ void SerialChannel::connectSylph(){
     }
     if (implantPort->open(QIODevice::ReadWrite)){
         implantConnected = true;
+        for(int i = 0; i < 30; i++){
+            implantPort->read(4800);
+        }
+        checked = false;
         qDebug() << "Implant Port connnected!";
     }
     if (ADCPort->open(QIODevice::ReadWrite)){
@@ -122,7 +131,7 @@ bool SerialChannel::isADCConnected(){
 }
 
 bool SerialChannel::isConnected(){
-    return connected;
+    return implantConnected || ADCConnected;
 }
 
 void SerialChannel::swapPort(){

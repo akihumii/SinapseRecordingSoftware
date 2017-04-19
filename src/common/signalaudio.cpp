@@ -10,19 +10,19 @@ SignalAudio::SignalAudio(){
     format.setSampleType(QAudioFormat::SignedInt);
     format.setSampleSize(sampleSize);
 
-//    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
-//    {
-//        qDebug() << "Device name: " << info.deviceName();
-//        qDebug() << "Supported Sample Rates: " << info.supportedSampleRates();
-//        qDebug() << "Supported Byte Orders: " << info.supportedByteOrders();
-//        qDebug() << "Supported Channel Counts: " << info.supportedChannelCounts();
-//        qDebug() << "Supported Sample Size: " << info.supportedSampleSizes();
-//        qDebug() << "Supported Sample Types: " << info.supportedSampleTypes();
-//        qDebug() << "Preferred Format: " << info.preferredFormat();
+    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+    {
+        qDebug() << "Device name: " << info.deviceName();
+        qDebug() << "Supported Sample Rates: " << info.supportedSampleRates();
+        qDebug() << "Supported Byte Orders: " << info.supportedByteOrders();
+        qDebug() << "Supported Channel Counts: " << info.supportedChannelCounts();
+        qDebug() << "Supported Sample Size: " << info.supportedSampleSizes();
+        qDebug() << "Supported Sample Types: " << info.supportedSampleTypes();
+        qDebug() << "Preferred Format: " << info.preferredFormat();
 
-//    }
+    }
 
-//    qDebug() << "Format set: " << format;
+    qDebug() << "Format set: " << format;
 
     if (!info.isFormatSupported(format)) {
         qDebug() << "Raw audio format not supported by backend, cannot play audio.";
@@ -41,9 +41,9 @@ SignalAudio::~SignalAudio(){
 
 }
 
-void SignalAudio::appendAudioBuffer(int ChannelIndex, char MSB, char LSB){
-    audioBuffer[ChannelIndex].append(MSB);
+void SignalAudio::appendAudioBuffer(int ChannelIndex, char LSB, char MSB){
     audioBuffer[ChannelIndex].append(LSB);
+    audioBuffer[ChannelIndex].append(MSB);
 }
 
 bool SignalAudio::playAudio(int ChannelIndex){

@@ -10,14 +10,26 @@ SocketSylph::SocketSylph(QObject *parent, DataProcessor *dataProcessor_) : QObje
 }
 
 void SocketSylph::doConnect(QString ipAddress, int port){
+    int connectionTries = 0;
     while(socketSylph->state() != QAbstractSocket::ConnectedState){
         qDebug() << "Connecting...";
         socketSylph->connectToHost(ipAddress, port);
         qDebug() << "Waiting...";
-        if(!socketSylph->waitForConnected(5000)){
+        if(!socketSylph->waitForConnected(1000)){
             qDebug() << "Error: " << socketSylph->errorString();
         }
+        connectionTries++;
+        if(connectionTries>2)
+            return;
     }
+}
+
+void SocketSylph::discardData(){
+    for(int i = 0; i < 50; i++){
+        socketSylph->read(48000);
+        qDebug() << "Discarding";
+    }
+    checked = false;
 }
 
 void SocketSylph::connectedCommandSocket(){
@@ -29,8 +41,20 @@ void SocketSylph::disconnectedCommandSocket(){
 }
 
 void SocketSylph::ReadCommand(){
-    if(socketSylph->bytesAvailable() >= 10*maxSize/10){
+    if(initCount < 100){
+        discardData();
+        initCount++;
+    }
+    else if(socketSylph->bytesAvailable() >= maxSize && checked){
+//        qDebug() << "Reading data";
         dataProcessor->parseFrameMarkers(socketSylph->read(maxSize));
+    }
+    else if(socketSylph->bytesAvailable() >= 106 && !checked){
+        qDebug() << "checking";
+        if(dataProcessor->checkNextFrameMarker(socketSylph->read(106), 0)){
+            checked = true;
+            qDebug() << "checked is true";
+        }
     }
 }
 

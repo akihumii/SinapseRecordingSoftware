@@ -99,6 +99,7 @@ int Data::getNumDataPoints(){
 }
 
 void Data::setNumDataPoints(int timeFrames, double sampleFreq){
+    qDebug() << sampleFreq;
     switch(timeFrames){
     case TimeFrames10ms:
         numDataPoints = 0.01/(1/sampleFreq);
