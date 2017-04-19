@@ -34,8 +34,27 @@ private:
     QTimer dataTimer;
 
     int restartCount = 0;
-    float samplingRate = 4190;
+    float samplingRate = 4190.0;
+    float period = 1/samplingRate;
+    bool pause = false;
 
+    QStatusBar *statusBarMainWindow;
+
+    QMenu *fileMenu;
+    QMenu *voltageMenu;
+    QMenu *timeFrameMenu;
+    QMenu *audioOutputMenu;
+    QMenu *helpMenu;
+
+    QAction *exitAction;
+    QAction *recordAction;
+    QAction *chooseDirectoryAction;
+    QAction *restartAction;
+    QAction *pauseAction;
+    QAction *resetDefaultX;
+    QAction *resetDefaultY;
+    QAction *filterAction;
+    QAction *dataAnalyzerAction;
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
     QAction *timeFrame50ms;
@@ -45,14 +64,26 @@ private:
     QAction *timeFrame1000ms;
     QAction *timeFrame2000ms;
     QAction *timeFrame5000ms;
+    QAction *voltage50u;
+    QAction *voltage100u;
+    QAction *voltage200u;
+    QAction *voltage500u;
+    QAction *voltage1000u;
+    QAction *voltage2000u;
+    QAction *voltage5000u;
+    QAction *audio[11];
+    QAction *aboutAction;
+
     QActionGroup *timeFrameGroup;
+    QActionGroup *voltageGroup;
+    QActionGroup *audioGroup;
 
-    QStatusBar *statusBarMainWindow;
+    QList<QSerialPortInfo> portInfo;
 
-    QMenu *fileMenu;
-    QMenu *voltageMenu;
-    QMenu *layoutMenu;
-    QMenu *timeFrameMenu;
+    QString connectionStatus;
+
+    QCustomPlot *channelGraph[12];
+    SocketSylph *socketSylph;
 
     void createStatusBar();
     void createActions();
@@ -61,54 +92,12 @@ private:
     void connectSylph();
     void setDefaultGraph();
     void activateChannelGraph(int index);
-
-    QAction *exitAction;
-    QAction *recordAction;
-    QAction *chooseDirectoryAction;
-    QAction *restartAction;
-
-    QAction *pauseAction;
-    bool pause = false;
-
-    QAction *resetDefaultX;
-    QAction *resetDefaultY;
-    QAction *swapAction;
-    QAction *filterAction;
-    QAction *dataAnalyzerAction;
-
-    QAction *voltage50u;
-    QAction *voltage100u;
-    QAction *voltage200u;
-    QAction *voltage500u;
-    QAction *voltage1000u;
-    QAction *voltage2000u;
-    QAction *voltage5000u;
-
-    QActionGroup *voltageGroup;
-
-    int numDataPoints;
-
-    QList<QSerialPortInfo> portInfo;
-
-    QString connectionStatus;
-
-    QCPRange *defaultRange;
-
-    QMenu *helpMenu;
-    QMenu *audioOutputMenu;
-
-    QCustomPlot *channelGraph[12];
-    SocketSylph *socketSylph;
-
-    QAction *serialPortAction;
-    QAction *aboutAction;
-
-    QAction *audio[11];
-
-    QActionGroup *audioGroup;
+    void setTimeFrameTickStep(TimeFrames timeframe, double step);
+    void setVoltageTickStep(double position, double size, double step);
 
 private slots:
     void updateData();
+    void on_resetX_triggered();
     void on_timeFrame10_triggered();
     void on_timeFrame20_triggered();
     void on_timeFrame50_triggered();
@@ -130,16 +119,9 @@ private slots:
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
-    void on_resetX_triggered();
-    void on_swap_triggered();
     void on_filterConfig_trigger();
     void on_restart_triggered();
 
-    void about();
-    void resetGraph1Range();
-    void resetGraph2Range();
-    void resetGraph3Range();
-    void resetGraph4Range();
     void on_graph1_clicked();
     void on_graph2_clicked();
     void on_graph3_clicked();
@@ -151,6 +133,7 @@ private slots:
     void on_graph9_clicked();
     void on_graph10_clicked();
     void on_graph11_clicked();
+    void about();
 };
 
 #endif // MainWindow_H

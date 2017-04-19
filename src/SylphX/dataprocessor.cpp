@@ -1,10 +1,8 @@
 #include "dataprocessor.h"
 
-DataProcessor::DataProcessor(){
-}
-
-void DataProcessor::setBitMode(bool BitMode){
-    is8BitMode = BitMode;
+DataProcessor::DataProcessor(float samplingRate_){
+    samplingRate = samplingRate_;
+    period = 1/samplingRate_;
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
@@ -27,14 +25,14 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
         total_data_count++;
-        X_axis.append(total_data_count*0.000202);
+        X_axis.append(total_data_count*period);
         ChannelData[11].append((quint8) rawData.at(i+20));
         if(RecordEnabled){
             RecordData((quint8)rawData.at(i+20));
             RecordData(END_OF_LINE);
         }
     }
-    playAudio(getAudioChannel());
+//    playAudio(getAudioChannel());
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
@@ -48,39 +46,6 @@ bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
     else{
         return false;
     }
-}
-
-int DataProcessor::findfirstFrameMarkers(QByteArray rawData){
-    for(int i = 0; i < rawData.size()-42; i++){
-        if((quint8)rawData.at(i+42) == (quint8)rawData.at(i+21)+1
-                && (quint8)rawData.at(i+21) == (quint8)rawData.at(i)+1){
-            return i;
-        }
-        else if((quint8)rawData.at(i+42) == 1 && (quint8)rawData.at(i+21) == 0 && (quint8)rawData.at(i) == 250){
-            return i;
-        }
-        else if((quint8)rawData.at(i+42) == 0 && (quint8)rawData.at(i+21) == 250 && (quint8)rawData.at(i) == 249){
-            return i;
-        }
-    }
-    return 0;
-}
-
-int DataProcessor::findlastFrameMarkers(QByteArray rawData){
-    if(rawData.size()>40){
-        for(int i = rawData.size()-1; i > 41; i--){
-            if((quint8)rawData.at(i-21)+1 == (quint8)rawData.at(i) && (quint8)rawData.at(i-42)+1 == (quint8)rawData.at(i-21)){
-                return i;
-            }
-            else if((quint8)rawData.at(i-42) == 249 && (quint8)rawData.at(i-21) == 250 && (quint8)rawData.at(i) == 0){
-                return i;
-            }
-            else if((quint8)rawData.at(i-42) == 250 && (quint8)rawData.at(i-21) == 0 && (quint8)rawData.at(i) == 1){
-                return i;
-            }
-        }
-    }
-    return 0;
 }
 
 void DataProcessor::sortADCData(QByteArray adcData){

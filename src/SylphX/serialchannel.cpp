@@ -45,7 +45,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setParity(QSerialPort::NoParity);
     implantPort->setStopBits(QSerialPort::OneStop);
     implantPort->setFlowControl(QSerialPort::NoFlowControl);
-//    implantPort->setReadBufferSize(2000);
+    implantPort->setReadBufferSize(2100);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -62,7 +62,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-//    ADCPort->setReadBufferSize(2000);
+    ADCPort->setReadBufferSize(2100);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -99,7 +99,7 @@ void SerialChannel::connectSylph(){
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
             implantPort->setFlowControl(QSerialPort::NoFlowControl);
-            implantPort->setReadBufferSize(4200);
+            implantPort->setReadBufferSize(2100);
 
             ADCPort->setDataBits(QSerialPort::Data8);
             ADCPort->setParity(QSerialPort::NoParity);
@@ -110,17 +110,15 @@ void SerialChannel::connectSylph(){
     }
     if (implantPort->open(QIODevice::ReadWrite)){
         implantConnected = true;
+        for(int i = 0; i < 30; i++){
+            implantPort->read(4800);
+        }
+        checked = false;
         qDebug() << "Implant Port connnected!";
     }
     if (ADCPort->open(QIODevice::ReadWrite)){
         ADCConnected = true;
         qDebug() << "ADC Port connnected!";
-    }
-    if(implantConnected){
-        for(int i = 0; i < 30; i++){
-            implantPort->read(4800);
-        }
-        checked = false;
     }
 }
 
@@ -156,7 +154,7 @@ void SerialChannel::swapPort(){
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
             implantPort->setFlowControl(QSerialPort::NoFlowControl);
-            implantPort->setReadBufferSize(2500);
+            implantPort->setReadBufferSize(2100);
             portOrder = 2;
             break;
         }
