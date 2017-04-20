@@ -26,8 +26,12 @@ INCLUDEPATH += $$PWD../common
 DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    serialodin.cpp \
+    commandodin.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    serialodin.h \
+    commandodin.h
 
 FORMS    +=

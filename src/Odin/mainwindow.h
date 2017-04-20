@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
 #include "../common/qtincludes.h"
+#include "serialodin.h"
+#include "commandodin.h"
 
 class MainWindow : public QMainWindow
 {
@@ -14,10 +17,11 @@ public:
 public slots:
 
 private:
-//    QSerialPort *OdinSerial;
-
+    SerialOdin *serialOdin;
+    CommandOdin *commandOdin;
+    QPushButton *testButton;
 private slots:
-
+    void sendCommand();
 };
 
 #endif // MAINWINDOW_H
