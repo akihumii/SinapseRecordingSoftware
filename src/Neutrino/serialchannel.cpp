@@ -28,45 +28,24 @@ bool SerialChannel::doConnect(){
         qDebug() << "Serial Number: " << info.serialNumber();
     }
     for(int i = 0; i < portInfo.size(); i++){
-//        if(portInfo.at(i).serialNumber() == "FT0JUPBGB" && portInfo.at(i+1).serialNumber() == "FT0JUPBGA"){
-//            serialData->setPortName(portInfo.at(i+1).portName());
-//            serialData->setBaudRate(3000000);
-//            qDebug() << "Data connected to " << portInfo.at(i+1).portName();
-
-//            serialCommand->setPortName(portInfo.at(i).portName());
-//            serialCommand->setBaudRate(19200);
-//            qDebug() << "Command connected to " << portInfo.at(i).portName();
-//            serialData->setDataBits(QSerialPort::Data8);
-//            serialData->setParity(QSerialPort::NoParity);
-//            serialData->setStopBits(QSerialPort::OneStop);
-//            serialData->setFlowControl(QSerialPort::NoFlowControl);
-//            serialData->setReadBufferSize(2048);
-
-//            serialCommand->setDataBits(QSerialPort::Data8);
-//            serialCommand->setParity(QSerialPort::EvenParity);
-//            serialCommand->setStopBits(QSerialPort::OneStop);
-//            serialCommand->setFlowControl(QSerialPort::NoFlowControl);
-//            break;
-//        }
-        if(portInfo.at(i).serialNumber() == "FTVN9Z5BA" && portInfo.at(i+1).serialNumber() == "FTVN9Z5BB"){
+        if(portInfo.at(i).serialNumber() == "FTVN9Z5BA" || portInfo.at(i).serialNumber() == "FT0JUPBGA"){
             serialData->setPortName(portInfo.at(i).portName());
             serialData->setBaudRate(3000000);
             qDebug() << "Data connected to " << portInfo.at(i).portName();
-
-            serialCommand->setPortName(portInfo.at(i+1).portName());
-            serialCommand->setBaudRate(19200);
-            qDebug() << "Command connected to " << portInfo.at(i+1).portName();
             serialData->setDataBits(QSerialPort::Data8);
             serialData->setParity(QSerialPort::NoParity);
             serialData->setStopBits(QSerialPort::OneStop);
             serialData->setFlowControl(QSerialPort::NoFlowControl);
             serialData->setReadBufferSize(2048);
-
+        }
+        if(portInfo.at(i).serialNumber() == "FTVN9Z5BB" || portInfo.at(i).serialNumber() == "FT0JUPBGB"){
+            serialCommand->setPortName(portInfo.at(i).portName());
+            serialCommand->setBaudRate(19200);
+            qDebug() << "Command connected to " << portInfo.at(i).portName();
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
             serialCommand->setFlowControl(QSerialPort::NoFlowControl);
-            break;
         }
     }
     if (serialData->open(QIODevice::ReadWrite) && serialCommand->open(QIODevice::ReadWrite)) {
