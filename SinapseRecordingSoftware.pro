@@ -16,15 +16,18 @@ SUBDIRS +=   \
     src/Neutrino \
     src/SylphII \
     src/SylphX \
+    src/Odin
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
 SylphII.subdir = src/SylphII
 SylphX.subdir = src/SylphX
+Odin.subdir = src/Odin
 
 Neutrino.depends = common
 SylphII.depends = common
 SylphX.depends = common
+Odin.depends = common
 
 FORMS +=
 
