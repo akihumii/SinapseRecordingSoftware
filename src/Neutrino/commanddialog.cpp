@@ -53,6 +53,7 @@ void CommandDialog::createLayout(){
     QVBoxLayout *BioImpLayout = new QVBoxLayout;
     BioImpLabel = new QLabel;
     BioImpLabel->setText("Bio Impedance");
+    BioImpLayout->addWidget(BioImpLabel);
 
     for(int i=0;i<6;i++){
         BioImpData[i] = new QCheckBox;
@@ -64,7 +65,6 @@ void CommandDialog::createLayout(){
     SendCommand = new QPushButton(tr("Send Command"));
     connect(SendCommand, SIGNAL(clicked(bool)), this, SLOT(on_sendCommand_clicked()));
 
-    BioImpLayout->addWidget(BioImpLabel);
     BioImpLayout->addWidget(SendCommand);
 
 
@@ -78,13 +78,17 @@ void CommandDialog::createLayout(){
     connect(Exit, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
     connect(Enter, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
 
+    CMReset = new QPushButton(tr("CM Reset"));
+    connect(CMReset, SIGNAL(clicked(bool)), this, SLOT(on_CMReset_clicked()));
+
     ChipReset = new QPushButton(tr("Chip Reset"));
     connect(ChipReset, SIGNAL(clicked(bool)), this, SLOT(on_chipReset_clicked()));
 
     DCL->addWidget(DigComLoopback);
     DCL->addWidget(Exit);
     DCL->addWidget(Enter);
-    DCL->addSpacing(100);
+    DCL->addSpacing(65);
+    DCL->addWidget(CMReset);
     DCL->addWidget(ChipReset);
 
     QHBoxLayout *BIOnDCL = new QHBoxLayout;
@@ -305,6 +309,27 @@ void CommandDialog::on_chipReset_clicked(){
     }
 }
 
+void CommandDialog::on_CMReset_clicked(){
+    qDebug() << "CM Resetting.. ";
+    JTAG[93]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(93);
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    qDebug() << "CM Unresetting.. ";
+    JTAG[93]->setChecked(false);
+    NeutrinoCommand->clearJTAGbit(93);
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+}
+
 void CommandDialog::on_JTAG_toggled(){
     for(int i=0;i<112;i++){
         if(JTAG[i]->isChecked()){
@@ -430,6 +455,8 @@ void CommandDialog::loadDefault(){
         JTAG[i]->setChecked(true);
         NeutrinoCommand->setJTAGbit(i);
     }
+    JTAG[102]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(102);
 //    JTAG[8]->setChecked(false);
 //    JTAG[9]->setChecked(false);
 }

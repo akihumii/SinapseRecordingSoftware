@@ -12,7 +12,16 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-    dataProcessor->parseFrameMarkers(implantPort->read(500));
+    if(implantPort->bytesAvailable() >= 2100 && checked){
+        dataProcessor->parseFrameMarkers(implantPort->read(2100));
+    }
+    else if(implantPort->bytesAvailable() >= 26 && !checked){
+        qDebug() << "checking";
+        if(dataProcessor->checkNextFrameMarker(implantPort->read(26), 0)){
+            checked = true;
+            qDebug() << "checked is true";
+        }
+    }
     dataProcessor->sortADCData(ADCPort->read(500));
 }
 
@@ -37,7 +46,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setParity(QSerialPort::NoParity);
     implantPort->setStopBits(QSerialPort::OneStop);
     implantPort->setFlowControl(QSerialPort::NoFlowControl);
-    implantPort->setReadBufferSize(2000);
+    implantPort->setReadBufferSize(2100);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -54,7 +63,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-    ADCPort->setReadBufferSize(2000);
+    ADCPort->setReadBufferSize(2100);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -91,7 +100,7 @@ void SerialChannel::connectSylph(){
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
             implantPort->setFlowControl(QSerialPort::NoFlowControl);
-            implantPort->setReadBufferSize(2048);
+            implantPort->setReadBufferSize(2100);
 
             ADCPort->setDataBits(QSerialPort::Data8);
             ADCPort->setParity(QSerialPort::NoParity);
@@ -102,6 +111,10 @@ void SerialChannel::connectSylph(){
     }
     if (implantPort->open(QIODevice::ReadWrite)){
         implantConnected = true;
+        for(int i = 0; i < 30; i++){
+            implantPort->read(48000);
+        }
+        checked = false;
         qDebug() << "Implant Port connnected!";
     }
     if (ADCPort->open(QIODevice::ReadWrite)){
@@ -119,7 +132,7 @@ bool SerialChannel::isADCConnected(){
 }
 
 bool SerialChannel::isConnected(){
-    return connected;
+    return implantConnected || ADCConnected;
 }
 
 void SerialChannel::swapPort(){
@@ -134,7 +147,7 @@ void SerialChannel::swapPort(){
             ADCPort->setParity(QSerialPort::NoParity);
             ADCPort->setStopBits(QSerialPort::OneStop);
             ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-            ADCPort->setReadBufferSize(2048);
+            ADCPort->setReadBufferSize(2100);
 
             implantPort->setPortName(portInfo.at(i).portName());
             implantPort->setBaudRate(1333333);
@@ -142,7 +155,7 @@ void SerialChannel::swapPort(){
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
             implantPort->setFlowControl(QSerialPort::NoFlowControl);
-            implantPort->setReadBufferSize(2048);
+            implantPort->setReadBufferSize(2100);
             portOrder = 2;
             break;
         }
@@ -153,7 +166,7 @@ void SerialChannel::swapPort(){
             ADCPort->setParity(QSerialPort::NoParity);
             ADCPort->setStopBits(QSerialPort::OneStop);
             ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-            ADCPort->setReadBufferSize(2048);
+            ADCPort->setReadBufferSize(2100);
 
             implantPort->setPortName(portInfo.at(i+1).portName());
             implantPort->setBaudRate(1333333);
@@ -161,7 +174,7 @@ void SerialChannel::swapPort(){
             implantPort->setParity(QSerialPort::NoParity);
             implantPort->setStopBits(QSerialPort::OneStop);
             implantPort->setFlowControl(QSerialPort::NoFlowControl);
-            implantPort->setReadBufferSize(2048);
+            implantPort->setReadBufferSize(2100);
             portOrder = 1;
             break;
         }

@@ -2,14 +2,16 @@
 #define COMMANDODIN_H
 
 #include "serialodin.h"
+#include "socketodin.h"
 
 class CommandOdin
 {
 public:
-    CommandOdin(SerialOdin *serialOdin_);
+    CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_);
     void sendTestCommand();
 private:
     SerialOdin *serialOdin;
+    SocketOdin *socketOdin;
 
 
     quint8 testCommand[16] = {

@@ -28,7 +28,7 @@ void SerialOdin::connectOdin(){
 }
 
 void SerialOdin::initOdin(){
-    odinPort->write(QByteArray::fromHex("F8"));
+//    odinPort->write(QByteArray::fromHex("F8"));
     timer.start();
     while (timer.elapsed() < 1700);
     qDebug() << "Odin Initialised!";

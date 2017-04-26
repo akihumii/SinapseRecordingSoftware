@@ -33,6 +33,7 @@ private slots:
     void on_BioImp_toggled();
     void on_DCL_toggled();
     void on_BER_textEdited();
+    void on_CMReset_clicked();
 
 private:
     SocketNeutrino *socketNeutrino;
@@ -78,6 +79,7 @@ private:
 
     QPushButton *SendCommand;
     QPushButton *ChipReset;
+    QPushButton *CMReset;
 
     QPushButton *JTAGextension;
     QPushButton *JTAGreset;

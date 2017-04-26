@@ -28,10 +28,12 @@ DEPENDPATH += $$PWD../common
 SOURCES += main.cpp\
         mainwindow.cpp \
     serialodin.cpp \
-    commandodin.cpp
+    commandodin.cpp \
+    socketodin.cpp
 
 HEADERS  += mainwindow.h \
     serialodin.h \
-    commandodin.h
+    commandodin.h \
+    socketodin.h
 
 FORMS    +=

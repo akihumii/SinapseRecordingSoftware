@@ -1,13 +1,15 @@
 #include "commandodin.h"
 
-CommandOdin::CommandOdin(SerialOdin *serialOdin_){
+CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_){
     serialOdin = serialOdin_;
+    socketOdin = socketOdin_;
 }
 
 void CommandOdin::sendTestCommand(){
-    QByteArray testCommandArray;
+    QByteArray commandByte;
     for(int i = 0; i < 16; i++){
-        testCommandArray.append(testCommand[i]);
+        commandByte.append(testCommand[i]);
     }
-    serialOdin->writeCommand(testCommandArray);
+//    serialOdin->writeCommand(testCommandArray);
+    socketOdin->writeCommand(commandByte);
 }
