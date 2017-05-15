@@ -28,9 +28,9 @@ void SerialOdin::connectOdin(){
 }
 
 void SerialOdin::initOdin(){
-//    odinPort->write(QByteArray::fromHex("F8"));
+    odinPort->write(QByteArray::fromHex("F8"));
     timer.start();
-    while (timer.elapsed() < 1700);
+    while (timer.elapsed() < 2500);
     qDebug() << "Odin Initialised!";
 }
 
@@ -43,6 +43,8 @@ void SerialOdin::writeCommand(QByteArray command){
 void SerialOdin::sendCommand(){
     qDebug() << "Sending Byte " << commandCount;
     QByteArray sending;
+    sending.clear();
+    qDebug("%x", (quint8) outgoingCommand.at(commandCount));
     sending.append(outgoingCommand.at(commandCount));
     odinPort->write(sending);
     commandCount++;
