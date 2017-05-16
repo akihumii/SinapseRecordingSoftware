@@ -115,8 +115,8 @@ void CommandOdin::setInterPulseDuration(char duration){
 }
 
 char CommandOdin::getInterPulseDuration(){
-    qDebug() << (quint8) interPulseDuration;
-    qDebug() << (quint8) PulseDuration;
+//    qDebug() << (quint8) interPulseDuration;
+//    qDebug() << (quint8) PulseDuration;
     return (char) (((1000000/(quint8)interPulseDuration) - ((quint8)PulseDuration * 2 + 100) - 1360) / 218);
 }
 
@@ -125,6 +125,10 @@ void CommandOdin::setMultiChannelSequence(CHANNELNUMBER first, CHANNELNUMBER sec
     multiChannelSeq[1] = second;
     multiChannelSeq[2] = third;
     multiChannelSeq[3] = fourth;
+}
+
+int *CommandOdin::getMultiChannelSequence(){
+    return (int *) multiChannelSeq;
 }
 
 char CommandOdin::getMultiChannelSequenceByte(){
@@ -144,6 +148,7 @@ char CommandOdin::getTimeZoneByte2(){
 }
 
 void CommandOdin::setZoneMask(ZONEMASK mask){
+//    qDebug() << (quint8) mask;
     zoneMask = mask;
 }
 

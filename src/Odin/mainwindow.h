@@ -21,7 +21,7 @@ private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
     CommandOdin *commandOdin;
-    QPushButton *testButton;
+    QPushButton *sendButton;
 
     QLabel *ModeLabel;
     QComboBox *ModeComboBox;
@@ -54,9 +54,20 @@ private:
     QLabel *interPulseTrainDelayLabel;
     QSpinBox *interPulseTrainDelaySpinBox;
 
-    QLabel *legend1;
-    QLabel *legend2;
-    QLabel *legend3;
+    QLabel *legend;
+
+    QGroupBox *multiChannel;
+    QHBoxLayout *channelSeqLayout[4];
+    QHBoxLayout *zoneleftLayout[4];
+    QHBoxLayout *zonerightLayout[4];
+    QGroupBox *sequence;
+    QLabel *channelSeqLabel[4];
+    QComboBox *channelSeqComboBox[4];
+    QGroupBox *zoneDuration;
+    QLabel *zoneLabel[7];
+    QComboBox *zoneSelector[7];
+    QLabel *maskLabel;
+    QComboBox *maskSelector;
 
     void createLayout();
 private slots:
@@ -67,6 +78,9 @@ private slots:
     void on_pulseDuration_Changed();
     void on_numPulse_Changed();
     void on_interPulseDuration_Changed();
+    void on_channelSeq_Changed();
+    void on_zoneSelector_Changed();
+    void on_zoneMask_Changed();
 };
 
 #endif // MAINWINDOW_H

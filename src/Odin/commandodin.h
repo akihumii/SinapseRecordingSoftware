@@ -60,6 +60,7 @@ public:
     char getPulseDuration();
     char getPulseNum();
     char getInterPulseDuration();
+    int *getMultiChannelSequence();
     char getMultiChannelSequenceByte();
     char getTimeZoneByte1();
     char getTimeZoneByte2();
@@ -71,7 +72,7 @@ private:
     MODE OPMode = FLATSINGLE;
 
     CHANNELNUMBER ChannelNum = CHANNELA;
-    CHANNELNUMBER multiChannelSeq[4] = {CHANNELD, CHANNELC, CHANNELB, CHANNELA};
+    CHANNELNUMBER multiChannelSeq[4] = {CHANNELA, CHANNELB, CHANNELC, CHANNELD};
 
     TIMEZONE zone[7] = {TIME_A, TIME_A, TIME_A, TIME_A, TIME_A, TIME_A, TIME_A};
     ZONEMASK zoneMask = MASKNONE;
