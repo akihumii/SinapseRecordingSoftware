@@ -2,11 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QThread>
 #include "../common/qtincludes.h"
 #include "serialodin.h"
 #include "commandodin.h"
 #include "socketodin.h"
+#include "loopingthread.h"
 
 class MainWindow : public QMainWindow
 {
@@ -15,12 +15,17 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow();
     ~MainWindow();
+
+    QLabel *statusBarLabel;
 public slots:
 
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
     CommandOdin *commandOdin;
+
+    QStatusBar *statusBarMainWindow;
+
     QPushButton *sendButton;
 
     QLabel *ModeLabel;
@@ -69,7 +74,15 @@ private:
     QLabel *maskLabel;
     QComboBox *maskSelector;
 
+    QMessageBox *mbox;
+
+    bool start = false;
+    LoopingThread *loopingThread;
+
+    int commandCount = 0;
+
     void createLayout();
+    void createStatusBar();
 private slots:
     void sendCommand();
     void on_Mode_Changed(int Mode);
@@ -81,6 +94,10 @@ private slots:
     void on_channelSeq_Changed();
     void on_zoneSelector_Changed();
     void on_zoneMask_Changed();
+    void on_numPulseTrain_Changed();
+    void on_interPulseTrainDelay_Changed();
+    void on_finishedSending();
+    void on_commandSent();
 };
 
 #endif // MAINWINDOW_H

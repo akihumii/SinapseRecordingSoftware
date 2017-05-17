@@ -10,8 +10,13 @@ MainWindow::MainWindow(){
 //    socketOdin->doConnect("10.10.10.1", 30000);
 //    socketOdin->initOdin();
     commandOdin = new CommandOdin(serialOdin, socketOdin);
+    loopingThread = new LoopingThread(commandOdin);
+    connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(on_finishedSending()));
+    connect(loopingThread, SIGNAL(commandSent()), this, SLOT(on_commandSent()));
+    mbox = new QMessageBox;
 
     createLayout();
+    createStatusBar();
 }
 
 void MainWindow::createLayout(){
@@ -42,7 +47,7 @@ void MainWindow::createLayout(){
     channelLayout->addWidget(channelComboBox);
 
     connect(channelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_channel_Changed(int)));
-//-------------------------------------------------------------------------------------------------//
+
     Parameters = new QGroupBox(tr("Stimulation Parameters"));
     Intensity = new QGroupBox(tr("Pulse Magnitude (0.3 to 9.3 mA)"));
     Timing = new QGroupBox(tr("Timing Parameters"));
@@ -127,9 +132,12 @@ void MainWindow::createLayout(){
     numPulseTrainLabel = new QLabel(tr("Number of Pulse Trains"));
     numPulseTrainSpinBox = new QSpinBox;
     numPulseTrainSpinBox->setValue(50);
+    numPulseTrainSpinBox->setMaximum(50000);
     numPulseTrainSpinBox->setMaximumWidth(50);
     numPulseTrainLayout->addWidget(numPulseTrainLabel);
     numPulseTrainLayout->addWidget(numPulseTrainSpinBox);
+
+    connect(numPulseTrainSpinBox, SIGNAL(valueChanged(int)), this, SLOT(on_numPulseTrain_Changed()));
 
     QHBoxLayout *interPulseTrainDelayLayout = new QHBoxLayout;
     interPulseTrainDelayLabel = new QLabel(tr("Inter-Pulse Train Delay (ms)"));
@@ -141,13 +149,14 @@ void MainWindow::createLayout(){
     interPulseTrainDelayLayout->addWidget(interPulseTrainDelayLabel);
     interPulseTrainDelayLayout->addWidget(interPulseTrainDelaySpinBox);
 
+    connect(interPulseTrainDelaySpinBox, SIGNAL(valueChanged(int)), this, SLOT(on_interPulseTrainDelay_Changed()));
+
     QVBoxLayout *loopingLayout = new QVBoxLayout;
     loopingLayout->addLayout(numPulseTrainLayout);
     loopingLayout->addLayout(interPulseTrainDelayLayout);
 
     Looping->setLayout(loopingLayout);
 
-//-------------------------------------------------------------------------------------------------//
     QHBoxLayout *parametersLayout1 = new QHBoxLayout;
     parametersLayout1->addWidget(Intensity);
     parametersLayout1->addWidget(Timing);
@@ -165,7 +174,7 @@ void MainWindow::createLayout(){
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
 
     multiChannel = new QGroupBox(tr("Multi-Channel Settings"));
-//--------------------------------------------------------------------------------------//
+
     sequence = new QGroupBox(tr("Sequence of Channels for Tetanic Pulses"));
     channelSeqLabel[0] = new QLabel(tr("Channel A"));
     channelSeqLabel[1] = new QLabel(tr("Channel B"));
@@ -187,7 +196,7 @@ void MainWindow::createLayout(){
 
         connect(channelSeqComboBox[i], SIGNAL(currentIndexChanged(int)), this, SLOT(on_channelSeq_Changed()));
     }
-//--------------------------------------------------------------------------------------//
+
     sequence->setLayout(multiChannelleftLayout);
     for(int i = 0; i < 4; i++){
         zoneleftLayout[i] = new QHBoxLayout;
@@ -254,7 +263,6 @@ void MainWindow::createLayout(){
     zoneDuration = new QGroupBox(tr("Zone Duration Selector"));
     zoneDuration->setLayout(zoneLayout);
 
-//--------------------------------------------------------------------------------------//
     QHBoxLayout *multiChannelmainLayout = new QHBoxLayout;
     multiChannelmainLayout->addWidget(sequence);
     multiChannelmainLayout->addWidget(zoneDuration);
@@ -274,8 +282,29 @@ void MainWindow::createLayout(){
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
 }
 
+void MainWindow::createStatusBar(){
+    statusBarLabel = new QLabel;
+    statusBarMainWindow = statusBar();
+    statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
+    statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
+    statusBarLabel->setText("Odin initialised");
+}
+
 void MainWindow::sendCommand(){
-    commandOdin->sendCommand();
+    start = !start;
+    if(start && !loopingThread->isRunning()){
+        loopingThread->send = true;
+        loopingThread->start();
+        numPulseTrainSpinBox->setDisabled(true);
+        interPulseTrainDelaySpinBox->setDisabled(true);
+        sendButton->setText("Stop!");
+    }
+    else{
+        loopingThread->send = false;
+        loopingThread->quit();
+        mbox->setText("Stopping Odin.. Please wait...");
+        mbox->show();
+    }
 }
 
 void MainWindow::on_Mode_Changed(int Mode){
@@ -342,6 +371,45 @@ void MainWindow::on_zoneMask_Changed(){
     else{
         commandOdin->setZoneMask((ZONEMASK) ~(1<<(maskSelector->currentIndex())));
     }
+}
+
+void MainWindow::on_numPulseTrain_Changed(){
+    loopingThread->num = numPulseTrainSpinBox->value();
+}
+
+void MainWindow::on_interPulseTrainDelay_Changed(){
+    loopingThread->delay = interPulseTrainDelaySpinBox->value();
+}
+
+void MainWindow::on_finishedSending(){
+    if(!mbox->isHidden()){
+        mbox->close();
+    }
+    numPulseTrainSpinBox->setEnabled(true);
+    interPulseTrainDelaySpinBox->setEnabled(true);
+    sendButton->setText("Start!");
+    mbox->setText("Finished sending commands " + QString::number(commandCount, 10) + " times");
+    mbox->show();
+    commandCount = 0;
+}
+
+void MainWindow::on_commandSent(){
+    commandCount++;
+    QString lastCommand;
+    lastCommand.append("Command: ");
+    for(int i = 0; i < commandOdin->getlastSentCommand().size(); i++){
+        if((quint8) commandOdin->getlastSentCommand().at(i) < 16){
+            lastCommand.append("0x0" + QString::number((quint8) commandOdin->getlastSentCommand().at(i), 16).toUpper());
+        }
+        else{
+            lastCommand.append("0x" + QString::number((quint8) commandOdin->getlastSentCommand().at(i), 16).toUpper());
+        }
+        lastCommand.append(" ");
+    }
+    lastCommand.append(" | ");
+    lastCommand.append("Sent: " + QString::number(commandCount,10));
+
+    statusBarLabel->setText(lastCommand);
 }
 
 MainWindow::~MainWindow(){

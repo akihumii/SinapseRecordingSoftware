@@ -15,7 +15,6 @@ void CommandOdin::sendTestCommand(){
 }
 
 void CommandOdin::sendCommand(){
-    QByteArray outgoingCommand;
     outgoingCommand.clear();
     outgoingCommand.append((const char) 0xAA);
     outgoingCommand.append(getMode());
@@ -35,6 +34,10 @@ void CommandOdin::sendCommand(){
     outgoingCommand.append(getPulseMagByte(4));
 
     serialOdin->writeCommand(outgoingCommand);
+}
+
+QByteArray CommandOdin::getlastSentCommand(){
+    return outgoingCommand;
 }
 
 void CommandOdin::setMode(int mode){

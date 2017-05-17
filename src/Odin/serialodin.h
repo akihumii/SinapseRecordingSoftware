@@ -13,14 +13,11 @@ public:
     void writeCommand(QByteArray command);
 
 private slots:
-    void sendCommand();
+
 private:
     QSerialPort *odinPort;
     QList<QSerialPortInfo> portInfo;
-    QElapsedTimer timer;
-    QTimer commandTimer;
-    QByteArray outgoingCommand;
-    int commandCount = 0;
+    QElapsedTimer *timer;
 };
 
 #endif // SERIALODIN_H

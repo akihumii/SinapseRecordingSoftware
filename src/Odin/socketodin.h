@@ -12,15 +12,11 @@ public:
     void doConnect(QString ipAddress, int port);
     bool isConnected();
 private slots:
-    void sendCommand();
     void connectedCommandSocket();
     void disconnectedCommandSocket();
 private:
     QTcpSocket *socketOdin;
-    QElapsedTimer timer;
-    QTimer commandTimer;
-    QByteArray outgoingCommand;
-    int commandCount = 0;
+    QElapsedTimer *timer;
 };
 
 #endif // SOCKETODIN_H

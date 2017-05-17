@@ -65,6 +65,7 @@ public:
     char getTimeZoneByte1();
     char getTimeZoneByte2();
     char getZoneMask();
+    QByteArray getlastSentCommand();
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
@@ -81,6 +82,8 @@ private:
     int PulseDuration = 200;
     char PulseNum = 2;
     char interPulseDuration = 75;
+
+    QByteArray outgoingCommand;
 
     quint8 testCommand[16] = {
         0xAA,

@@ -3,7 +3,6 @@
 SocketOdin::SocketOdin(QObject *parent) : QObject(parent){
     socketOdin = new QTcpSocket(this);
 
-    connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
     connect(socketOdin, SIGNAL(connected()), this, SLOT(connectedCommandSocket()));
     connect(socketOdin, SIGNAL(disconnected()), this, SLOT(disconnectedCommandSocket()));
 }
@@ -39,27 +38,21 @@ bool SocketOdin::isConnected(){
 }
 
 void SocketOdin::initOdin(){
-//    socketOdin->write(QByteArray::fromHex("F8"));
-    timer.start();
-    while (timer.elapsed() < 1700);
+    socketOdin->write(QByteArray::fromHex("F8"));
+    timer = new QElapsedTimer;
+    timer->start();
+    while (timer->elapsed() < 2500);
     qDebug() << "Odin Initialised!";
 }
 
 void SocketOdin::writeCommand(QByteArray command){
-    qDebug() << "Started command timer";
-    outgoingCommand = command;
-    commandTimer.start(15);
-}
-
-void SocketOdin::sendCommand(){
-    qDebug() << "Sending Byte " << commandCount;
-    QByteArray sending;
-    sending.append(outgoingCommand.at(commandCount));
-    socketOdin->write(sending);
-    commandCount++;
-    if(commandCount >= 16){
-        commandTimer.stop();
-        commandCount = 0;
-        qDebug() << "Finished sending command";
+    for(int i = 0; i < 16; i++){
+        qDebug() << "Sending Byte " << i;
+        QByteArray sending;
+        sending.clear();
+        qDebug("%x", (quint8) command.at(i));
+        sending.append(command.at(i));
+        socketOdin->write(sending);
+        QThread::msleep(15);
     }
 }
