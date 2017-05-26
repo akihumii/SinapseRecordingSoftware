@@ -3,6 +3,7 @@
 
 #include "serialodin.h"
 #include "socketodin.h"
+#include "../common/qtincludes.h"
 
 typedef enum MODE{
     FLATSINGLE = 0x55,
@@ -39,8 +40,9 @@ typedef enum ZONEMASK{
     MASKNONE = 0x55
 } ZONEMASK;
 
-class CommandOdin
+class CommandOdin : public QObject
 {
+    Q_OBJECT
 public:
     CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_);
     void sendTestCommand();
@@ -56,7 +58,7 @@ public:
     void setZoneMask(ZONEMASK mask);
     char getMode();
     char getChannelNumber();
-    char getPulseMagByte(int index);
+    unsigned char getPulseMagByte(int index);
     char getPulseDuration();
     char getPulseNum();
     char getInterPulseDuration();
@@ -65,6 +67,9 @@ public:
     char getTimeZoneByte1();
     char getTimeZoneByte2();
     char getZoneMask();
+    void sendStart();
+    void sendStop();
+    void constructCommand();
     QByteArray getlastSentCommand();
 private:
     SerialOdin *serialOdin;
@@ -81,7 +86,7 @@ private:
     double PulseMag[5] = {2.0, 2.0, 2.0, 2.0, 2.0};
     int PulseDuration = 200;
     char PulseNum = 2;
-    char interPulseDuration = 75;
+    int interPulseDuration = 75;
 
     QByteArray outgoingCommand;
 

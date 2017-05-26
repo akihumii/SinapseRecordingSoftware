@@ -3,10 +3,13 @@
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
+#include "../common/qcustomplot.h"
 #include "serialodin.h"
 #include "commandodin.h"
 #include "socketodin.h"
 #include "loopingthread.h"
+#include "pulseplot.h"
+#include <QtMath>
 
 class MainWindow : public QMainWindow
 {
@@ -74,15 +77,25 @@ private:
     QLabel *maskLabel;
     QComboBox *maskSelector;
 
+    QList<QSerialPortInfo> portInfo;
+    QString connectionStatus;
+
+    QCustomPlot *pulseGraph;
+    PulsePlot *pulsePlot;
+
     QMessageBox *mbox;
+    QMessageBox *mboxStop;
 
     bool start = false;
     LoopingThread *loopingThread;
 
     int commandCount = 0;
 
+    void connectOdin();
     void createLayout();
     void createStatusBar();
+    void plotPulse();
+    void setDelay();
 private slots:
     void sendCommand();
     void on_Mode_Changed(int Mode);

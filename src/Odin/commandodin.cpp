@@ -1,6 +1,6 @@
 #include "commandodin.h"
 
-CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_){
+CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_) {
     serialOdin = serialOdin_;
     socketOdin = socketOdin_;
 }
@@ -10,11 +10,15 @@ void CommandOdin::sendTestCommand(){
     for(int i = 0; i < 16; i++){
         commandByte.append(testCommand[i]);
     }
-    serialOdin->writeCommand(commandByte);
-//    socketOdin->writeCommand(commandByte);
+    if(serialOdin->isOdinSerialConnected()){
+        serialOdin->writeCommand(commandByte);
+    }
+    else if(socketOdin->isConnected()){
+        socketOdin->writeCommand(commandByte);
+    }
 }
 
-void CommandOdin::sendCommand(){
+void CommandOdin::constructCommand(){
     outgoingCommand.clear();
     outgoingCommand.append((const char) 0xAA);
     outgoingCommand.append(getMode());
@@ -32,7 +36,27 @@ void CommandOdin::sendCommand(){
     outgoingCommand.append(getPulseMagByte(2));
     outgoingCommand.append(getPulseMagByte(3));
     outgoingCommand.append(getPulseMagByte(4));
+}
 
+void CommandOdin::sendCommand(){
+    constructCommand();
+    if(serialOdin->isOdinSerialConnected()){
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    else if(socketOdin->isConnected()){
+        socketOdin->writeCommand(outgoingCommand);
+    }
+}
+
+void CommandOdin::sendStart(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) 0xF8);
+    serialOdin->writeCommand(outgoingCommand);
+}
+
+void CommandOdin::sendStop(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) 0x8F);
     serialOdin->writeCommand(outgoingCommand);
 }
 
@@ -71,7 +95,6 @@ void CommandOdin::setMode(int mode){
         break;
 
     }
-//    qDebug() << OPMode;
 }
 
 char CommandOdin::getMode(){
@@ -80,7 +103,6 @@ char CommandOdin::getMode(){
 
 void CommandOdin::setChannelNumber(CHANNELNUMBER num){
     ChannelNum = num;
-//    qDebug() << ChannelNum;
 }
 
 char CommandOdin::getChannelNumber(){
@@ -89,11 +111,16 @@ char CommandOdin::getChannelNumber(){
 
 void CommandOdin::setPulseMag(int index, double mag){
     PulseMag[index] = mag;
-//    qDebug() << PulseMag[index];
 }
 
-char CommandOdin::getPulseMagByte(int index){
-    return (char) ((quint8)PulseMag[index]*(quint8)PulseMag[index]*0.0012 + (quint8)PulseMag[index]*25.556 - 6.601);
+unsigned char CommandOdin::getPulseMagByte(int index){
+    if(PulseMag[index] == 0.0){
+        return 0;
+    }
+    else{
+        unsigned char temp = PulseMag[index]*PulseMag[index]*0.0012 + PulseMag[index]*25.556 - 6.601;
+        return temp;
+    }
 }
 
 void CommandOdin::setPulseDuration(int duration){
@@ -114,13 +141,10 @@ char CommandOdin::getPulseNum(){
 
 void CommandOdin::setInterPulseDuration(char duration){
     interPulseDuration = duration;
-//    qDebug() << (quint8) interPulseDuration;
 }
 
 char CommandOdin::getInterPulseDuration(){
-//    qDebug() << (quint8) interPulseDuration;
-//    qDebug() << (quint8) PulseDuration;
-    return (char) (((1000000/(quint8)interPulseDuration) - ((quint8)PulseDuration * 2 + 100) - 1360) / 218);
+    return (char) ((((1000000/(quint8)interPulseDuration) - ((double)PulseDuration * 2.0 + 22.0))*0.0045) - 2.8147);
 }
 
 void CommandOdin::setMultiChannelSequence(CHANNELNUMBER first, CHANNELNUMBER second, CHANNELNUMBER third, CHANNELNUMBER fourth){
@@ -151,7 +175,6 @@ char CommandOdin::getTimeZoneByte2(){
 }
 
 void CommandOdin::setZoneMask(ZONEMASK mask){
-//    qDebug() << (quint8) mask;
     zoneMask = mask;
 }
 

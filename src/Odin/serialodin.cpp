@@ -2,6 +2,7 @@
 
 SerialOdin::SerialOdin(QObject *parent) : QObject(parent = Q_NULLPTR){
     odinPort = new QSerialPort(this);
+    connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
 }
 
 void SerialOdin::connectOdin(){
@@ -12,8 +13,9 @@ void SerialOdin::connectOdin(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer() == "Silicon Labs"){
+        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
             odinPort->setPortName(portInfo.at(i).portName());
+            qDebug() << "Connected to port " << portInfo.at(i).portName();
             odinPort->setBaudRate(2400);
             odinPort->setDataBits(QSerialPort::Data8);
             odinPort->setParity(QSerialPort::NoParity);
@@ -22,27 +24,41 @@ void SerialOdin::connectOdin(){
         }
     }
     if(odinPort->open(QIODevice::ReadWrite)){
+        odinSerialConnected = true;
         qDebug() << "Connected to Odin serial";
     }
 }
 
+void SerialOdin::closeOdinSerial(){
+    odinPort->flush();
+    odinPort->close();
+}
+
+bool SerialOdin::isOdinSerialConnected(){
+    return odinSerialConnected;
+}
+
 void SerialOdin::initOdin(){
-    odinPort->write(QByteArray::fromHex("F8"));
-    QMessageBox *mbox = new QMessageBox;
-    QTimer::singleShot(3000, mbox, SLOT(hide()));
-    mbox->setText("Initialising Odin.. Please wait...");
-    mbox->show();
     qDebug() << "Odin Initialised!";
 }
 
 void SerialOdin::writeCommand(QByteArray command){
-    for(int i = 0; i < 16; i++){
-        qDebug() << "Sending Byte " << i;
-        QByteArray sending;
-        sending.clear();
-        qDebug("%x", (quint8) command.at(i));
-        sending.append(command.at(i));
-        odinPort->write(sending);
-        QThread::msleep(15);
+    qDebug() << "Started command timer";
+    outgoingCommand = command;
+    commandTimer.start(15);
+}
+
+void SerialOdin::sendCommand(){
+    qDebug() << "Sending Byte " << commandCount;
+    QByteArray sending;
+    sending.clear();
+    qDebug("%x", (quint8) outgoingCommand.at(commandCount));
+    sending.append(outgoingCommand.at(commandCount));
+    odinPort->write(sending);
+    commandCount++;
+    if(commandCount >= 16){
+        commandTimer.stop();
+        commandCount = 0;
+        qDebug() << "Finished sending command";
     }
 }

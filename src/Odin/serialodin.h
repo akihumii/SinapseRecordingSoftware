@@ -9,15 +9,21 @@ class SerialOdin: public QObject{
 public:
     SerialOdin(QObject *parent);
     void connectOdin();
+    void closeOdinSerial();
+    bool isOdinSerialConnected();
     void initOdin();
     void writeCommand(QByteArray command);
 
 private slots:
+    void sendCommand();
 
 private:
     QSerialPort *odinPort;
     QList<QSerialPortInfo> portInfo;
-    QElapsedTimer *timer;
+    QTimer commandTimer;
+    QByteArray outgoingCommand;
+    int commandCount = 0;
+    bool odinSerialConnected = false;
 };
 
 #endif // SERIALODIN_H

@@ -50,5 +50,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <qmath.h>
 #include "math.h"
+#include <unistd.h>
+#include <QThread>
 
 #endif // QTINCLUDES_H

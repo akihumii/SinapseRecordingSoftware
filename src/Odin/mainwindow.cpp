@@ -4,19 +4,20 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Odin Stimulator Software V") + version);
     serialOdin = new SerialOdin(this);
-    serialOdin->connectOdin();
-    serialOdin->initOdin();
     socketOdin = new SocketOdin(this);
-//    socketOdin->doConnect("10.10.10.1", 30000);
-//    socketOdin->initOdin();
     commandOdin = new CommandOdin(serialOdin, socketOdin);
-    loopingThread = new LoopingThread(commandOdin);
+    loopingThread = new LoopingThread();
+    QThread *thread = new QThread;
+    loopingThread->moveToThread(thread);
     connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(on_finishedSending()));
     connect(loopingThread, SIGNAL(commandSent()), this, SLOT(on_commandSent()));
     mbox = new QMessageBox;
+    mboxStop = new QMessageBox;
+    pulsePlot = new PulsePlot;
 
     createLayout();
     createStatusBar();
+    connectOdin();
 }
 
 void MainWindow::createLayout(){
@@ -63,15 +64,17 @@ void MainWindow::createLayout(){
     for(int i = 0; i < 5; i++){
         intensityLayout1->addWidget(pulseMagLabel[i]);
         pulseMag[i] = new QDoubleSpinBox;
-        pulseMag[i]->setMinimum(0.3);
+        pulseMag[i]->setMinimum(0.0);
         pulseMag[i]->setMaximum(9.3);
         pulseMag[i]->setSingleStep(0.1);
         pulseMag[i]->setValue(2.0);
         pulseMag[i]->setMaximumWidth(50);
         pulseMag[i]->setAlignment(Qt::AlignHCenter);
+        pulseMag[i]->setDisabled(true);
         intensityLayout2->addWidget(pulseMag[i]);
         connect(pulseMag[i], SIGNAL(valueChanged(double)), this, SLOT(on_pulseMag_Changed()));
     }
+    pulseMag[0]->setDisabled(false);
 
     QHBoxLayout *intensityLayout = new QHBoxLayout;
     intensityLayout->addLayout(intensityLayout1);
@@ -268,18 +271,30 @@ void MainWindow::createLayout(){
     multiChannelmainLayout->addWidget(zoneDuration);
 
     multiChannel->setLayout(multiChannelmainLayout);
+    pulseGraph = new QCustomPlot;
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(modeLayout);
     mainLayout->addLayout(channelLayout);
     mainLayout->addWidget(Parameters);
     mainLayout->addWidget(multiChannel);
+    mainLayout->addWidget(pulseGraph);
     mainLayout->addWidget(sendButton);
     QWidget *mainWidget = new QWidget;
     multiChannel->setDisabled(true);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+
+    pulseGraph->setMinimumHeight(120);
+    pulseGraph->yAxis->setAutoTickStep(false);
+    pulseGraph->xAxis->setTickStep((double) 0.000001);
+    pulseGraph->setInteractions(QCP::iRangeDrag);
+    pulseGraph->axisRect()->setAutoMargins(QCP::msNone);
+    pulseGraph->yAxis->setRange(-2.2, 4.8, Qt::AlignLeft);
+    pulseGraph->yAxis->setTickStep(2.0);
+    pulseGraph->addGraph();
+    plotPulse();
 }
 
 void MainWindow::createStatusBar(){
@@ -290,9 +305,42 @@ void MainWindow::createStatusBar(){
     statusBarLabel->setText("Odin initialised");
 }
 
+void MainWindow::connectOdin(){
+    portInfo = QSerialPortInfo::availablePorts();
+    connectionStatus.clear();
+    if(portInfo.size()>0){
+        serialOdin->connectOdin();
+        connectionStatus.clear();
+        if(serialOdin->isOdinSerialConnected()){
+            connectionStatus.append("Connected to Odin!!");
+        }
+        else{
+            connectionStatus.append("Connection to Odin failed");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
+    if(!serialOdin->isOdinSerialConnected()){
+        socketOdin->doConnect("10.10.10.1", 30000);
+        connectionStatus.clear();
+        if(socketOdin->isConnected()){
+            connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
+        }
+        else{
+            sendButton->setDisabled(true);
+            connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
+            QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
+                                                                 "Check your connections and run the program again..");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
+}
+
 void MainWindow::sendCommand(){
     start = !start;
-    if(start && !loopingThread->isRunning()){
+    commandOdin->constructCommand();
+    setDelay();
+    if(start){
+        commandOdin->sendStart();
         loopingThread->send = true;
         loopingThread->start();
         numPulseTrainSpinBox->setDisabled(true);
@@ -300,10 +348,12 @@ void MainWindow::sendCommand(){
         sendButton->setText("Stop!");
     }
     else{
+        commandOdin->sendStop();
         loopingThread->send = false;
         loopingThread->quit();
-        mbox->setText("Stopping Odin.. Please wait...");
-        mbox->show();
+        mboxStop->setText("Stopping Odin.. Please wait...");
+        mboxStop->setStandardButtons(0);
+        mboxStop->show();
     }
 }
 
@@ -315,7 +365,25 @@ void MainWindow::on_Mode_Changed(int Mode){
     else{
         multiChannel->setEnabled(true);
         channelComboBox->setDisabled(true);
+        if(ModeComboBox->currentIndex() == 5){
+            zoneDuration->setDisabled(true);
+        }
+        else{
+            zoneDuration->setEnabled(true);
+        }
     }
+    for(int i = 0; i < 5; i++){
+        pulseMag[i]->setEnabled(true);
+    }
+    if(ModeComboBox->currentIndex() == 0 || ModeComboBox->currentIndex() == 2 || ModeComboBox->currentIndex() == 3){
+        for(int i = 1; i < 5; i++){
+            pulseMag[i]->setDisabled(true);
+        }
+    }
+    else if(ModeComboBox->currentIndex() == 4 || ModeComboBox->currentIndex() == 5){
+        pulseMag[4]->setDisabled(true);
+    }
+
     commandOdin->setMode(Mode);
 }
 
@@ -326,19 +394,27 @@ void MainWindow::on_channel_Changed(int channel){
 void MainWindow::on_pulseMag_Changed(){
     for(int i = 0; i < 5; i++){
         commandOdin->setPulseMag(i, pulseMag[i]->value());
+        pulsePlot->setAmplitude(pulseMag[0]->value());
     }
+    pulseGraph->yAxis->setTickStep((double) pulseMag[0]->value());
+    pulseGraph->yAxis->setRange(-(pulseMag[0]->value()+0.2), 2*(pulseMag[0]->value()+0.2), Qt::AlignLeft);
+    plotPulse();
 }
 
 void MainWindow::on_pulseDuration_Changed(){
+    pulsePlot->setPulseDuration(pulseDurationSpinBox->value());
+    plotPulse();
     commandOdin->setPulseDuration(pulseDurationSpinBox->value());
 }
 
 void MainWindow::on_numPulse_Changed(){
     commandOdin->setPulseNum((char) numPulseSpinBox->value());
+    setDelay();
 }
 
 void MainWindow::on_interPulseDuration_Changed(){
     commandOdin->setInterPulseDuration((char) interPulseDurationSpinBox->value());
+    setDelay();
 }
 
 void MainWindow::on_channelSeq_Changed(){
@@ -378,23 +454,26 @@ void MainWindow::on_numPulseTrain_Changed(){
 }
 
 void MainWindow::on_interPulseTrainDelay_Changed(){
-    loopingThread->delay = interPulseTrainDelaySpinBox->value();
+    setDelay();
 }
 
 void MainWindow::on_finishedSending(){
-    if(!mbox->isHidden()){
-        mbox->close();
-    }
     numPulseTrainSpinBox->setEnabled(true);
     interPulseTrainDelaySpinBox->setEnabled(true);
     sendButton->setText("Start!");
+    mboxStop->hide();
     mbox->setText("Finished sending commands " + QString::number(commandCount, 10) + " times");
     mbox->show();
+    commandOdin->sendStop();
     commandCount = 0;
+    start = false;
 }
 
 void MainWindow::on_commandSent(){
     commandCount++;
+    commandOdin->constructCommand();
+    commandOdin->sendCommand();
+    if(commandOdin->getlastSentCommand().size() > 0){
     QString lastCommand;
     lastCommand.append("Command: ");
     for(int i = 0; i < commandOdin->getlastSentCommand().size(); i++){
@@ -410,6 +489,54 @@ void MainWindow::on_commandSent(){
     lastCommand.append("Sent: " + QString::number(commandCount,10));
 
     statusBarLabel->setText(lastCommand);
+    }
+}
+
+void MainWindow::plotPulse(){
+    pulsePlot->updateYvalues();
+    qDebug() << "Setting data";
+    for(int i = 0; i < pulsePlot->retrieveXaxis().size(); i++){
+//        qDebug() << pulsePlot->retrieveXaxis().at(i);
+//        qDebug() << pulsePlot->retrieveYaxis().at(i);
+    }
+//    qDebug() << pulsePlot->retrieveXaxis().size();
+//    qDebug() << pulsePlot->retrieveYaxis().size();
+
+    pulseGraph->graph()->setData(pulsePlot->retrieveXaxis(), pulsePlot->retrieveYaxis());
+    pulseGraph->xAxis->setRange(0, 2550*0.000001, Qt::AlignLeft);
+    pulseGraph->replot();
+}
+
+void MainWindow::setDelay(){
+    if(ModeComboBox->currentIndex() == 0){
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+    }
+    else if(ModeComboBox->currentIndex() == 1){
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+    }
+    else if(ModeComboBox->currentIndex() == 2 || ModeComboBox->currentIndex() == 3){
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                                                             ( 1.0 / (4*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                                                             ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                                                             ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                                                             ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+    }
+    else if(ModeComboBox->currentIndex() == 5){
+        if(pulseMag[2]->value() == 0.0 && pulseMag[3]->value() == 0.0){
+            qDebug() << (quint8) pulseMag[3]->value();
+            loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        }
+        else if(pulseMag[3]->value() == 0.0){
+            qDebug() << (quint8) pulseMag[3]->value();
+            loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        }
+        else{
+            loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        }
+    }
+    else{
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + 500;
+    }
 }
 
 MainWindow::~MainWindow(){

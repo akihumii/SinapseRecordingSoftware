@@ -4,25 +4,25 @@
 #include <QThread>
 #include "../common/qtincludes.h"
 #include "commandodin.h"
+#include <QThread>
+#include <windows.h>
 
 class LoopingThread : public QThread{
     Q_OBJECT
 public:
-    CommandOdin* commandOdin;
     int num = 50;
     int delay = 3000;
     bool send = false;
-    LoopingThread(CommandOdin *commandOdin_){
-        commandOdin = commandOdin_;
+    LoopingThread(){
     }
 
     void run() Q_DECL_OVERRIDE {
+        QThread::msleep(1700);
         for(int i = 0; i < num; i++){
             if(this->send){
-                commandOdin->sendCommand();
                 emit commandSent();
-                qDebug() << "Sending Command";
-                this->msleep(delay);
+                qDebug() << "Sending Command" << delay;
+                QThread::msleep(delay);
             }
             else{
                 qDebug() << "Breaking out";
@@ -35,6 +35,8 @@ public:
 signals:
     void commandSent();
     void finishedSending();
+
+private slots:
 };
 
 #endif // LOOPINGTHREAD_H

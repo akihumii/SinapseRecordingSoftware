@@ -12,13 +12,17 @@ SocketNeutrino::SocketNeutrino(QObject *parent, Command *NeutrinoCommand_, DataP
 }
 
 void SocketNeutrino::doConnect(QString ipAddress, int port){
+    int connectionTries = 0;
     while(socketNeutrino->state() != QAbstractSocket::ConnectedState){
         qDebug() << "Connecting...";
         socketNeutrino->connectToHost(ipAddress, port);
         qDebug() << "Waiting...";
-        if(!socketNeutrino->waitForConnected(5000)){
+        if(!socketNeutrino->waitForConnected(1000)){
             qDebug() << "Error: " << socketNeutrino->errorString();
         }
+        connectionTries++;
+        if(connectionTries>2)
+            return;
     }
 }
 
@@ -55,10 +59,7 @@ void SocketNeutrino::doDisconnect(){
 }
 
 bool SocketNeutrino::isConnected(){
-    if (socketNeutrino->state() == QAbstractSocket::ConnectedState){
-        return true;
-    }
-    else return false;
+    return (socketNeutrino->state() == QAbstractSocket::ConnectedState);
 }
 
 bool SocketNeutrino::writeCommand(QByteArray Command){

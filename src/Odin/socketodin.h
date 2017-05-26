@@ -14,9 +14,12 @@ public:
 private slots:
     void connectedCommandSocket();
     void disconnectedCommandSocket();
+    void sendCommand();
 private:
     QTcpSocket *socketOdin;
-    QElapsedTimer *timer;
+    QTimer commandTimer;
+    QByteArray outgoingCommand;
+    int commandCount = 0;
 };
 
 #endif // SOCKETODIN_H
