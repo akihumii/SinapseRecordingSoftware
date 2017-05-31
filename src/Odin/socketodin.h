@@ -11,6 +11,8 @@ public:
     void writeCommand(QByteArray command);
     void doConnect(QString ipAddress, int port);
     bool isConnected();
+signals:
+    void odinDisconnected();
 private slots:
     void connectedCommandSocket();
     void disconnectedCommandSocket();

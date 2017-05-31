@@ -14,8 +14,12 @@ public:
     void initOdin();
     void writeCommand(QByteArray command);
 
+signals:
+    void odinDisconnected();
+
 private slots:
     void sendCommand();
+    void disconnectedCommandSerial();
 
 private:
     QSerialPort *odinPort;

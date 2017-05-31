@@ -80,7 +80,7 @@ void SerialChannel::connectSylph(){
         qDebug() << "Manufacturer: " << info.manufacturer();
         qDebug() << "Serial Number: " << info.serialNumber();
     }
-    for(int i = 0; i < portInfo.size(); i++){
+    for(int i = 0; i < portInfo.size()-1; i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
             if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
                 implantPort->setPortName(portInfo.at(i+1).portName());

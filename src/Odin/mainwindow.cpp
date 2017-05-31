@@ -11,6 +11,8 @@ MainWindow::MainWindow(){
     loopingThread->moveToThread(thread);
     connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(on_finishedSending()));
     connect(loopingThread, SIGNAL(commandSent()), this, SLOT(on_commandSent()));
+    connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
+//    connect(serialOdin, SIGNAL(aboutToClose()), this, SLOT(on_odinDisconnected()));
     mbox = new QMessageBox;
     mboxStop = new QMessageBox;
     pulsePlot = new PulsePlot;
@@ -305,7 +307,7 @@ void MainWindow::createStatusBar(){
     statusBarLabel->setText("Odin initialised");
 }
 
-void MainWindow::connectOdin(){
+bool MainWindow::connectOdin(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
     if(portInfo.size()>0){
@@ -313,6 +315,8 @@ void MainWindow::connectOdin(){
         connectionStatus.clear();
         if(serialOdin->isOdinSerialConnected()){
             connectionStatus.append("Connected to Odin!!");
+            sendButton->setEnabled(true);
+            return true;
         }
         else{
             connectionStatus.append("Connection to Odin failed");
@@ -324,15 +328,20 @@ void MainWindow::connectOdin(){
         connectionStatus.clear();
         if(socketOdin->isConnected()){
             connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
+            statusBarLabel->setText(connectionStatus);
+            sendButton->setEnabled(true);
+            return true;
         }
         else{
             sendButton->setDisabled(true);
             connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
             QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
                                                                  "Check your connections and run the program again..");
+            statusBarLabel->setText(connectionStatus);
+            return false;
         }
-        statusBarLabel->setText(connectionStatus);
     }
+    return false;
 }
 
 void MainWindow::sendCommand(){
@@ -471,7 +480,6 @@ void MainWindow::on_finishedSending(){
 
 void MainWindow::on_commandSent(){
     commandCount++;
-    commandOdin->constructCommand();
     commandOdin->sendCommand();
     if(commandOdin->getlastSentCommand().size() > 0){
     QString lastCommand;
@@ -495,12 +503,6 @@ void MainWindow::on_commandSent(){
 void MainWindow::plotPulse(){
     pulsePlot->updateYvalues();
     qDebug() << "Setting data";
-    for(int i = 0; i < pulsePlot->retrieveXaxis().size(); i++){
-//        qDebug() << pulsePlot->retrieveXaxis().at(i);
-//        qDebug() << pulsePlot->retrieveYaxis().at(i);
-    }
-//    qDebug() << pulsePlot->retrieveXaxis().size();
-//    qDebug() << pulsePlot->retrieveYaxis().size();
 
     pulseGraph->graph()->setData(pulsePlot->retrieveXaxis(), pulsePlot->retrieveYaxis());
     pulseGraph->xAxis->setRange(0, 2550*0.000001, Qt::AlignLeft);
@@ -537,6 +539,11 @@ void MainWindow::setDelay(){
     else{
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + 500;
     }
+}
+
+void MainWindow::on_odinDisconnected(){
+    QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
+    this->close();
 }
 
 MainWindow::~MainWindow(){

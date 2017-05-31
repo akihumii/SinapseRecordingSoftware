@@ -2,6 +2,9 @@
 
 SerialOdin::SerialOdin(QObject *parent) : QObject(parent = Q_NULLPTR){
     odinPort = new QSerialPort(this);
+
+    connect(odinPort, SIGNAL(aboutToClose()), this, SLOT(disconnectedCommandSerial()));
+
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
 }
 
@@ -27,6 +30,10 @@ void SerialOdin::connectOdin(){
         odinSerialConnected = true;
         qDebug() << "Connected to Odin serial";
     }
+}
+
+void SerialOdin::disconnectedCommandSerial(){
+    emit odinDisconnected();
 }
 
 void SerialOdin::closeOdinSerial(){

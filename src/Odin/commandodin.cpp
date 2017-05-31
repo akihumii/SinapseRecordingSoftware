@@ -36,28 +36,45 @@ void CommandOdin::constructCommand(){
     outgoingCommand.append(getPulseMagByte(2));
     outgoingCommand.append(getPulseMagByte(3));
     outgoingCommand.append(getPulseMagByte(4));
+    qDebug() << "Constructed command";
 }
 
 void CommandOdin::sendCommand(){
     constructCommand();
     if(serialOdin->isOdinSerialConnected()){
+        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
     }
     else if(socketOdin->isConnected()){
+        qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
     }
 }
 
 void CommandOdin::sendStart(){
     outgoingCommand.clear();
-    outgoingCommand.append((const char) 0xF8);
-    serialOdin->writeCommand(outgoingCommand);
+    outgoingCommand.append((char) 0xF8);
+    if(serialOdin->isOdinSerialConnected()){
+        qDebug() << "Sending via serial";
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    else if(socketOdin->isConnected()){
+        qDebug() << "Sending via socket";
+        socketOdin->writeCommand(outgoingCommand);
+    }
 }
 
 void CommandOdin::sendStop(){
     outgoingCommand.clear();
     outgoingCommand.append((const char) 0x8F);
-    serialOdin->writeCommand(outgoingCommand);
+    if(serialOdin->isOdinSerialConnected()){
+        qDebug() << "Sending via serial";
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    else if(socketOdin->isConnected()){
+        qDebug() << "Sending via socket";
+        socketOdin->writeCommand(outgoingCommand);
+    }
 }
 
 QByteArray CommandOdin::getlastSentCommand(){

@@ -91,7 +91,7 @@ private:
 
     int commandCount = 0;
 
-    void connectOdin();
+    bool connectOdin();
     void createLayout();
     void createStatusBar();
     void plotPulse();
@@ -111,6 +111,7 @@ private slots:
     void on_interPulseTrainDelay_Changed();
     void on_finishedSending();
     void on_commandSent();
+    void on_odinDisconnected();
 };
 
 #endif // MAINWINDOW_H

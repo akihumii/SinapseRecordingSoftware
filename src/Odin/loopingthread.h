@@ -17,11 +17,15 @@ public:
     }
 
     void run() Q_DECL_OVERRIDE {
-        QThread::msleep(1700);
+        QThread::msleep(2000);
+        qDebug() << "Sleeping for 2 seconds " << num;
+        QMutex mutex;
+        mutex.lock();
         for(int i = 0; i < num; i++){
+            qDebug() << "Looping in looping thread , " << i;
             if(this->send){
-                emit commandSent();
                 qDebug() << "Sending Command" << delay;
+                emit commandSent();
                 QThread::msleep(delay);
             }
             else{
@@ -29,6 +33,7 @@ public:
                 break;
             }
         }
+        mutex.unlock();
         emit finishedSending();
         qDebug() << "Finished sending everything";
     }
