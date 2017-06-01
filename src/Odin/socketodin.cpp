@@ -53,11 +53,12 @@ void SocketOdin::writeCommand(QByteArray command){
 }
 
 void SocketOdin::sendCommand(){
-    qDebug() << "Sending Byte " << commandCount << "of byte" << outgoingCommand.size();
+    qDebug() << "Sending Byte " << commandCount << "of " << outgoingCommand.size() << " total byte";
     QByteArray sending;
     sending.clear();
     qDebug("%x", (quint8) outgoingCommand.at(commandCount));
     sending.append(outgoingCommand.at(commandCount));
+    while(!socketOdin->isWritable());
     socketOdin->write(sending);
     commandCount++;
     if(commandCount >= outgoingCommand.size()){

@@ -25,11 +25,15 @@ HEADERS += \
     filterdialog.h \
     qcustomplot.h \
     qtincludes.h \
-    signalaudio.h
+    signalaudio.h \
+    ipdialog.h
 
 SOURCES += \
     data.cpp \
     filter.cpp \
     filterdialog.cpp \
     qcustomplot.cpp \
-    signalaudio.cpp
+    signalaudio.cpp \
+    ipdialog.cpp
+
+FORMS +=

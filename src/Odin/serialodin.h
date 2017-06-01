@@ -19,13 +19,15 @@ signals:
 
 private slots:
     void sendCommand();
-    void disconnectedCommandSerial();
+    void checkConnectivity();
 
 private:
     QSerialPort *odinPort;
     QList<QSerialPortInfo> portInfo;
     QTimer commandTimer;
+    QTimer *serialTimer;
     QByteArray outgoingCommand;
+    QString connectedPortName;
     int commandCount = 0;
     bool odinSerialConnected = false;
 };

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
+#include "../common/ipdialog.h"
 #include "serialodin.h"
 #include "commandodin.h"
 #include "socketodin.h"
@@ -85,6 +86,8 @@ private:
 
     QMessageBox *mbox;
     QMessageBox *mboxStop;
+    QAction *connectAction;
+    QMenu *fileMenu;
 
     bool start = false;
     LoopingThread *loopingThread;
@@ -112,6 +115,7 @@ private slots:
     void on_finishedSending();
     void on_commandSent();
     void on_odinDisconnected();
+    void on_ConnectMenu_triggered();
 };
 
 #endif // MAINWINDOW_H

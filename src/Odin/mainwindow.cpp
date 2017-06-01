@@ -11,14 +11,19 @@ MainWindow::MainWindow(){
     loopingThread->moveToThread(thread);
     connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(on_finishedSending()));
     connect(loopingThread, SIGNAL(commandSent()), this, SLOT(on_commandSent()));
-    connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
-//    connect(serialOdin, SIGNAL(aboutToClose()), this, SLOT(on_odinDisconnected()));
+//    connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
+//    connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     mbox = new QMessageBox;
     mboxStop = new QMessageBox;
     pulsePlot = new PulsePlot;
 
     createLayout();
     createStatusBar();
+//    fileMenu = menuBar()->addMenu(tr("&Connect"));
+    connectAction = new QAction(tr("&Connect"), this);
+//    connectAction->setShortcut(tr("Ctrl+C"));
+//    connect(connectAction, SIGNAL(triggered()), this, SLOT(on_ConnectMenu_triggered()));
+//    fileMenu->addAction(connectAction);
     connectOdin();
 }
 
@@ -451,7 +456,7 @@ void MainWindow::on_zoneSelector_Changed(){
 
 void MainWindow::on_zoneMask_Changed(){
     if(maskSelector->currentIndex() == 0){
-        commandOdin->setZoneMask((ZONEMASK) 85);
+        commandOdin->setZoneMask((ZONEMASK) 0b01010101);
     }
     else{
         commandOdin->setZoneMask((ZONEMASK) ~(1<<(maskSelector->currentIndex())));
@@ -542,8 +547,16 @@ void MainWindow::setDelay(){
 }
 
 void MainWindow::on_odinDisconnected(){
-    QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
-    this->close();
+    do{
+        loopingThread->send = false;
+        loopingThread->quit();
+        QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
+    }while(!connectOdin());
+}
+
+void MainWindow::on_ConnectMenu_triggered(){
+    IPDialog ipDialog;
+    ipDialog.exec();
 }
 
 MainWindow::~MainWindow(){

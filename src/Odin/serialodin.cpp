@@ -3,8 +3,9 @@
 SerialOdin::SerialOdin(QObject *parent) : QObject(parent = Q_NULLPTR){
     odinPort = new QSerialPort(this);
 
-    connect(odinPort, SIGNAL(aboutToClose()), this, SLOT(disconnectedCommandSerial()));
-
+    serialTimer = new QTimer;
+    serialTimer->start(100);
+    connect(serialTimer, SIGNAL(timeout()), this, SLOT(checkConnectivity()));
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
 }
 
@@ -16,9 +17,10 @@ void SerialOdin::connectOdin(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
+        if(portInfo.at(i).manufacturer().contains("ftdi", Qt::CaseInsensitive)){
             odinPort->setPortName(portInfo.at(i).portName());
             qDebug() << "Connected to port " << portInfo.at(i).portName();
+            connectedPortName = portInfo.at(i).portName();
             odinPort->setBaudRate(2400);
             odinPort->setDataBits(QSerialPort::Data8);
             odinPort->setParity(QSerialPort::NoParity);
@@ -32,8 +34,15 @@ void SerialOdin::connectOdin(){
     }
 }
 
-void SerialOdin::disconnectedCommandSerial(){
-    emit odinDisconnected();
+void SerialOdin::checkConnectivity(){
+    if(odinSerialConnected){
+        portInfo = QSerialPortInfo::availablePorts();
+        foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+            if(connectedPortName == info.portName())
+                return;
+        }
+        emit odinDisconnected();
+    }
 }
 
 void SerialOdin::closeOdinSerial(){
