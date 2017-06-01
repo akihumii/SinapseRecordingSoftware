@@ -17,7 +17,7 @@ void SerialOdin::connectOdin(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer().contains("ftdi", Qt::CaseInsensitive)){
+        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
             odinPort->setPortName(portInfo.at(i).portName());
             qDebug() << "Connected to port " << portInfo.at(i).portName();
             connectedPortName = portInfo.at(i).portName();

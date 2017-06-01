@@ -11,8 +11,8 @@ MainWindow::MainWindow(){
     loopingThread->moveToThread(thread);
     connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(on_finishedSending()));
     connect(loopingThread, SIGNAL(commandSent()), this, SLOT(on_commandSent()));
-//    connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
-//    connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
+    connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
+    connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     mbox = new QMessageBox;
     mboxStop = new QMessageBox;
     pulsePlot = new PulsePlot;
@@ -547,11 +547,8 @@ void MainWindow::setDelay(){
 }
 
 void MainWindow::on_odinDisconnected(){
-    do{
-        loopingThread->send = false;
-        loopingThread->quit();
-        QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
-    }while(!connectOdin());
+    QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
+    this->close();
 }
 
 void MainWindow::on_ConnectMenu_triggered(){
