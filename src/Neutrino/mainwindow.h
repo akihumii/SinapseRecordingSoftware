@@ -6,7 +6,6 @@
 #include "command.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
-#include "connectiondialog.h"
 #include "commanddialog.h"
 #include "dataprocessor.h"
 #include "channel.h"

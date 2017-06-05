@@ -13,13 +13,16 @@ public:
     bool isOdinSerialConnected();
     void initOdin();
     void writeCommand(QByteArray command);
+    QString getConnectedPort();
 
 signals:
     void odinDisconnected();
+    void commandReceived(bool);
 
 private slots:
     void sendCommand();
     void checkConnectivity();
+    void readCommand();
 
 private:
     QSerialPort *odinPort;

@@ -2,21 +2,18 @@
 #define SOCKETODIN_H
 
 #include "../common/qtincludes.h"
+#include "../common/socketabstract.h"
 
-class SocketOdin: public QObject {
+class SocketOdin: public SocketAbstract{
     Q_OBJECT
 public:
-    SocketOdin(QObject *parent);
-    void initOdin();
+    SocketOdin();
     void writeCommand(QByteArray command);
-    void doConnect(QString ipAddress, int port);
-    bool isConnected();
 signals:
     void odinDisconnected();
 private slots:
-    void connectedCommandSocket();
-    void disconnectedCommandSocket();
     void sendCommand();
+    void on_socketDisconnected();
 private:
     QTcpSocket *socketOdin;
     QTimer commandTimer;

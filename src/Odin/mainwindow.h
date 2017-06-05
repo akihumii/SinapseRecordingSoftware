@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
-#include "../common/ipdialog.h"
+#include "../common/connectiondialog.h"
+#include "../common/led.h"
 #include "serialodin.h"
 #include "commandodin.h"
 #include "socketodin.h"
@@ -29,6 +30,7 @@ private:
     CommandOdin *commandOdin;
 
     QStatusBar *statusBarMainWindow;
+    QStatusBar *statusBarMainWindow2;
 
     QPushButton *sendButton;
 
@@ -89,6 +91,9 @@ private:
     QAction *connectAction;
     QMenu *fileMenu;
 
+    Led *sentLED;
+    Led *receivedLED;
+
     bool start = false;
     LoopingThread *loopingThread;
 
@@ -116,6 +121,7 @@ private slots:
     void on_commandSent();
     void on_odinDisconnected();
     void on_ConnectMenu_triggered();
+    void on_commandReceived(bool received);
 };
 
 #endif // MAINWINDOW_H

@@ -6,7 +6,7 @@ MainWindow::MainWindow(){
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     data = new DataProcessor(samplingRate);
     serialChannel = new SerialChannel(this, data);
-    socketSylph = new SocketSylph(this, data);
+    socketSylph = new SocketSylph(data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();

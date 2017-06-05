@@ -4,7 +4,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Odin Stimulator Software V") + version);
     serialOdin = new SerialOdin(this);
-    socketOdin = new SocketOdin(this);
+    socketOdin = new SocketOdin;
     commandOdin = new CommandOdin(serialOdin, socketOdin);
     loopingThread = new LoopingThread();
     QThread *thread = new QThread;
@@ -20,7 +20,7 @@ MainWindow::MainWindow(){
     createLayout();
     createStatusBar();
 //    fileMenu = menuBar()->addMenu(tr("&Connect"));
-    connectAction = new QAction(tr("&Connect"), this);
+//    connectAction = new QAction(tr("&Connect"), this);
 //    connectAction->setShortcut(tr("Ctrl+C"));
 //    connect(connectAction, SIGNAL(triggered()), this, SLOT(on_ConnectMenu_triggered()));
 //    fileMenu->addAction(connectAction);
@@ -280,12 +280,32 @@ void MainWindow::createLayout(){
     multiChannel->setLayout(multiChannelmainLayout);
     pulseGraph = new QCustomPlot;
 
+    QHBoxLayout *LEDLayout = new QHBoxLayout;
+    sentLED = new Led;
+    sentLED->setMaximumWidth(15);
+    sentLED->setMaximumHeight(15);
+    receivedLED = new Led;
+    connect(serialOdin, SIGNAL(commandReceived(bool)), this, SLOT(on_commandReceived(bool)));
+    receivedLED->setMaximumWidth(15);
+    receivedLED->setMaximumHeight(15);
+
+    QLabel *sentLabel = new QLabel(tr("Command Sent"));
+    sentLabel->setMinimumHeight(20);
+    QLabel *receivedLabel = new QLabel(tr("Command Received"));
+    receivedLabel->setMinimumHeight(20);
+    LEDLayout->addWidget(sentLED);
+    LEDLayout->addWidget(sentLabel);
+    LEDLayout->addWidget(receivedLED);
+    LEDLayout->addWidget(receivedLabel);
+
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(modeLayout);
     mainLayout->addLayout(channelLayout);
     mainLayout->addWidget(Parameters);
     mainLayout->addWidget(multiChannel);
     mainLayout->addWidget(pulseGraph);
+    mainLayout->addLayout(LEDLayout);
     mainLayout->addWidget(sendButton);
     QWidget *mainWidget = new QWidget;
     multiChannel->setDisabled(true);
@@ -309,7 +329,7 @@ void MainWindow::createStatusBar(){
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
-    statusBarLabel->setText("Odin initialised");
+//    statusBarLabel->setText("Odin initialised");
 }
 
 bool MainWindow::connectOdin(){
@@ -319,14 +339,15 @@ bool MainWindow::connectOdin(){
         serialOdin->connectOdin();
         connectionStatus.clear();
         if(serialOdin->isOdinSerialConnected()){
-            connectionStatus.append("Connected to Odin!!");
+            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
             sendButton->setEnabled(true);
+            statusBarLabel->setText(connectionStatus);
             return true;
         }
         else{
             connectionStatus.append("Connection to Odin failed");
+            statusBarLabel->setText(connectionStatus);
         }
-        statusBarLabel->setText(connectionStatus);
     }
     if(!serialOdin->isOdinSerialConnected()){
         socketOdin->doConnect("10.10.10.1", 30000);
@@ -486,6 +507,10 @@ void MainWindow::on_finishedSending(){
 void MainWindow::on_commandSent(){
     commandCount++;
     commandOdin->sendCommand();
+    sentLED->setPower(true);
+    QTimer::singleShot(50, [=] {
+            sentLED->setPower(false);
+    });
     if(commandOdin->getlastSentCommand().size() > 0){
     QString lastCommand;
     lastCommand.append("Command: ");
@@ -505,10 +530,15 @@ void MainWindow::on_commandSent(){
     }
 }
 
+void MainWindow::on_commandReceived(bool received){
+    receivedLED->setPower(true);
+    QTimer::singleShot(50, [=] {
+            receivedLED->setPower(false);
+    });
+}
+
 void MainWindow::plotPulse(){
     pulsePlot->updateYvalues();
-    qDebug() << "Setting data";
-
     pulseGraph->graph()->setData(pulsePlot->retrieveXaxis(), pulsePlot->retrieveYaxis());
     pulseGraph->xAxis->setRange(0, 2550*0.000001, Qt::AlignLeft);
     pulseGraph->replot();
@@ -552,8 +582,8 @@ void MainWindow::on_odinDisconnected(){
 }
 
 void MainWindow::on_ConnectMenu_triggered(){
-    IPDialog ipDialog;
-    ipDialog.exec();
+    ConnectionDialog connectionDialog(socketOdin);
+    connectionDialog.exec();
 }
 
 MainWindow::~MainWindow(){

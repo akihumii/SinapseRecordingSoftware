@@ -29,7 +29,6 @@ HEADERS += \
     channel.h \
     command.h \
     commanddialog.h \
-    connectiondialog.h \
     dataprocessor.h \
     mainwindow.h \
     serialchannel.h \
@@ -42,7 +41,6 @@ SOURCES += \
     channel.cpp \
     command.cpp \
     commanddialog.cpp \
-    connectiondialog.cpp \
     dataprocessor.cpp \
     main.cpp \
     mainwindow.cpp \

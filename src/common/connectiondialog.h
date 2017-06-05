@@ -3,10 +3,9 @@
 
 #include <QDialog>
 #include "../common/qtincludes.h"
-#include "socketneutrino.h"
-#include "mainwindow.h"
+#include "socketabstract.h"
 
-class SocketNeutrino;
+class SocketAbstract;
 
 using namespace std;
 
@@ -15,7 +14,7 @@ class ConnectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionDialog(SocketNeutrino *socketNeutrino_);
+    ConnectionDialog(SocketAbstract *socketAbstract_);
     ~ConnectionDialog();
 
 private slots:
@@ -25,7 +24,7 @@ private slots:
 private:
     void createLayout();
 
-    SocketNeutrino *socketNeutrino;
+    SocketAbstract *socketAbstract;
 
     QLabel *IPLabel;
     QLabel *PortLabel;

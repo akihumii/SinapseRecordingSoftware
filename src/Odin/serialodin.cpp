@@ -7,6 +7,7 @@ SerialOdin::SerialOdin(QObject *parent) : QObject(parent = Q_NULLPTR){
     serialTimer->start(100);
     connect(serialTimer, SIGNAL(timeout()), this, SLOT(checkConnectivity()));
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
+    connect(odinPort, SIGNAL(readyRead()), this, SLOT(readCommand()));
 }
 
 void SerialOdin::connectOdin(){
@@ -32,6 +33,16 @@ void SerialOdin::connectOdin(){
         odinSerialConnected = true;
         qDebug() << "Connected to Odin serial";
     }
+}
+
+QString SerialOdin::getConnectedPort(){
+    return connectedPortName;
+}
+
+void SerialOdin::readCommand(){
+    QByteArray temp = odinPort->read(1);
+    qDebug("Read: %x", (quint8) temp.at(0));
+    emit commandReceived(true);
 }
 
 void SerialOdin::checkConnectivity(){

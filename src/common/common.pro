@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network serialport multimedia
+QT       += core gui network serialport multimedia svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -26,7 +26,9 @@ HEADERS += \
     qcustomplot.h \
     qtincludes.h \
     signalaudio.h \
-    ipdialog.h
+    socketabstract.h \
+    connectiondialog.h \
+    led.h
 
 SOURCES += \
     data.cpp \
@@ -34,6 +36,7 @@ SOURCES += \
     filterdialog.cpp \
     qcustomplot.cpp \
     signalaudio.cpp \
-    ipdialog.cpp
+    socketabstract.cpp \
+    connectiondialog.cpp
 
 FORMS +=
