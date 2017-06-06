@@ -7,6 +7,7 @@
 #include "../common/socketabstract.h"
 
 class SocketNeutrino : public SocketAbstract {
+    Q_OBJECT
 public:
     SocketNeutrino(Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
     bool writeCommand(QByteArray Command);

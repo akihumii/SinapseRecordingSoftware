@@ -41,7 +41,7 @@ QString SerialOdin::getConnectedPort(){
 
 void SerialOdin::readCommand(){
     QByteArray temp = odinPort->read(1);
-    qDebug("Read: %x", (quint8) temp.at(0));
+    qDebug("Read: %x", (quint8) BitReverseTable256[(quint8) temp.at(0)]);
     emit commandReceived(true);
 }
 
