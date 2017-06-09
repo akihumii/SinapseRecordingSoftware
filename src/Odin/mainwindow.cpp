@@ -286,6 +286,7 @@ void MainWindow::createLayout(){
     sentLED->setMaximumHeight(15);
     receivedLED = new Led;
     connect(serialOdin, SIGNAL(commandReceived(bool)), this, SLOT(on_commandReceived(bool)));
+    connect(socketOdin, SIGNAL(commandReceived(bool)), this, SLOT(on_commandReceived(bool)));
     receivedLED->setMaximumWidth(15);
     receivedLED->setMaximumHeight(15);
 
@@ -531,7 +532,19 @@ void MainWindow::on_commandSent(){
 }
 
 void MainWindow::on_commandReceived(bool received){
-    receivedLED->setPower(true);
+    if(!received){
+        QString temp;
+        for(int i = 0; i < socketOdin->getIncomingCommand().size(); i++){
+            if((quint8) socketOdin->getIncomingCommand().at(i) < 16){
+                temp.append("0x0" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
+            }
+            else{
+                temp.append("0x" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
+            }
+        }
+        QMessageBox::information(this, "Received bytes error", temp);
+    }
+    receivedLED->setPower(received);
     QTimer::singleShot(50, [=] {
             receivedLED->setPower(false);
     });
@@ -547,9 +560,11 @@ void MainWindow::plotPulse(){
 void MainWindow::setDelay(){
     if(ModeComboBox->currentIndex() == 0){
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        socketOdin->setReadDelay((int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
     }
     else if(ModeComboBox->currentIndex() == 1){
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        socketOdin->setReadDelay((int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
     }
     else if(ModeComboBox->currentIndex() == 2 || ModeComboBox->currentIndex() == 3){
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
@@ -557,22 +572,31 @@ void MainWindow::setDelay(){
                                                                              ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
                                                                              ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
                                                                              ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        socketOdin->setReadDelay((int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                        ( 1.0 / (4*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                        ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                        ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                        ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
     }
     else if(ModeComboBox->currentIndex() == 5){
         if(pulseMag[2]->value() == 0.0 && pulseMag[3]->value() == 0.0){
-            qDebug() << (quint8) pulseMag[3]->value();
+//            qDebug() << (quint8) pulseMag[3]->value();
             loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            socketOdin->setReadDelay((int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
         }
         else if(pulseMag[3]->value() == 0.0){
-            qDebug() << (quint8) pulseMag[3]->value();
+//            qDebug() << (quint8) pulseMag[3]->value();
             loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            socketOdin->setReadDelay((int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
         }
         else{
             loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            socketOdin->setReadDelay((int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
         }
     }
     else{
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + 500;
+        socketOdin->setReadDelay(300);
     }
 }
 

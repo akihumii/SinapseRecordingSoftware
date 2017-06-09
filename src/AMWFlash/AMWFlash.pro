@@ -36,6 +36,10 @@ DEPENDPATH += $$PWD../common
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    serialportdialog.cpp \
+    console.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    serialportdialog.h \
+    console.h

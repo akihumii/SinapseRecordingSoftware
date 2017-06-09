@@ -18,7 +18,7 @@ void SerialOdin::connectOdin(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
+        if(portInfo.at(i).manufacturer().contains("FTDI", Qt::CaseInsensitive)){
             odinPort->setPortName(portInfo.at(i).portName());
             qDebug() << "Connected to port " << portInfo.at(i).portName();
             connectedPortName = portInfo.at(i).portName();
@@ -40,9 +40,17 @@ QString SerialOdin::getConnectedPort(){
 }
 
 void SerialOdin::readCommand(){
-    QByteArray temp = odinPort->read(1);
-    qDebug("Read: %x", (quint8) BitReverseTable256[(quint8) temp.at(0)]);
-    emit commandReceived(true);
+    if(timeToRead){
+        QByteArray temp = odinPort->readAll();
+        qDebug() << "New data come in";
+        for(int i = 0; i < temp.size(); i++){
+            qDebug("Read %d : %x", i, /* BitReverseTable256[(quint8) */(quint8)temp.at(i));
+        }
+        emit commandReceived(true);
+    }
+    else{
+        odinPort->readAll();
+    }
 }
 
 void SerialOdin::checkConnectivity(){
@@ -72,6 +80,7 @@ void SerialOdin::initOdin(){
 void SerialOdin::writeCommand(QByteArray command){
     qDebug() << "Started command timer";
     outgoingCommand = command;
+    timeToRead = false;
     commandTimer.start(15);
 }
 
@@ -87,5 +96,8 @@ void SerialOdin::sendCommand(){
         commandTimer.stop();
         commandCount = 0;
         qDebug() << "Finished sending command";
+        QTimer::singleShot(300, [=] {
+                timeToRead = true;
+        });
     }
 }
