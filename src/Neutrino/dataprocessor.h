@@ -30,6 +30,7 @@ public:
     QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
+    double readBioImpedance(QByteArray input);
 
 private:
     QTextStream *out;

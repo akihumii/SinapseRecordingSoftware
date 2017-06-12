@@ -12,7 +12,24 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
 }
 
 void SerialChannel::ReadData(){
-    NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+    switch (NeutrinoCommand->getOPMode() ){
+        case 2:{
+            NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+            break;
+        }
+        case 5:{
+            emit bioImpReady(NeutrinoData->readBioImpedance(serialData->read(1)));
+            serialData->flush();
+            break;
+        }
+        case 7:{
+            emit bioImpReady(NeutrinoData->readBioImpedance(serialData->read(1)));
+            serialData->flush();
+            break;
+        }
+    default:
+        break;
+    }
 }
 
 void SerialChannel::closePort(){

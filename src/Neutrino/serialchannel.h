@@ -32,6 +32,8 @@ private:
     bool connected = false;
     int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
+signals:
+    void bioImpReady(double temp);
 };
 
 #endif // SerialChannel_H
