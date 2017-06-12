@@ -16,19 +16,24 @@ SUBDIRS +=   \
     src/Neutrino \
     src/SylphII \
     src/SylphX \
-    src/Odin
+    src/Odin \
+    src/Jane \
+    src/AMWFlash
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
 SylphII.subdir = src/SylphII
 SylphX.subdir = src/SylphX
 Odin.subdir = src/Odin
+Jane.subdir = src/Jane
 
 Neutrino.depends = common
 SylphII.depends = common
 SylphX.depends = common
 Odin.depends = common
+Jane.depends = common
 
 FORMS +=
 
 DISTFILES +=
+

@@ -78,8 +78,9 @@ void SerialChannel::connectSylph(){
         qDebug() << "Name : " << info.portName();
         qDebug() << "Description : " << info.description();
         qDebug() << "Manufacturer: " << info.manufacturer();
+        qDebug() << "Serial Number: " << info.serialNumber();
     }
-    for(int i = 0; i < portInfo.size(); i++){
+    for(int i = 0; i < portInfo.size()-1; i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
             if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
                 implantPort->setPortName(portInfo.at(i+1).portName());
@@ -110,8 +111,8 @@ void SerialChannel::connectSylph(){
     }
     if (implantPort->open(QIODevice::ReadWrite)){
         implantConnected = true;
-        for(int i = 0; i < 30; i++){
-            implantPort->read(4800);
+        for(int i = 0; i < 300; i++){
+            implantPort->readAll();
         }
         checked = false;
         qDebug() << "Implant Port connnected!";

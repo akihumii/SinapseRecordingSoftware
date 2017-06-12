@@ -7,9 +7,7 @@ MainWindow::MainWindow(){
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
     serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
-    serialNeutrino->doConnect();
-    socketNeutrino = new SocketNeutrino(this, NeutrinoCommand, data, NeutrinoChannel);
-//    socketNeutrino->doConnect("10.10.10.1", 30000);
+    socketNeutrino = new SocketNeutrino(NeutrinoCommand, data, NeutrinoChannel);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     createStatusBar();
     create5x2Layout();
@@ -17,6 +15,7 @@ MainWindow::MainWindow(){
     dataTimer.start(1);     //tick timer every XXX msec
     createActions();
     createMenus();
+    connectNeutrino();
     qDebug() << "Starting NEUTRINO II..";
 }
 
@@ -330,6 +329,35 @@ void MainWindow::createStatusBar(){
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
+}
+
+void MainWindow::connectNeutrino(){
+    portInfo = QSerialPortInfo::availablePorts();
+    connectionStatus.clear();
+    if(portInfo.size()>0){
+        serialNeutrino->doConnect();
+        connectionStatus.clear();
+        if(serialNeutrino->isConnected()){
+            connectionStatus.append("Connected to Neutrino!!");
+        }
+        else{
+            connectionStatus.append("Connection to Neutrino failed");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
+    if(!serialNeutrino->isConnected()){
+        socketNeutrino->doConnect("192.168.42.1", 8888);
+        connectionStatus.clear();
+        if(socketNeutrino->isConnected()){
+            connectionStatus.append("Connected to Neutrino WiFi Module at 192.168.42.1/8888");
+        }
+        else{
+            connectionStatus.append("Connection to Neutrino failed! Restart this program after connecting Neutrino.");
+            QMessageBox::information(this, "Failed to connect!", "No Neutrino device detected.. \n"
+                                                                 "Check your connections and run the program again..");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
 }
 
 MainWindow::~MainWindow(){

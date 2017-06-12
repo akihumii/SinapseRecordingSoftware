@@ -12,7 +12,7 @@ TARGET = Odin
 TEMPLATE = app
 
 # The application version
-VERSION = 1.0.4
+VERSION = 1.0.6
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -26,8 +26,17 @@ INCLUDEPATH += $$PWD../common
 DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    serialodin.cpp \
+    commandodin.cpp \
+    socketodin.cpp \
+    pulseplot.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    serialodin.h \
+    commandodin.h \
+    socketodin.h \
+    loopingthread.h \
+    pulseplot.h
 
 FORMS    +=

@@ -71,6 +71,7 @@ private:
     QAction *voltage1000u;
     QAction *voltage2000u;
     QAction *voltage5000u;
+    QAction *voltage10000u;
     QAction *audio[11];
     QAction *aboutAction;
 
@@ -115,6 +116,7 @@ private slots:
     void on_voltage1000u_triggered();
     void on_voltage2000u_triggered();
     void on_voltage5000u_triggered();
+    void on_voltage10000u_triggered();
     void on_dataAnalyzer_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();

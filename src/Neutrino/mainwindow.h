@@ -6,7 +6,6 @@
 #include "command.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
-#include "connectiondialog.h"
 #include "commanddialog.h"
 #include "dataprocessor.h"
 #include "channel.h"
@@ -51,6 +50,8 @@ private:
 
     QStatusBar *statusBarMainWindow;
 
+    QString connectionStatus;
+
     QMenu *fileMenu;
     QMenu *voltageMenu;
     QMenu *layoutMenu;
@@ -59,6 +60,7 @@ private:
     void createStatusBar();
     void createActions();
     void createMenus();
+    void connectNeutrino();
 
     QAction *exitAction;
     QAction *recordAction;

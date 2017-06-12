@@ -4,16 +4,13 @@
 #include "../common/qtincludes.h"
 #include "command.h"
 #include "dataprocessor.h"
+#include "../common/socketabstract.h"
 
-class SocketNeutrino : public QObject {
+class SocketNeutrino : public SocketAbstract {
     Q_OBJECT
 public:
-    SocketNeutrino(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
-    void doConnect(QString ipAddress, int port);
+    SocketNeutrino(Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
     bool writeCommand(QByteArray Command);
-    bool isConnected();
-    void doDisconnect();
-    QString getError();
     bool wifiEnabled = true;
     QByteArray getlastCommand();
 
@@ -32,8 +29,6 @@ private:
     int getNumChannels(QByteArray lastCommand);
 
 private slots:
-    void connectedCommandSocket();
-    void disconnectedCommandSocket();
     void ReadCommand();
 };
 

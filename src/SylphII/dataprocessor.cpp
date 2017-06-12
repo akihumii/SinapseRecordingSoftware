@@ -8,14 +8,14 @@ DataProcessor::DataProcessor(float samplingRate_){
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //    qDebug() << rawData.size();
     for(int i = 0; i < rawData.size(); i = i + 5){
-        fullWord_rawData = ((quint8) rawData.at(i+1) << 8 | (quint8) rawData.at(i+2))-32768;
+        fullWord_rawData = ((quint8) rawData.at(i) << 8 | (quint8) rawData.at(i+1))-32768;
         appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
         if(RecordEnabled){
             RecordData(fullWord_rawData);
         }
         ChannelData[0].append(fullWord_rawData*(0.000000195));
 
-        fullWord_rawData = ((quint8) rawData.at(i+3) << 8 | (quint8) rawData.at(i+4))-32768;
+        fullWord_rawData = ((quint8) rawData.at(i+2) << 8 | (quint8) rawData.at(i+3))-32768;
         appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
         if(RecordEnabled){
             RecordData(fullWord_rawData);
@@ -28,14 +28,14 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             else{
                 RecordData(0);
             }
-            RecordData((quint8) rawData.at(i));
+            RecordData((quint8) rawData.at(i+4));
             RecordData(END_OF_LINE);
         }
         if(ADC_Data.size()>0){
             ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
             ADC_Data.remove(0, 1);
         }
-        ChannelData[3].append((quint8) rawData.at(i));
+        ChannelData[3].append((quint8) rawData.at(i+4));
         total_data_count = total_data_count+1;
         X_axis.append(total_data_count*period);
     }
@@ -43,8 +43,11 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-    if((quint8) data.at(currentIndex + 5) == (quint8) data.at(currentIndex) + 1
-            || ((quint8) data.at(currentIndex) == 250 && (quint8) data.at(currentIndex + 5) == 0)){
+    if(((quint8) data.at(currentIndex + 5) == (quint8) data.at(currentIndex) + 1
+        && (quint8) data.at(currentIndex + 10) == (quint8) data.at(currentIndex + 5) + 1
+        && (quint8) data.at(currentIndex + 15) == (quint8) data.at(currentIndex + 10) + 1
+        && (quint8) data.at(currentIndex + 20) == (quint8) data.at(currentIndex + 15) + 1
+        && (quint8) data.at(currentIndex + 25) == (quint8) data.at(currentIndex + 20) + 1)){
         return true;
     }
     else{

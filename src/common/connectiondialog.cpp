@@ -1,8 +1,8 @@
 #include "connectiondialog.h"
 
-ConnectionDialog::ConnectionDialog(SocketNeutrino *socketNeutrino_)
+ConnectionDialog::ConnectionDialog(SocketAbstract *socketAbstract_)
 {
-    socketNeutrino = socketNeutrino_;
+    socketAbstract = socketAbstract_;
     setWindowTitle(tr("Enter IP and Port Number"));
     createLayout();
 }
@@ -14,12 +14,12 @@ ConnectionDialog::~ConnectionDialog()
 
 void ConnectionDialog::createLayout()
 {
-    IPAddress = new QLineEdit(tr("192.168.0.100"));
-    PortNumber = new QLineEdit(tr("8888"));
+    IPAddress = new QLineEdit(tr("10.10.10.1"));
+    PortNumber = new QLineEdit(tr("30000"));
 
     IPAddress->setInputMask("999.999.999.999");
     IPAddress->setCursorPosition(10);
-    QValidator *validator = new QIntValidator(0, 9999, this);
+    QValidator *validator = new QIntValidator(0, 99999, this);
     PortNumber->setValidator(validator);
 
     IPLabel = new QLabel;
@@ -38,7 +38,7 @@ void ConnectionDialog::createLayout()
     Connect = new QPushButton(tr("Connect"));
     Cancel = new QPushButton(tr("Cancel"));
 
-    if (socketNeutrino->isConnected()){
+    if (socketAbstract->isConnected()){
         Cancel->setText("Disconnect");
     }
 
@@ -58,21 +58,20 @@ void ConnectionDialog::createLayout()
 }
 
 void ConnectionDialog::on_ConnectButton_clicked(){
-    socketNeutrino->doConnect(IPAddress->text(), PortNumber->text().toInt());
-    if (socketNeutrino->isConnected()){
+    socketAbstract->doConnect(IPAddress->text(), PortNumber->text().toInt());
+    if (socketAbstract->isConnected()){
         setWindowTitle(tr("Connected!!"));
         QThread::msleep(1000);
         ConnectionDialog::close();
     }
     else{
-        setWindowTitle(socketNeutrino->getError());
+        setWindowTitle(socketAbstract->getError());
     }
 }
 
 void ConnectionDialog::on_CancelButton_clicked(){
-    if (socketNeutrino->isConnected()){
-        socketNeutrino->writeCommand(QByteArray::number(255, 10));
-        socketNeutrino->doDisconnect();
+    if (socketAbstract->isConnected()){
+        socketAbstract->doDisconnect();
         setWindowTitle(tr("Disconnected!!"));
         QThread::msleep(1000);
         ConnectionDialog::close();

@@ -6,7 +6,7 @@ MainWindow::MainWindow(){
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     data = new DataProcessor(samplingRate);
     serialChannel = new SerialChannel(this, data);
-    socketSylph = new SocketSylph(this, data);
+    socketSylph = new SocketSylph(data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
@@ -180,6 +180,7 @@ void MainWindow::createActions(){
     voltage1000u = new QAction(tr("+/- 1000uV"));
     voltage2000u = new QAction(tr("+/- 2000uV"));
     voltage5000u = new QAction(tr("+/- 5000uV"));
+    voltage10000u = new QAction(tr("+/- 10000uV"));
 
     connect(voltage50u, SIGNAL(triggered(bool)), this, SLOT(on_voltage50u_triggered()));
     connect(voltage100u, SIGNAL(triggered(bool)), this, SLOT(on_voltage100u_triggered()));
@@ -188,6 +189,7 @@ void MainWindow::createActions(){
     connect(voltage1000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage1000u_triggered()));
     connect(voltage2000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage2000u_triggered()));
     connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
+    connect(voltage10000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage10000u_triggered()));
 }
 
 void MainWindow::createMenus(){
@@ -256,6 +258,8 @@ void MainWindow::createMenus(){
     voltage2000u->setCheckable(true);
     voltageMenu->addAction(voltage5000u);
     voltage5000u->setCheckable(true);
+    voltageMenu->addAction(voltage10000u);
+    voltage10000u->setCheckable(true);
 
     voltageGroup = new QActionGroup(this);
     voltageGroup->addAction(voltage50u);
@@ -266,6 +270,7 @@ void MainWindow::createMenus(){
     voltageGroup->addAction(voltage1000u);
     voltageGroup->addAction(voltage2000u);
     voltageGroup->addAction(voltage5000u);
+    voltageGroup->addAction(voltage10000u);
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
@@ -421,6 +426,10 @@ void MainWindow::on_voltage2000u_triggered(){
 
 void MainWindow::on_voltage5000u_triggered(){
     setVoltageTickStep(0.005, 0.01, 0.001);
+}
+
+void MainWindow::on_voltage10000u_triggered(){
+    setVoltageTickStep(0.01, 0.02, 0.002);
 }
 
 void MainWindow::setVoltageTickStep(double position, double size, double step){
