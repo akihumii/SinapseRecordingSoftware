@@ -25,6 +25,14 @@ void SocketOdin::readCommand(){
         incomingCommand.append(socketAbstract->readAll());
         if(incomingCommand.size() >= 16){
 //            qDebug() << incomingCommand.toHex();
+            for(int i = 0; i < incomingCommand.size(); i++){
+                if(incomingCommand.at(i) != 0xAA){
+                    incomingCommand.remove(0, 1);
+                }
+                else{
+                    break;
+                }
+            }
             for(int i = 0; i < 16; i++){
                 if(outgoingCommand.at(i) == incomingCommand.at(i)){
                     emit commandReceived(true);
