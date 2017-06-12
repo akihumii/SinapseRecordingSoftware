@@ -18,7 +18,7 @@ void SerialOdin::connectOdin(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer().contains("FTDI", Qt::CaseInsensitive)){
+        if(portInfo.at(i).manufacturer().contains("Silicons", Qt::CaseInsensitive)){
             odinPort->setPortName(portInfo.at(i).portName());
             qDebug() << "Connected to port " << portInfo.at(i).portName();
             connectedPortName = portInfo.at(i).portName();
@@ -41,12 +41,24 @@ QString SerialOdin::getConnectedPort(){
 
 void SerialOdin::readCommand(){
     if(timeToRead){
-        QByteArray temp = odinPort->readAll();
-        qDebug() << "New data come in";
-        for(int i = 0; i < temp.size(); i++){
-            qDebug("Read %d : %x", i, /* BitReverseTable256[(quint8) */(quint8)temp.at(i));
+        incomingCommand.append(odinPort->readAll());
+        for(int i = 0; i < incomingCommand.size(); i++){
+            if((quint8) incomingCommand.at(i) != (quint8) 0xAA){
+                incomingCommand.remove(0, 1);
+            }
+            else{
+                break;
+            }
         }
-        emit commandReceived(true);
+        for(int i = 0; i < 16; i++){
+            if(outgoingCommand.at(i) == incomingCommand.at(i)){
+                emit commandReceived(true);
+            }
+            else{
+                emit commandReceived(false);
+                break;
+            }
+        }
     }
     else{
         odinPort->readAll();
@@ -78,26 +90,37 @@ void SerialOdin::initOdin(){
 }
 
 void SerialOdin::writeCommand(QByteArray command){
-    qDebug() << "Started command timer";
+//    qDebug() << "Started command timer";
     outgoingCommand = command;
+    odinPort->readAll();
+    odinPort->flush();
     timeToRead = false;
+    incomingCommand.clear();
     commandTimer.start(15);
 }
 
+QByteArray SerialOdin::getIncomingCommand(){
+    return incomingCommand;
+}
+
 void SerialOdin::sendCommand(){
-    qDebug() << "Sending Byte " << commandCount;
+//    qDebug() << "Sending Byte " << commandCount;
     QByteArray sending;
     sending.clear();
-    qDebug("%x", (quint8) outgoingCommand.at(commandCount));
+//    qDebug("%x", (quint8) outgoingCommand.at(commandCount));
     sending.append(outgoingCommand.at(commandCount));
     odinPort->write(sending);
     commandCount++;
-    if(commandCount >= 16){
+    if(commandCount >= outgoingCommand.size()){
         commandTimer.stop();
         commandCount = 0;
-        qDebug() << "Finished sending command";
+//        qDebug() << "Finished sending command";
         QTimer::singleShot(300, [=] {
                 timeToRead = true;
         });
     }
+}
+
+void SerialOdin::setReadDelay(int delay){
+    readDelay = delay;
 }
