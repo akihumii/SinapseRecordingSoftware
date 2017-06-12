@@ -330,7 +330,6 @@ void MainWindow::createStatusBar(){
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
-//    statusBarLabel->setText("Odin initialised");
 }
 
 bool MainWindow::connectOdin(){
@@ -559,44 +558,51 @@ void MainWindow::plotPulse(){
 
 void MainWindow::setDelay(){
     if(ModeComboBox->currentIndex() == 0){
-        loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
-        socketOdin->setReadDelay((int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
+        int additionalDelay = (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
+        socketOdin->setReadDelay(additionalDelay-20);
+        serialOdin->setReadDelay(additionalDelay-20);
     }
     else if(ModeComboBox->currentIndex() == 1){
-        loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
-        socketOdin->setReadDelay((int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
+        int additionalDelay = (int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
+        socketOdin->setReadDelay(additionalDelay-20);
+        serialOdin->setReadDelay(additionalDelay-20);
     }
     else if(ModeComboBox->currentIndex() == 2 || ModeComboBox->currentIndex() == 3){
-        loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                                                             ( 1.0 / (4*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                                                             ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                                                             ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                                                             ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
-        socketOdin->setReadDelay((int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                        ( 1.0 / (4*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                        ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                        ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
-                                        ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
+        int additionalDelay = (int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                     ( 1.0 / (4*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                     ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                     ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+                                     ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
+        socketOdin->setReadDelay(additionalDelay-20);
+        serialOdin->setReadDelay(additionalDelay-20);
     }
     else if(ModeComboBox->currentIndex() == 5){
         if(pulseMag[2]->value() == 0.0 && pulseMag[3]->value() == 0.0){
-//            qDebug() << (quint8) pulseMag[3]->value();
-            loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
-            socketOdin->setReadDelay((int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
+            int additionalDelay = (int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
+            socketOdin->setReadDelay(additionalDelay-20);
+            serialOdin->setReadDelay(additionalDelay-20);
         }
         else if(pulseMag[3]->value() == 0.0){
-//            qDebug() << (quint8) pulseMag[3]->value();
-            loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
-            socketOdin->setReadDelay((int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
+            int additionalDelay = (int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
+            socketOdin->setReadDelay(additionalDelay-20);
+            serialOdin->setReadDelay(additionalDelay-20);
         }
         else{
-            loopingThread->delay = interPulseTrainDelaySpinBox->value() + (int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
-            socketOdin->setReadDelay((int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value())-20);
+            int additionalDelay = (int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
+            socketOdin->setReadDelay(additionalDelay-20);
+            serialOdin->setReadDelay(additionalDelay-20);
         }
     }
     else{
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + 500;
         socketOdin->setReadDelay(300);
+        serialOdin->setReadDelay(300);
     }
 }
 

@@ -25,7 +25,6 @@ private:
     QByteArray incomingCommand;
     int commandCount = 0;
     bool timeToRead = false;
-
     int readDelay = 3000;
 };
 
