@@ -6,6 +6,7 @@
 #include "socketneutrino.h"
 #include "command.h"
 #include "serialchannel.h"
+#include "measurementdialog.h"
 
 using namespace std;
 
@@ -90,12 +91,13 @@ private:
     QLineEdit *BER_byte[8];
 
     QAction *exitAction;
-    QString BioImpNames[8] = {  "ETIRST",
-                                "ENBIOPIN",
-                                "BIOCHSEL<4>",
-                                "BIOCHSEL<3>",
+    QString BioImpNames[8] = {  "BIOCHSEL<1>",
                                 "BIOCHSEL<2>",
-                                "BIOCHSEL<1>"};
+                                "BIOCHSEL<3>",
+                                "BIOCHSEL<4>",
+                                "ENBIOPIN",
+                                "ETIRST"
+                                };
     QString JTAGNames[112] = {  "DATAMOD",          "OFFDATABUFFS",     "DATAMOD<2>",       "DATAMOD<1>",       "DATAMOD<0>",       "OSCINT<5>",        "OSCINT<4>",    "OSCINT<3>",
                                 "OSCINT<2>",        "OSCINT<1>",        "BIO<7>",           "BIO<6>",           "BIO<5>",           "BIO<4>",           "BIO<3>",       "BIO<2>",
                                 "BIO<1>",           "Ch10<5>",          "Ch10<4>",          "Ch10<3>",          "Ch10<2>",          "Ch10<1>",          "Ch9<5>",       "Ch9<4>",

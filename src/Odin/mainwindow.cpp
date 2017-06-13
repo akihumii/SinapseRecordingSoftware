@@ -532,21 +532,61 @@ void MainWindow::on_commandSent(){
 
 void MainWindow::on_commandReceived(bool received){
     if(!received){
-        QString temp;
-        for(int i = 0; i < socketOdin->getIncomingCommand().size(); i++){
-            if((quint8) socketOdin->getIncomingCommand().at(i) < 16){
-                temp.append("0x0" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
-            }
-            else{
-                temp.append("0x" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
-            }
+        if(socketOdin->isConnected()){
+            checkviaSocket();
         }
-        QMessageBox::information(this, "Received bytes error", temp);
+        if(serialOdin->isOdinSerialConnected()){
+            checkviaSerial();
+        }
     }
     receivedLED->setPower(received);
     QTimer::singleShot(50, [=] {
             receivedLED->setPower(false);
     });
+}
+
+void MainWindow::checkviaSocket(){
+        QString temp;
+        for(int i = 0; i < socketOdin->getIncomingCommand().size(); i++){
+            if((quint8) socketOdin->getIncomingCommand().at(i) < 16){
+                temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
+            }
+            else{
+                temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
+            }
+            if((i+1)%4 == 0){
+                temp.append("\n");
+            }
+        }
+        temp.append("\n");
+        for(int i = 0; i < socketOdin->getIncomingCommand().size(); i++){
+            if((quint8) socketOdin->getIncomingCommand().at(i) != (quint8) socketOdin->getOutgoingCommand().at(i)){
+                temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + ") \n");
+            }
+        }
+        QMessageBox::information(this, "Received bytes error", temp);
+}
+
+void MainWindow::checkviaSerial(){
+        QString temp;
+        for(int i = 0; i < serialOdin->getIncomingCommand().size(); i++){
+            if((quint8) serialOdin->getIncomingCommand().at(i) < 16){
+                temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
+            }
+            else{
+                temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
+            }
+            if((i+1)%4 == 0){
+                temp.append("\n");
+            }
+        }
+        temp.append("\n");
+        for(int i = 0; i < serialOdin->getIncomingCommand().size(); i++){
+            if((quint8) serialOdin->getIncomingCommand().at(i) != (quint8) serialOdin->getOutgoingCommand().at(i)){
+                temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + ") \n");
+            }
+        }
+        QMessageBox::information(this, "Received bytes error", temp);
 }
 
 void MainWindow::plotPulse(){

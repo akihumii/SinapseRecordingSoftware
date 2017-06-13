@@ -36,9 +36,6 @@ void CommandDialog::createLayout(){
     ModeComboBox->addItem("Bioimpedance Measurement (10-bit)");
     ModeComboBox->addItem("Power Level Measurement");
 
-    ModeComboBox->setCurrentIndex(2);
-    on_Mode_Changed(2);
-
     connect(ModeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Mode_Changed(int)));
 
     CIDLabel = new QLabel;
@@ -149,9 +146,13 @@ void CommandDialog::createLayout(){
     connect(JTAGextension, SIGNAL(clicked(bool)), this, SLOT(on_JTAGextension_clicked()));
 
     JTAGreset = new QPushButton(tr("Restore default JTAG setting"));
+
     connect(JTAGreset, SIGNAL(clicked(bool)), this, SLOT(on_JTAGreset_clicked()));
 
     createJTAGLayout();
+
+    ModeComboBox->setCurrentIndex(2);
+    on_Mode_Changed(2);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(topLayout);
@@ -298,6 +299,11 @@ void CommandDialog::on_sendCommand_clicked(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
+    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 7){
+        MeasurementDialog measurementDialog(NeutrinoSerial);
+        measurementDialog.exec();
+        on_chipReset_clicked();
+    }
 }
 
 void CommandDialog::on_chipReset_clicked(){
@@ -376,6 +382,26 @@ void CommandDialog::on_SELCHN_toggled(){
 
 void CommandDialog::on_Mode_Changed(int Mode){
     NeutrinoCommand->setOPMode(Mode);
+    if(Mode == 5){
+        JTAG[94]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(94);
+    }
+    else{
+        JTAG[94]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(94);
+    }
+    if(Mode == 7){
+        JTAG[10]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(10);
+        BioImpData[4]->setChecked(true);
+        on_BioImp_toggled();
+    }
+    else{
+        JTAG[10]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(10);
+        BioImpData[4]->setChecked(false);
+        on_BioImp_toggled();
+    }
 }
 
 void CommandDialog::on_ChipID_Changed(int IDnum){

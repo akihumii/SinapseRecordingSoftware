@@ -57,7 +57,7 @@ public:
 private:
     Channel *NeutrinoChannel;
     quint8 ChipID = 0;
-    quint8 OPModeSel = 0;
+    quint8 OPModeSel = 2;
 
     quint8 bioimp = 0;
     quint8 JTAGarray[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

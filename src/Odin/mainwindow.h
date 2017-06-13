@@ -104,6 +104,8 @@ private:
     void createStatusBar();
     void plotPulse();
     void setDelay();
+    void checkviaSocket();
+    void checkviaSerial();
 private slots:
     void sendCommand();
     void on_Mode_Changed(int Mode);
