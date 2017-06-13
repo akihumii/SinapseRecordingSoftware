@@ -44,10 +44,8 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     return Plot_Y_AllDataPoint;
 }
 
-double DataProcessor::readBioImpedance(QByteArray input){
-    double temp = ((quint8) input.at(0) * 1.2/256);
-    qDebug() << temp;
-    return temp;
+double DataProcessor::signalReconstruction(QByteArray input){
+    return ((quint8) input.at(0) * 1.2/256);
 }
 
 int DataProcessor::first_10bitFrameMarker(QByteArray data){

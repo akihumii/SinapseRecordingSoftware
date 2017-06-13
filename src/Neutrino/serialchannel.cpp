@@ -18,13 +18,13 @@ void SerialChannel::ReadData(){
             break;
         }
         case 5:{
-            emit bioImpReady(NeutrinoData->readBioImpedance(serialData->read(1)));
-            serialData->flush();
+            emit singleByteReady(NeutrinoData->signalReconstruction(serialData->read(1)));
+            serialData->readAll();
             break;
         }
         case 7:{
-            emit bioImpReady(NeutrinoData->readBioImpedance(serialData->read(1)));
-            serialData->flush();
+            emit singleByteReady(NeutrinoData->signalReconstruction(serialData->read(1)));
+            serialData->readAll();
             break;
         }
     default:

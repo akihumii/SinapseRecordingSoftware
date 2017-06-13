@@ -31,7 +31,7 @@ public:
 
 
 public slots:
-    void updateBioImpedance(double bioImp);
+
 
 private:
     QElapsedTimer timer;

@@ -6,6 +6,7 @@
 #include "socketneutrino.h"
 #include "command.h"
 #include "serialchannel.h"
+#include "measurementdialog.h"
 
 using namespace std;
 

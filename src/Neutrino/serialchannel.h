@@ -33,7 +33,7 @@ private:
     int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
 signals:
-    void bioImpReady(double temp);
+    void singleByteReady(double temp);
 };
 
 #endif // SerialChannel_H

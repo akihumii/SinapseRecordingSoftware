@@ -12,7 +12,6 @@ MainWindow::MainWindow(){
     createStatusBar();
     create5x2Layout();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    connect(serialNeutrino, SIGNAL(bioImpReady(double)), this, SLOT(updateBioImpedance(double)));
     dataTimer.start(1);     //tick timer every XXX msec
     createActions();
     createMenus();
@@ -386,10 +385,6 @@ void MainWindow::updateData(){
         }
         data->removeXAxis();
     }
-}
-
-void MainWindow::updateBioImpedance(double bioImp){
-    statusBarLabel->setText(QString::number(bioImp));
 }
 
 void MainWindow::on_timeFrame10_triggered(){

@@ -11,6 +11,7 @@ public:
     void writeCommand(QByteArray command);
     void setReadDelay(int delay);
     QByteArray getIncomingCommand();
+    QByteArray getOutgoingCommand();
 signals:
     void odinDisconnected();
     void commandReceived(bool);

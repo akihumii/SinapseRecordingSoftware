@@ -299,6 +299,11 @@ void CommandDialog::on_sendCommand_clicked(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
+    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 7){
+        MeasurementDialog measurementDialog(NeutrinoSerial);
+        measurementDialog.exec();
+        on_chipReset_clicked();
+    }
 }
 
 void CommandDialog::on_chipReset_clicked(){
