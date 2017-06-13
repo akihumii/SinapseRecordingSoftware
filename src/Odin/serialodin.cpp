@@ -42,21 +42,23 @@ QString SerialOdin::getConnectedPort(){
 void SerialOdin::readCommand(){
     if(timeToRead){
         incomingCommand.append(odinPort->readAll());
-        for(int i = 0; i < incomingCommand.size(); i++){
-            if((quint8) incomingCommand.at(i) != (quint8) 0xAA){
-                incomingCommand.remove(0, 1);
+        if(incomingCommand.size() >= 16){
+            for(int i = 0; i < incomingCommand.size(); i++){
+                if((quint8) incomingCommand.at(i) != (quint8) 0xAA){
+                    incomingCommand.remove(0, 1);
+                }
+                else{
+                    break;
+                }
             }
-            else{
-                break;
-            }
-        }
-        for(int i = 0; i < 16; i++){
-            if(outgoingCommand.at(i) == incomingCommand.at(i)){
-                emit commandReceived(true);
-            }
-            else{
-                emit commandReceived(false);
-                break;
+            for(int i = 0; i < 16; i++){
+                if(outgoingCommand.at(i) == incomingCommand.at(i)){
+                    emit commandReceived(true);
+                }
+                else{
+                    emit commandReceived(false);
+                    break;
+                }
             }
         }
     }
@@ -103,6 +105,10 @@ QByteArray SerialOdin::getIncomingCommand(){
     return incomingCommand;
 }
 
+QByteArray SerialOdin::getOutgoingCommand(){
+    return outgoingCommand;
+}
+
 void SerialOdin::sendCommand(){
 //    qDebug() << "Sending Byte " << commandCount;
     QByteArray sending;
@@ -115,7 +121,7 @@ void SerialOdin::sendCommand(){
         commandTimer.stop();
         commandCount = 0;
 //        qDebug() << "Finished sending command";
-        QTimer::singleShot(300, [=] {
+        QTimer::singleShot(readDelay, [=] {
                 timeToRead = true;
         });
     }

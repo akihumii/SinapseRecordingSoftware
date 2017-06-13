@@ -53,6 +53,10 @@ QByteArray SocketOdin::getIncomingCommand(){
     return incomingCommand;
 }
 
+QByteArray SocketOdin::getOutgoingCommand(){
+    return outgoingCommand;
+}
+
 void SocketOdin::sendCommand(){
 //    qDebug() << "Sending Byte " << commandCount << "of " << outgoingCommand.size() << " total byte";
     QByteArray sending;

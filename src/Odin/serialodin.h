@@ -16,6 +16,7 @@ public:
     void setReadDelay(int delay);
     QString getConnectedPort();
     QByteArray getIncomingCommand();
+    QByteArray getOutgoingCommand();
 
 signals:
     void odinDisconnected();
