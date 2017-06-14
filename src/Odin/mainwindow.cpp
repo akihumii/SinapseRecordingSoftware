@@ -586,7 +586,7 @@ void MainWindow::checkviaSerial(){
                 temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + ") \n");
             }
         }
-        QMessageBox::information(this, "Received bytes error", temp);
+//        QMessageBox::information(this, "Received bytes error", temp);
 }
 
 void MainWindow::plotPulse(){

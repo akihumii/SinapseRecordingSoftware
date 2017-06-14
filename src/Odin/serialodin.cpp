@@ -8,6 +8,10 @@ SerialOdin::SerialOdin(QObject *parent) : QObject(parent = Q_NULLPTR){
     connect(serialTimer, SIGNAL(timeout()), this, SLOT(checkConnectivity()));
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
     connect(odinPort, SIGNAL(readyRead()), this, SLOT(readCommand()));
+
+    player = new QMediaPlayer;
+    player->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "/coins.mp3"));
+    player->setVolume(50);
 }
 
 void SerialOdin::connectOdin(){
@@ -18,7 +22,7 @@ void SerialOdin::connectOdin(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer().contains("Silicons", Qt::CaseInsensitive)){
+        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
             odinPort->setPortName(portInfo.at(i).portName());
             qDebug() << "Connected to port " << portInfo.at(i).portName();
             connectedPortName = portInfo.at(i).portName();
@@ -98,6 +102,9 @@ void SerialOdin::writeCommand(QByteArray command){
     odinPort->flush();
     timeToRead = false;
     incomingCommand.clear();
+    if(command.size() > 1){
+        player->play();
+    }
     commandTimer.start(15);
 }
 

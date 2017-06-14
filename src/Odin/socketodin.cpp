@@ -4,6 +4,10 @@ SocketOdin::SocketOdin(){
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
     connect(socketAbstract, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(readCommand()));
+
+    player = new QMediaPlayer;
+    player->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "/coins.mp3"));
+    player->setVolume(50);
 }
 
 void SocketOdin::writeCommand(QByteArray command){
@@ -13,6 +17,9 @@ void SocketOdin::writeCommand(QByteArray command){
     socketAbstract->flush();
     timeToRead = false;
     incomingCommand.clear();
+    if(command.size() > 1){
+        player->play();
+    }
     commandTimer.start(15);
 }
 

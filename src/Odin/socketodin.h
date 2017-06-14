@@ -24,6 +24,7 @@ private:
     QTimer commandTimer;
     QByteArray outgoingCommand;
     QByteArray incomingCommand;
+    QMediaPlayer *player;
     int commandCount = 0;
     bool timeToRead = false;
     int readDelay = 3000;

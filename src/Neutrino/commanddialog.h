@@ -41,6 +41,7 @@ private:
     Command *NeutrinoCommand;
     Channel *NeutrinoChannel;
     SerialChannel *NeutrinoSerial;
+
     void createLayout();
     void createJTAGLayout();
     void loadlastCommand();
