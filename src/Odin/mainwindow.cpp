@@ -227,7 +227,7 @@ void MainWindow::createLayout(){
         zonerightLayout[i] = new QHBoxLayout;
         zoneLabel[i+4] = new QLabel("Zone " + QString::number(i+5));
         zoneSelector[i+4] = new QComboBox;
-        zoneSelector[i+4]->setFixedWidth(90);
+        zoneSelector[i+4]->setFixedWidth(120);
         zoneSelector[i+4]->addItem("Time A");
         zoneSelector[i+4]->addItem("Time B");
         zoneSelector[i+4]->addItem("Time C");
@@ -240,16 +240,16 @@ void MainWindow::createLayout(){
     maskLabel = new QLabel(tr("Zone Mask"));
     zonerightLayout[3] = new QHBoxLayout;
     maskSelector = new QComboBox;
-    maskSelector->setFixedWidth(90);
-    maskSelector->addItem("Mask None");
-    maskSelector->addItem("Mask Zone 1");
-    maskSelector->addItem("Mask Zone 2");
-    maskSelector->addItem("Mask Zone 3");
-    maskSelector->addItem("Mask Zone 4");
-    maskSelector->addItem("Mask Zone 5");
-    maskSelector->addItem("Mask Zone 6");
-    maskSelector->addItem("Mask Zone 7");
-    maskSelector->addItem("Mask All Zone");
+    maskSelector->setFixedWidth(120);
+//    maskSelector->addItem("Mask None");
+    maskSelector->addItem("Simult4");
+    maskSelector->addItem("Simult3-Single1");
+    maskSelector->addItem("Single1-Simult3");
+    maskSelector->addItem("Simult2-Simult2");
+    maskSelector->addItem("Single1-Simult2-Single1");
+    maskSelector->addItem("Single1-Single1-Simult2");
+    maskSelector->addItem("Simul2-Single1-Single1");
+    maskSelector->addItem("Single1 x4");
 
     connect(maskSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(on_zoneMask_Changed()));
 
@@ -305,7 +305,7 @@ void MainWindow::createLayout(){
     mainLayout->addLayout(channelLayout);
     mainLayout->addWidget(Parameters);
     mainLayout->addWidget(multiChannel);
-    mainLayout->addWidget(pulseGraph);
+//    mainLayout->addWidget(pulseGraph);
     mainLayout->addLayout(LEDLayout);
     mainLayout->addWidget(sendButton);
     QWidget *mainWidget = new QWidget;
@@ -418,7 +418,7 @@ void MainWindow::on_Mode_Changed(int Mode){
     else if(ModeComboBox->currentIndex() == 4 || ModeComboBox->currentIndex() == 5){
         pulseMag[4]->setDisabled(true);
     }
-
+    setDelay();
     commandOdin->setMode(Mode);
 }
 
@@ -476,12 +476,7 @@ void MainWindow::on_zoneSelector_Changed(){
 }
 
 void MainWindow::on_zoneMask_Changed(){
-    if(maskSelector->currentIndex() == 0){
-        commandOdin->setZoneMask((ZONEMASK) 0b01010101);
-    }
-    else{
-        commandOdin->setZoneMask((ZONEMASK) ~(1<<(maskSelector->currentIndex())));
-    }
+    commandOdin->setZoneMask((ZONEMASK) ~(1<<(maskSelector->currentIndex())));
 }
 
 void MainWindow::on_numPulseTrain_Changed(){
@@ -507,86 +502,67 @@ void MainWindow::on_finishedSending(){
 void MainWindow::on_commandSent(){
     commandCount++;
     commandOdin->sendCommand();
-    sentLED->setPower(true);
-    QTimer::singleShot(50, [=] {
-            sentLED->setPower(false);
-    });
+    sentLED->blink(50);
     if(commandOdin->getlastSentCommand().size() > 0){
-    QString lastCommand;
-    lastCommand.append("Command: ");
-    for(int i = 0; i < commandOdin->getlastSentCommand().size(); i++){
-        if((quint8) commandOdin->getlastSentCommand().at(i) < 16){
-            lastCommand.append("0x0" + QString::number((quint8) commandOdin->getlastSentCommand().at(i), 16).toUpper());
+        QString lastCommand;
+        lastCommand.append("Command: ");
+        for(int i = 0; i < commandOdin->getlastSentCommand().size(); i++){
+            if((quint8) commandOdin->getlastSentCommand().at(i) < 16){
+                lastCommand.append("0x0" + QString::number((quint8) commandOdin->getlastSentCommand().at(i), 16).toUpper());
+            }
+            else{
+                lastCommand.append("0x" + QString::number((quint8) commandOdin->getlastSentCommand().at(i), 16).toUpper());
+            }
+            lastCommand.append(" ");
         }
-        else{
-            lastCommand.append("0x" + QString::number((quint8) commandOdin->getlastSentCommand().at(i), 16).toUpper());
-        }
-        lastCommand.append(" ");
-    }
-    lastCommand.append(" | ");
-    lastCommand.append("Sent: " + QString::number(commandCount,10));
+        lastCommand.append(" | ");
+        lastCommand.append("Sent: " + QString::number(commandCount,10));
 
-    statusBarLabel->setText(lastCommand);
+        statusBarLabel->setText(lastCommand);
     }
 }
 
 void MainWindow::on_commandReceived(bool received){
     if(!received){
+//        qDebug() << "Command didnt come back";
         if(socketOdin->isConnected()){
-            checkviaSocket();
+//            qDebug() << "Trying to display error";
+            displayError(socketOdin->getIncomingCommand(), socketOdin->getOutgoingCommand());
         }
         if(serialOdin->isOdinSerialConnected()){
-            checkviaSerial();
+            displayError(serialOdin->getIncomingCommand(), serialOdin->getOutgoingCommand());
         }
     }
-    receivedLED->setPower(received);
-    QTimer::singleShot(50, [=] {
-            receivedLED->setPower(false);
-    });
+    else{
+        receivedLED->blink(50);
+    }
 }
 
-void MainWindow::checkviaSocket(){
-        QString temp;
-        for(int i = 0; i < socketOdin->getIncomingCommand().size(); i++){
-            if((quint8) socketOdin->getIncomingCommand().at(i) < 16){
-                temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
-            }
-            else{
-                temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
-            }
-            if((i+1)%4 == 0){
-                temp.append("\n");
-            }
+void MainWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCommand){
+    QString temp;
+//    qDebug() << "Checking error";
+    for(int i = 0; i < incomingCommand.size(); i++){
+        if((quint8) incomingCommand.at(i) < 16){
+            temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + " ");
         }
-        temp.append("\n");
-        for(int i = 0; i < socketOdin->getIncomingCommand().size(); i++){
-            if((quint8) socketOdin->getIncomingCommand().at(i) != (quint8) socketOdin->getOutgoingCommand().at(i)){
-                temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) socketOdin->getIncomingCommand().at(i), 16).toUpper() + ") \n");
-            }
+        else{
+            temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + " ");
         }
+        if((i+1)%4 == 0){
+            temp.append("\n");
+        }
+    }
+    temp.append("\n");
+    for(int i = 0; i < incomingCommand.size(); i++){
+        if((quint8) incomingCommand.at(i) != (quint8) outgoingCommand.at(i)){
+//            qDebug() << "Checking error byte by byte " << i;
+            temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + ") \n");
+        }
+    }
+    if(socketOdin->isConnected()){
+//        qDebug() << "Message box coming up!";
         QMessageBox::information(this, "Received bytes error", temp);
-}
-
-void MainWindow::checkviaSerial(){
-        QString temp;
-        for(int i = 0; i < serialOdin->getIncomingCommand().size(); i++){
-            if((quint8) serialOdin->getIncomingCommand().at(i) < 16){
-                temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
-            }
-            else{
-                temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + " ");
-            }
-            if((i+1)%4 == 0){
-                temp.append("\n");
-            }
-        }
-        temp.append("\n");
-        for(int i = 0; i < serialOdin->getIncomingCommand().size(); i++){
-            if((quint8) serialOdin->getIncomingCommand().at(i) != (quint8) serialOdin->getOutgoingCommand().at(i)){
-                temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) serialOdin->getIncomingCommand().at(i), 16).toUpper() + ") \n");
-            }
-        }
-//        QMessageBox::information(this, "Received bytes error", temp);
+    }
 }
 
 void MainWindow::plotPulse(){
@@ -597,53 +573,78 @@ void MainWindow::plotPulse(){
 }
 
 void MainWindow::setDelay(){
-    if(ModeComboBox->currentIndex() == 0){
-        int additionalDelay = (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+    int additionalDelay;
+    switch(ModeComboBox->currentIndex()){
+    case 0:{
+        additionalDelay = (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
-        socketOdin->setReadDelay(additionalDelay-20);
-        serialOdin->setReadDelay(additionalDelay-20);
+        break;
     }
-    else if(ModeComboBox->currentIndex() == 1){
-        int additionalDelay = (int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+    case 1:{
+        additionalDelay = (int) (( 5.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
-        socketOdin->setReadDelay(additionalDelay-20);
-        serialOdin->setReadDelay(additionalDelay-20);
+        break;
     }
-    else if(ModeComboBox->currentIndex() == 2 || ModeComboBox->currentIndex() == 3){
-        int additionalDelay = (int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
+    case 2:
+    case 3:{
+        additionalDelay = (int) (( 1.0 / (5*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
                                      ( 1.0 / (4*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
                                      ( 1.0 / (3*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
                                      ( 1.0 / (2*interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value() +
                                      ( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
         loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
-        socketOdin->setReadDelay(additionalDelay-20);
-        serialOdin->setReadDelay(additionalDelay-20);
+        break;
     }
-    else if(ModeComboBox->currentIndex() == 5){
+    case 4:{
+        switch(maskSelector->currentIndex()){
+        case 0:{
+             additionalDelay = (int) ((1.0 / (interPulseDurationSpinBox->value())* 1000.0) * 10.0 * numPulseSpinBox->value());
+             break;
+        }
+        case 1:
+        case 2:
+        case 3:{
+            additionalDelay = (int) ((1.0 / (interPulseDurationSpinBox->value())* 1000.0) * (15.0 * numPulseSpinBox->value()));
+            break;
+        }
+        case 4:
+        case 5:
+        case 6:{
+            additionalDelay = (int) ((1.0 / (interPulseDurationSpinBox->value())* 1000.0) * (20.0 * numPulseSpinBox->value()));
+            break;
+        }
+        case 7:{
+            additionalDelay = (int) ((1.0 / (interPulseDurationSpinBox->value())* 1000.0) * (25.0 * numPulseSpinBox->value()));
+            break;
+        }
+        default:
+            break;
+        }
+        loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay + 5;
+        break;
+    }
+    case 5:{
         if(pulseMag[2]->value() == 0.0 && pulseMag[3]->value() == 0.0){
-            int additionalDelay = (int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            additionalDelay = (int) (( 2.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
             loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
-            socketOdin->setReadDelay(additionalDelay-20);
-            serialOdin->setReadDelay(additionalDelay-20);
         }
         else if(pulseMag[3]->value() == 0.0){
-            int additionalDelay = (int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            additionalDelay = (int) (( 3.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
             loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
-            socketOdin->setReadDelay(additionalDelay-20);
-            serialOdin->setReadDelay(additionalDelay-20);
         }
         else{
-            int additionalDelay = (int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
+            additionalDelay = (int) (( 4.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
             loopingThread->delay = interPulseTrainDelaySpinBox->value() + additionalDelay;
-            socketOdin->setReadDelay(additionalDelay-20);
-            serialOdin->setReadDelay(additionalDelay-20);
         }
+        break;
     }
-    else{
-        loopingThread->delay = interPulseTrainDelaySpinBox->value() + 500;
-        socketOdin->setReadDelay(300);
-        serialOdin->setReadDelay(300);
+    default:{
+        additionalDelay = 320;
+        break;
     }
+    }
+    socketOdin->setReadDelay(additionalDelay-20);
+    serialOdin->setReadDelay(additionalDelay-20);
 }
 
 void MainWindow::on_odinDisconnected(){

@@ -29,15 +29,14 @@ typedef enum TIMEZONE{
 } TIMEZONE;
 
 typedef enum ZONEMASK{
-    MASKALLZONE = 0xFF,
+    MASKZONE0 = 0xFE,
     MASKZONE1 = 0xFD,
     MASKZONE2 = 0xFB,
     MASKZONE3 = 0xF7,
     MASKZONE4 = 0xEF,
     MASKZONE5 = 0xDF,
     MASKZONE6 = 0xBF,
-    MASKZONE7 = 0x7F,
-    MASKNONE = 0x55
+    MASKZONE7 = 0x7F
 } ZONEMASK;
 
 class CommandOdin : public QObject
@@ -81,7 +80,7 @@ private:
     CHANNELNUMBER multiChannelSeq[4] = {CHANNELA, CHANNELB, CHANNELC, CHANNELD};
 
     TIMEZONE zone[7] = {TIME_A, TIME_A, TIME_A, TIME_A, TIME_A, TIME_A, TIME_A};
-    ZONEMASK zoneMask = MASKNONE;
+    ZONEMASK zoneMask = MASKZONE0;
 
     double PulseMag[5] = {2.0, 2.0, 2.0, 2.0, 2.0};
     int PulseDuration = 200;

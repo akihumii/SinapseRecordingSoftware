@@ -42,9 +42,11 @@ void SocketOdin::readCommand(){
             }
             for(int i = 0; i < 16; i++){
                 if(outgoingCommand.at(i) == incomingCommand.at(i)){
+//                    qDebug() << "Byte " << i << " is correct";
                     emit commandReceived(true);
                 }
                 else{
+//                    qDebug() << "There is a wrong byte!";
                     emit commandReceived(false);
                     break;
                 }
