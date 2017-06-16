@@ -12,10 +12,12 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
 }
 
 void SerialChannel::ReadData(){
-    switch (NeutrinoCommand->getOPMode() ){
+    switch (NeutrinoCommand->getOPMode()){
         case 2:{
-            NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
-            break;
+            if(NeutrinoData->isPlotEnabled()){
+                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+                break;
+            }
         }
         case 5:{
             emit singleByteReady(NeutrinoData->signalReconstruction(serialData->read(1)));

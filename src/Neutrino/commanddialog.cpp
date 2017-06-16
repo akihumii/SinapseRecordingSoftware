@@ -477,12 +477,20 @@ void CommandDialog::loadDefault(){
         JTAG[i]->setChecked(true);
         NeutrinoCommand->setJTAGbit(i);
     }
-    for(int i=5;i<10;i++){
-        JTAG[i]->setChecked(true);
-        NeutrinoCommand->setJTAGbit(i);
-    }
+//    for(int i=5;i<10;i++){
+//        JTAG[i]->setChecked(true);
+//        NeutrinoCommand->setJTAGbit(i);
+//    }
     JTAG[102]->setChecked(true);
     NeutrinoCommand->setJTAGbit(102);
+
+    JTAG[5]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(6);
+    JTAG[7]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(8);
+
+
+
 //    JTAG[8]->setChecked(false);
 //    JTAG[9]->setChecked(false);
 }
