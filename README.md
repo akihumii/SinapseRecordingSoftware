@@ -48,31 +48,31 @@ SylphII & SylphX:
 Details of the programs are listed below:
 
 Classes included in common:
-	1. Connection Dialog -> Takes in User input of IP address and Port to attempt connection via TCP Socket.
-	2. Filter Dialog -> Takes in User input of Notch Filter freq (None, 50Hz or 60Hz) and High Pass Filter (100-7500Hz) and makes use of Filter Class to execute Digital Signal Processing.
-	3. Filter Class -> Includes methods of Digital Notch Filter and High Pass Filter.
-	4. QCustomPlot -> Custom Plotting graph that is used in mainly Neutrino and Sylph Programs.
-	5. SignalAudio -> Main class that handles all the data to audio conversion.
-	6. SocketAbstract -> Contains all of the abstract socket operations that is general across the different programs.
+	- Connection Dialog -> Takes in User input of IP address and Port to attempt connection via TCP Socket.
+	- Filter Dialog -> Takes in User input of Notch Filter freq (None, 50Hz or 60Hz) and High Pass Filter (100-7500Hz) and makes use of Filter Class to execute Digital Signal Processing.
+	- Filter Class -> Includes methods of Digital Notch Filter and High Pass Filter.
+	- QCustomPlot -> Custom Plotting graph that is used in mainly Neutrino and Sylph Programs.
+	- SignalAudio -> Main class that handles all the data to audio conversion.
+	- SocketAbstract -> Contains all of the abstract socket operations that is general across the different programs.
 
 Classes included in AMWFlash:
-	1. Console -> Terminal-like User Interface extracted from Qt examples that print out all of the necessary outputs for Users.
-	2. SerialPort Dialog -> A Dialog that allows User to choose which serial port prior flashing the AMW004.
+	- Console -> Terminal-like User Interface extracted from Qt examples that print out all of the necessary outputs for Users.
+	- SerialPort Dialog -> A Dialog that allows User to choose which serial port prior flashing the AMW004.
 
 Classes included in Neutrino:
-	1. Channel -> A class that holds the channel properties. (Obsolete)
-	2. Command Dialog -> Takes in all the User input for Neutrino setting and sends out the command via Socket or Serial.
-	3. Serial Channel -> The main class that handles all the serial operations of Neutrino.
-	4. Signal Channel -> Unused, obsolete.
-	5. Command -> The main class that handles all of the command to be sent to Neutrino.
-	6. Data Processor -> Inherited from Data in common, includes additional methods unique to Neutrino.
-	7. Measurement Dialog -> Displays measurements such as Min, Max, Average and Peak to Peak for Analog measurement and Bioimpedance measurement.
-	8. Socket Neutrino -> Inherited from Socket Abstract in common, includes additional methods unique to Neutrino.
+	- Channel -> A class that holds the channel properties. (Obsolete)
+	- Command Dialog -> Takes in all the User input for Neutrino setting and sends out the command via Socket or Serial.
+	- Serial Channel -> The main class that handles all the serial operations of Neutrino.
+	- Signal Channel -> Unused, obsolete.
+	- Command -> The main class that handles all of the command to be sent to Neutrino.
+	- Data Processor -> Inherited from Data in common, includes additional methods unique to Neutrino.
+	- Measurement Dialog -> Displays measurements such as Min, Max, Average and Peak to Peak for Analog measurement and Bioimpedance measurement.
+	- Socket Neutrino -> Inherited from Socket Abstract in common, includes additional methods unique to Neutrino.
 
 Classes included in SylphII/SylphX:
-	1. Data Processor -> Inherited from Data in common, includes additional methods unique to Sylph.
-	2. Serial Channel -> The main class that handles all the serial operations of Sylph.
-	3. Socket Sylph -> Inherited from Socket Abstract in common, includes additional methods unique to Sylph.
+	- Data Processor -> Inherited from Data in common, includes additional methods unique to Sylph.
+	- Serial Channel -> The main class that handles all the serial operations of Sylph.
+	- Socket Sylph -> Inherited from Socket Abstract in common, includes additional methods unique to Sylph.
 
 *Note* Difference in SylphII and SylphX *Note*
 - As SylphII only has 2 Implant Channels and SylphX has 10, the only difference between the two programs can be found in Data Processor and Main Window only.
@@ -81,11 +81,11 @@ Classes included in SylphII/SylphX:
 *Note* Difference in SylphII and SylphX *Note*
 
 Class included in Odin:
-	1. Command Odin -> The main class that handles all of the command to be sent to Odin.
-	2. Looping Thread -> Executes everytime Send button is clicked and runs on a different thread to get precise timing of command sent.
-	3. Pulse Plot -> (Still in development) The main class that creates a graphical display of the pulse Odin is generating.
-	4. Serial Odin -> The main class that handles all the serial operations of Odin.
-	5. Socket Odin -> Inherited from Socket Abstract in common, includes additional methods unique to Odin.
+	- Command Odin -> The main class that handles all of the command to be sent to Odin.
+	- Looping Thread -> Executes everytime Send button is clicked and runs on a different thread to get precise timing of command sent.
+	- Pulse Plot -> (Still in development) The main class that creates a graphical display of the pulse Odin is generating.
+	- Serial Odin -> The main class that handles all the serial operations of Odin.
+	- Socket Odin -> Inherited from Socket Abstract in common, includes additional methods unique to Odin.
 
 #**Compiling on Windows**
 - Desktop Qt 5.7.0 MinGW 32bit kit should be used to compile Sinapse Recording Software.
