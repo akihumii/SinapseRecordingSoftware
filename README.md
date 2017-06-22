@@ -32,16 +32,22 @@ Sylph Recording Software includes the following features:
 
 Sinapse Recording Software is a Graphical User Interface designed with Qt Creator 4.1.0based on Qt 5.7.0. 
 This software comprises of the following programs:
+
 common:
 - A static library created for almost all of the programs listed below.
+
 AMWFlash:
 - A program that takes in a setting file in .txt format and flash the AMW004 via FTDI.
+
 Jane:
 - Thor's control program (yet to be developed)
+
 Neutrino:
 - Neutrino's control program and real-time signal display of up to 10 channels.
+
 Odin:
 - Odin's control program designed for Stimulator V4.1.
+
 SylphII & SylphX:
 - Sylph's program that display real-time ENG(SylphII) and EMG(SylphX) signals.
 
