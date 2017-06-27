@@ -111,6 +111,7 @@ git clone https://github.com/mxe/mxe.git
 ```
 http://mxe.cc/#requirements
 ![screenshot from 2017-06-27 15-11-25](https://user-images.githubusercontent.com/19749458/27578402-8b601bfe-5b56-11e7-89ad-b9f9a409f94c.png)
+![](https://user-images.githubusercontent.com/19749458/27578402-8b601bfe-5b56-11e7-89ad-b9f9a409f94c.png)
 ```
 - Build Qt 5 for Windows:
 ```
