@@ -5,7 +5,7 @@
 #include "../common/qtincludes.h"
 #include "commandodin.h"
 #include <QThread>
-#include <windows.h>
+//#include <windows.h>
 
 class LoopingThread : public QThread{
     Q_OBJECT
