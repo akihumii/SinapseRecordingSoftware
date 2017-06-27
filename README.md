@@ -100,3 +100,36 @@ Class included in Odin:
 ![](https://cloud.githubusercontent.com/assets/19749458/21709617/578840e2-d41d-11e6-994d-b1a0833a9b35.png)
 - Build Settings should be as follows:
 ![](https://cloud.githubusercontent.com/assets/19749458/21709673/eba4f0b8-d41d-11e6-89c4-8335f6bbe237.png)
+
+#**Compiling on Linux for Windows (Static 64-bit executable)**
+- Install Ubuntu 16.04 LTS
+- Get MXE: 
+```
+git clone https://github.com/mxe/mxe.git
+```
+- Install build dependencies
+```
+http://mxe.cc/#requirements
+![screenshot from 2017-06-27 15-11-25](https://user-images.githubusercontent.com/19749458/27578402-8b601bfe-5b56-11e7-89ad-b9f9a409f94c.png)
+```
+- Build Qt 5 for Windows:
+```
+cd mxe && make MXE_TARGETS=x86_64-w64-mingw32.static qt5
+```
+- Set path:
+```
+PATH = ~/mxe/usr/bin:$PATH
+```
+- Althenatively: add this line into ~/.bashrc
+```
+export PATH=~/mxe/usr:$PATH
+```
+- Get to the directory of your app (where the main .pro file is), and run the Qt Makefile generator tool:
+```
+~/mxe/usr/x86_64-w64-ming32.static-qmake-qt5 
+```
+- Build your project:
+```
+make
+```
+You should find the binary in the ./release directory
