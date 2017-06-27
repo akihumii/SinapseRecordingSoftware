@@ -47,7 +47,11 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QTime>
+#include <QtConcurrent/QtConcurrent>
 #include <qmath.h>
 #include "math.h"
+#include <unistd.h>
+#include <QThread>
+#include <QtMultimedia/QMediaPlayer>
 
 #endif // QTINCLUDES_H

@@ -14,18 +14,26 @@ TEMPLATE = subdirs
 SUBDIRS +=   \
     src/common \
     src/Neutrino \
-    src/Sylph \
-    src/DataAnalyzer \
+    src/SylphII \
+    src/SylphX \
+    src/Odin \
+    src/Jane \
+    src/AMWFlash
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
-Sylph.subdir = src/Sylph
-DataAnalyzer  = src/DataAnalyzer
+SylphII.subdir = src/SylphII
+SylphX.subdir = src/SylphX
+Odin.subdir = src/Odin
+Jane.subdir = src/Jane
 
 Neutrino.depends = common
-Sylph.depends = common
-DataAnalyzer.depends = common
+SylphII.depends = common
+SylphX.depends = common
+Odin.depends = common
+Jane.depends = common
 
 FORMS +=
 
 DISTFILES +=
+

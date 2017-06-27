@@ -7,8 +7,7 @@ MainWindow::MainWindow(){
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
     serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
-    serialNeutrino->doConnect();
-    socketEdison = new SocketEdison(this, NeutrinoCommand, data, NeutrinoChannel);
+    socketNeutrino = new SocketNeutrino(NeutrinoCommand, data, NeutrinoChannel);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     createStatusBar();
     create5x2Layout();
@@ -16,6 +15,7 @@ MainWindow::MainWindow(){
     dataTimer.start(1);     //tick timer every XXX msec
     createActions();
     createMenus();
+    connectNeutrino();
     qDebug() << "Starting NEUTRINO II..";
 }
 
@@ -129,7 +129,7 @@ void MainWindow::create10x1Layout(){
         channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep(0.000056);
+        channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
     }
@@ -187,7 +187,7 @@ void MainWindow::create5x2Layout(){
 
     for(int i=0;i<10;i++){
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep(0.000056);
+        channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
         channelGraph[i]->yAxis->setAutoTickStep(false);
@@ -236,11 +236,9 @@ void MainWindow::createMenus(){
 //--------------------------- FILE MENU -----------------------------//
 
 //-------------------------- LAYOUT MENU ----------------------------//
-#ifdef NEUTRINO_II
     layoutMenu = menuBar()-> addMenu(tr("&Layout"));
     layoutMenu->addAction(tenby1Action);
     layoutMenu->addAction(fiveby2Action);
-#endif //NEUTRINO_II CREATEMENU LAYOUTMENU
 //-------------------------- LAYOUT MENU ----------------------------//
 
 //------------------------- TIMEFRAME MENU --------------------------//
@@ -333,10 +331,39 @@ void MainWindow::createStatusBar(){
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
 }
 
+void MainWindow::connectNeutrino(){
+    portInfo = QSerialPortInfo::availablePorts();
+    connectionStatus.clear();
+    if(portInfo.size()>0){
+        serialNeutrino->doConnect();
+        connectionStatus.clear();
+        if(serialNeutrino->isConnected()){
+            connectionStatus.append("Connected to Neutrino!!");
+        }
+        else{
+            connectionStatus.append("Connection to Neutrino failed");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
+    if(!serialNeutrino->isConnected()){
+        socketNeutrino->doConnect("192.168.42.1", 8888);
+        connectionStatus.clear();
+        if(socketNeutrino->isConnected()){
+            connectionStatus.append("Connected to Neutrino WiFi Module at 192.168.42.1/8888");
+        }
+        else{
+            connectionStatus.append("Connection to Neutrino failed! Restart this program after connecting Neutrino.");
+            QMessageBox::information(this, "Failed to connect!", "No Neutrino device detected.. \n"
+                                                                 "Check your connections and run the program again..");
+        }
+        statusBarLabel->setText(connectionStatus);
+    }
+}
+
 MainWindow::~MainWindow(){
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(QByteArray::number(255, 10));
-        socketEdison->doDisconnect();
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(QByteArray::number(255, 10));
+        socketNeutrino->doDisconnect();
     }
     serialNeutrino->closePort();
 }
@@ -347,7 +374,9 @@ void MainWindow::updateData(){
         for(int i=0; i<10; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), (data->getNumDataPoints())*0.000056, Qt::AlignLeft);
+                channelGraph[i]->xAxis->setRange(X_axis.at(0),
+                                                 (data->getNumDataPoints())*(14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0),
+                                                 Qt::AlignLeft);
                 if(!pause){
                     channelGraph[i]->replot();
                 }
@@ -359,47 +388,47 @@ void MainWindow::updateData(){
 }
 
 void MainWindow::on_timeFrame10_triggered(){
-    data->setNumDataPoints(TimeFrames10ms, 17000.0);
+    data->setNumDataPoints(TimeFrames10ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame20_triggered(){
-    data->setNumDataPoints(TimeFrames20ms, 17000.0);
+    data->setNumDataPoints(TimeFrames20ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame50_triggered(){
-    data->setNumDataPoints(TimeFrames50ms, 17000.0);
+    data->setNumDataPoints(TimeFrames50ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame100_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 17000.0);
+    data->setNumDataPoints(TimeFrames100ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame200_triggered(){
-    data->setNumDataPoints(TimeFrames200ms, 17000.0);
+    data->setNumDataPoints(TimeFrames200ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame500_triggered(){
-    data->setNumDataPoints(TimeFrames500ms, 17000.0);
+    data->setNumDataPoints(TimeFrames500ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame1000_triggered(){
-    data->setNumDataPoints(TimeFrames1000ms, 17000.0);
+    data->setNumDataPoints(TimeFrames1000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame2000_triggered(){
-    data->setNumDataPoints(TimeFrames2000ms, 17000.0);
+    data->setNumDataPoints(TimeFrames2000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
 void MainWindow::on_timeFrame5000_triggered(){
-    data->setNumDataPoints(TimeFrames5000ms, 17000.0);
+    data->setNumDataPoints(TimeFrames5000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
 }
 
@@ -528,7 +557,7 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, 17000);
+    data->setNumDataPoints(TimeFrames100ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
@@ -559,9 +588,9 @@ void MainWindow::on_resetY_triggered(){
 
 //void MainWindow::on_ConnectMenu_triggered(){
 //    statusBarLabel->setText("Connection Dialog Opened");
-//    ConnectionDialog connectionDialog(socketEdison);
+//    ConnectionDialog connectionDialog(socketNeutrino);
 //    connectionDialog.exec();
-//    if(socketEdison->isConnected()){
+//    if(socketNeutrino->isConnected()){
 //        statusBarLabel->setText("Connected!!");
 //    }
 //    else{
@@ -570,29 +599,28 @@ void MainWindow::on_resetY_triggered(){
 //}
 
 //void MainWindow::on_DisconnectMenu_triggered(){
-//    if(socketEdison->isConnected()){
+//    if(socketNeutrino->isConnected()){
 //        qDebug() << "Disconnecting, please wait...";
-//        socketEdison->writeCommand(QByteArray::number(255, 10));
-//        socketEdison->doDisconnect();
+//        socketNeutrino->writeCommand(QByteArray::number(255, 10));
+//        socketNeutrino->doDisconnect();
 //    }
-//    if(!socketEdison->isConnected()){
+//    if(!socketNeutrino->isConnected()){
 //        statusBarLabel->setText("Disconnected!!");
 //    }
 //}
 
 void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
-    QString file = QDir::currentPath() + QDir::separator() + "DataAnalyzer.exe";
+    QString file = QDir::currentPath() + "/DataAnalyzer.exe";
+    statusBarLabel->setText("Opening: " + file);
     process->start(file);
-//    DataAnalyzer dataAnalyzer;
-//    dataAnalyzer.showMaximized();
-//    dataAnalyzer.exec();
 }
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
-    CommandDialog commandDialog(socketEdison, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
+    CommandDialog commandDialog(socketNeutrino, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
     commandDialog.exec();
+
 }
 
 void MainWindow::on_tenby1_triggered(){
@@ -607,7 +635,7 @@ void MainWindow::on_fiveby2_triggered(){
 //    qDebug() << "ready via Wifi";
 //    serialNeutrino->closePort();
 //    serialNeutrino->serialenabled = false;
-//    socketEdison->wifiEnabled = true;
+//    socketNeutrino->wifiEnabled = true;
 //}
 
 //void MainWindow::on_wired_triggered(){
@@ -615,5 +643,5 @@ void MainWindow::on_fiveby2_triggered(){
 //    if(serialNeutrino->doConnect()){
 //        qDebug() << "ready via USB";
 //    }
-//    socketEdison->wifiEnabled = false;
+//    socketNeutrino->wifiEnabled = false;
 //}

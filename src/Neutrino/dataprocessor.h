@@ -4,7 +4,7 @@
 #include "../common/qtincludes.h"
 #include "../common/data.h"
 #include "channel.h"
-#include "signalaudio.h"
+#include "../common/signalaudio.h"
 
 #define END_OF_LINE 2779058
 
@@ -30,6 +30,7 @@ public:
     QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
+    double signalReconstruction(QByteArray input);
 
 private:
     QTextStream *out;

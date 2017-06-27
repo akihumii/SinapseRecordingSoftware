@@ -12,7 +12,7 @@ TARGET = Neutrino
 TEMPLATE = app
 
 # The application version
-VERSION = 1.0.2
+VERSION = 1.0.8
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -29,26 +29,26 @@ HEADERS += \
     channel.h \
     command.h \
     commanddialog.h \
-    connectiondialog.h \
     dataprocessor.h \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    signalaudio.h \
     signalchannel.h \
-    socketedison.h \
-    qtincludes.h
+    qtincludes.h \
+    socketneutrino.h \
+    measurementdialog.h
 
 SOURCES += \
     channel.cpp \
     command.cpp \
     commanddialog.cpp \
-    connectiondialog.cpp \
     dataprocessor.cpp \
     main.cpp \
     mainwindow.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
-    signalaudio.cpp \
     signalchannel.cpp \
-    socketedison.cpp
+    socketneutrino.cpp \
+    measurementdialog.cpp
+
+FORMS +=

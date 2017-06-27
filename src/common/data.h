@@ -44,20 +44,21 @@ public:
     double getSamplingRate();
 protected:
     QVector<double> X_axis;
-    QVector<double> ChannelData[10];
+    QVector<double> ChannelData[12];
 
     quint64 total_data_count = 0;
     bool RecordEnabled = false;
     void RecordData(int data);
+    QString directory = QDir::homePath() + "/Desktop/";
 
 private:
     QFile *File;
     QTextStream *out;
 
     QString fileName;
-    QString directory = QDir::homePath() + "/Desktop/";
 
-    bool PlotEnabled = false;
+
+    bool PlotEnabled = true;
     int prevleftOverByteCount = 0;
 
     int numDataPoints = 2082;

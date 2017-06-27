@@ -290,3 +290,17 @@ tmp/
 /src/Neutrino/release/
 /src/Sylph/debug/
 /src/Sylph/release/
+src/Odin/loopingthread.h
+src/AMWFlash/AMWFlash
+src/AMWFlash/moc_predefs.h
+src/Jane/Jane
+src/Jane/moc_predefs.h
+src/Neutrino/Neutrino
+src/Neutrino/moc_predefs.h
+src/Odin/Odin
+src/Odin/moc_predefs.h
+src/SylphII/SylphII
+src/SylphII/moc_predefs.h
+src/SylphX/SylphX
+src/SylphX/moc_predefs.h
+src/common/moc_predefs.h

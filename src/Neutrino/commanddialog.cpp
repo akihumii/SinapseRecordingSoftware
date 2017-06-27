@@ -1,7 +1,7 @@
 #include "commanddialog.h"
 
-CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_){
-    socketEdison = socketEdison_;
+CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_){
+    socketNeutrino = socketNeutrino_;
     NeutrinoChannel = NeutrinoChannel_;
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoSerial = NeutrinoSerial_;
@@ -14,6 +14,8 @@ CommandDialog::CommandDialog(SocketEdison *socketEdison_, Command *NeutrinoComma
         loadDefault();
         Exit->setChecked(true);
     }
+    on_SELALL_clicked();
+    on_amplifierSelectAll_clicked();
 }
 
 CommandDialog::~CommandDialog(){
@@ -49,6 +51,7 @@ void CommandDialog::createLayout(){
     QVBoxLayout *BioImpLayout = new QVBoxLayout;
     BioImpLabel = new QLabel;
     BioImpLabel->setText("Bio Impedance");
+    BioImpLayout->addWidget(BioImpLabel);
 
     for(int i=0;i<6;i++){
         BioImpData[i] = new QCheckBox;
@@ -60,7 +63,6 @@ void CommandDialog::createLayout(){
     SendCommand = new QPushButton(tr("Send Command"));
     connect(SendCommand, SIGNAL(clicked(bool)), this, SLOT(on_sendCommand_clicked()));
 
-    BioImpLayout->addWidget(BioImpLabel);
     BioImpLayout->addWidget(SendCommand);
 
 
@@ -74,13 +76,21 @@ void CommandDialog::createLayout(){
     connect(Exit, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
     connect(Enter, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
 
+    CMReset = new QPushButton(tr("CM Reset"));
+    connect(CMReset, SIGNAL(clicked(bool)), this, SLOT(on_CMReset_clicked()));
+
+    shortRefToGND = new QPushButton(tr("Short Ref to GND"));
+    connect(shortRefToGND, SIGNAL(clicked(bool)), this, SLOT(on_shortRefToGND_clicked()));
+
     ChipReset = new QPushButton(tr("Chip Reset"));
     connect(ChipReset, SIGNAL(clicked(bool)), this, SLOT(on_chipReset_clicked()));
 
     DCL->addWidget(DigComLoopback);
     DCL->addWidget(Exit);
     DCL->addWidget(Enter);
-    DCL->addSpacing(100);
+    DCL->addSpacing(40);
+    DCL->addWidget(shortRefToGND);
+    DCL->addWidget(CMReset);
     DCL->addWidget(ChipReset);
 
     QHBoxLayout *BIOnDCL = new QHBoxLayout;
@@ -119,6 +129,8 @@ void CommandDialog::createLayout(){
     DataBERLayout->addLayout(BIOnDCL);
 
     QVBoxLayout *ChannelLayout = new QVBoxLayout;
+    QLabel *channelStreamLabel = new QLabel(tr("Channel Stream:"));
+    ChannelLayout->addWidget(channelStreamLabel);
     for(int i=0;i<10;i++){
         SELCHN[i] = new QCheckBox("Channel "+QString::number(i+1), this);
         connect(SELCHN[i], SIGNAL(toggled(bool)), this, SLOT(on_SELCHN_toggled()));
@@ -136,14 +148,38 @@ void CommandDialog::createLayout(){
 
     topLayout->addLayout(DataBERLayout);
     topLayout->addLayout(ChannelLayout);
+//------------------------------------------------------------------ TO ADD AMPLIFIER ENABLE CHECKBOXES -------------------------------------------------------//
+    QVBoxLayout *AmplifierSelectLayout = new QVBoxLayout;
+    QLabel *amplifierEnableLabel = new QLabel(tr("Amplifier Enable:"));
+    AmplifierSelectLayout->addWidget(amplifierEnableLabel);
+    for(int i = 0; i < 10; i++){
+        amplifierSelect[i] = new QCheckBox("Amplifier " + QString::number(i+1), this);
+        connect(amplifierSelect[i], SIGNAL(toggled(bool)), this, SLOT(on_amplifierSelect_toggled()));
+        AmplifierSelectLayout->addWidget(amplifierSelect[i]);
+    }
+    amplifierSelectAll = new QPushButton(tr("Select All"));
+    amplifierSelectNone = new QPushButton(tr("Select None"));
+    connect(amplifierSelectAll, SIGNAL(clicked(bool)), this, SLOT(on_amplifierSelectAll_clicked()));
+    connect(amplifierSelectNone, SIGNAL(clicked(bool)), this, SLOT(on_amplifierSelectNone_clicked()));
+
+    AmplifierSelectLayout->addWidget(amplifierSelectAll);
+    AmplifierSelectLayout->addWidget(amplifierSelectNone);
+
+    topLayout->addLayout(AmplifierSelectLayout);
+//------------------------------------------------------------------ TO ADD AMPLIFIER ENABLE CHECKBOXES -------------------------------------------------------//
+
 
     JTAGextension = new QPushButton(tr("Show JTAG"));
     connect(JTAGextension, SIGNAL(clicked(bool)), this, SLOT(on_JTAGextension_clicked()));
 
     JTAGreset = new QPushButton(tr("Restore default JTAG setting"));
+
     connect(JTAGreset, SIGNAL(clicked(bool)), this, SLOT(on_JTAGreset_clicked()));
 
     createJTAGLayout();
+
+    ModeComboBox->setCurrentIndex(2);
+    on_Mode_Changed(2);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(topLayout);
@@ -284,20 +320,71 @@ void CommandDialog::on_sendCommand_clicked(){
             NeutrinoChannel->setChannelState(i, false);
         }
     }
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(NeutrinoCommand->constructCommand());
-    }
     if(NeutrinoSerial->isConnected()){
         NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 7){
+        MeasurementDialog measurementDialog(NeutrinoSerial);
+        measurementDialog.exec();
+        on_chipReset_clicked();
     }
 }
 
 void CommandDialog::on_chipReset_clicked(){
-    if(socketEdison->isConnected()){
-        socketEdison->writeCommand(NeutrinoCommand->resetCommand());
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->resetCommand());
     }
     if(NeutrinoSerial->isConnected()){
         NeutrinoSerial->writeCommand(NeutrinoCommand->resetCommand());
+    }
+}
+
+void CommandDialog::on_CMReset_clicked(){
+    qDebug() << "CM Resetting.. ";
+    JTAG[93]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(93);
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    qDebug() << "CM Unresetting.. ";
+    JTAG[93]->setChecked(false);
+    NeutrinoCommand->clearJTAGbit(93);
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+}
+
+void CommandDialog::on_shortRefToGND_clicked(){
+    if(!JTAG[67]->isChecked()){
+        qDebug() << "Setting REFPWRDWN";
+        JTAG[67]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(67);
+        if(NeutrinoSerial->isConnected()){
+            NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+        }
+        if(socketNeutrino->isConnected()){
+            socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+        }
+    }
+    else{
+        qDebug() << "Unsetting REFPWRDWN";
+        JTAG[67]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(67);
+        if(NeutrinoSerial->isConnected()){
+            NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+        }
+        if(socketNeutrino->isConnected()){
+            socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+        }
     }
 }
 
@@ -341,12 +428,55 @@ void CommandDialog::on_SELNONE_clicked(){
     }
 }
 
+void CommandDialog::on_amplifierSelectAll_clicked(){
+    for(int i=0;i<10;i++){
+        amplifierSelect[i]->setChecked(true);
+    }
+}
+
+void CommandDialog::on_amplifierSelectNone_clicked(){
+    for(int i=0;i<10;i++){
+        amplifierSelect[i]->setChecked(false);
+    }
+}
+
 void CommandDialog::on_SELCHN_toggled(){
 
 }
 
+void CommandDialog::on_amplifierSelect_toggled(){
+    for(int i = 0; i < 10; i++){
+        if(amplifierSelect[i]->isChecked()){
+            JTAG[(66-i*5)]->setChecked(false);
+        }
+        else{
+            JTAG[(66-i*5)]->setChecked(true);
+        }
+    }
+}
+
 void CommandDialog::on_Mode_Changed(int Mode){
     NeutrinoCommand->setOPMode(Mode);
+    if(Mode == 5){
+        JTAG[94]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(94);
+    }
+    else{
+        JTAG[94]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(94);
+    }
+    if(Mode == 7){
+        JTAG[10]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(10);
+        BioImpData[4]->setChecked(true);
+        on_BioImp_toggled();
+    }
+    else{
+        JTAG[10]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(10);
+        BioImpData[4]->setChecked(false);
+        on_BioImp_toggled();
+    }
 }
 
 void CommandDialog::on_ChipID_Changed(int IDnum){
@@ -422,10 +552,22 @@ void CommandDialog::loadDefault(){
         JTAG[i]->setChecked(true);
         NeutrinoCommand->setJTAGbit(i);
     }
-    for(int i=5;i<10;i++){
-        JTAG[i]->setChecked(true);
-        NeutrinoCommand->setJTAGbit(i);
+//    for(int i=5;i<10;i++){
+//        JTAG[i]->setChecked(true);
+//        NeutrinoCommand->setJTAGbit(i);
+//    }
+    JTAG[102]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(102);
+
+    JTAG[5]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(6);
+    JTAG[7]->setChecked(true);
+    NeutrinoCommand->setJTAGbit(8);
+
+    for(int i = 0; i < 10; i++){
+        JTAG[(66-i*5)]->setChecked(true);
     }
+
 //    JTAG[8]->setChecked(false);
 //    JTAG[9]->setChecked(false);
 }

@@ -2,16 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "socketedison.h"
+#include "socketneutrino.h"
 #include "command.h"
 #include "../common/qtincludes.h"
 #include "../common/qcustomplot.h"
-#include "connectiondialog.h"
 #include "commanddialog.h"
 #include "dataprocessor.h"
 #include "channel.h"
 #include "../common/data.h"
-#include "filter.h"
+#include "../common/filter.h"
 #include "signalchannel.h"
 #include "serialportdialog.h"
 #include "serialchannel.h"
@@ -51,6 +50,8 @@ private:
 
     QStatusBar *statusBarMainWindow;
 
+    QString connectionStatus;
+
     QMenu *fileMenu;
     QMenu *voltageMenu;
     QMenu *layoutMenu;
@@ -59,6 +60,7 @@ private:
     void createStatusBar();
     void createActions();
     void createMenus();
+    void connectNeutrino();
 
     QAction *exitAction;
     QAction *recordAction;
@@ -83,7 +85,7 @@ private:
 
     QActionGroup *voltageGroup;
 
-    SocketEdison *socketEdison;
+    SocketNeutrino *socketNeutrino;
     SerialChannel *serialNeutrino;
     Command *NeutrinoCommand;
     DataProcessor *data;
