@@ -28,7 +28,6 @@ private:
     QTextStream *out;
 
     QString fileName;
-    QString directory = QDir::homePath() + "/Desktop/";
     bool ADCEnabled = false;
     bool ADCRecordEnabled = false;
 

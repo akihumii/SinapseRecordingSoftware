@@ -35,6 +35,7 @@ private:
     QByteArray outgoingCommand;
     QByteArray incomingCommand;
     QString connectedPortName;
+    QMediaPlayer *player;
     int commandCount = 0;
     bool odinSerialConnected = false;
     bool timeToRead = false;

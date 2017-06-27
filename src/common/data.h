@@ -49,13 +49,14 @@ protected:
     quint64 total_data_count = 0;
     bool RecordEnabled = false;
     void RecordData(int data);
+    QString directory = QDir::homePath() + "/Desktop/";
 
 private:
     QFile *File;
     QTextStream *out;
 
     QString fileName;
-    QString directory = QDir::homePath() + "/Desktop/";
+
 
     bool PlotEnabled = true;
     int prevleftOverByteCount = 0;

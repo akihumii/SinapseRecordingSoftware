@@ -27,6 +27,13 @@ public slots:
             update();
         }
     }
+    void blink(int msecDuration){
+        setPower(true);
+        QTimer::singleShot(msecDuration, [=] {
+                setPower(false);
+        });
+    }
+
 signals:
     void powerChanged();
 protected:

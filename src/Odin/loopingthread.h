@@ -5,7 +5,7 @@
 #include "../common/qtincludes.h"
 #include "commandodin.h"
 #include <QThread>
-#include <windows.h>
+//#include <windows.h>
 
 class LoopingThread : public QThread{
     Q_OBJECT
@@ -23,6 +23,7 @@ public:
         mutex.lock();
         for(int i = 0; i < num; i++){
 //            qDebug() << "Looping in looping thread , " << i;
+//            qDebug() << delay;
             if(this->send){
 //                qDebug() << "Sending Command" << delay;
                 emit commandSent();

@@ -52,5 +52,6 @@
 #include "math.h"
 #include <unistd.h>
 #include <QThread>
+#include <QtMultimedia/QMediaPlayer>
 
 #endif // QTINCLUDES_H
