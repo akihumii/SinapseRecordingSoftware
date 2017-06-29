@@ -59,7 +59,8 @@ void DataProcessor::sortADCData(QByteArray adcData){
 }
 
 void DataProcessor::appenedSync(){
-    ChannelData[10].removeLast();
+    qDebug() << "Sync pulse detected!";
+//    ChannelData[10].removeLast();
     ChannelData[10].append(1);
 }
 

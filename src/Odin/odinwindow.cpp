@@ -352,7 +352,7 @@ bool OdinWindow::connectOdin(){
         }
     }
     if(!serialOdin->isOdinSerialConnected()){
-        socketOdin->doConnect("10.10.10.1", 30000);
+        socketOdin->doConnect("192.168.0.104", 30000);
         connectionStatus.clear();
         if(socketOdin->isConnected()){
             connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
