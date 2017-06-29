@@ -33,7 +33,7 @@ void SocketOdin::readCommand(){
         if(incomingCommand.size() >= 16){
 //            qDebug() << incomingCommand.toHex();
             for(int i = 0; i < incomingCommand.size(); i++){
-                if((quint8) incomingCommand.at(i) != (quint8) 0xAA){
+                if((quint8) incomingCommand.at(0) != (quint8) 0xAA){
                     incomingCommand.remove(0, 1);
                 }
                 else{
@@ -51,6 +51,7 @@ void SocketOdin::readCommand(){
                     break;
                 }
             }
+            incomingCommand.clear();
         }
     }
     else{
