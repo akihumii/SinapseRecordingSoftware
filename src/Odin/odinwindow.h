@@ -15,13 +15,13 @@
 
 namespace Odin {
 
-class MainWindow : public QMainWindow
+class OdinWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow();
-    ~MainWindow();
+    OdinWindow();
+    ~OdinWindow();
 
     QLabel *statusBarLabel;
 public slots:
@@ -125,6 +125,9 @@ private slots:
     void on_odinDisconnected();
     void on_ConnectMenu_triggered();
     void on_commandReceived(bool received);
+
+signals:
+    void commandSent();
 };
 
 }

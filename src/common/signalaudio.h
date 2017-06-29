@@ -25,8 +25,6 @@ private:
     int audioChannelSelected = 0;
     int sampleRate = 44100;
     int sampleSize = 16;
-private slots:
-    void handleStateChanged(QAudio::State);
 };
 
 #endif // SIGNALAUDIO_H

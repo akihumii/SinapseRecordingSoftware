@@ -2,7 +2,7 @@
 
 namespace Odin {
 
-MainWindow::MainWindow(){
+OdinWindow::OdinWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Odin Stimulator Software V") + version);
     serialOdin = new SerialOdin(this);
@@ -29,7 +29,7 @@ MainWindow::MainWindow(){
     connectOdin();
 }
 
-void MainWindow::createLayout(){
+void OdinWindow::createLayout(){
     QHBoxLayout *modeLayout = new QHBoxLayout;
     ModeLabel = new QLabel(tr("Mode"));
     ModeComboBox = new QComboBox;
@@ -327,14 +327,14 @@ void MainWindow::createLayout(){
     plotPulse();
 }
 
-void MainWindow::createStatusBar(){
+void OdinWindow::createStatusBar(){
     statusBarLabel = new QLabel;
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
 }
 
-bool MainWindow::connectOdin(){
+bool OdinWindow::connectOdin(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
     if(portInfo.size()>0){
@@ -372,7 +372,7 @@ bool MainWindow::connectOdin(){
     return false;
 }
 
-void MainWindow::sendCommand(){
+void OdinWindow::sendCommand(){
     start = !start;
     commandOdin->constructCommand();
     setDelay();
@@ -394,7 +394,7 @@ void MainWindow::sendCommand(){
     }
 }
 
-void MainWindow::on_Mode_Changed(int Mode){
+void OdinWindow::on_Mode_Changed(int Mode){
     if(ModeComboBox->currentIndex() < 4){
         multiChannel->setDisabled(true);
         channelComboBox->setEnabled(true);
@@ -424,11 +424,11 @@ void MainWindow::on_Mode_Changed(int Mode){
     commandOdin->setMode(Mode);
 }
 
-void MainWindow::on_channel_Changed(int channel){
+void OdinWindow::on_channel_Changed(int channel){
     commandOdin->setChannelNumber((CHANNELNUMBER) channel);
 }
 
-void MainWindow::on_pulseMag_Changed(){
+void OdinWindow::on_pulseMag_Changed(){
     for(int i = 0; i < 5; i++){
         commandOdin->setPulseMag(i, pulseMag[i]->value());
         pulsePlot->setAmplitude(pulseMag[0]->value());
@@ -438,23 +438,23 @@ void MainWindow::on_pulseMag_Changed(){
     plotPulse();
 }
 
-void MainWindow::on_pulseDuration_Changed(){
+void OdinWindow::on_pulseDuration_Changed(){
     pulsePlot->setPulseDuration(pulseDurationSpinBox->value());
     plotPulse();
     commandOdin->setPulseDuration(pulseDurationSpinBox->value());
 }
 
-void MainWindow::on_numPulse_Changed(){
+void OdinWindow::on_numPulse_Changed(){
     commandOdin->setPulseNum((char) numPulseSpinBox->value());
     setDelay();
 }
 
-void MainWindow::on_interPulseDuration_Changed(){
+void OdinWindow::on_interPulseDuration_Changed(){
     commandOdin->setInterPulseDuration((char) interPulseDurationSpinBox->value());
     setDelay();
 }
 
-void MainWindow::on_channelSeq_Changed(){
+void OdinWindow::on_channelSeq_Changed(){
     int *temp = commandOdin->getMultiChannelSequence();
     for(int i = 0; i < 4; i++){
         if(channelSeqComboBox[i]->currentIndex() != temp[i]){
@@ -471,25 +471,25 @@ void MainWindow::on_channelSeq_Changed(){
                                          (CHANNELNUMBER) channelSeqComboBox[3]->currentIndex());
 }
 
-void MainWindow::on_zoneSelector_Changed(){
+void OdinWindow::on_zoneSelector_Changed(){
     for(int i = 0; i < 7; i++){
         commandOdin->setTimeZone(i, (TIMEZONE) zoneSelector[i]->currentIndex());
     }
 }
 
-void MainWindow::on_zoneMask_Changed(){
+void OdinWindow::on_zoneMask_Changed(){
     commandOdin->setZoneMask((ZONEMASK) ~(1<<(maskSelector->currentIndex())));
 }
 
-void MainWindow::on_numPulseTrain_Changed(){
+void OdinWindow::on_numPulseTrain_Changed(){
     loopingThread->num = numPulseTrainSpinBox->value();
 }
 
-void MainWindow::on_interPulseTrainDelay_Changed(){
+void OdinWindow::on_interPulseTrainDelay_Changed(){
     setDelay();
 }
 
-void MainWindow::on_finishedSending(){
+void OdinWindow::on_finishedSending(){
     numPulseTrainSpinBox->setEnabled(true);
     interPulseTrainDelaySpinBox->setEnabled(true);
     sendButton->setText("Start!");
@@ -501,10 +501,11 @@ void MainWindow::on_finishedSending(){
     start = false;
 }
 
-void MainWindow::on_commandSent(){
+void OdinWindow::on_commandSent(){
     commandCount++;
     commandOdin->sendCommand();
     sentLED->blink(50);
+    emit commandSent();
     if(commandOdin->getlastSentCommand().size() > 0){
         QString lastCommand;
         lastCommand.append("Command: ");
@@ -524,7 +525,7 @@ void MainWindow::on_commandSent(){
     }
 }
 
-void MainWindow::on_commandReceived(bool received){
+void OdinWindow::on_commandReceived(bool received){
     if(!received){
 //        qDebug() << "Command didnt come back";
         if(socketOdin->isConnected()){
@@ -540,7 +541,7 @@ void MainWindow::on_commandReceived(bool received){
     }
 }
 
-void MainWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCommand){
+void OdinWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCommand){
     QString temp;
 //    qDebug() << "Checking error";
     for(int i = 0; i < incomingCommand.size(); i++){
@@ -567,14 +568,14 @@ void MainWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCom
     }
 }
 
-void MainWindow::plotPulse(){
+void OdinWindow::plotPulse(){
     pulsePlot->updateYvalues();
     pulseGraph->graph()->setData(pulsePlot->retrieveXaxis(), pulsePlot->retrieveYaxis());
     pulseGraph->xAxis->setRange(0, 2550*0.000001, Qt::AlignLeft);
     pulseGraph->replot();
 }
 
-void MainWindow::setDelay(){
+void OdinWindow::setDelay(){
     int additionalDelay = 0;
     switch(ModeComboBox->currentIndex()){
     case 0:{
@@ -649,17 +650,17 @@ void MainWindow::setDelay(){
     serialOdin->setReadDelay(additionalDelay-20);
 }
 
-void MainWindow::on_odinDisconnected(){
+void OdinWindow::on_odinDisconnected(){
     QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
     this->close();
 }
 
-void MainWindow::on_ConnectMenu_triggered(){
+void OdinWindow::on_ConnectMenu_triggered(){
     ConnectionDialog connectionDialog(socketOdin);
     connectionDialog.exec();
 }
 
-MainWindow::~MainWindow(){
+OdinWindow::~OdinWindow(){
 }
 
 }

@@ -11,6 +11,7 @@
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
+#include "../Odin/odinwindow.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -28,6 +29,8 @@ public:
 
     SerialChannel *serialChannel;
     DataProcessor *data;
+
+    Odin::OdinWindow *x;
 
 public slots:
 
@@ -76,6 +79,7 @@ private:
     QAction *voltage10000u;
     QAction *audio[11];
     QAction *aboutAction;
+    QAction *odinAction;
 
     QActionGroup *timeFrameGroup;
     QActionGroup *voltageGroup;
@@ -125,6 +129,7 @@ private slots:
     void on_playPause_triggered();
     void on_filterConfig_trigger();
     void on_restart_triggered();
+    void on_odin_triggered();
 
     void on_graph1_clicked();
     void on_graph2_clicked();

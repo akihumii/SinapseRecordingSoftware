@@ -5,6 +5,7 @@
 #include "../common/data.h"
 #include "../common/signalaudio.h"
 #include "time.h"
+#include "../Odin/socketodin.h"
 
 namespace SylphX {
 
@@ -12,6 +13,7 @@ namespace SylphX {
 
 class DataProcessor : public SignalAudio, public Data
 {
+    Q_OBJECT
 public:
     DataProcessor(float samplingRate_);
     Data *data;
@@ -24,6 +26,9 @@ public:
     bool isADCRecordEnabled();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
+
+public slots:
+    void appenedSync();
 
 private:
     QFile *File;

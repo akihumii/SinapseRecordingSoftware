@@ -3,10 +3,14 @@
 namespace SylphX {
 
 MainWindow::MainWindow(){
+    x = new Odin::OdinWindow();
+    x->setFixedSize(x->sizeHint());
+    x->show();
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     data = new DataProcessor(samplingRate);
+    connect(x, SIGNAL(commandSent()), data, SLOT(appenedSync()));
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
@@ -119,6 +123,9 @@ void MainWindow::createActions(){
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
+    odinAction = new QAction(tr("Odin Control Panel"));
+    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
+
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
     connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
@@ -196,6 +203,8 @@ void MainWindow::createActions(){
 
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(odinAction);
+    fileMenu->addSeparator();
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
@@ -318,10 +327,10 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(connectionStatus);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        socketSylph->doConnect("10.10.10.1", 30000);
+        socketSylph->doConnect("192.168.0.100", 30000);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
-            connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
         }
         else{
             connectionStatus.append("Failed to connect...");
@@ -481,6 +490,10 @@ void MainWindow::on_resetX_triggered(){
     data->setNumDataPoints(TimeFrames100ms, samplingRate);
     data->clearallChannelData();
     timeFrame100ms->setChecked(true);
+}
+
+void MainWindow::on_odin_triggered(){
+    x->show();
 }
 
 void MainWindow::on_filterConfig_trigger(){
