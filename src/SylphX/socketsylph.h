@@ -5,6 +5,8 @@
 #include "../common/socketabstract.h"
 #include "dataprocessor.h"
 
+namespace SylphX {
+
 class SocketSylph : public SocketAbstract {
     Q_OBJECT
 public:
@@ -24,5 +26,7 @@ private:
 private slots:
     void ReadCommand();
 };
+
+}
 
 #endif // SOCKETSYLPH_H

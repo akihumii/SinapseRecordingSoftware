@@ -5,6 +5,8 @@
 #include "socketodin.h"
 #include "../common/qtincludes.h"
 
+namespace Odin {
+
 typedef enum MODE{
     FLATSINGLE = 0x55,
     GRADEDAMPLITUDE = 0x65,
@@ -108,5 +110,7 @@ private:
         0x00
     };
 };
+
+}
 
 #endif // COMMANDODIN_H

@@ -6,6 +6,8 @@
 #include "../common/signalaudio.h"
 #include "time.h"
 
+namespace SylphX {
+
 #define END_OF_LINE 2779058
 
 class DataProcessor : public SignalAudio, public Data
@@ -35,5 +37,7 @@ private:
     float samplingRate;
     float period;
 };
+
+}
 
 #endif // DATAPROCESSOR_KA_H

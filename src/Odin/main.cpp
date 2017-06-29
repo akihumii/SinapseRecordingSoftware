@@ -1,5 +1,7 @@
-#include "mainwindow.h"
+#include "odinwindow.h"
 #include <QApplication>
+
+using namespace Odin;
 
 int main(int argc, char *argv[])
 {

@@ -26,17 +26,18 @@ INCLUDEPATH += $$PWD../common
 DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     serialodin.cpp \
     commandodin.cpp \
     socketodin.cpp \
-    pulseplot.cpp
+    pulseplot.cpp \
+    odinwindow.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     serialodin.h \
     commandodin.h \
     socketodin.h \
     loopingthread.h \
-    pulseplot.h
+    pulseplot.h \
+    odinwindow.h
 
 FORMS    +=

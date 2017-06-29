@@ -4,6 +4,7 @@
 #include "../common/qtincludes.h"
 #include "dataprocessor.h"
 
+namespace SylphX {
 
 class SerialChannel : public QObject{
     Q_OBJECT
@@ -36,5 +37,7 @@ private:
     bool ADCConnected = false;
     int portOrder =2;
 };
+
+}
 
 #endif // SerialChannel_H

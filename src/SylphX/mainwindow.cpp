@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+namespace SylphX {
+
 MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
@@ -596,4 +598,6 @@ void MainWindow::activateChannelGraph(int index){
     channelGraph[index]->graph()->setPen(QPen(Qt::red));
     data->setAudioChannel(index);
     audio[index]->setChecked(true);
+}
+
 }

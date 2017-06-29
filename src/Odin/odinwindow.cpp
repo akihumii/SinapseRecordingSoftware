@@ -1,4 +1,6 @@
-#include "mainwindow.h"
+#include "odinwindow.h"
+
+namespace Odin {
 
 MainWindow::MainWindow(){
     QString version(APP_VERSION);
@@ -573,7 +575,7 @@ void MainWindow::plotPulse(){
 }
 
 void MainWindow::setDelay(){
-    int additionalDelay;
+    int additionalDelay = 0;
     switch(ModeComboBox->currentIndex()){
     case 0:{
         additionalDelay = (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
@@ -658,4 +660,6 @@ void MainWindow::on_ConnectMenu_triggered(){
 }
 
 MainWindow::~MainWindow(){
+}
+
 }

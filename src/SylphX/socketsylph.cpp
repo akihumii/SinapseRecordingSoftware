@@ -1,5 +1,7 @@
 #include "socketsylph.h"
 
+namespace SylphX {
+
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
@@ -27,4 +29,6 @@ void SocketSylph::ReadCommand(){
             qDebug() << "checked is true";
         }
     }
+}
+
 }

@@ -5,9 +5,7 @@
 #include "../common/qtincludes.h"
 #include "serialchannel.h"
 
-namespace Ui {
-class SerialPortDialog;
-}
+namespace SylphX {
 
 class SerialPortDialog : public QDialog
 {
@@ -45,5 +43,7 @@ private:
     QPushButton *scanPorts;
 
 };
+
+}
 
 #endif // SERIALPORTDIALOG_H

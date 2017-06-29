@@ -1,5 +1,7 @@
 #include "commandodin.h"
 
+namespace Odin {
+
 CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_) {
     serialOdin = serialOdin_;
     socketOdin = socketOdin_;
@@ -197,4 +199,6 @@ void CommandOdin::setZoneMask(ZONEMASK mask){
 
 char CommandOdin::getZoneMask(){
     return (char) zoneMask;
+}
+
 }

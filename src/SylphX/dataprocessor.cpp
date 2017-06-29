@@ -1,5 +1,7 @@
 #include "dataprocessor.h"
 
+namespace SylphX {
+
 DataProcessor::DataProcessor(float samplingRate_){
     samplingRate = samplingRate_;
     period = 1/samplingRate_;
@@ -78,4 +80,6 @@ void DataProcessor::setADCRecordEnabled(bool enableFlag){
 
 bool DataProcessor::isADCRecordEnabled(){
     return ADCRecordEnabled;
+}
+
 }

@@ -1,5 +1,7 @@
 #include "socketodin.h"
 
+namespace Odin {
+
 SocketOdin::SocketOdin(){
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
     connect(socketAbstract, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
@@ -88,4 +90,6 @@ void SocketOdin::sendCommand(){
 
 void SocketOdin::setReadDelay(int delay){
     readDelay = delay;
+}
+
 }

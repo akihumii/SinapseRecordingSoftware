@@ -15,6 +15,8 @@
 class QComboBox;
 class QCustomPlot;
 
+namespace SylphX {
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -137,5 +139,7 @@ private slots:
     void on_graph11_clicked();
     void about();
 };
+
+}
 
 #endif // MainWindow_H

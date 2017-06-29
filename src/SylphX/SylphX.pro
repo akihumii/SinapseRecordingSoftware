@@ -30,7 +30,6 @@ HEADERS += \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    qtincludes.h \
     socketsylph.h
 
 SOURCES += \

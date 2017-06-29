@@ -1,5 +1,7 @@
 #include "serialchannel.h"
 
+namespace SylphX {
+
 SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : QObject(parent = Q_NULLPTR)
 {
     implantPort = new QSerialPort(this);
@@ -181,4 +183,6 @@ void SerialChannel::swapPort(){
     }
     ADCPort->open(QIODevice::ReadWrite);
     implantPort->open(QIODevice::ReadWrite);
+}
+
 }
