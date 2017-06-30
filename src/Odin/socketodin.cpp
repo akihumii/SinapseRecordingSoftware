@@ -28,7 +28,7 @@ void SocketOdin::on_socketDisconnected(){
 }
 
 void SocketOdin::readCommand(){
-    if(timeToRead){
+//    if(timeToRead){
         incomingCommand.append(socketAbstract->readAll());
         if(incomingCommand.size() >= 16){
 //            qDebug() << incomingCommand.toHex();
@@ -54,9 +54,9 @@ void SocketOdin::readCommand(){
             incomingCommand.clear();
         }
     }
-    else{
-        socketAbstract->readAll();
-    }
+//    else{
+//        socketAbstract->readAll();
+//    }
 }
 
 QByteArray SocketOdin::getIncomingCommand(){
