@@ -48,7 +48,7 @@ bool SerialOdin::connectSyncPort(){
         qDebug() << "Manufacturer: " << info.manufacturer();
         qDebug() << "Serial Number: " << info.serialNumber();
     }
-    for(int i = 0; i < portInfo.size()-1; i++){
+    for(int i = 0; i < portInfo.size(); i++){
         if(portInfo.at(i).manufacturer() == "FTDI"){
             syncPort->setPortName(portInfo.at(i).portName());
             syncPort->setBaudRate(115200);
@@ -145,9 +145,13 @@ void SerialOdin::writeCommand(QByteArray command){
     incomingCommand.clear();
     if(command.size() > 1){
         player->play();
-        syncPort->write("0");
     }
     commandTimer.start(15);
+}
+
+void SerialOdin::writeSync(){
+    syncPort->write("0");
+    qDebug() << "Writing something";
 }
 
 QByteArray SerialOdin::getIncomingCommand(){

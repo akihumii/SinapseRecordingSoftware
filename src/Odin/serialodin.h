@@ -15,6 +15,7 @@ public:
     bool isOdinSerialConnected();
     void initOdin();
     void writeCommand(QByteArray command);
+    void writeSync();
     void setReadDelay(int delay);
     QString getConnectedPort();
     QByteArray getIncomingCommand();

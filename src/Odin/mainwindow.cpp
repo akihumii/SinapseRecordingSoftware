@@ -4,7 +4,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Odin Stimulator Software V") + version);
     serialOdin = new SerialOdin(this);
-    serialOdin->connectSyncPort();
+
     socketOdin = new SocketOdin;
     commandOdin = new CommandOdin(serialOdin, socketOdin);
     loopingThread = new LoopingThread();
@@ -355,8 +355,16 @@ bool MainWindow::connectOdin(){
         connectionStatus.clear();
         if(socketOdin->isConnected()){
             connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
-            statusBarLabel->setText(connectionStatus);
+
             sendButton->setEnabled(true);
+//            serialOdin->connectSyncPort();
+            if(serialOdin->connectSyncPort()){
+                connectionStatus.append(" | Sync port connected!");
+            }
+            else{
+                connectionStatus.append(" | Sync port not connected... ");
+            }
+            statusBarLabel->setText(connectionStatus);
             return true;
         }
         else{
@@ -504,6 +512,7 @@ void MainWindow::on_commandSent(){
     commandCount++;
     commandOdin->sendCommand();
     sentLED->blink(50);
+    serialOdin->writeSync();
     if(commandOdin->getlastSentCommand().size() > 0){
         QString lastCommand;
         lastCommand.append("Command: ");

@@ -62,7 +62,7 @@ void MainWindow::createLayout(){
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
 
-    channelGraph[10]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    channelGraph[10]->yAxis->setRange(0, 1, Qt::AlignLeft);
     channelGraph[10]->yAxis->setTickStep(0.5);
     channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(50);
