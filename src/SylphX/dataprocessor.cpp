@@ -31,6 +31,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData((quint8)rawData.at(i+20));
             RecordData(END_OF_LINE);
         }
+        ChannelData[10].append(0);
     }
 //    playAudio(getAudioChannel());
 }
@@ -53,6 +54,12 @@ void DataProcessor::sortADCData(QByteArray adcData){
         audioBuffer[10].append(adcData.at(i));
         ADC_Data.append(adcData.at(i));
     }
+}
+
+void DataProcessor::appendSync(){
+    qDebug() << "Sync pulse detected!";
+//    ChannelData[10].removeLast();
+    ChannelData[10].append(1);
 }
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){

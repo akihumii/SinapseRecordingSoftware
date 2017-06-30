@@ -5,10 +5,14 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
     implantPort = new QSerialPort(this);
     ADCPort = new QSerialPort(this);
 
+    syncPort = new QSerialPort(this);
+
     dataProcessor = dataProcessor_;
 
     connect(implantPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
     connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadADCData()));
+    connect(syncPort, SIGNAL(readyRead()), dataProcessor, SLOT(appendSync()));
+    connect(syncPort, SIGNAL(readyRead()), this, SLOT(flushSyncPort()));
 }
 
 void SerialChannel::ReadImplantData(){
@@ -32,6 +36,16 @@ void SerialChannel::closeImplantPort(){
 void SerialChannel::closeADCPort(){
     ADCPort->flush();
     ADCPort->close();
+}
+
+void SerialChannel::closeSyncPort(){
+    syncPort->flush();
+    syncPort->close();
+}
+
+void SerialChannel::flushSyncPort(){
+    syncPort->readAll();
+    syncPort->flush();
 }
 
 void SerialChannel::ReadADCData(){
@@ -72,6 +86,35 @@ bool SerialChannel::enableADCPort(QString portName){
     }
 }
 
+bool SerialChannel::connectSyncPort(){
+    portInfo = QSerialPortInfo::availablePorts();
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        qDebug() << "Name : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
+        qDebug() << "Serial Number: " << info.serialNumber();
+    }
+    for(int i = 0; i < portInfo.size()-1; i++){
+        if(portInfo.at(i).manufacturer() == "FTDI"){
+            syncPort->setPortName(portInfo.at(i).portName());
+            syncPort->setBaudRate(115200);
+            syncPort->setDataBits(QSerialPort::Data8);
+            syncPort->setParity(QSerialPort::NoParity);
+            syncPort->setStopBits(QSerialPort::OneStop);
+            syncPort->setFlowControl(QSerialPort::NoFlowControl);
+            break;
+        }
+    }
+    if (syncPort->open(QIODevice::ReadWrite)){
+        qDebug() << "Sync Port connnected!";
+        return 1;
+    }
+    else{
+        return 0;
+    }
+
+}
+
 void SerialChannel::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
@@ -82,7 +125,8 @@ void SerialChannel::connectSylph(){
     }
     for(int i = 0; i < portInfo.size()-1; i++){
         if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            if(portInfo.at(i+1).portName().split("COM")[1].toInt() > portInfo.at(i).portName().split("COM")[1].toInt()){
+                    if(portInfo.at(i+1).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()
+                            > portInfo.at(i).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()){
                 implantPort->setPortName(portInfo.at(i+1).portName());
                 implantPort->setBaudRate(1333333);
 

@@ -23,6 +23,9 @@ public:
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
 
+public slots:
+    void appendSync();
+
 private:
     QFile *File;
     QTextStream *out;

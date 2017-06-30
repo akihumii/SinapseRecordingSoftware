@@ -9,7 +9,9 @@ class SerialOdin: public QObject{
 public:
     SerialOdin(QObject *parent);
     void connectOdin();
+    bool connectSyncPort();
     void closeOdinSerial();
+    void closeSyncPort();
     bool isOdinSerialConnected();
     void initOdin();
     void writeCommand(QByteArray command);
@@ -26,9 +28,11 @@ private slots:
     void sendCommand();
     void checkConnectivity();
     void readCommand();
+    void flushSyncPort();
 
 private:
     QSerialPort *odinPort;
+    QSerialPort *syncPort;
     QList<QSerialPortInfo> portInfo;
     QTimer commandTimer;
     QTimer *serialTimer;

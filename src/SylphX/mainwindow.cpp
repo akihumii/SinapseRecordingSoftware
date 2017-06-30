@@ -320,6 +320,12 @@ void MainWindow::connectSylph(){
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+            if(serialChannel->connectSyncPort()){
+                connectionStatus.append(" | Sync port connected!");
+            }
+            else{
+                connectionStatus.append(" | Sync port not connected... ");
+            }
         }
         else{
             connectionStatus.append("Failed to connect...");

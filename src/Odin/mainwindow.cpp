@@ -4,6 +4,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Odin Stimulator Software V") + version);
     serialOdin = new SerialOdin(this);
+    serialOdin->connectSyncPort();
     socketOdin = new SocketOdin;
     commandOdin = new CommandOdin(serialOdin, socketOdin);
     loopingThread = new LoopingThread();
