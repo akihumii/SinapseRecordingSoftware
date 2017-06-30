@@ -94,14 +94,15 @@ bool SerialChannel::connectSyncPort(){
         qDebug() << "Manufacturer: " << info.manufacturer();
         qDebug() << "Serial Number: " << info.serialNumber();
     }
-    for(int i = 0; i < portInfo.size()-1; i++){
-        if(portInfo.at(i).manufacturer() == "FTDI"){
+    for(int i = 0; i < portInfo.size(); i++){
+        if(portInfo.at(i).manufacturer().contains("FTDI", Qt::CaseInsensitive)){
             syncPort->setPortName(portInfo.at(i).portName());
             syncPort->setBaudRate(115200);
             syncPort->setDataBits(QSerialPort::Data8);
             syncPort->setParity(QSerialPort::NoParity);
             syncPort->setStopBits(QSerialPort::OneStop);
             syncPort->setFlowControl(QSerialPort::NoFlowControl);
+            qDebug() << "Found sync port";
             break;
         }
     }
@@ -110,6 +111,7 @@ bool SerialChannel::connectSyncPort(){
         return 1;
     }
     else{
+        qDebug() << "Sync Port no connected";
         return 0;
     }
 
