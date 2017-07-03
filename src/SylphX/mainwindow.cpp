@@ -502,7 +502,7 @@ void MainWindow::on_resetY_triggered(){
 
 void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
-    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
+    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX" + QDir::separator()+ "sylphanalyzer.exe";
     process->start(file);
 }
 
