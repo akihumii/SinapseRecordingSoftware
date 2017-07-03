@@ -26,6 +26,12 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
+
+        ChannelData[10].append(0);
+        if(RecordEnabled){
+            RecordData(0);
+        }
+
         total_data_count++;
         X_axis.append(total_data_count*period);
         ChannelData[11].append((quint8) rawData.at(i+20));
@@ -58,10 +64,13 @@ void DataProcessor::sortADCData(QByteArray adcData){
     }
 }
 
-void DataProcessor::appenedSync(){
+void DataProcessor::appendSync(){
     qDebug() << "Sync pulse detected!";
 //    ChannelData[10].removeLast();
     ChannelData[10].append(1);
+    if(RecordEnabled){
+        RecordData(1);
+    }
 }
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){
