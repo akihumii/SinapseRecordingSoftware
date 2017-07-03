@@ -31,10 +31,16 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData((quint8) rawData.at(i+4));
             RecordData(END_OF_LINE);
         }
-        if(ADC_Data.size()>0){
-            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
-            ADC_Data.remove(0, 1);
+//        if(ADC_Data.size()>0){
+//            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
+//            ADC_Data.remove(0, 1);
+//        }
+
+        ChannelData[2].append(0);
+        if(RecordEnabled){
+            RecordData(0);
         }
+
         ChannelData[3].append((quint8) rawData.at(i+4));
         total_data_count = total_data_count+1;
         X_axis.append(total_data_count*period);
@@ -61,6 +67,16 @@ void DataProcessor::sortADCData(QByteArray adcData){
         ADC_Data.append(adcData.at(i));
     }
 }
+
+void DataProcessor::appendSync(){
+    qDebug() << "Sync pulse detected!";
+//    ChannelData[10].removeLast();
+    ChannelData[2].append(1);
+    if(RecordEnabled){
+        RecordData(1);
+    }
+}
+
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){
     ADCRecordEnabled = enableFlag;

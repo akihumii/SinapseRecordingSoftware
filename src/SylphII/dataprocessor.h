@@ -10,6 +10,7 @@
 
 class DataProcessor : public SignalAudio, public Data
 {
+    Q_OBJECT
 public:
     DataProcessor(float samplingRate_);
     Data *data;
@@ -22,6 +23,9 @@ public:
     bool isADCRecordEnabled();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
+
+public slots:
+    void appendSync();
 
 private:
     QFile *File;

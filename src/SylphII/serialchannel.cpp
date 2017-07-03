@@ -5,10 +5,14 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
     implantPort = new QSerialPort(this);
     ADCPort = new QSerialPort(this);
 
+    syncPort = new QSerialPort(this);
+
     dataProcessor = dataProcessor_;
 
     connect(implantPort, SIGNAL(readyRead()), this, SLOT(ReadImplantData()));
     connect(ADCPort, SIGNAL(readyRead()), this, SLOT(ReadADCData()));
+    connect(syncPort, SIGNAL(readyRead()), dataProcessor, SLOT(appendSync()));
+    connect(syncPort, SIGNAL(readyRead()), this, SLOT(flushSyncPort()));
 }
 
 void SerialChannel::ReadImplantData(){
@@ -37,6 +41,16 @@ void SerialChannel::closeADCPort(){
 
 void SerialChannel::ReadADCData(){
 
+}
+
+void SerialChannel::closeSyncPort(){
+    syncPort->flush();
+    syncPort->close();
+}
+
+void SerialChannel::flushSyncPort(){
+    syncPort->readAll();
+    syncPort->flush();
 }
 
 bool SerialChannel::enableImplantPort(QString portName){
@@ -71,6 +85,37 @@ bool SerialChannel::enableADCPort(QString portName){
     else{
         return 0;
     }
+}
+
+bool SerialChannel::connectSyncPort(){
+    portInfo = QSerialPortInfo::availablePorts();
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        qDebug() << "Name : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
+        qDebug() << "Serial Number: " << info.serialNumber();
+    }
+    for(int i = 0; i < portInfo.size(); i++){
+        if(portInfo.at(i).manufacturer().contains("FTDI", Qt::CaseInsensitive)){
+            syncPort->setPortName(portInfo.at(i).portName());
+            syncPort->setBaudRate(115200);
+            syncPort->setDataBits(QSerialPort::Data8);
+            syncPort->setParity(QSerialPort::NoParity);
+            syncPort->setStopBits(QSerialPort::OneStop);
+            syncPort->setFlowControl(QSerialPort::NoFlowControl);
+            qDebug() << "Found sync port";
+            break;
+        }
+    }
+    if (syncPort->open(QIODevice::ReadWrite)){
+        qDebug() << "Sync Port connnected!";
+        return 1;
+    }
+    else{
+        qDebug() << "Sync Port no connected";
+        return 0;
+    }
+
 }
 
 void SerialChannel::connectSylph(){

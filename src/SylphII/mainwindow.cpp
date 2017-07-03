@@ -284,6 +284,12 @@ void MainWindow::connectSylph(){
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+            if(serialChannel->connectSyncPort()){
+                connectionStatus.append(" | Sync port connected!");
+            }
+            else{
+                connectionStatus.append(" | Sync port not connected... ");
+            }
         }
         else{
             connectionStatus.append("Failed to connect...");
@@ -466,7 +472,7 @@ void MainWindow::on_resetY_triggered(){
 
 void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
-    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzer.exe";
+    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerII.exe";
     process->start(file);
 }
 

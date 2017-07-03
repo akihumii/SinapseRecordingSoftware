@@ -11,6 +11,7 @@ public:
     SerialChannel(QObject *parent, DataProcessor *dataProcessor_);
     void closeImplantPort();
     void closeADCPort();
+    void closeSyncPort();
     bool enableImplantPort(QString portName);
     bool enableADCPort(QString portName);
     bool serialenabled = true;
@@ -18,14 +19,17 @@ public:
     bool isConnected();
     void swapPort();
     void connectSylph();
+    bool connectSyncPort();
     bool isImplantConnected();
     bool isADCConnected();
 public slots:
     void ReadImplantData();
     void ReadADCData();
+    void flushSyncPort();
 private:
     QSerialPort *implantPort;
     QSerialPort *ADCPort;
+    QSerialPort *syncPort;
     DataProcessor *dataProcessor;
 
     bool checked = false;

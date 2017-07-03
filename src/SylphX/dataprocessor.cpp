@@ -25,10 +25,10 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
 
-        ChannelData[10].append(0);
-        if(RecordEnabled){
-            RecordData(0);
-        }
+//        ChannelData[10].append(0);
+//        if(RecordEnabled){
+//            RecordData(0);
+//        }
 
         total_data_count++;
         X_axis.append(total_data_count*period);
