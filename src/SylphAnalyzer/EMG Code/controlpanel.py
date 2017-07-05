@@ -12,8 +12,8 @@ class ControlPannel:
 		for i in range(10):
 			self.channelSel.append(IntVar())
 			self.cb = Checkbutton(master, text="Channel " + str(i+1), variable=self.channelSel[i]).grid(row=i+1, column=0)
-		self.channelSel.append(IntVar())
-		self.cb = Checkbutton(master, text="Sync Pulse Channel", variable=self.channelSel[10]).grid(row=11, column=0)
+#		self.channelSel.append(IntVar())
+#		self.cb = Checkbutton(master, text="Sync Pulse Channel", variable=self.channelSel[10]).grid(row=11, column=0)
 
 		self.plotButton = Button(master, text="Plot!", fg="black", command=self.plotRawData).grid(row=13, column=0)
 		self.plotAllButton = Button(master, text="Plot All!", fg="black", command=self.plotAllRawData).grid(row=14, column=0)
@@ -36,23 +36,23 @@ class ControlPannel:
 				dfy = self.df.ix[:,i] * 0.000000195
 				dfx = dfy.index*0.000239
 				if not channels:
-					channels.append(plt.subplot(self.channelCount+2, 1, count+1))
+					channels.append(plt.subplot(self.channelCount+1, 1, count+1))
 				else:
-					channels.append(plt.subplot(self.channelCount+2, 1, count+1, sharex=channels[0]))
+					channels.append(plt.subplot(self.channelCount+1, 1, count+1, sharex=channels[0]))
 				plt.ylabel('Channel ' + str(i+1) + '(V)')
 				plt.ylim(-0.005, 0.005)
 				plt.plot(dfx, dfy)
 				count += 1
 
+#		dfy = self.df.ix[:,10]
+#		dfx = dfy.index*0.000239
+#		channels.append(plt.subplot(self.channelCount+2, 1, self.channelCount+1, sharex=channels[0]))
+#		plt.ylabel("Sync Pulse")
+#		plt.plot(dfx, dfy)
+
 		dfy = self.df.ix[:,10]
 		dfx = dfy.index*0.000239
-		channels.append(plt.subplot(self.channelCount+2, 1, self.channelCount+1, sharex=channels[0]))
-		plt.ylabel("Sync Pulse")
-		plt.plot(dfx, dfy)
-
-		dfy = self.df.ix[:,11]
-		dfx = dfy.index*0.000239
-		channels.append(plt.subplot(self.channelCount+2, 1, self.channelCount+2, sharex=channels[0]))
+		channels.append(plt.subplot(self.channelCount+1, 1, self.channelCount+2, sharex=channels[0]))
 		plt.ylabel("Frame Marker")
 		plt.plot(dfx, dfy)
 
@@ -76,24 +76,24 @@ class ControlPannel:
 			dfy = self.df.ix[:,i] * 0.000000195
 			dfx = dfy.index*0.000239
 			if not channels:
-				channels.append(plt.subplot(12, 1, i+1))
+				channels.append(plt.subplot(11, 1, i+1))
 			else:
-				channels.append(plt.subplot(12, 1, i+1, sharex=channels[0]))
+				channels.append(plt.subplot(11, 1, i+1, sharex=channels[0]))
 			# channels.append(plt.subplot(12, 1, i+1, sharex=channels[0]))
 			plt.ylabel('Channel ' + str(i+1) + '(V)')
 			plt.ylim(-0.005, 0.005)
 			plt.plot(dfx, dfy)
 
+#		dfy = self.df.ix[:,10]
+#		dfx = dfy.index*0.000239
+#		channels.append(plt.subplot(12, 1, 11, sharex=channels[0]))
+#		plt.ylim(0, 1)
+#		plt.ylabel("Sync Pulse")
+#		plt.plot(dfx, dfy)
+
 		dfy = self.df.ix[:,10]
 		dfx = dfy.index*0.000239
-		channels.append(plt.subplot(12, 1, 11, sharex=channels[0]))
-		plt.ylim(0, 1)
-		plt.ylabel("Sync Pulse")
-		plt.plot(dfx, dfy)
-
-		dfy = self.df.ix[:,11]
-		dfx = dfy.index*0.000239
-		channels.append(plt.subplot(12, 1, 12, sharex=channels[0]))
+		channels.append(plt.subplot(11, 1, 12, sharex=channels[0]))
 		plt.ylabel("Frame Marker")
 		plt.plot(dfx, dfy)
 		# dfy = self.dfADC.ix[:,0] * 2.5 / 256.0
