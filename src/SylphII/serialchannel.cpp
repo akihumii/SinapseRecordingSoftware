@@ -81,8 +81,9 @@ void SerialChannel::connectSylph(){
         qDebug() << "Manufacturer: " << info.manufacturer();
     }
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i+1).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()
-            > portInfo.at(i).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()){
+        if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
+            if(portInfo.at(i+1).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()
+                > portInfo.at(i).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()){
                 implantPort->setPortName(portInfo.at(i+1).portName());
                 implantPort->setBaudRate(1333333);
 
