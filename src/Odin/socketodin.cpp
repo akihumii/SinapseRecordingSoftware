@@ -30,7 +30,6 @@ void SocketOdin::on_socketDisconnected(){
 void SocketOdin::readCommand(){
 //    if(timeToRead){
         incomingCommand.append(socketAbstract->readAll());
-        if(incomingCommand.size() >= 16){
 //            qDebug() << incomingCommand.toHex();
             for(int i = 0; i < incomingCommand.size(); i++){
                 if((quint8) incomingCommand.at(0) != (quint8) 0xAA){
@@ -40,20 +39,21 @@ void SocketOdin::readCommand(){
                     break;
                 }
             }
-            for(int i = 0; i < 16; i++){
-                if(outgoingCommand.at(i) == incomingCommand.at(i)){
-//                    qDebug() << "Byte " << i << " is correct";
-                    emit commandReceived(true);
+            if(incomingCommand.size() >= 16){
+                for(int i = 0; i < 16; i++){
+                    if(outgoingCommand.at(i) == incomingCommand.at(i)){
+    //                    qDebug() << "Byte " << i << " is correct";
+                        emit commandReceived(true);
+                    }
+                    else{
+    //                    qDebug() << "There is a wrong byte!";
+                        emit commandReceived(false);
+                        break;
+                    }
                 }
-                else{
-//                    qDebug() << "There is a wrong byte!";
-                    emit commandReceived(false);
-                    break;
-                }
+                incomingCommand.clear();
             }
-            incomingCommand.clear();
-        }
-    }
+//    }
 //    else{
 //        socketAbstract->readAll();
 //    }

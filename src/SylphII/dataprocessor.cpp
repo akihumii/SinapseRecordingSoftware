@@ -22,21 +22,21 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         ChannelData[1].append(fullWord_rawData*(0.000000195));
         if(RecordEnabled){
-            if(ADC_Data.size()>0){
-                RecordData(ADC_Data.at(0));
-            }
-            else{
-                RecordData(0);
-            }
+//            if(ADC_Data.size()>0){
+//                RecordData(ADC_Data.at(0));
+//            }
+//            else{
+//                RecordData(0);
+//            }
             RecordData((quint8) rawData.at(i+4));
             RecordData(END_OF_LINE);
         }
-        if(ADC_Data.size()>0){
-            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
-            ADC_Data.remove(0, 1);
-        }
+//        if(ADC_Data.size()>0){
+//            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
+//            ADC_Data.remove(0, 1);
+//        }
         ChannelData[3].append((quint8) rawData.at(i+4));
-        total_data_count = total_data_count+1;
+        total_data_count++;
         X_axis.append(total_data_count*period);
     }
 //    playAudio(getAudioChannel());
@@ -64,23 +64,23 @@ void DataProcessor::sortADCData(QByteArray adcData){
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){
     ADCRecordEnabled = enableFlag;
-    if(enableFlag){
-        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
-        File = new QFile;
-        File->setFileName(fileName);
-        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
-            qDebug()<< "File ADC opened";
-        }
-        else{
-            qDebug() << "File ADC failed to open";
-        }
-        out = new QTextStream(File);
-        qDebug() << "setting Record Enabled";
-    }
-    else{
-        File->close();
-        qDebug() << "setting Record disabled";
-    }
+//    if(enableFlag){
+//        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
+//        File = new QFile;
+//        File->setFileName(fileName);
+//        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+//            qDebug()<< "File ADC opened";
+//        }
+//        else{
+//            qDebug() << "File ADC failed to open";
+//        }
+//        out = new QTextStream(File);
+//        qDebug() << "setting Record Enabled";
+//    }
+//    else{
+//        File->close();
+//        qDebug() << "setting Record disabled";
+//    }
 }
 
 bool DataProcessor::isADCRecordEnabled(){

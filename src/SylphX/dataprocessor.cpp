@@ -57,23 +57,23 @@ void DataProcessor::sortADCData(QByteArray adcData){
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){
     ADCRecordEnabled = enableFlag;
-    if(enableFlag){
-        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
-        File = new QFile;
-        File->setFileName(fileName);
-        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
-            qDebug()<< "File ADC opened";
-        }
-        else{
-            qDebug() << "File ADC failed to open";
-        }
-        out = new QTextStream(File);
-        qDebug() << "setting Record Enabled";
-    }
-    else{
-        File->close();
-        qDebug() << "setting Record disabled";
-    }
+//    if(enableFlag){
+//        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'ADC.csv'");
+//        File = new QFile;
+//        File->setFileName(fileName);
+//        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+//            qDebug()<< "File ADC opened";
+//        }
+//        else{
+//            qDebug() << "File ADC failed to open";
+//        }
+//        out = new QTextStream(File);
+//        qDebug() << "setting Record Enabled";
+//    }
+//    else{
+//        File->close();
+//        qDebug() << "setting Record disabled";
+//    }
 }
 
 bool DataProcessor::isADCRecordEnabled(){
