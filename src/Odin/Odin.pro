@@ -12,7 +12,7 @@ TARGET = Odin
 TEMPLATE = app
 
 # The application version
-VERSION = 1.2.0
+VERSION = 1.2.1
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
