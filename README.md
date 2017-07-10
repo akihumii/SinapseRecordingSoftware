@@ -122,11 +122,11 @@ PATH = ~/mxe/usr/bin:$PATH
 ```
 - Althenatively: add this line into ~/.bashrc
 ```
-export PATH=~/mxe/usr:$PATH
+export PATH=~/mxe/usr/bin:$PATH
 ```
 - Get to the directory of your app (where the main .pro file is), and run the Qt Makefile generator tool:
 ```
-~/mxe/usr/x86_64-w64-ming32.static-qmake-qt5 
+~/mxe/usr/bin/x86_64-w64-ming32.static-qmake-qt5 
 ```
 - Build your project:
 ```
