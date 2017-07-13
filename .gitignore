@@ -294,7 +294,6 @@ tmp/
 /src/Neutrino/release/
 /src/Sylph/debug/
 /src/Sylph/release/
-src/Odin/loopingthread.h
 src/AMWFlash/AMWFlash
 src/AMWFlash/moc_predefs.h
 src/Jane/Jane
