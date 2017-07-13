@@ -38,6 +38,8 @@ tags
 ui_*.h
 wrapper.bat
 wrapper.sh
+.gitignore.swp
+.smproj
 
 # qtcreator generated files
 *.creator.user*
@@ -281,6 +283,8 @@ tmp/
 /*_release/
 /build*/
 /build*
+/src/*/*_plugin_import.cpp
+/src/*/.qmake.stash
 /src/*.pro.user
 /src/common/debug/
 /src/common/release/
