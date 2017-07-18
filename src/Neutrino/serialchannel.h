@@ -5,12 +5,16 @@
 #include "dataprocessor.h"
 #include "command.h"
 #include "channel.h"
-
+#include "datastreamfifo.h"
 
 class SerialChannel : public QObject{
     Q_OBJECT
 public:
-    SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
+    SerialChannel(QObject *parent,
+                  Command *NeutrinoCommand_,
+                  DataProcessor *NeutrinoData_,
+                  Channel *NeutrinoChannel_,
+                  DataStreamFifo *dataStream_);
     bool serialenabled = true;
     void closePort();
     bool doConnect();
@@ -23,6 +27,7 @@ private:
     QSerialPort *serialData;
     QSerialPort *serialCommand;
     DataProcessor *dataProcessor;
+    DataStreamFifo *dataStream;
 
     Channel *NeutrinoChannel;
     Command *NeutrinoCommand;

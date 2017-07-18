@@ -6,8 +6,13 @@ MainWindow::MainWindow(){
     NeutrinoChannel = new Channel;
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
-    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
     socketNeutrino = new SocketNeutrino(NeutrinoCommand, data, NeutrinoChannel);
+    socketFifo = new DataStreamFifo(300000000);
+    socketThread = new UsbDataThread(socketFifo, data, this);
+    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel, socketFifo);
+    connect(socketThread, SIGNAL(finished()), socketThread, SLOT(deleteLater()));
+    socketThread->start();
+    socketThread->startRunning();
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     createStatusBar();
     create5x2Layout();
@@ -365,11 +370,14 @@ MainWindow::~MainWindow(){
         socketNeutrino->writeCommand(QByteArray::number(255, 10));
         socketNeutrino->doDisconnect();
     }
+    socketThread->close();
+    socketThread->wait();
     serialNeutrino->closePort();
 }
 
 void MainWindow::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
+//    qDebug() << "Updating from " << QThread::currentThreadId();
     if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
         for(int i=0; i<10; i++){
             if(!data->isEmpty(i)){
@@ -539,9 +547,11 @@ void MainWindow::on_record_triggered(){
 void MainWindow::on_playPause_triggered(){
     if(pause){
         pauseAction->setText("Pause graph");
+        socketThread->startRunning();
     }
     else{
         pauseAction->setText("Resume graph");
+        socketThread->stopRunning();
     }
     pause = !pause;
 }

@@ -19,6 +19,11 @@ typedef enum FrameMarkers{
 //Order of FrameMarker should be 5AF0 for 8 bit
 } FrameMarkers;
 
+typedef enum BITMODE{
+    BITMODE8 = 0,
+    BITMODE10 = 1
+} BITMODE;
+
 class DataProcessor : public SignalAudio, public Data
 {
 public:
@@ -28,6 +33,7 @@ public:
 
     QVector<quint16> ParseFrameMarkers10bits(QByteArray data_store);
     QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
+    void processData(BITMODE mode, QByteArray inRawData);
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
     double signalReconstruction(QByteArray input);

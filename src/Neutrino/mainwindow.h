@@ -15,7 +15,8 @@
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
-
+#include "datastreamfifo.h"
+#include "datathread.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -36,6 +37,8 @@ public slots:
 private:
     QElapsedTimer timer;
     QTimer dataTimer;
+    DataStreamFifo *socketFifo;
+    UsbDataThread *socketThread;
 
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;

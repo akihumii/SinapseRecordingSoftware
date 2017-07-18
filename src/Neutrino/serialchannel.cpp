@@ -1,12 +1,13 @@
 #include "serialchannel.h"
 
-SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent)
+SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_, DataStreamFifo *dataStream_) : QObject(parent)
 {
     serialData = new QSerialPort(this);
     serialCommand = new QSerialPort(this);
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoData = NeutrinoData_;
     NeutrinoChannel = NeutrinoChannel_;
+    dataStream = dataStream_;
 
     connect(serialData, SIGNAL(readyRead()), this, SLOT(ReadData()));
 }
@@ -15,7 +16,12 @@ void SerialChannel::ReadData(){
     switch (NeutrinoCommand->getOPMode()){
         case 2:{
             if(NeutrinoData->isPlotEnabled()){
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+                dataStream->writeToBuffer((unsigned char*)serialData->read(2048).data(), 2048);
+//                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+                break;
+            }
+            else{
+                serialData->readAll();
                 break;
             }
         }

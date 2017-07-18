@@ -16,7 +16,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
         }
         leftOverData.clear();
     }
-    if(leftOverData.size() > 10*data_store.size())
+    if(leftOverData.size() > 5*data_store.size())
     {
         leftOverData.clear();
     }
@@ -86,7 +86,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
         }
         leftOverData.clear();
     }
-    if(leftOverData.size() > 10*data_store.size())
+    if(leftOverData.size() > 5*data_store.size())
     {
         leftOverData.clear();
     }
@@ -131,6 +131,7 @@ int DataProcessor::first_8bitFrameMarker(QByteArray data){
 void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
     bool *channels = NeutrinoChannel->getChannelState_Bool();
     int numChannels = NeutrinoChannel->getNumChannels();
+//    qDebug() << "Multiplexing" << QThread::currentThreadId();
     if(!Plot_Y_AllDataPoint.isEmpty()){
         for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + numChannels){
             int k = 0;
@@ -166,4 +167,13 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
 
 void DataProcessor::setBitMode(bool BitMode){
     is8BitMode = BitMode;
+}
+
+void DataProcessor::processData(BITMODE mode, QByteArray inRawData){
+    if(mode == BITMODE8){
+        MultiplexChannelData(ParseFrameMarkers8bits(inRawData));
+    }
+    else{
+        MultiplexChannelData(ParseFrameMarkers10bits(inRawData));
+    }
 }
