@@ -8,7 +8,7 @@ MainWindow::MainWindow(){
     data = new DataProcessor(NeutrinoChannel);
     socketNeutrino = new SocketNeutrino(NeutrinoCommand, data, NeutrinoChannel);
     socketFifo = new DataStreamFifo(300000000);
-    socketThread = new UsbDataThread(socketFifo, data, this);
+    socketThread = new DataThread(socketFifo, data, this);
     serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel, socketFifo);
     connect(socketThread, SIGNAL(finished()), socketThread, SLOT(deleteLater()));
     socketThread->start();

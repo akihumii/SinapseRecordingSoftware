@@ -38,7 +38,7 @@ private:
     QElapsedTimer timer;
     QTimer dataTimer;
     DataStreamFifo *socketFifo;
-    UsbDataThread *socketThread;
+    DataThread *socketThread;
 
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
