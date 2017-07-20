@@ -10,14 +10,23 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
     dataStream = dataStream_;
 
     connect(serialData, SIGNAL(readyRead()), this, SLOT(ReadData()));
+
+    qDebug() << "Creating Data Handler Thread from Serial Channel";
+    dataHandler = new DataHandlerThread(dataStream, serialData, this);
+    dataHandler->start(QThread::TimeCriticalPriority);
+}
+
+SerialChannel::~SerialChannel(){
+    dataHandler->close();
+    dataHandler->wait();
 }
 
 void SerialChannel::ReadData(){
     switch (NeutrinoCommand->getOPMode()){
         case 2:{
             if(NeutrinoData->isPlotEnabled()){
-                dataStream->writeToBuffer((unsigned char*)serialData->read(2048).data(), 2048);
 //                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
+                dataHandler->startRunning();
                 break;
             }
             else{

@@ -20,49 +20,37 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include "datathread.h"
+#include "datahandlerthread.h"
 
 using namespace std;
 
-DataThread::DataThread(DataStreamFifo* incomingFifo_, QVector<QQueue<double>> outgoingFifo_, DataProcessor* neutrinoData_, QObject *parent):
+DataHandlerThread::DataHandlerThread(DataStreamFifo* dataFifo_, QSerialPort* serialData_, QObject *parent):
     QThread(parent),
-    incomingFifo(incomingFifo_),
-    outgoingFifo(outgoingFifo_),
-    NeutrinoData(neutrinoData_)
+    serialData(serialData_),
+    dataFifo(dataFifo_)
 {
     keepGoing = false;
     running = false;
     stopThread = false;
     numUsbBlocksToRead = 1;
     unsigned int bufferSize = 32 * 2 * 31744;
-    cout << "DataThread: Allocating " << bufferSize / 1.0e6 << " MBytes for USB buffer." << endl;
+    cout << "DataHandlerThread: Allocating " << bufferSize / 1.0e6 << " MBytes for USB buffer." << endl;
     dataBuffer = new unsigned char [bufferSize];
 }
 
-DataThread::~DataThread()
+DataHandlerThread::~DataHandlerThread()
 {
     delete [] dataBuffer;
 }
 
-void DataThread::run()
+void DataHandlerThread::run()
 {
     while (!stopThread) {
         if (keepGoing) {
             running = true;
             while (keepGoing && !stopThread) {
-                if(incomingFifo->readFromBuffer(dataBuffer, 20480)){
-                    qDebug() << "successfully read from datafifo" << currentThreadId();
-                    NeutrinoData->processData(BITMODE8, (const char *)dataBuffer);
-                    for(int i = 0; i < 10; i++){
-                            if(NeutrinoData->retrieveData(i).size() >  4096){
-//                                outgoingFifo[0]->writeToBuffer(dataBuffer, 2048);
-                                for(int j = 0; j < NeutrinoData->retrieveData(i).size(); j++){
-                                    outgoingFifo[i].append(NeutrinoData->retrieveData(i).at(j));
-                                }
-                            qDebug() << outgoingFifo[i].size();
-                            }
-                    }
-                }
+                qDebug() << "Reading in serial data" << currentThreadId();
+                dataFifo->writeToBuffer((unsigned char*)serialData->read(2048).data(), 2048);
             }
             running = false;
         } else {
@@ -71,31 +59,31 @@ void DataThread::run()
     }
 }
 
-void DataThread::startRunning()
+void DataHandlerThread::startRunning()
 {
     keepGoing = true;
 }
 
-void DataThread::stopRunning()
+void DataHandlerThread::stopRunning()
 {
     keepGoing = false;
 }
 
-void DataThread::close()
+void DataHandlerThread::close()
 {
     keepGoing = false;
     stopThread = true;
 }
 
-bool DataThread::isRunning() const
+bool DataHandlerThread::isRunning() const
 {
     return running;
 }
 
-void DataThread::setNumUsbBlocksToRead(int numUsbBlocksToRead_)
+void DataHandlerThread::setNumUsbBlocksToRead(int numUsbBlocksToRead_)
 {
     if (numUsbBlocksToRead_ > 32) {
-        cerr << "DataThread::setNumUsbBlocksToRead: Buffer is too small to read " << numUsbBlocksToRead_ <<
+        cerr << "DataHandlerThread::setNumUsbBlocksToRead: Buffer is too small to read " << numUsbBlocksToRead_ <<
                 " blocks.  Increase BUFFER_SIZE_IN_BLOCKS." << endl;
     }
     numUsbBlocksToRead = numUsbBlocksToRead_;

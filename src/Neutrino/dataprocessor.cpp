@@ -131,7 +131,7 @@ int DataProcessor::first_8bitFrameMarker(QByteArray data){
 void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
     bool *channels = NeutrinoChannel->getChannelState_Bool();
     int numChannels = NeutrinoChannel->getNumChannels();
-//    qDebug() << "Multiplexing" << QThread::currentThreadId();
+    qDebug() << "Multiplexing" << QThread::currentThreadId();
     if(!Plot_Y_AllDataPoint.isEmpty()){
         for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + numChannels){
             int k = 0;

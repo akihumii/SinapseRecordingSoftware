@@ -6,6 +6,7 @@
 #include "command.h"
 #include "channel.h"
 #include "datastreamfifo.h"
+#include "datahandlerthread.h"
 
 class SerialChannel : public QObject{
     Q_OBJECT
@@ -15,6 +16,7 @@ public:
                   DataProcessor *NeutrinoData_,
                   Channel *NeutrinoChannel_,
                   DataStreamFifo *dataStream_);
+    ~SerialChannel();
     bool serialenabled = true;
     void closePort();
     bool doConnect();
@@ -28,6 +30,7 @@ private:
     QSerialPort *serialCommand;
     DataProcessor *dataProcessor;
     DataStreamFifo *dataStream;
+    DataHandlerThread *dataHandler;
 
     Channel *NeutrinoChannel;
     Command *NeutrinoCommand;

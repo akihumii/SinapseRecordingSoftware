@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DATATHREAD_H
-#define DATATHREAD_H
+#ifndef DATAHANDLERTHREAD_H
+#define DATAHANDLERTHREAD_H
 
 #include <QObject>
 #include <QThread>
@@ -30,12 +30,12 @@
 
 #define BUFFER_SIZE_IN_BLOCKS 32
 
-class DataThread : public QThread
+class DataHandlerThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit DataThread(DataStreamFifo* incomingFifo_, QVector<QQueue<double>> outgoingFifo, DataProcessor *neutrinoData_,  QObject *parent = 0);
-    ~DataThread();
+    explicit DataHandlerThread(DataStreamFifo* dataFifo_, QSerialPort *serialData_,  QObject *parent = 0);
+    ~DataHandlerThread();
 
     void run() override;
     void startRunning();
@@ -50,9 +50,8 @@ signals:
 public slots:
 
 private:
-    DataStreamFifo* incomingFifo;
-    QVector<QQueue<double>> outgoingFifo;
-    DataProcessor* NeutrinoData;
+    QSerialPort* serialData;
+    DataStreamFifo* dataFifo;
     volatile bool keepGoing;
     volatile bool running;
     volatile bool stopThread;
@@ -62,4 +61,4 @@ private:
 
 };
 
-#endif // DATATHREAD_H
+#endif // DATAHANDLERTHREAD_H

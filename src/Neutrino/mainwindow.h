@@ -37,8 +37,12 @@ public slots:
 private:
     QElapsedTimer timer;
     QTimer dataTimer;
-    DataStreamFifo *socketFifo;
+    DataStreamFifo *incomingFifo;
+    QVector<QQueue<double>> displayBuffer;
+//    DataStreamFifo *outgoingFifo[10];
     DataThread *socketThread;
+
+//    unsigned char *displayBuffer;
 
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;

@@ -38,7 +38,8 @@ HEADERS += \
     socketneutrino.h \
     measurementdialog.h \
     datastreamfifo.h \
-    datathread.h
+    datathread.h \
+    datahandlerthread.h
 
 SOURCES += \
     channel.cpp \
@@ -53,6 +54,7 @@ SOURCES += \
     socketneutrino.cpp \
     measurementdialog.cpp \
     datastreamfifo.cpp \
-    datathread.cpp
+    datathread.cpp \
+    datahandlerthread.cpp
 
 FORMS +=

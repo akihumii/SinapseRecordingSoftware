@@ -7,9 +7,12 @@ MainWindow::MainWindow(){
     NeutrinoCommand = new Command(NeutrinoChannel);
     data = new DataProcessor(NeutrinoChannel);
     socketNeutrino = new SocketNeutrino(NeutrinoCommand, data, NeutrinoChannel);
-    socketFifo = new DataStreamFifo(300000000);
-    socketThread = new DataThread(socketFifo, data, this);
-    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel, socketFifo);
+    incomingFifo = new DataStreamFifo(200000000);
+    outgoingFifo = new DataStreamFifo(200000000);
+//    displayBuffer = new QVector<QQueue<double>>;
+
+    socketThread = new DataThread(incomingFifo, displayBuffer, data, this);
+    serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel, incomingFifo);
     connect(socketThread, SIGNAL(finished()), socketThread, SLOT(deleteLater()));
     socketThread->start();
     socketThread->startRunning();
@@ -377,21 +380,30 @@ MainWindow::~MainWindow(){
 
 void MainWindow::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
-//    qDebug() << "Updating from " << QThread::currentThreadId();
-    if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
-        for(int i=0; i<10; i++){
-            if(!data->isEmpty(i)){
-                channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0),
-                                                 (data->getNumDataPoints())*(14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0),
-                                                 Qt::AlignLeft);
-                if(!pause){
-                    channelGraph[i]->replot();
-                }
-                data->clearChannelData(i);
-            }
-        }
-        data->removeXAxis();
+    qDebug() << "Main Window: " << QThread::currentThreadId();
+//    if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
+//        for(int i=0; i<10; i++){
+//            if(!data->isEmpty(i)){
+//                channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
+//                channelGraph[i]->xAxis->setRange(X_axis.at(0),
+//                                                 (data->getNumDataPoints())*(14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0),
+//                                                 Qt::AlignLeft);
+//                if(!pause){
+//                    channelGraph[i]->replot();
+//                }
+//                data->clearChannelData(i);
+//            }
+//        }
+//        data->removeXAxis();
+//    }
+    for(int i = 0; i < 10; i ++){
+//        if(displayBuffer.at(i).size() > 2048){
+//            outgoingFifo[i]->readFromBuffer(displayBuffer, 2048);
+//            for(int j = 0; j < displayBuffer[i].size(); j++){
+//                displayBuffer[i].dequeue();
+//            }
+            qDebug() << "Main Window: " << QThread::currentThreadId();
+//        }
     }
 }
 

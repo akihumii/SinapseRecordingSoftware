@@ -51,7 +51,7 @@ bool DataStreamFifo::writeToBuffer(unsigned char* dataSource, unsigned int numBy
                 bufferWriteIndex = 0;
             }
         }
-//        qDebug() << "Writing to data stream" << percentFull();
+        qDebug() << "Writing to data stream" << percentFull();
         usedBytes.release(numBytes);
         return true;
     } else {
