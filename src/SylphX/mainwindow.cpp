@@ -4,13 +4,13 @@ namespace SylphX {
 
 MainWindow::MainWindow(){
     x = new Odin::OdinWindow();
-    x->setFixedSize(x->sizeHint());
-    x->show();
+//    x->setFixedSize(x->sizeHint());
+//    x->show();
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     data = new DataProcessor(samplingRate);
-    connect(x, SIGNAL(commandSent()), data, SLOT(appenedSync()));
+    connect(x, SIGNAL(commandSent()), data, SLOT(appendSync()));
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
@@ -68,7 +68,7 @@ void MainWindow::createLayout(){
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
 
-    channelGraph[10]->yAxis->setRange(0, 1, Qt::AlignLeft);
+    channelGraph[10]->yAxis->setRange(-0.5, 2.5, Qt::AlignLeft);
     channelGraph[10]->yAxis->setTickStep(0.5);
     channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(50);
@@ -327,7 +327,7 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(connectionStatus);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        socketSylph->doConnect("192.168.0.100", 30000);
+        socketSylph->doConnect("10.10.10.1", 30000);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
@@ -533,6 +533,7 @@ void MainWindow::on_restart_triggered(){
     data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
+//        serialChannel->flushADC();
         socketSylph->discardData();
     }
 }

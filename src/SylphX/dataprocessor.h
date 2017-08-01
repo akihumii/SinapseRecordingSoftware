@@ -28,7 +28,7 @@ public:
     QVector<quint8> ADC_Data;
 
 public slots:
-    void appenedSync();
+    void appendSync();
 
 private:
     QFile *File;
@@ -41,6 +41,7 @@ private:
 
     float samplingRate;
     float period;
+    int syncPulse = 0;
 };
 
 }

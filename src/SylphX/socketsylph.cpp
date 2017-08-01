@@ -22,9 +22,9 @@ void SocketSylph::ReadCommand(){
     else if(socketAbstract->bytesAvailable() >= maxSize && checked){
         dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
     }
-    else if(socketAbstract->bytesAvailable() >= 106 && !checked){
+    else if(socketAbstract->bytesAvailable() >= 89 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(106), 0)){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(89), 0)){
             checked = true;
             qDebug() << "checked is true";
         }

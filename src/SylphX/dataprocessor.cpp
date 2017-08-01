@@ -8,48 +8,51 @@ DataProcessor::DataProcessor(float samplingRate_){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-//    qDebug() << rawData.size();
-    for(int i = 0; i < rawData.size(); i = i + 21){
+    qDebug() << rawData.size();
+    for(int i = 0; i < rawData.size(); i = i + 22){
         for(int j = 2; j < 10; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            appendAudioBuffer(j-2, rawData.at(i+(2*j)+1), rawData.at(i+(2*j)));
+            appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             ChannelData[j-2].append(fullWord_rawData*(0.000000195));
         }
         for(int j = 0; j < 2; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
-            appendAudioBuffer(j+8, rawData.at(i+(2*j)+1), rawData.at(i+(2*j)));
+            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
-
-        ChannelData[10].append(0);
-        if(RecordEnabled){
-            RecordData(0);
-        }
-
+//        if(ADC_Data.size()>5){
+//            ChannelData[10].append(ADC_Data.at(0)/ 256.0 * 2.5);
+//            if(RecordEnabled){
+//                for(int i = 0; i < 5; i++){
+//                    *out << ADC_Data.at(i) << " , \n";
+//                }
+//            }
+//            ADC_Data.remove(0, 6);
+//        }
+        ChannelData[10].append((quint8) rawData.at(i+22));
         total_data_count++;
         X_axis.append(total_data_count*period);
-        ChannelData[11].append((quint8) rawData.at(i+20));
+        ChannelData[11].append((quint8) rawData.at(i+21));
         if(RecordEnabled){
             RecordData((quint8)rawData.at(i+20));
             RecordData(END_OF_LINE);
         }
-        ChannelData[10].append(0);
     }
 //    playAudio(getAudioChannel());
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-    if(((quint8) data.at(currentIndex + 21) == (quint8) data.at(currentIndex) + 1
-        && (quint8) data.at(currentIndex + 42) == (quint8) data.at(currentIndex + 21) + 1
-        && (quint8) data.at(currentIndex + 63) == (quint8) data.at(currentIndex + 42) + 1
-        && (quint8) data.at(currentIndex + 84) == (quint8) data.at(currentIndex + 63) + 1
-        && (quint8) data.at(currentIndex + 105) == (quint8) data.at(currentIndex + 84) + 1)){
+    if(((quint8) data.at(currentIndex + 22) == (quint8) data.at(currentIndex) + 1
+        && (quint8) data.at(currentIndex + 44) == (quint8) data.at(currentIndex + 22) + 1
+        && (quint8) data.at(currentIndex + 66) == (quint8) data.at(currentIndex + 44) + 1
+        && (quint8) data.at(currentIndex + 88) == (quint8) data.at(currentIndex + 66) + 1
+        /*&& (quint8) data.at(currentIndex + 110) == (quint8) data.at(currentIndex + 88) + 1*/)){
         return true;
     }
     else{
@@ -67,10 +70,11 @@ void DataProcessor::sortADCData(QByteArray adcData){
 void DataProcessor::appendSync(){
     qDebug() << "Sync pulse detected!";
 //    ChannelData[10].removeLast();
-    ChannelData[10].append(1);
-    if(RecordEnabled){
-        RecordData(1);
-    }
+//    ChannelData[10].append(1);
+//    if(RecordEnabled){
+//        RecordData(1);
+//    }
+    syncPulse = 1;
 }
 
 void DataProcessor::setADCRecordEnabled(bool enableFlag){

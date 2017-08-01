@@ -21,6 +21,7 @@ public:
     void connectSylph();
     bool isImplantConnected();
     bool isADCConnected();
+    void flushADC();
 public slots:
     void ReadImplantData();
     void ReadADCData();
