@@ -35,7 +35,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //            }
 //            ADC_Data.remove(0, 6);
 //        }
-        ChannelData[10].append((quint8) rawData.at(i+22));
+        ChannelData[10].append((quint8) rawData.at(i));
         total_data_count++;
         X_axis.append(total_data_count*period);
         ChannelData[11].append((quint8) rawData.at(i+21));
@@ -48,10 +48,14 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-    if(((quint8) data.at(currentIndex + 22) == (quint8) data.at(currentIndex) + 1
-        && (quint8) data.at(currentIndex + 44) == (quint8) data.at(currentIndex + 22) + 1
-        && (quint8) data.at(currentIndex + 66) == (quint8) data.at(currentIndex + 44) + 1
-        && (quint8) data.at(currentIndex + 88) == (quint8) data.at(currentIndex + 66) + 1
+//    if(((quint8) data.at(currentIndex + 21) == (quint8) data.at(currentIndex) + 1
+//        && (quint8) data.at(currentIndex + 42) == (quint8) data.at(currentIndex + 21) + 1
+//        && (quint8) data.at(currentIndex + 63) == (quint8) data.at(currentIndex + 42) + 1
+//        && (quint8) data.at(currentIndex + 84) == (quint8) data.at(currentIndex + 63) + 1
+        if(((quint8) data.at(currentIndex + 22) == (quint8) data.at(currentIndex) + 1
+            && (quint8) data.at(currentIndex + 44) == (quint8) data.at(currentIndex + 22) + 1
+            && (quint8) data.at(currentIndex + 66) == (quint8) data.at(currentIndex + 44) + 1
+            && (quint8) data.at(currentIndex + 88) == (quint8) data.at(currentIndex + 66) + 1
         /*&& (quint8) data.at(currentIndex + 110) == (quint8) data.at(currentIndex + 88) + 1*/)){
         return true;
     }
