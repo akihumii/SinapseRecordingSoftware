@@ -20,15 +20,22 @@ public:
     SignalAudio *signalAudio;
 
     void parseFrameMarkers(QByteArray rawData);
+    void parseFrameMarkersWithChecks(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int currentIndex);
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
     bool isADCRecordEnabled();
+    int findfirstFrameMarkers(QByteArray rawData);
+    int findlastFrameMarkers(QByteArray rawData);
+    void setSmartDataProcessor(bool flag);
+    bool isSmart();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
-
-public slots:
-    void appendSync();
+    int firstFrameMarker;
+    quint8 currentFrameMarker;
+    int currentFrameMarkerIndex;
+    int lastFrameMarker;
+    QByteArray leftOverData;
 
 private:
     QFile *File;
@@ -38,6 +45,7 @@ private:
     QString directory = QDir::homePath() + "/Desktop/";
     bool ADCEnabled = false;
     bool ADCRecordEnabled = false;
+    bool smartDataProcessor = false;
 
     float samplingRate;
     float period;

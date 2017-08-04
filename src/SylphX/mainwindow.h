@@ -49,6 +49,7 @@ private:
     QMenu *voltageMenu;
     QMenu *timeFrameMenu;
     QMenu *audioOutputMenu;
+    QMenu *processorMenu;
     QMenu *helpMenu;
 
     QAction *exitAction;
@@ -80,7 +81,10 @@ private:
     QAction *audio[11];
     QAction *aboutAction;
     QAction *odinAction;
+    QAction *isSmart;
+    QAction *isDumb;
 
+    QActionGroup *smartOrDumbGroup;
     QActionGroup *timeFrameGroup;
     QActionGroup *voltageGroup;
     QActionGroup *audioGroup;
@@ -130,6 +134,8 @@ private slots:
     void on_filterConfig_trigger();
     void on_restart_triggered();
     void on_odin_triggered();
+    void on_smartDataProcessor_triggered();
+    void on_dumbDataProcessor_triggered();
 
     void on_graph1_clicked();
     void on_graph2_clicked();

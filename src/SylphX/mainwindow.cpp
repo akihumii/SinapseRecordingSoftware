@@ -4,15 +4,15 @@ namespace SylphX {
 
 MainWindow::MainWindow(){
     x = new Odin::OdinWindow();
-//    x->setFixedSize(x->sizeHint());
-//    x->show();
+    x->setFixedSize(x->sizeHint());
+    x->show();
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     data = new DataProcessor(samplingRate);
-    connect(x, SIGNAL(commandSent()), data, SLOT(appendSync()));
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
+    connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
@@ -138,10 +138,6 @@ void MainWindow::createActions(){
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
-    restartAction = new QAction(tr("Restart serial port"), this);
-    restartAction->setShortcut(tr("Ctrl+A"));
-    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
-
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
@@ -157,6 +153,15 @@ void MainWindow::createActions(){
     recordAction = new QAction(tr("Start &Recording"), this);
     recordAction->setShortcut(tr("Ctrl+R"));
     connect(recordAction, SIGNAL(triggered()), this, SLOT(on_record_triggered()));
+
+    isSmart = new QAction(tr("Smart Data Processor"), this);
+    connect(isSmart, SIGNAL(triggered(bool)), this, SLOT(on_smartDataProcessor_triggered()));
+    isDumb = new QAction(tr("Dumb Data Processor"), this);
+    connect(isDumb, SIGNAL(triggered(bool)), this, SLOT(on_dumbDataProcessor_triggered()));
+
+    restartAction = new QAction(tr("Resync data"), this);
+    restartAction->setShortcut(tr("Ctrl+A"));
+    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
 
     timeFrame10ms = new QAction(tr("10 milliseconds"), this);
     timeFrame20ms = new QAction(tr("20 milliseconds"), this);
@@ -213,8 +218,6 @@ void MainWindow::createMenus(){
     fileMenu->addSeparator();
     fileMenu->addAction(recordAction);
     fileMenu->addAction(chooseDirectoryAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(restartAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
@@ -295,6 +298,20 @@ void MainWindow::createMenus(){
     }
     audio[0]->setChecked(true);
 
+    processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
+    processorMenu->addAction(isSmart);
+    isSmart->setCheckable(true);
+    processorMenu->addAction(isDumb);
+    isDumb->setCheckable(true);
+
+    smartOrDumbGroup = new QActionGroup(this);
+    smartOrDumbGroup->addAction(isSmart);
+    smartOrDumbGroup->addAction(isDumb);
+    isDumb->setChecked(true);
+
+    processorMenu->addSeparator();
+    processorMenu->addAction(restartAction);
+
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
 }
@@ -328,7 +345,7 @@ void MainWindow::connectSylph(){
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
 //        socketSylph->doConnect("10.10.10.1", 30000);
-        socketSylph->doConnect("192.168.4.1", 8888);
+        socketSylph->doConnect("192.168.0.101", 8888);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
@@ -613,6 +630,14 @@ void MainWindow::activateChannelGraph(int index){
     channelGraph[index]->graph()->setPen(QPen(Qt::red));
     data->setAudioChannel(index);
     audio[index]->setChecked(true);
+}
+
+void MainWindow::on_smartDataProcessor_triggered(){
+    data->setSmartDataProcessor(true);
+}
+
+void MainWindow::on_dumbDataProcessor_triggered(){
+    data->setSmartDataProcessor(false);
 }
 
 }

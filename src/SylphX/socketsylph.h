@@ -14,6 +14,9 @@ public:
     bool wifiEnabled = true;
     void discardData();
 
+public slots:
+    void appendSync();
+
 private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
