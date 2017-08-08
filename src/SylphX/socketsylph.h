@@ -13,6 +13,7 @@ public:
     SocketSylph(DataProcessor *dataProcessor_);
     bool wifiEnabled = true;
     void discardData();
+    void closeESP();
 
 public slots:
     void appendSync();

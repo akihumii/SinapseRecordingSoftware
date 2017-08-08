@@ -45,7 +45,7 @@ private:
     QString directory = QDir::homePath() + "/Desktop/";
     bool ADCEnabled = false;
     bool ADCRecordEnabled = false;
-    bool smartDataProcessor = false;
+    bool smartDataProcessor = true;
 
     float samplingRate;
     float period;

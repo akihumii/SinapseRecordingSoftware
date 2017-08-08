@@ -10,7 +10,7 @@ SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
 void SocketSylph::discardData(){
     for(int i = 0; i < 50; i++){
         socketAbstract->read(48000);
-        qDebug() << "Discarding";
+//        qDebug() << "Discarding";
     }
     checked = false;
 }
@@ -39,6 +39,12 @@ void SocketSylph::ReadCommand(){
 void SocketSylph::appendSync(){
     qDebug() << "Sync pulse detected!";
     socketAbstract->write(QByteArray::number(255, 10));
+}
+
+void SocketSylph::closeESP(){
+    qDebug() << "Closing ESP";
+    QByteArray closingMSG = "Closing ESP";
+    socketAbstract->write(closingMSG);
 }
 
 }
