@@ -35,6 +35,14 @@ INCLUDEPATH += $$PWD../common
 DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    amwflash_mainwindow.cpp \
+    console.cpp \
+    settingdialog.cpp \
+    command.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    amwflash_mainwindow.h \
+    console.h \
+    settingdialog.h \
+    command.h

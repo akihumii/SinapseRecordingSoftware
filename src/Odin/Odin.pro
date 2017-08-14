@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     serialodin.cpp \
     commandodin.cpp \
     socketodin.cpp \
-    pulseplot.cpp
+    pulseplot.cpp \
+    loopingthread.cpp
 
 HEADERS  += mainwindow.h \
     serialodin.h \

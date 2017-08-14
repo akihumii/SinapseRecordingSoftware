@@ -12,15 +12,19 @@ void SocketNeutrino::ReadCommand(){
     if(socketAbstract->bytesAvailable() > 5*maxSize/10 && wifiEnabled){
         if(NeutrinoData->isPlotEnabled()){
             if(Mode_8Bit == true){
-//                qDebug() << "Got 8 bit data";
+                //qDebug() << "Got 8 bit data";
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketAbstract->read(maxSize)));
             }
             else if(Mode_8Bit == false){
-//                qDebug() << "Got 10 bit data";
+                //qDebug() << "Got 10 bit data";
                 NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketAbstract->read(maxSize)));
             }
         }
     }
+//    QByteArray temp = socketAbstract->readAll();
+//    for(int i = 0; i < temp.size(); i++){
+//        qDebug() << (quint8) temp.at(i);
+//    }
 }
 
 bool SocketNeutrino::writeCommand(QByteArray Command){

@@ -58,7 +58,7 @@ private:
     QString fileName;
 
 
-    bool PlotEnabled = true;
+    bool PlotEnabled = false;
     int prevleftOverByteCount = 0;
 
     int numDataPoints = 2082;

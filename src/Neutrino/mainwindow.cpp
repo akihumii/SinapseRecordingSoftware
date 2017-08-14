@@ -346,7 +346,7 @@ void MainWindow::connectNeutrino(){
         statusBarLabel->setText(connectionStatus);
     }
     if(!serialNeutrino->isConnected()){
-        socketNeutrino->doConnect("192.168.42.1", 8888);
+        socketNeutrino->doConnect("192.168.4.1", 8888);
         connectionStatus.clear();
         if(socketNeutrino->isConnected()){
             connectionStatus.append("Connected to Neutrino WiFi Module at 192.168.42.1/8888");

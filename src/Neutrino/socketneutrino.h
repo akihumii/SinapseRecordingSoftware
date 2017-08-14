@@ -15,12 +15,12 @@ public:
     QByteArray getlastCommand();
 
 private:
-    QTcpSocket *socketNeutrino;
+    //QTcpSocket *socketNeutrino;
     Channel *NeutrinoChannel;
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 40960;
+    qint64 maxSize = 20480;
     int numChannels;
     QByteArray lastSentCommand;
 

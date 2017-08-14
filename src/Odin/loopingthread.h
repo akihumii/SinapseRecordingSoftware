@@ -4,16 +4,20 @@
 #include <QThread>
 #include "../common/qtincludes.h"
 #include "commandodin.h"
-#include <QThread>
 //#include <windows.h>
 
 class LoopingThread : public QThread{
     Q_OBJECT
 public:
+    explicit LoopingThread();
+    void run() Q_DECL_OVERRIDE;
+
     int num = 50;
     int delay = 3000;
     bool send = false;
-    LoopingThread(){
+    QMutex mutex;
+
+    /*LoopingThread(){
     }
 
     void run() Q_DECL_OVERRIDE {
@@ -37,7 +41,8 @@ public:
         mutex.unlock();
         emit finishedSending();
 //        qDebug() << "Finished sending everything";
-    }
+    }*/
+
 signals:
     void commandSent();
     void finishedSending();

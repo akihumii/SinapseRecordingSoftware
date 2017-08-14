@@ -71,6 +71,11 @@ QByteArray Command::constructCommand()
         outgoingCommand.append((const char) JTAGarray[i]);
     }
     outgoingCommand.append((const char) MARKER_5A);
+    for(int i = outgoingCommand.size() -1; i < 256; i++){
+        outgoingCommand.append((const char) 0);
+    }
+//    for(int i = 0; i < outgoingCommand.size(); i++)
+//        qDebug() << (quint8) outgoingCommand.at(i);
     return outgoingCommand;
 }
 
