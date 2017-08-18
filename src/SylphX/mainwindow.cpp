@@ -344,8 +344,8 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(connectionStatus);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-//        socketSylph->doConnect("10.10.10.1", 30000);
-        socketSylph->doConnect("192.168.0.102", 8888);
+        socketSylph->doConnect("10.10.10.6", 8888);
+//        socketSylph->doConnect("192.168.0.102", 8888);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
@@ -481,7 +481,7 @@ void MainWindow::on_record_triggered(){
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
-        data->setADCRecordEnabled(false);
+//        data->setADCRecordEnabled(false);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
