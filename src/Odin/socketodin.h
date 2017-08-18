@@ -23,6 +23,7 @@ private slots:
     void readCommand();
 private:
     QTcpSocket *socketOdin;
+    QUdpSocket *udpSocket;
     QTimer commandTimer;
     QByteArray outgoingCommand;
     QByteArray incomingCommand;

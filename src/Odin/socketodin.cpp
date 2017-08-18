@@ -3,9 +3,15 @@
 namespace Odin {
 
 SocketOdin::SocketOdin(){
+    udpSocket = new QUdpSocket(this);
+
+    udpSocket->bind(QHostAddress::LocalHost, 1234);
+
+    qDebug() << "Binded UDP Socket";
+
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
-    connect(socketAbstract, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
-    connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(readCommand()));
+    connect(udpSocket, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
+    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readCommand()));
 
     player = new QMediaPlayer;
     player->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "/coins.mp3"));
@@ -13,10 +19,10 @@ SocketOdin::SocketOdin(){
 }
 
 void SocketOdin::writeCommand(QByteArray command){
-//    qDebug() << "Started command timer";
+    qDebug() << "Started command timer";
     outgoingCommand = command;
-    socketAbstract->readAll();
-    socketAbstract->flush();
+//    udpSocket->readAll();
+//    udpSocket->flush();
     timeToRead = false;
     incomingCommand.clear();
     if(command.size() > 1){
@@ -31,7 +37,7 @@ void SocketOdin::on_socketDisconnected(){
 
 void SocketOdin::readCommand(){
     if(timeToRead){
-        incomingCommand.append(socketAbstract->readAll());
+//        incomingCommand.append(socketAbstract->readAll());
         if(incomingCommand.size() >= 16){
 //            qDebug() << incomingCommand.toHex();
             for(int i = 0; i < incomingCommand.size(); i++){
@@ -57,7 +63,7 @@ void SocketOdin::readCommand(){
         }
     }
     else{
-        socketAbstract->readAll();
+//        socketAbstract->readAll();
     }
 }
 
@@ -70,18 +76,18 @@ QByteArray SocketOdin::getOutgoingCommand(){
 }
 
 void SocketOdin::sendCommand(){
-//    qDebug() << "Sending Byte " << commandCount << "of " << outgoingCommand.size() << " total byte";
+    qDebug() << "Sending Byte " << commandCount << "of " << outgoingCommand.size() << " total byte";
     QByteArray sending;
     sending.clear();
-//    qDebug("%x", (quint8) outgoingCommand.at(commandCount));
+    qDebug("%x", (quint8) outgoingCommand.at(commandCount));
     sending.append(outgoingCommand.at(commandCount));
-    while(!socketAbstract->isWritable());
-    socketAbstract->write(sending);
+//    while(!udpSocket->isWritable());
+    udpSocket->writeDatagram(sending, QHostAddress::LocalHost, 1234);
     commandCount++;
     if(commandCount >= outgoingCommand.size()){
         commandTimer.stop();
         commandCount = 0;
-//        qDebug() << "Finished sending command";
+        qDebug() << "Finished sending command";
         QTimer::singleShot(readDelay, [=] {
                 timeToRead = true;
         });

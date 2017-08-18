@@ -47,10 +47,10 @@ void CommandOdin::sendCommand(){
 //        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
     }
-    else if(socketOdin->isConnected()){
+//    else if(socketOdin->isConnected()){
 //        qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
-    }
+//    }
 }
 
 void CommandOdin::sendStart(){
@@ -60,10 +60,10 @@ void CommandOdin::sendStart(){
 //        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
     }
-    else if(socketOdin->isConnected()){
+//    else if(socketOdin->isConnected()){
 //        qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
-    }
+//    }
 }
 
 void CommandOdin::sendStop(){
@@ -73,10 +73,10 @@ void CommandOdin::sendStop(){
 //        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
     }
-    else if(socketOdin->isConnected()){
-//        qDebug() << "Sending via socket";
+//    else if(socketOdin->isConnected()){
+        qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
-    }
+//    }
 }
 
 QByteArray CommandOdin::getlastSentCommand(){

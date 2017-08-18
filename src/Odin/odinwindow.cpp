@@ -352,23 +352,23 @@ bool OdinWindow::connectOdin(){
         }
     }
     if(!serialOdin->isOdinSerialConnected()){
-        socketOdin->doConnect("10.10.10.1", 30000);
+//        socketOdin->doConnect("10.10.10.1", 30000);
 //        socketOdin->doConnect("192.168.0.104", 30000);
-        connectionStatus.clear();
-        if(socketOdin->isConnected()){
-            connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
-            statusBarLabel->setText(connectionStatus);
-            sendButton->setEnabled(true);
+//        connectionStatus.clear();
+//        if(socketOdin->isConnected()){
+//            connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
+//            statusBarLabel->setText(connectionStatus);
+//            sendButton->setEnabled(true);
             return true;
-        }
-        else{
-            sendButton->setDisabled(true);
-            connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
-            QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
-                                                                 "Check your connections and run the program again..");
-            statusBarLabel->setText(connectionStatus);
-            return false;
-        }
+//        }
+//        else{
+//            sendButton->setDisabled(true);
+//            connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
+//            QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
+//                                                                 "Check your connections and run the program again..");
+//            statusBarLabel->setText(connectionStatus);
+//            return false;
+//        }
     }
     return false;
 }
