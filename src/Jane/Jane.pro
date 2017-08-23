@@ -39,10 +39,12 @@ SOURCES += main.cpp\
     amwflash_mainwindow.cpp \
     console.cpp \
     settingdialog.cpp \
-    command.cpp
+    command.cpp \
+    stimulator.cpp
 
 HEADERS  += mainwindow.h \
     amwflash_mainwindow.h \
     console.h \
     settingdialog.h \
-    command.h
+    command.h \
+    stimulator.h

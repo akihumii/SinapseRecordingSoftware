@@ -98,7 +98,9 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
                     for(int i = 0; i < numChannels; i++){
                         current_8bit = (uint8_t)data_store.at(j+1+i);
                         Plot_Y_AllDataPoint.append(current_8bit);
-                        //qDebug() << (quint8) current_8bit;
+//                        if(current_8bit >241){
+//                            qDebug() << (quint8) current_8bit;
+//                        }
                     }
                 }
         }
@@ -137,6 +139,10 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
             int k = 0;
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
+                    if(Plot_Y_AllDataPoint.at(i+k) > 200){
+                        //makqDebug() << Plot_Y_AllDataPoint.at(i+k);
+                        //qDebug() << ChannelIndex;
+                    }
                     if(is8BitMode){
                         ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/256);
                     }

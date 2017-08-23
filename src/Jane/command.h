@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QString>
+#include "stimulator.h"
 
 #define MARKER_A5 0B10100101
 #define MARKER_5A 0B01011010
@@ -26,11 +27,13 @@ class command
 {
 
 public:
-    command();
+    command(Stimulator *thorParam_);
     QByteArray constructCommand();
     QByteArray resetCommand();
     void setOPMode(int mode);
     void setChipID(int IDNum);
+    void setBioImpBit(int index);
+    void clearBioImpBit(int index);
     quint8 getBioImp();
     quint8 getOPMOde();
     quint8 getJTAG(int index);
@@ -40,10 +43,11 @@ public:
     void clearJTAGBit(int index);
     void setDCLMode(quint8 newDCL_Mode);
     void updateBER(int index, QString newBER);
-    bool getLastCommand();
+    bool haveLastCommand();
     void setLastCommand(bool flags);
 
 private:
+    Stimulator *thorParam;
     quint8 chipID = 0;
     quint8 OPModeSelect = 2;
     quint8 bioimp = 0;
