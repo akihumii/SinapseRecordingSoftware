@@ -307,7 +307,7 @@ void MainWindow::createMenus(){
     smartOrDumbGroup = new QActionGroup(this);
     smartOrDumbGroup->addAction(isSmart);
     smartOrDumbGroup->addAction(isDumb);
-    isDumb->setChecked(true);
+    isSmart->setChecked(true);
 
     processorMenu->addSeparator();
     processorMenu->addAction(restartAction);
@@ -344,8 +344,8 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(connectionStatus);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        socketSylph->doConnect("10.10.10.6", 8888);
-//        socketSylph->doConnect("192.168.0.102", 8888);
+//        socketSylph->doConnect("10.10.10.2", 8888);
+        socketSylph->doConnect("192.168.4.2", 8888);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");

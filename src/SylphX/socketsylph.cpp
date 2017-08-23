@@ -38,7 +38,7 @@ void SocketSylph::ReadCommand(){
 
 void SocketSylph::appendSync(){
     qDebug() << "Sync pulse detected!";
-    socketAbstract->write(QByteArray::number(255, 10));
+//    socketAbstract->write(QByteArray::number(255, 10));
 }
 
 void SocketSylph::closeESP(){
