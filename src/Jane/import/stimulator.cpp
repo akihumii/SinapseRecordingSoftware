@@ -1,4 +1,4 @@
-#include "stimulator.h"
+#include "import/stimulator.h"
 
 Stimulator::Stimulator()
 {

@@ -1,19 +1,25 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef CMDDIALOG_H
+#define CMDDIALOG_H
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
-#include "amwflash_mainwindow.h"
-#include "command.h"
-#include "stimulator.h"
+#include "import/amwflash_mainwindow.h"
+#include "import/commandj.h"
+#include "import/stimulator.h"
+#include "socketneutrino.h"
+#include "serialchannel.h"
 
-class MainWindow : public QMainWindow
+
+class CommandJ;
+
+
+class CmdDialog : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow();
-    ~MainWindow();
+    CmdDialog(SocketNeutrino *socketNeutrino_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_);
+    ~CmdDialog();
     void createLayout();
     void createAction();
 
@@ -37,7 +43,10 @@ private slots:
     void on_subSeqMultipleStopComboBox_selected(int index);
 
 private:
-    command *thorCommand;
+    SocketNeutrino *thorSocket;
+    Channel *thorChannel;
+    SerialChannel *thorSerial;
+    CommandJ *thorCommand;
     Stimulator *thorParam;
     amwFlash_mainWindow *amwFlash_init;
 
@@ -81,4 +90,4 @@ private:
     QHBoxLayout *allLayout;
 };
 
-#endif // MAINWINDOW_H
+#endif // CMDDIALOG_H

@@ -1,11 +1,18 @@
-#include "mainwindow.h"
-#include "amwflash_mainwindow.h"
+#include "import/cmddialog.h"
+#include "import/amwflash_mainwindow.h"
 
-MainWindow::MainWindow()
+
+CmdDialog::CmdDialog(SocketNeutrino *socketNeutrino_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_)
 {
+//    QMainWindow(parent);
+
+    thorSocket = socketNeutrino_;
+    thorChannel = NeutrinoChannel_;
+    thorSerial = NeutrinoSerial_;
+
     amwFlash_init = new amwFlash_mainWindow;
     thorParam = new Stimulator;
-    thorCommand = new command(thorParam);
+    thorCommand = new CommandJ(thorParam);
 
     createLayout();
     createAction();
@@ -18,12 +25,12 @@ MainWindow::MainWindow()
     }
 }
 
-MainWindow::~MainWindow()
+CmdDialog::~CmdDialog()
 {
     thorCommand -> setLastCommand(true);
 }
 
-void MainWindow::createLayout()
+void CmdDialog::createLayout()
 {
     QLabel *modeLabel = new QLabel;
     modeLabel -> setText("Mode  : ");
@@ -189,7 +196,7 @@ void MainWindow::createLayout()
     centralWidget() -> setLayout(allLayout);
 }
 
-void MainWindow::createAction()
+void CmdDialog::createAction()
 {    
     connect(modeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_mode_changed(int)));
     connect(chipIDComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_chipID_changed(int)));
@@ -220,31 +227,31 @@ void MainWindow::createAction()
     }
 }
 
-void MainWindow::loadLastCommand(){
+void CmdDialog::loadLastCommand(){
 
 }
 
-void MainWindow::loadDefault(){
+void CmdDialog::loadDefault(){
 
 }
 
-void MainWindow::on_mode_changed(int mode)
+void CmdDialog::on_mode_changed(int mode)
 {
     thorCommand -> setOPMode(mode);
 }
 
-void MainWindow::on_chipID_changed(int IDNum)
+void CmdDialog::on_chipID_changed(int IDNum)
 {
     thorCommand -> setChipID(IDNum);
 }
 
-void MainWindow::on_BER_TextEditted(){
+void CmdDialog::on_BER_TextEditted(){
     for(int i = 0; i < 8; i++){
         thorCommand -> updateBER(i, BER_byte[i] -> text());
     }
 }
 
-void MainWindow::on_BioImp_toggled()
+void CmdDialog::on_BioImp_toggled()
 {
     for(int i = 0; i < 6; i++){
         if(BioImpData[i] -> isChecked())
@@ -255,7 +262,7 @@ void MainWindow::on_BioImp_toggled()
     }
 }
 
-void MainWindow::on_DCL_toggled()
+void CmdDialog::on_DCL_toggled()
 {
     if(DCLEnter_RadioButtun -> isChecked()){
         thorCommand -> setDCLMode(DCL_ENTER);
@@ -265,16 +272,17 @@ void MainWindow::on_DCL_toggled()
     }
 }
 
-void MainWindow::on_sendCommand_clicked(){
+void CmdDialog::on_sendCommand_clicked(){
     qDebug() << thorCommand -> constructCommand();
+    thorSerial->writeCommand(thorCommand->constructCommand());
 }
 
-void MainWindow::on_chipReset_clicked()
+void CmdDialog::on_chipReset_clicked()
 {
     qDebug() << thorCommand -> resetCommand();
 }
 
-void MainWindow::on_subSequenceChannel_selected()
+void CmdDialog::on_subSequenceChannel_selected()
 {
     for(int i = 0; i < 8; i++){
         if(subSeqCheckBox[i] -> isChecked()){
@@ -286,29 +294,29 @@ void MainWindow::on_subSequenceChannel_selected()
     }
 }
 
-void MainWindow::on_subSeqParamSpinBox_changed()
+void CmdDialog::on_subSeqParamSpinBox_changed()
 {
     for(int i = 0; i < 8; i++){
         thorParam -> setSubSeqParam(i, subSeqParamSpinBox[i] -> value());
     }
 }
 
-void MainWindow::on_subSeqTimeStartEdit_changed(int channel)
+void CmdDialog::on_subSeqTimeStartEdit_changed(int channel)
 {
     thorParam -> setSubSeqTimeStart(channel, subSeqTimeStartEdit[channel] -> text().toInt());
 }
 
-void MainWindow::on_subSeqMultipleStartComboBox_selected(int index)
+void CmdDialog::on_subSeqMultipleStartComboBox_selected(int index)
 {
     thorParam -> setSubSeqMultipleStart(index, subSeqMultipleStartComboBox[index] -> currentIndex());
 }
 
-void MainWindow::on_subSeqTimeStopEdit_changed(int channel)
+void CmdDialog::on_subSeqTimeStopEdit_changed(int channel)
 {
     thorParam -> setSubSeqTimeStop(channel, subSeqTimeStopEdit[channel] -> text().toInt());
 }
 
-void MainWindow::on_subSeqMultipleStopComboBox_selected(int index)
+void CmdDialog::on_subSeqMultipleStopComboBox_selected(int index)
 {
     thorParam -> setSubSeqMultipleStop(index, subSeqMultipleStopComboBox[index] -> currentIndex());
 }
