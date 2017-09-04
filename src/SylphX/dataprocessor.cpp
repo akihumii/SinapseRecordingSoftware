@@ -5,14 +5,35 @@ namespace SylphX {
 DataProcessor::DataProcessor(float samplingRate_){
     samplingRate = samplingRate_;
     period = 1/samplingRate_;
+
+    process = new QProcess(this);
+    process->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
+    {
+        args->flags |= CREATE_NEW_CONSOLE;
+        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
+        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
+        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
+                                           | FOREGROUND_INTENSITY;
+    });
+    QString file;
+    file = "python " + QDir::currentPath() + "/release/Data.py -arg1 arg1";
+    process->start(file);
+    qDebug() << file;
+    if(!process->waitForStarted())
+           qDebug() << "Failed to start";
+    QByteArray temp = process->readAllStandardOutput();
+    qDebug() << temp;
+    qDebug() << "Starting data streamer";
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //    qDebug() << rawData.size();
     for(int i = 0; i < rawData.size(); i = i + 22){
+        QByteArray temp;
         for(int j = 2; j < 10; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-            std::cout << fullWord_rawData;
+            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
+            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -21,7 +42,8 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-            std::cout << fullWord_rawData;
+            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
+            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
             appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
@@ -29,16 +51,19 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
         ChannelData[10].append((quint8) rawData.at(i));
+        temp.append(rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
         ChannelData[11].append((quint8) rawData.at(i+21));
+        temp.append(rawData.at(i+21));
         if(RecordEnabled){
             RecordData((quint8)rawData.at(i+21));
             RecordData(END_OF_LINE);
         }
+        qDebug() << process->write(temp);
     }
 //    playAudio(getAudioChannel());
 }

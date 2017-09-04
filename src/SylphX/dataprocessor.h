@@ -40,6 +40,7 @@ public:
 private:
     QFile *File;
     QTextStream *out;
+    QProcess *process;
 
     QString fileName;
     QString directory = QDir::homePath() + "/Desktop/";
