@@ -12,6 +12,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
     for(int i = 0; i < rawData.size(); i = i + 22){
         for(int j = 2; j < 10; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            std::cout << fullWord_rawData;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -20,6 +21,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            std::cout << fullWord_rawData;
             appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);

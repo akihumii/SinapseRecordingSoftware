@@ -53,5 +53,6 @@
 #include <unistd.h>
 #include <QThread>
 #include <QtMultimedia/QMediaPlayer>
+#include <iostream>
 
 #endif // QTINCLUDES_H
