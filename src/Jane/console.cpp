@@ -1,4 +1,4 @@
-#include "import/console.h"
+#include "console.h"
 
 console::console(QWidget *parent): QPlainTextEdit(parent), localEchoEnabled(false)
 {

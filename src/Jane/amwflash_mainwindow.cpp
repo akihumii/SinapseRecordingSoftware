@@ -1,6 +1,6 @@
-#include "import/amwflash_mainwindow.h"
-#include "import/settingdialog.h"
-#include "import/console.h"
+#include "amwflash_mainwindow.h"
+#include "settingdialog.h"
+#include "console.h"
 
 amwFlash_mainWindow::amwFlash_mainWindow(QWidget *parent) : QMainWindow(parent)
 {

@@ -6,19 +6,14 @@
 #include "command.h"
 #include "channel.h"
 
-#define PORT_CMD "COM1"
-#define PORT_CMD_TYPE "PORT_COMMAND"
-#define PORT_DATA "COM1"
-#define PORT_DATA_TYPE "PORT_DATA"
-
-
 
 class SerialChannel : public QObject{
-
     Q_OBJECT
-
 public:
-    SerialChannel(QObject *parent, DataProcessor *ThorData_, Channel *ThorChannel_);
+
+
+
+    SerialChannel(QObject *parent, Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_);
     bool serialenabled = true;
     void closePort();
     bool doConnect();

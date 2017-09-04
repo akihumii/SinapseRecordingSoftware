@@ -1,25 +1,24 @@
-#ifndef CMDDIALOG_H
-#define CMDDIALOG_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
-#include "import/amwflash_mainwindow.h"
-#include "import/commandj.h"
-#include "import/stimulator.h"
-#include "socketneutrino.h"
+#include "amwflash_mainwindow.h"
+#include "command.h"
+#include "stimulator.h"
+#include "dataprocessor.h"
+#include "socketthor.h"
 #include "serialchannel.h"
+#include "measurementdialog.h"
 
 
-class CommandJ;
-
-
-class CmdDialog : public QMainWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    CmdDialog(SocketNeutrino *socketNeutrino_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_);
-    ~CmdDialog();
+    explicit MainWindow();
+    ~MainWindow();
     void createLayout();
     void createAction();
 
@@ -43,12 +42,17 @@ private slots:
     void on_subSeqMultipleStopComboBox_selected(int index);
 
 private:
-    SocketNeutrino *thorSocket;
-    Channel *thorChannel;
     SerialChannel *thorSerial;
-    CommandJ *thorCommand;
+    SocketThor *socketThor;
+    Command *thorCommand;
     Stimulator *thorParam;
+    SerialChannel *serialThor;
+    Channel *thorChannel;
+    DataProcessor *data;
+    bool isWired = true;
+
     amwFlash_mainWindow *amwFlash_init;
+//    MeasurementDialog *graph_init;
 
     QComboBox *modeComboBox;
     QComboBox *chipIDComboBox;
@@ -64,12 +68,13 @@ private:
                               "ETIRST"
                             };
     
-    QRadioButton *DCLEnter_RadioButtun;
+    QRadioButton *DCLEnter_RadioButton;
     QRadioButton *DCLExit_RadioButton;
 
     QPushButton *sendCommandButton;
     QPushButton *chipResetButton;
     QPushButton *amwFlashButton;
+    QPushButton *graphButton;
     QVBoxLayout *mainLayout;
 
     QHBoxLayout *subSeqLine[8];
@@ -88,6 +93,9 @@ private:
     QVBoxLayout *subSequenceLayout;
 
     QHBoxLayout *allLayout;
+
+    void on_wired_triggered();
+
 };
 
-#endif // CMDDIALOG_H
+#endif // MAINWINDOW_H

@@ -1,9 +1,10 @@
 #include "serialchannel.h"
 
-SerialChannel::SerialChannel(QObject *parent, DataProcessor *ThorData_, Channel *ThorChannel_) : QObject(parent)
+SerialChannel::SerialChannel(QObject *parent, Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_) : QObject(parent)
 {
     serialData = new QSerialPort(this);
     serialCommand = new QSerialPort(this);
+    ThorCommand = ThorCommand_;
     ThorData = ThorData_;
     ThorChannel = ThorChannel_;
 
@@ -11,42 +12,37 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *ThorData_, Channel 
 }
 
 void SerialChannel::ReadData(){
-//    switch (ThorCommand->getOPMode()){
-//        case 2:{
-//            if(ThorData->isPlotEnabled()){
-//                ThorData->MultiplexChannelData(ThorData->ParseFrameMarkers8bits(serialData->read(2048)));
-//                break;
-//            }
-//        }
-//        case 5:{
-//            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
-//            serialData->readAll();
-//            break;
-//        }
-//        case 7:{
-//            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
-//            serialData->readAll();
-//            break;
-//        }
-//    default:
-//        break;
-//    }
-
-    if(ThorData->isPlotEnabled()){
-        ThorData->MultiplexChannelData(ThorData->ParseFrameMarkers8bits(serialData->read(2048)));
+    switch (ThorCommand->getOPMode()){
+        case 2:{
+            if(ThorData->isPlotEnabled()){
+                ThorData->MultiplexChannelData(ThorData->ParseFrameMarkers8bits(serialData->read(2048)));
+                break;
+            }
+        }
+        case 5:{
+            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
+            serialData->readAll();
+            break;
+        }
+        case 7:{
+            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
+            serialData->readAll();
+            break;
+        }
+    default:
+        break;
     }
 }
 
 void SerialChannel::closePort(){
-    serialCommand->close();
     serialData->close();
 }
 
 bool SerialChannel::doConnect(){
     ListAllPort();
-    InitializePort(PORT_CMD_TYPE,PORT_CMD);
-    InitializePort(PORT_DATA_TYPE,PORT_DATA);
-    return (ConnectPort("serialCommand")/* && ConnectPort("serialData")*/);
+    InitializePort("serialCommand","COM3");
+//    InitializePort("serialData","COM3");
+    return (ConnectPort("serialCommand") && ConnectPort("serialData"));
 }
 
 bool SerialChannel::isConnected(){
@@ -55,6 +51,19 @@ bool SerialChannel::isConnected(){
 
 bool SerialChannel::writeCommand(QByteArray Command){
     if(connected){
+        if(Command.size()>5){
+//            if(Command.at(6) == (char) WL_8){
+            if(true){
+                ThorData->setBitMode(true);
+                ThorData->setPlotEnabled(true);
+                ThorData->clearallChannelData();
+//                qDebug() << "8 Bit Mode";
+                ThorChannel->setNumChannels(getNumChannels(Command));
+            }
+            else {
+                ThorData->setPlotEnabled(false);
+            }
+        }
         serialCommand->write(Command);         //write the command itself
         return true;
     }
@@ -134,7 +143,7 @@ void SerialChannel::ListAllPort()
 void SerialChannel::InitializePort(QString portType, QString portName)
 {
     qDebug() << "Finding USB port for " << portType;
-    if (portType == PORT_CMD_TYPE||PORT_DATA_TYPE){
+    if (portType == "serialCommand"){
         for(int i = 0; i < portInfo.size(); i++){
             if(portInfo.at(i).portName() == portName){
                 qDebug() << "setting up USB port for " <<portType;
@@ -160,7 +169,7 @@ void SerialChannel::InitializePort(QString portType, QString portName)
 bool SerialChannel::ConnectPort(QString portType)
 {
     qDebug() << "Attempt to connect for" << portType;
-    if (portType == PORT_CMD_TYPE||PORT_DATA_TYPE){
+    if (portType == "serialCommand"){
         if (serialCommand->open(QIODevice::ReadWrite)) {
             connected = true;
             qDebug() << "Connected via USB!";
@@ -170,6 +179,9 @@ bool SerialChannel::ConnectPort(QString portType)
             qDebug() << "Failed to connect via USB!";
             return false;
         }
+    }
+    if (portType == "serialData"){
+        return true;
     }
     qDebug() << "No such portType as " << portType;
     return false;

@@ -14,7 +14,7 @@ typedef enum FrameMarkers{
     FM_0 = 0B00010000,
     FM_F = 0B00011111,
     FM_F0 = 0B11110000,
-    FM_5A = 0B01011010
+    FM_5A = 0B01011010,
 //Order of FrameMarker should be A5 0F for 10 bit (Since bytes are combined with MSB|LSB)
 //Order of FrameMarker should be 5AF0 for 8 bit
 } FrameMarkers;

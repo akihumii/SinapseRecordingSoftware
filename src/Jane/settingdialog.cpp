@@ -1,4 +1,4 @@
-#include "import/settingdialog.h"
+#include "settingdialog.h"
 
 settingsDialog::settingsDialog(QWidget *parent) : QDialog(parent)
 {

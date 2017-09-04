@@ -1,21 +1,19 @@
-#include "import/cmddialog.h"
-#include "import/amwflash_mainwindow.h"
+#include "mainwindow.h"
+#include "amwflash_mainwindow.h"
 
-
-CmdDialog::CmdDialog(SocketNeutrino *socketNeutrino_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_)
+MainWindow::MainWindow()
 {
-//    QMainWindow(parent);
-
-    thorSocket = socketNeutrino_;
-    thorChannel = NeutrinoChannel_;
-    thorSerial = NeutrinoSerial_;
-
     amwFlash_init = new amwFlash_mainWindow;
     thorParam = new Stimulator;
-    thorCommand = new CommandJ(thorParam);
-
+    data = new DataProcessor(thorChannel);
+    thorCommand = new Command(thorParam);
+    serialThor = new SerialChannel(this, thorCommand, data, thorChannel);
     createLayout();
     createAction();
+
+    on_wired_triggered();
+
+
     if(thorCommand -> haveLastCommand()){
         loadLastCommand();
     }
@@ -25,12 +23,12 @@ CmdDialog::CmdDialog(SocketNeutrino *socketNeutrino_, Channel *NeutrinoChannel_,
     }
 }
 
-CmdDialog::~CmdDialog()
+MainWindow::~MainWindow()
 {
     thorCommand -> setLastCommand(true);
 }
 
-void CmdDialog::createLayout()
+void MainWindow::createLayout()
 {
     QLabel *modeLabel = new QLabel;
     modeLabel -> setText("Mode  : ");
@@ -93,10 +91,10 @@ void CmdDialog::createLayout()
     QVBoxLayout *DCLLayout = new QVBoxLayout;
     QLabel *DCLLabel = new QLabel;
     DCLLabel -> setText("Digital Command Loopback");
-    DCLEnter_RadioButtun = new QRadioButton(tr("Enter"));
+    DCLEnter_RadioButton = new QRadioButton(tr("Enter"));
     DCLExit_RadioButton = new QRadioButton(tr("Exit"));
     DCLLayout -> addWidget(DCLLabel);
-    DCLLayout -> addWidget(DCLEnter_RadioButtun);
+    DCLLayout -> addWidget(DCLEnter_RadioButton);
     DCLLayout -> addWidget(DCLExit_RadioButton);
     DCLLayout -> setAlignment(Qt::AlignTop);
 
@@ -111,7 +109,10 @@ void CmdDialog::createLayout()
     buttonLayout -> addWidget(chipResetButton);
 
     amwFlashButton = new QPushButton(tr("amw flash"));
-    
+
+    graphButton = new QPushButton(tr("Readings"));
+
+
     mainLayout = new QVBoxLayout();
     mainLayout -> addLayout(modeLayout);
     mainLayout -> addLayout(chipIDLayout);
@@ -119,6 +120,7 @@ void CmdDialog::createLayout()
     mainLayout -> addLayout(BIOnDCL);
     mainLayout -> addLayout(buttonLayout);
     mainLayout -> addWidget(amwFlashButton);
+    mainLayout -> addWidget(graphButton);
 
     subSequenceLayout = new QVBoxLayout();
     timeStartMapper = new QSignalMapper(this);
@@ -196,7 +198,7 @@ void CmdDialog::createLayout()
     centralWidget() -> setLayout(allLayout);
 }
 
-void CmdDialog::createAction()
+void MainWindow::createAction()
 {    
     connect(modeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_mode_changed(int)));
     connect(chipIDComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_chipID_changed(int)));
@@ -206,11 +208,12 @@ void CmdDialog::createAction()
     for(int i = 0; i < 6; i++){
         connect(BioImpData[i], SIGNAL(toggled(bool)), this, SLOT(on_BioImp_toggled()));
     }
-    connect(DCLEnter_RadioButtun, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
+    connect(DCLEnter_RadioButton, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
     connect(DCLExit_RadioButton, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
     connect(sendCommandButton, SIGNAL(clicked()), this, SLOT(on_sendCommand_clicked()));
     connect(chipResetButton, SIGNAL(clicked()), this, SLOT(on_chipReset_clicked()));
     connect(amwFlashButton, SIGNAL(clicked()), amwFlash_init, SLOT(show()));
+//    connect(graphButton, SIGNAL(clicked()), graph_init, SLOT(show()));
 
     connect(timeStartMapper, SIGNAL(mapped(int)), this, SLOT(on_subSeqTimeStartEdit_changed(int)));
     connect(timeStopMapper, SIGNAL(mapped(int)), this, SLOT(on_subSeqTimeStopEdit_changed(int)));
@@ -227,31 +230,31 @@ void CmdDialog::createAction()
     }
 }
 
-void CmdDialog::loadLastCommand(){
+void MainWindow::loadLastCommand(){
 
 }
 
-void CmdDialog::loadDefault(){
+void MainWindow::loadDefault(){
 
 }
 
-void CmdDialog::on_mode_changed(int mode)
+void MainWindow::on_mode_changed(int mode)
 {
     thorCommand -> setOPMode(mode);
 }
 
-void CmdDialog::on_chipID_changed(int IDNum)
+void MainWindow::on_chipID_changed(int IDNum)
 {
     thorCommand -> setChipID(IDNum);
 }
 
-void CmdDialog::on_BER_TextEditted(){
+void MainWindow::on_BER_TextEditted(){
     for(int i = 0; i < 8; i++){
         thorCommand -> updateBER(i, BER_byte[i] -> text());
     }
 }
 
-void CmdDialog::on_BioImp_toggled()
+void MainWindow::on_BioImp_toggled()
 {
     for(int i = 0; i < 6; i++){
         if(BioImpData[i] -> isChecked())
@@ -262,9 +265,9 @@ void CmdDialog::on_BioImp_toggled()
     }
 }
 
-void CmdDialog::on_DCL_toggled()
+void MainWindow::on_DCL_toggled()
 {
-    if(DCLEnter_RadioButtun -> isChecked()){
+    if(DCLEnter_RadioButton -> isChecked()){
         thorCommand -> setDCLMode(DCL_ENTER);
     }
     else{
@@ -272,17 +275,26 @@ void CmdDialog::on_DCL_toggled()
     }
 }
 
-void CmdDialog::on_sendCommand_clicked(){
+void MainWindow::on_sendCommand_clicked(){
     qDebug() << thorCommand -> constructCommand();
-    thorSerial->writeCommand(thorCommand->constructCommand());
+    qDebug() << thorCommand -> cmd;
+
+    if(modeComboBox->currentIndex() == 7 || modeComboBox->currentIndex() == 8){
+        MeasurementDialog measurementDialog(serialThor);
+        measurementDialog.exec();
+        on_chipReset_clicked();
+    }
+//    if(thorSerial->isConnected()){
+//        thorSerial->writeCommand(thorCommand->cmd);
+//    }
 }
 
-void CmdDialog::on_chipReset_clicked()
+void MainWindow::on_chipReset_clicked()
 {
     qDebug() << thorCommand -> resetCommand();
 }
 
-void CmdDialog::on_subSequenceChannel_selected()
+void MainWindow::on_subSequenceChannel_selected()
 {
     for(int i = 0; i < 8; i++){
         if(subSeqCheckBox[i] -> isChecked()){
@@ -294,29 +306,38 @@ void CmdDialog::on_subSequenceChannel_selected()
     }
 }
 
-void CmdDialog::on_subSeqParamSpinBox_changed()
+void MainWindow::on_subSeqParamSpinBox_changed()
 {
     for(int i = 0; i < 8; i++){
         thorParam -> setSubSeqParam(i, subSeqParamSpinBox[i] -> value());
     }
 }
 
-void CmdDialog::on_subSeqTimeStartEdit_changed(int channel)
+void MainWindow::on_subSeqTimeStartEdit_changed(int channel)
 {
     thorParam -> setSubSeqTimeStart(channel, subSeqTimeStartEdit[channel] -> text().toInt());
 }
 
-void CmdDialog::on_subSeqMultipleStartComboBox_selected(int index)
+void MainWindow::on_subSeqMultipleStartComboBox_selected(int index)
 {
     thorParam -> setSubSeqMultipleStart(index, subSeqMultipleStartComboBox[index] -> currentIndex());
 }
 
-void CmdDialog::on_subSeqTimeStopEdit_changed(int channel)
+void MainWindow::on_subSeqTimeStopEdit_changed(int channel)
 {
     thorParam -> setSubSeqTimeStop(channel, subSeqTimeStopEdit[channel] -> text().toInt());
 }
 
-void CmdDialog::on_subSeqMultipleStopComboBox_selected(int index)
+void MainWindow::on_subSeqMultipleStopComboBox_selected(int index)
 {
     thorParam -> setSubSeqMultipleStop(index, subSeqMultipleStopComboBox[index] -> currentIndex());
+}
+
+
+void MainWindow::on_wired_triggered(){
+    serialThor->serialenabled = true;
+    if(serialThor->doConnect()){
+        qDebug() << "ready via USB";
+    }
+//    socketThor->wifiEnabled = false;
 }

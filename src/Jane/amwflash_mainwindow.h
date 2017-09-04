@@ -6,8 +6,8 @@
 #include <QtCore/QtGlobal>
 #include <QtSerialPort/QSerialPort>
 
-#include <import/console.h>
-#include <import/settingdialog.h>
+#include <console.h>
+#include <settingdialog.h>
 
 #include <QThread>
 #include <QLabel>

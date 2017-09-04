@@ -1,32 +1,28 @@
-#ifndef SOCKETNEUTRINO_H
-#define SOCKETNEUTRINO_H
+#ifndef SOCKETTHOR_H
+#define SOCKETTHOR_H
 
 #include "../common/qtincludes.h"
 #include "command.h"
 #include "dataprocessor.h"
 #include "../common/socketabstract.h"
 
-class Command;
-
-class SocketNeutrino : public SocketAbstract {
+class SocketThor : public SocketAbstract {
     Q_OBJECT
 public:
-    SocketNeutrino(Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_);
+    SocketThor(Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_);
     bool writeCommand(QByteArray Command);
     bool wifiEnabled = true;
     QByteArray getlastCommand();
 
 private:
-    //QTcpSocket *socketNeutrino;
-    Channel *NeutrinoChannel;
-    Command *NeutrinoCommand;
-    DataProcessor *NeutrinoData;
+    //QTcpSocket *socketThor;
+    Channel *ThorChannel;
+    Command *ThorCommand;
+    DataProcessor *ThorData;
 
     qint64 maxSize = 20480;
     int numChannels;
     QByteArray lastSentCommand;
-
-    bool Mode_8Bit = false;
 
     int getNumChannels(QByteArray lastCommand);
 
@@ -34,4 +30,4 @@ private slots:
     void ReadCommand();
 };
 
-#endif // SocketNeutrino_H
+#endif // SocketThor_H

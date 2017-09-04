@@ -1,6 +1,7 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
+#include <QObject>
 #include "../common/qtincludes.h"
 
 typedef enum ChannelState{
@@ -19,7 +20,7 @@ public:
     void setNumChannels(int NumChannels);
 
 private:
-    bool SELCHNarray[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    bool SELCHNarray[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int numChannels;
 };
 
