@@ -7,16 +7,16 @@ DataProcessor::DataProcessor(float samplingRate_){
     period = 1/samplingRate_;
 
     process = new QProcess(this);
-    process->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
-    {
-        args->flags |= CREATE_NEW_CONSOLE;
-        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
-        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
-        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
-                                           | FOREGROUND_INTENSITY;
-    });
+//    process->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
+//    {
+//        args->flags |= CREATE_NEW_CONSOLE;
+//        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
+//        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
+//        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
+//                                           | FOREGROUND_INTENSITY;
+//    });
     QString file;
-    file = "python " + QDir::currentPath() + "/release/Data.py -arg1 arg1";
+    file = "python " + QDir::currentPath() + "/Data.py -arg1 arg1";
     process->start(file);
     qDebug() << file;
     if(!process->waitForStarted())
