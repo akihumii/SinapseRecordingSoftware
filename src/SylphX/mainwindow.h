@@ -61,6 +61,7 @@ private:
     QAction *resetDefaultY;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
+    QAction *pythonLaunchAction;
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
     QAction *timeFrame50ms;
@@ -95,6 +96,7 @@ private:
 
     QCustomPlot *channelGraph[12];
     SocketSylph *socketSylph;
+    QProcess *pythonProcess;
 
     void createStatusBar();
     void createActions();
@@ -128,6 +130,7 @@ private slots:
     void on_voltage5000u_triggered();
     void on_voltage10000u_triggered();
     void on_dataAnalyzer_triggered();
+    void on_pythonLaunch_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();

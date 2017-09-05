@@ -15,7 +15,7 @@ class DataProcessor : public SignalAudio, public Data
 {
     Q_OBJECT
 public:
-    DataProcessor(float samplingRate_);
+    DataProcessor(float samplingRate_, QProcess *process_);
     Data *data;
     SignalAudio *signalAudio;
 

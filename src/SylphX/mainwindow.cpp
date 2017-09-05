@@ -6,10 +6,11 @@ MainWindow::MainWindow(){
     x = new Odin::OdinWindow();
     x->setFixedSize(x->sizeHint());
     x->show();
+    pythonProcess = new QProcess(this);
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
-    data = new DataProcessor(samplingRate);
+    data = new DataProcessor(samplingRate, pythonProcess);
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
@@ -142,6 +143,10 @@ void MainWindow::createActions(){
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
 
+    pythonLaunchAction = new QAction(tr("&Python Launcher"), this);
+    pythonLaunchAction->setShortcut(tr("Ctrl+P"));
+    connect(pythonLaunchAction, SIGNAL(triggered()), this, SLOT(on_pythonLaunch_triggered()));
+
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+X"));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
@@ -213,6 +218,8 @@ void MainWindow::createMenus(){
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(pythonLaunchAction);
     fileMenu->addSeparator();
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
@@ -534,6 +541,28 @@ void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
     QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzer.exe";
     process->start(file);
+}
+
+void MainWindow::on_pythonLaunch_triggered(){
+    pythonProcess->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
+    {
+        args->flags |= CREATE_NEW_CONSOLE;
+        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
+        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
+        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
+                                           | FOREGROUND_INTENSITY;
+    });
+    QString file;
+    file = "python " + QFileDialog::getOpenFileName(this,
+        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
+//    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
+    pythonProcess->start(file);
+    qDebug() << file;
+    QByteArray temp = pythonProcess->readAll();
+    qDebug() << temp;
+    if(!pythonProcess->waitForStarted())
+           qDebug() << "Failed to start";
+    qDebug() << "Starting data streamer";
 }
 
 void MainWindow::on_restart_triggered(){

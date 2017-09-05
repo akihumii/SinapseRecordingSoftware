@@ -2,28 +2,10 @@
 
 namespace SylphX {
 
-DataProcessor::DataProcessor(float samplingRate_){
+DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
     samplingRate = samplingRate_;
     period = 1/samplingRate_;
-
-    process = new QProcess(this);
-    process->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
-    {
-        args->flags |= CREATE_NEW_CONSOLE;
-        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
-        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
-        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
-                                           | FOREGROUND_INTENSITY;
-    });
-    QString file;
-    file = "python " + QDir::currentPath() + "/release/Data.py -arg1 arg1";
-    process->start(file);
-    qDebug() << file;
-    if(!process->waitForStarted())
-           qDebug() << "Failed to start";
-    QByteArray temp = process->readAllStandardOutput();
-    qDebug() << temp;
-    qDebug() << "Starting data streamer";
+    process = process_;
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
@@ -34,6 +16,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
             temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
             temp.append((quint8) rawData.at(i+1+((2*j)+1)));
+            std::cout << fullWord_rawData;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -44,6 +27,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
             temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
             temp.append((quint8) rawData.at(i+1+((2*j)+1)));
+            std::cout << fullWord_rawData;
             appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
@@ -63,6 +47,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData((quint8)rawData.at(i+21));
             RecordData(END_OF_LINE);
         }
+//        std::cout << temp;
         qDebug() << process->write(temp);
     }
 //    playAudio(getAudioChannel());
