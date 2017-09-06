@@ -40,6 +40,8 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         X_axis.append(total_data_count*period);
     }
 //    playAudio(getAudioChannel());
+
+    if(ChannelData[0].size() >  && ChannelData[1].size() > )
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){

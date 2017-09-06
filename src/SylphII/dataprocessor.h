@@ -33,6 +33,9 @@ private:
 
     float samplingRate;
     float period;
+
+    float classifierK[2] = {0.214856, 299.9201};
+    float classifierL[2] = {0.850121, 120.5125};
 };
 
 #endif // DATAPROCESSOR_KA_H
