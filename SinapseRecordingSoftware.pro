@@ -14,11 +14,11 @@ TEMPLATE = subdirs
 SUBDIRS +=   \
     src/common \
     src/Neutrino \
-#    src/SylphII \
-#    src/SylphX \
-#    src/Odin \
+    src/SylphII \
+    src/SylphX \
+    src/Odin \
     src/Jane \
-#    src/AMWFlash
+    src/AMWFlash
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
