@@ -28,6 +28,7 @@ private slots:
     void on_mode_changed(int mode);
     void on_chipID_changed(int IDNum);
     void on_BER_TextEditted();
+    void on_OP_Trigger_TextEditted();
     void on_BioImp_toggled();
     void on_DCL_toggled();
     void on_sendCommand_clicked();
@@ -50,6 +51,7 @@ private:
     Channel *thorChannel;
     DataProcessor *data;
     bool isWired = true;
+    bool isConnected = false;
 
     amwFlash_mainWindow *amwFlash_init;
 //    MeasurementDialog *graph_init;
@@ -58,6 +60,8 @@ private:
     QComboBox *chipIDComboBox;
 
     QLineEdit *BER_byte[8];
+    QLineEdit *OP_bit[8];
+
 
     QCheckBox *BioImpData[8];
     QString BioImpName[8] = { "BIOCHSEL<1>",
@@ -77,8 +81,10 @@ private:
     QPushButton *graphButton;
     QVBoxLayout *mainLayout;
 
-    QHBoxLayout *subSeqLine[8];
+    QHBoxLayout *subSeqLine[9];
     QCheckBox *subSeqCheckBox[8];
+    QCheckBox *triggerCheckBox[8];
+
     QSpinBox *subSeqParamSpinBox[8];
     
     QSignalMapper *timeStartMapper;
@@ -94,7 +100,11 @@ private:
 
     QHBoxLayout *allLayout;
 
+    QList<QSerialPortInfo> portInfo;
+    QString connectionStatus;
+
     void on_wired_triggered();
+    void connectThor();
 
 };
 

@@ -5,6 +5,7 @@
 #include "command.h"
 #include "dataprocessor.h"
 #include "../common/socketabstract.h"
+#include "channel.h"
 
 class SocketThor : public SocketAbstract {
     Q_OBJECT

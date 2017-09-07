@@ -15,6 +15,8 @@ typedef enum FrameMarkers{
     FM_F = 0B00011111,
     FM_F0 = 0B11110000,
     FM_5A = 0B01011010,
+    FM_A5 = 0B10100101,
+    FM_0F = 0B00001111
 //Order of FrameMarker should be A5 0F for 10 bit (Since bytes are combined with MSB|LSB)
 //Order of FrameMarker should be 5AF0 for 8 bit
 } FrameMarkers;
@@ -31,6 +33,7 @@ public:
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
     double signalReconstruction(QByteArray input);
+    int first_AnalogMeasurementFrameMarker(QByteArray);
 
 private:
     QTextStream *out;
@@ -52,6 +55,11 @@ private:
 
     int first_8bitFrameMarker(QByteArray data);
     int last_8bitFrameMarker(QByteArray data);
+
+    int first_10xA5FrameMarker(QByteArray data);
+    int last_5AFrameMarker(QByteArray data);
+
+
 
     int prevleftOverByteCount = 0;
 

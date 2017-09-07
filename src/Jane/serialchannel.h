@@ -35,6 +35,7 @@ private:
     DataProcessor *ThorData;
 
     bool connected = false;
+    bool isData = false;
     int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
 

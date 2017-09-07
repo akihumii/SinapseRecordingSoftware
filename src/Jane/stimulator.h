@@ -30,12 +30,14 @@ public:
     QByteArray getSubSequenceStop(int channelNumber);
 
     QByteArray getParameter();
-    QByteArray getTrigger();
+    QByteArray getTriggerCmd();
 
     void setSubSeqSelect(int index, bool state);
     void *getSubSeqSelectArray();
     void setSubSeqParam(int channel, int param);
     void *getSubSeqParamArray();
+
+    void setTriggerCmd(int index, bool state);
 
     void setSubSeqTimeStart(int index, int value);
     void setSubSeqMultipleStart(int index, int multiple);
@@ -54,6 +56,8 @@ private:
     quint8 subSeqStop[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
 
     int stimParam[16][5];
+    boolean triggerCmd[8] = {0,0,0,0,0,0,0,0};  //DEFXYabc
+
 };
 
 #endif // STIMULATOR_H

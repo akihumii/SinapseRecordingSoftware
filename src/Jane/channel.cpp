@@ -6,7 +6,7 @@ Channel::Channel(){
 
 QByteArray Channel::getChannelState(){
     QByteArray channelState;
-    for(int i=0;i<10;i++){
+    for(int i=0;i<8;i++){
         if(SELCHNarray[i]){
             channelState.append((const char) CHANNELSTATE_ON);
         }

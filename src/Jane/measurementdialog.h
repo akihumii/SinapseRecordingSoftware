@@ -17,7 +17,7 @@ public slots:
     void updataData(double data);
 
 private:
-    SerialChannel *NeutrinoSerial;
+    SerialChannel *thorSerial;
 
     QLabel *labels[4];
     QString labelNames[4] = {   "Minimum:",

@@ -13,20 +13,23 @@ SerialChannel::SerialChannel(QObject *parent, Command *ThorCommand_, DataProcess
 
 void SerialChannel::ReadData(){
     switch (ThorCommand->getOPMode()){
-        case 2:{
-            if(ThorData->isPlotEnabled()){
-                ThorData->MultiplexChannelData(ThorData->ParseFrameMarkers8bits(serialData->read(2048)));
-                break;
+        case 7:{
+
+            if(isData){
+                emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
+                serialData->readAll();
             }
-        }
-        case 5:{
-            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
-            serialData->readAll();
+            if((!isData) && (ThorData->first_AnalogMeasurementFrameMarker(serialData->readAll())!=0)){
+                isData=true;
+            }
             break;
         }
-        case 7:{
-            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
-            serialData->readAll();
+        case 8:{
+//            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
+//            serialData->readAll();
+             qDebug() << serialData->readAll();
+
+
             break;
         }
     default:
@@ -50,25 +53,8 @@ bool SerialChannel::isConnected(){
 }
 
 bool SerialChannel::writeCommand(QByteArray Command){
-    if(connected){
-        if(Command.size()>5){
-//            if(Command.at(6) == (char) WL_8){
-            if(true){
-                ThorData->setBitMode(true);
-                ThorData->setPlotEnabled(true);
-                ThorData->clearallChannelData();
-//                qDebug() << "8 Bit Mode";
-                ThorChannel->setNumChannels(getNumChannels(Command));
-            }
-            else {
-                ThorData->setPlotEnabled(false);
-            }
-        }
         serialCommand->write(Command);         //write the command itself
         return true;
-    }
-    else
-        return false;
 }
 
 int SerialChannel::getNumChannels(QByteArray lastCommand){
@@ -177,6 +163,7 @@ bool SerialChannel::ConnectPort(QString portType)
         }
         else{
             qDebug() << "Failed to connect via USB!";
+            connected = false;
             return false;
         }
     }

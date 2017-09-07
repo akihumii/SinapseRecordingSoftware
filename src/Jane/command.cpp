@@ -8,10 +8,41 @@ Command::Command(Stimulator *thorParam_)
 
 QByteArray Command::constructCommand()
 {
-    QByteArray outgoingCommand;
-    outgoingCommand = addSyncPulse(outgoingCommand);             //add 5 x 5A
+    outgoingCommand.clear();
+    addSyncPulse();             //add 5 x 5A
+    addChipID();
+    addData();
+    addEndPulse();
+    cmd = outgoingCommand;
+    return outgoingCommand;
+}
 
+QByteArray Command::resetCommand()
+{
+    outgoingCommand.clear();
+    addSyncPulse();             //add 5 x 5A
+    addChipID();
+    outgoingCommand.append((const char) RESETMODE);
+    addEndPulse();
+
+    cmd = outgoingCommand;
+    return outgoingCommand;
+}
+
+// Append 5 X 5A in Hexadecimal
+void Command::addSyncPulse(){
+    for(int i = 0; i< 5; i++){
+        outgoingCommand.append((const char) FR_A5);
+    }
+}
+
+void Command::addChipID()
+{
     outgoingCommand.append((const char) chipID);    // Append chip ID
+}
+
+void Command::addData()
+{
     switch(OPModeSelect){
         case 0:{                                    // Digital Command Loopback
             outgoingCommand.append((const char)DIGCOMLOOPBACK);
@@ -44,6 +75,7 @@ QByteArray Command::constructCommand()
         }
         case 5:{                                    // Stimulator Trigger mode
             outgoingCommand.append((const char)STIM_TRIGGER);
+            outgoingCommand.append(thorParam->getTriggerCmd());
         }
         case 6:{                                    // Oscilator clock tuning
             outgoingCommand.append((const char)OSC_CLK_MODE);
@@ -57,34 +89,11 @@ QByteArray Command::constructCommand()
         default:
         break;
     }
-    outgoingCommand.append((const char) MARKER_5A); // Append A5 as a last framemarker
-
-    cmd = outgoingCommand;
-    return outgoingCommand;
 }
 
-QByteArray Command::resetCommand()
+void Command::addEndPulse()
 {
-    QByteArray outgoingCommand;
-    outgoingCommand = addSyncPulse(outgoingCommand);             //add 5 x 5A
-
-    //outgoingCommand.append((const char) FR_A5);
-
-    outgoingCommand.append((const char) chipID);
-    outgoingCommand.append((const char) RESETMODE);
-    outgoingCommand.append((const char) MARKER_5A);
-
-    cmd = outgoingCommand;
-
-    return outgoingCommand;
-}
-
-// Append 5 X 5A in Hexadecimal
-QByteArray Command::addSyncPulse(QByteArray outgoingCommand){
-    for(int i = 0; i< 5; i++){
-        outgoingCommand.append((const char) FR_A5);
-    }
-    return outgoingCommand;
+    outgoingCommand.append((const char) FR_5A); // Append A5 as a last framemarker
 }
 
 void Command::setOPMode(int mode) { OPModeSelect = (quint8)mode;}
@@ -105,6 +114,13 @@ void Command::setDCLMode(quint8 newDCL_Mode) { DCL_Mode = newDCL_Mode; }
 quint8 Command::getDCLMode() { return DCL_Mode; }
 
 void Command::setLastCommand(bool flags) { lastCommandExits = flags; }
+
+
 bool Command::haveLastCommand() { return lastCommandExits; }
 
 void Command::updateBER(int index, QString newBER) { BERbytesHex[index] = newBER.toInt(&ok, 16); }
+
+void Command::updateTriggerCmd(int index, QString state)
+{
+    thorParam->setTriggerCmd(index,(boolean) state.toInt());
+}

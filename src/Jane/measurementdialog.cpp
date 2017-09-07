@@ -1,9 +1,9 @@
 #include "measurementdialog.h"
 
-MeasurementDialog::MeasurementDialog(SerialChannel *NeutrinoSerial_)
+MeasurementDialog::MeasurementDialog(SerialChannel *thorSerial_)
 {
-    NeutrinoSerial = NeutrinoSerial_;
-    connect(NeutrinoSerial, SIGNAL(singleByteReady(double)), this, SLOT(updataData(double)));
+    thorSerial = thorSerial_;
+    connect(thorSerial, SIGNAL(singleByteReady(double)), this, SLOT(updataData(double)));
     createLayout();
 }
 

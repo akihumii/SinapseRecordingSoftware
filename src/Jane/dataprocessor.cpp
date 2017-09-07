@@ -74,6 +74,8 @@ int DataProcessor::last_10bitFrameMarker(QByteArray data){
     return 0;
 }
 
+
+
 QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
 //    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
@@ -121,12 +123,53 @@ int DataProcessor::last_8bitFrameMarker(QByteArray data){
     return 0;
 }
 
+
+
 int DataProcessor::first_8bitFrameMarker(QByteArray data){
     for(int i=0; i<data.size()-1;i++){
         if((uint8_t) data.at(i) == FM_5A
             && (uint8_t)data.at(i+1) == FM_F0){
             return i;
         }
+    }
+    return 0;
+}
+
+int DataProcessor::first_10xA5FrameMarker(QByteArray data)
+{
+    for(int i=0; i<data.size()-1;i++){
+
+        if(((uint8_t) data.at(i) == FM_A5) &&(i+9 <data.size())){
+            boolean isFrame = true;
+            for (int j=0;j<9;j++){
+                if ((uint8_t)data.at(i+j) != FM_A5){
+                    isFrame = false;
+                }
+            }
+            if (isFrame) return i+10;
+        }
+    }
+
+    return 0;
+}
+
+
+int DataProcessor::last_5AFrameMarker(QByteArray data)
+{
+    for(int i= data.size()-1; i>0; i--){
+        if((uint8_t) data.at(i) == FM_5A){
+            return i-1;
+        }
+    }
+    return 0;
+}
+
+int DataProcessor::first_AnalogMeasurementFrameMarker(QByteArray data)
+{
+    int i = first_10xA5FrameMarker(data);
+    if((i) && (i+10 < data.size()) ){
+        if ((uint8_t)data.at(i+10) == FM_0F)
+                return i;
     }
     return 0;
 }

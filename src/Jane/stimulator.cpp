@@ -7,7 +7,7 @@ Stimulator::Stimulator()
 
 quint8 Stimulator::getMultiplier(quint8 arr[][2], int channel)
 {
-    quint8 multiplierBits;
+    quint8 multiplierBits=0;
     int number = arr[channel][2];
     switch (number){
         case 0:{
@@ -94,9 +94,15 @@ QByteArray Stimulator::getParameter()
     return parameter;
 }
 
-QByteArray Stimulator::getTrigger()
+QByteArray Stimulator::getTriggerCmd()
 {
     QByteArray trigger;
+    quint8 cmd = 0B00000000;
+    for (int i = 0; i<8; i++){
+        cmd += triggerCmd[i]*pow(2,7-i);
+    }
+    trigger.append(cmd);
+//    qDebug()<< cmd;
     return trigger;
 }
 
@@ -105,6 +111,9 @@ void *Stimulator::getSubSeqSelectArray() { return subSeqSelect; }
 
 void Stimulator::setSubSeqParam(int channel, int param) { subSeqParam[channel] = param; }
 void *Stimulator::getSubSeqParamArray() { return subSeqParam; }
+
+void Stimulator::setTriggerCmd(int index, bool state){ triggerCmd[index] = state; }
+
 
 void Stimulator::setSubSeqTimeStart(int index, int value) { subSeqStart[index][1] = value; }
 void Stimulator::setSubSeqMultipleStart(int index, int multiple) { subSeqStart[index][2] = multiple; }

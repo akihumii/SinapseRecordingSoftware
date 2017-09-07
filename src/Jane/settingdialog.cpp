@@ -127,26 +127,31 @@ void settingsDialog::createSerialportSetting(){
 
 void settingsDialog::updateSettings(int selectedPort){
     QList<QSerialPortInfo> portInfo = QSerialPortInfo::availablePorts();
-    for(int i = 0; i < 4; i++){
-        if(i == selectedPort)
-            currentSettings.name = portInfo.at(i).portName();
+    if(portInfo.size()>0){
 
-            currentSettings.baudRate = static_cast<QSerialPort::BaudRate>(baudRateComboBox -> itemData(baudRateComboBox -> currentIndex()).toInt());
-            currentSettings.stringBaudRate = QString::number(currentSettings.baudRate);
 
-            currentSettings.dataBits = static_cast<QSerialPort::DataBits>(dataBitsComboBox -> itemData(dataBitsComboBox -> currentIndex()).toInt());
-            currentSettings.stringDataBits = QString::number(currentSettings.dataBits);
+        for(int i = 0; i < 4; i++){
+            if(i == selectedPort){
+                currentSettings.name = portInfo.at(i).portName();
 
-            currentSettings.parity = static_cast<QSerialPort::Parity>(parityComboBox -> itemData(parityComboBox -> currentIndex()).toInt());
-            currentSettings.stringParity = QString::number(currentSettings.parity);
+                currentSettings.baudRate = static_cast<QSerialPort::BaudRate>(baudRateComboBox -> itemData(baudRateComboBox -> currentIndex()).toInt());
+                currentSettings.stringBaudRate = QString::number(currentSettings.baudRate);
 
-            currentSettings.stopBits = static_cast<QSerialPort::StopBits>(stopBitsComboBox -> itemData(stopBitsComboBox -> currentIndex()).toInt());
-            currentSettings.stringStopBits = QString::number(currentSettings.stopBits);
+                currentSettings.dataBits = static_cast<QSerialPort::DataBits>(dataBitsComboBox -> itemData(dataBitsComboBox -> currentIndex()).toInt());
+                currentSettings.stringDataBits = QString::number(currentSettings.dataBits);
 
-            currentSettings.flowControl = static_cast<QSerialPort::FlowControl>(flowControlComboBox -> itemData(flowControlComboBox -> currentIndex()).toInt());
-            currentSettings.stringFlowControl = QString::number(currentSettings.flowControl);
+                currentSettings.parity = static_cast<QSerialPort::Parity>(parityComboBox -> itemData(parityComboBox -> currentIndex()).toInt());
+                currentSettings.stringParity = QString::number(currentSettings.parity);
 
-            currentSettings.localEchoEnabled = true;
+                currentSettings.stopBits = static_cast<QSerialPort::StopBits>(stopBitsComboBox -> itemData(stopBitsComboBox -> currentIndex()).toInt());
+                currentSettings.stringStopBits = QString::number(currentSettings.stopBits);
+
+                currentSettings.flowControl = static_cast<QSerialPort::FlowControl>(flowControlComboBox -> itemData(flowControlComboBox -> currentIndex()).toInt());
+                currentSettings.stringFlowControl = QString::number(currentSettings.flowControl);
+
+                currentSettings.localEchoEnabled = true;
+            }
+        }
     }
 }
 

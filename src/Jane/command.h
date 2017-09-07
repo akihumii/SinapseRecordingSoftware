@@ -55,11 +55,12 @@ public:
     void clearJTAGBit(int index);
     void setDCLMode(quint8 newDCL_Mode);
     void updateBER(int index, QString newBER);
+    void updateTriggerCmd(int index, QString state);
     bool haveLastCommand();
     void setLastCommand(bool flags);
 
 private:
-
+    QByteArray outgoingCommand;
     Stimulator *thorParam;
     quint8 chipID = 0;
     quint8 OPModeSelect = 2;
@@ -69,7 +70,10 @@ private:
     bool ok;
     int BERbytesHex[8];
     bool lastCommandExits = false;
-    QByteArray addSyncPulse(QByteArray outgoingCommand);
+    void addSyncPulse();
+    void addChipID();
+    void addData();
+    void addEndPulse();
 };
 
 #endif // COMMAND_H

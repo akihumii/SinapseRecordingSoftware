@@ -20,7 +20,7 @@ public:
     void setNumChannels(int NumChannels);
 
 private:
-    bool SELCHNarray[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    bool SELCHNarray[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     int numChannels;
 };
 

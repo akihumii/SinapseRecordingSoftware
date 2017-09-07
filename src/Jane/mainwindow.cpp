@@ -8,9 +8,10 @@ MainWindow::MainWindow()
     data = new DataProcessor(thorChannel);
     thorCommand = new Command(thorParam);
     serialThor = new SerialChannel(this, thorCommand, data, thorChannel);
+    socketThor = new SocketThor(thorCommand, data, thorChannel);
     createLayout();
     createAction();
-
+//    connectThor();
     on_wired_triggered();
 
 
@@ -78,6 +79,22 @@ void MainWindow::createLayout()
     dataBERLayout -> addWidget(dataBERLabel);
     dataBERLayout -> addLayout(BERLayout);
 
+    QLabel *triggerBitLabel = new QLabel;
+    triggerBitLabel -> setText("DEFXYabc bit:");
+    QHBoxLayout *triggerBitLayout = new QHBoxLayout;
+    for(int i = 0; i < 8; i++){
+        OP_bit[i] = new QLineEdit;
+        OP_bit[i] -> setInputMask("B");
+        OP_bit[i] -> setMaximumWidth(35);
+        OP_bit[i] -> setAlignment(Qt::AlignCenter);
+        triggerBitLayout -> addWidget(OP_bit[i]);
+    }
+
+    QVBoxLayout *dataTriggerBitLayout = new QVBoxLayout;
+    dataTriggerBitLayout -> addWidget(triggerBitLabel);
+    dataTriggerBitLayout -> addLayout(triggerBitLayout);
+
+
     QVBoxLayout *BioImpLayout = new QVBoxLayout;
     QLabel *BioImpLabel = new QLabel;
     BioImpLabel -> setText("Bio Impedance");
@@ -110,17 +127,18 @@ void MainWindow::createLayout()
 
     amwFlashButton = new QPushButton(tr("amw flash"));
 
-    graphButton = new QPushButton(tr("Readings"));
+//    graphButton = new QPushButton(tr("Readings"));
 
 
     mainLayout = new QVBoxLayout();
     mainLayout -> addLayout(modeLayout);
     mainLayout -> addLayout(chipIDLayout);
     mainLayout -> addLayout(dataBERLayout);
+    mainLayout -> addLayout(dataTriggerBitLayout);
     mainLayout -> addLayout(BIOnDCL);
     mainLayout -> addLayout(buttonLayout);
     mainLayout -> addWidget(amwFlashButton);
-    mainLayout -> addWidget(graphButton);
+//    mainLayout -> addWidget(graphButton);
 
     subSequenceLayout = new QVBoxLayout();
     timeStartMapper = new QSignalMapper(this);
@@ -188,7 +206,9 @@ void MainWindow::createLayout()
 
         subSequenceLayout -> addLayout(subSeqLine[i]);
     }
+
     subSequenceLayout -> setAlignment(Qt::AlignTop);
+
 
     allLayout = new QHBoxLayout();
     allLayout -> addLayout(mainLayout);
@@ -205,6 +225,11 @@ void MainWindow::createAction()
     for(int i = 0; i < 8; i++){
         connect(BER_byte[i], SIGNAL(textEdited(QString)), this, SLOT(on_BER_TextEditted()));
     }
+
+    for(int i = 0; i < 8; i++){
+        connect(OP_bit[i], SIGNAL(textEdited(QString)), this, SLOT(on_OP_Trigger_TextEditted()));
+    }
+
     for(int i = 0; i < 6; i++){
         connect(BioImpData[i], SIGNAL(toggled(bool)), this, SLOT(on_BioImp_toggled()));
     }
@@ -228,6 +253,8 @@ void MainWindow::createAction()
         connect(subSeqTimeStopEdit[i], SIGNAL(textChanged(QString)), timeStopMapper, SLOT(map()));
         connect(subSeqMultipleStopComboBox[i], SIGNAL(currentIndexChanged(int)), multipleStopMapper, SLOT(map()));
     }
+
+
 }
 
 void MainWindow::loadLastCommand(){
@@ -254,6 +281,13 @@ void MainWindow::on_BER_TextEditted(){
     }
 }
 
+void MainWindow::on_OP_Trigger_TextEditted()
+{
+    for(int i = 0; i < 8; i++){
+        thorCommand -> updateTriggerCmd(i, OP_bit[i] -> text());
+    }
+}
+
 void MainWindow::on_BioImp_toggled()
 {
     for(int i = 0; i < 6; i++){
@@ -277,21 +311,24 @@ void MainWindow::on_DCL_toggled()
 
 void MainWindow::on_sendCommand_clicked(){
     qDebug() << thorCommand -> constructCommand();
-    qDebug() << thorCommand -> cmd;
+//    qDebug() << thorCommand -> cmd;
 
-    if(modeComboBox->currentIndex() == 7 || modeComboBox->currentIndex() == 8){
+    if(modeComboBox->currentIndex() == 7){
         MeasurementDialog measurementDialog(serialThor);
         measurementDialog.exec();
-        on_chipReset_clicked();
+//        on_chipReset_clicked();
     }
-//    if(thorSerial->isConnected()){
-//        thorSerial->writeCommand(thorCommand->cmd);
-//    }
+    if(thorSerial->isConnected()){
+        thorSerial->writeCommand(thorCommand->cmd);
+    }
 }
 
 void MainWindow::on_chipReset_clicked()
 {
     qDebug() << thorCommand -> resetCommand();
+    if(thorSerial->isConnected()){
+        thorSerial->writeCommand(thorCommand->cmd);
+    }
 }
 
 void MainWindow::on_subSequenceChannel_selected()
@@ -339,5 +376,37 @@ void MainWindow::on_wired_triggered(){
     if(serialThor->doConnect()){
         qDebug() << "ready via USB";
     }
-//    socketThor->wifiEnabled = false;
+    //    socketThor->wifiEnabled = false;
+}
+
+void MainWindow::connectThor()
+{
+    portInfo = QSerialPortInfo::availablePorts();
+    connectionStatus.clear();
+    if(portInfo.size()>0){
+        serialThor->doConnect();
+        connectionStatus.clear();
+        if(serialThor->isConnected()){
+            connectionStatus.append("Connected to Neutrino!!");
+        }
+        else{
+            connectionStatus.append("Connection to Neutrino failed");
+        }
+        qDebug()<<connectionStatus;
+//        statusBarLabel->setText(connectionStatus);
+    }
+    if(!serialThor->isConnected()){
+        qDebug()<<"start wifi";
+        socketThor->doConnect("192.168.4.1", 8888);
+        connectionStatus.clear();
+        if(socketThor->isConnected()){
+            connectionStatus.append("Connected to Neutrino WiFi Module at 192.168.42.1/8888");
+        }
+        else{
+            connectionStatus.append("Connection to Neutrino failed! Restart this program after connecting Neutrino.");
+            QMessageBox::information(this, "Failed to connect!", "No Neutrino device detected.. \n"
+                                                                 "Check your connections and run the program again..");
+        }
+//        statusBarLabel->setText(connectionStatus);
+    }
 }
