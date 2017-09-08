@@ -22,7 +22,9 @@ public:
     void setADCRecordEnabled(bool enableFlag);
     bool isADCRecordEnabled();
     void setClassifierK(float newValue);
+    float getClassifierK();
     void setClassifierL(float newValue);
+    float getClassifierL();
     void setClassifierWindowLength(float length);
     float getClassifierWindowLength();
     void setClassifierThreshold(float threshold);

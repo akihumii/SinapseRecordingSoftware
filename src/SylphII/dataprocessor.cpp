@@ -79,9 +79,17 @@ void DataProcessor::setClassifierK(float newValue){
     classifierK = newValue;
 }
 
+float DataProcessor::getClassifierK(){
+    return classifierK;
+}
+
 void DataProcessor::setClassifierL(float newValue){
     qDebug () << "Classifier value L: " << newValue;
     classifierL = newValue;
+}
+
+float DataProcessor::getClassifierL(){
+    return classifierL;
 }
 
 void DataProcessor::setClassifierWindowLength(float length){

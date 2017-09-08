@@ -74,4 +74,15 @@ void ClassifierDialog::on_openParameter_clicked(){
     temp = in.readLine();
     dataProcessor->setClassifierL(temp.toFloat());
     qDebug() << "Classifier value L set to: " << temp;
+    temp = in.readLine();
+    dataProcessor->setClassifierWindowLength(temp.toFloat());
+    qDebug() << "Window Length set to: " << temp;
+    temp = in.readLine();
+    dataProcessor->setClassifierThreshold(temp.toFloat());
+    qDebug() << "Threshold set to: " << temp;
+    QMessageBox::information(this, "Parameters set!", "K Value: " + QString::number(dataProcessor->getClassifierK()) + "\n"
+                                                            + "L Value: " + QString::number(dataProcessor->getClassifierL()) + "\n"
+                                                            + "Window Length: " + QString::number(dataProcessor->getClassifierWindowLength()) + "\n"
+                                                            + "Threshold: " + QString::number(dataProcessor->getClassifierThreshold()) + "\n"
+                                                            + "You may close the dialog!");
 }
