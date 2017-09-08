@@ -14,15 +14,17 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData(fullWord_rawData);
         }
         ChannelData[0].append(fullWord_rawData*(0.000000195));
-        if(fullWord_rawData*(0.000000195) > classifierThreshold){
-            startSavingData = true;
-        }
-        if(startSavingData){
-            savedData.append(fullWord_rawData*(0.000000195));
-        }
-        if(savedData.size() > classifierWindowLength/period){
-            classifyFeature(computeFeature(0));
-            startSavingData = false;
+        if(classifierEnabled){
+            if(fullWord_rawData*(0.000000195) > classifierThreshold){
+                startSavingData = true;
+            }
+            if(startSavingData){
+                savedData.append(fullWord_rawData*(0.000000195));
+            }
+            if(savedData.size() > classifierWindowLength/period){
+                classifyFeature(computeFeature(classifierChannel));
+                startSavingData = false;
+            }
         }
 
         fullWord_rawData = ((quint8) rawData.at(i+2) << 8 | (quint8) rawData.at(i+3))-32768;
@@ -106,6 +108,22 @@ void DataProcessor::setClassifierThreshold(float threshold){
 
 float DataProcessor::getClassifierThreshold(){
     return classifierThreshold;
+}
+
+void DataProcessor::setClassifierChannel(int channel){
+    classifierChannel = channel;
+}
+
+int DataProcessor::getClassifierChannel(){
+    return classifierChannel;
+}
+
+void DataProcessor::setClassifierEnabled(bool flag){
+    classifierEnabled = flag;
+}
+
+bool DataProcessor::getClassifierEnabled(){
+    return classifierEnabled;
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){

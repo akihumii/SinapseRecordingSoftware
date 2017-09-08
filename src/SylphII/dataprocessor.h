@@ -29,6 +29,10 @@ public:
     float getClassifierWindowLength();
     void setClassifierThreshold(float threshold);
     float getClassifierThreshold();
+    void setClassifierChannel(int channel);
+    int getClassifierChannel();
+    void setClassifierEnabled(bool flag);
+    bool getClassifierEnabled();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
 
@@ -50,6 +54,8 @@ private:
     bool startSavingData = false;
     int numSavedData = 0;
     QVector<double> savedData;
+    int classifierChannel = 1;
+    bool classifierEnabled = false;
 
     float computeFeature(int channel);
     void classifyFeature(float x);

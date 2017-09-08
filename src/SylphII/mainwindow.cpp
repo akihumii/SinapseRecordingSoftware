@@ -88,8 +88,12 @@ void MainWindow::createActions(){
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
 
-    classifierAction = new QAction(tr("Classifier"));
+    classifierAction = new QAction(tr("&Train Classifier"));
+    classifierAction->setShortcut(tr("Ctrl+T"));
     connect(classifierAction, SIGNAL(triggered(bool)), this, SLOT(on_classifier_triggered()));
+    classifierEnableAction = new QAction(tr("Enable &classifier"));
+    classifierEnableAction->setShortcut(tr("Ctrl+C"));
+    connect(classifierEnableAction, SIGNAL(triggered(bool)), this, SLOT(on_classifierEnable_triggered()));
 
     resetDefaultX = new QAction(tr("Default Time Scale"), this);
     resetDefaultX->setShortcut(tr("Ctrl+X"));
@@ -161,6 +165,8 @@ void MainWindow::createMenus(){
     fileMenu->addAction(dataAnalyzerAction);
     fileMenu->addSeparator();
     fileMenu->addAction(classifierAction);
+    fileMenu->addAction(classifierEnableAction);
+    classifierEnableAction->setCheckable(true);
     fileMenu->addSeparator();
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
@@ -478,6 +484,11 @@ void MainWindow::on_dataAnalyzer_triggered(){
 void MainWindow::on_classifier_triggered(){
     ClassifierDialog classifierDialog(data);
     classifierDialog.exec();
+}
+
+void MainWindow::on_classifierEnable_triggered(){
+    data->setClassifierEnabled(!data->getClassifierEnabled());
+    classifierEnableAction->setChecked(data->getClassifierEnabled());
 }
 
 void MainWindow::on_restart_triggered(){

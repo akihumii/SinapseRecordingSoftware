@@ -59,6 +59,7 @@ private:
     QAction *filterAction;
     QAction *dataAnalyzerAction;
     QAction *classifierAction;
+    QAction *classifierEnableAction;
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
     QAction *timeFrame50ms;
@@ -125,6 +126,7 @@ private slots:
     void on_voltage10000u_triggered();
     void on_dataAnalyzer_triggered();
     void on_classifier_triggered();
+    void on_classifierEnable_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
