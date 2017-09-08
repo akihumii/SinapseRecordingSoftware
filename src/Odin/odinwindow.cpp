@@ -59,7 +59,7 @@ void OdinWindow::createLayout(){
     connect(channelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_channel_Changed(int)));
 
     Parameters = new QGroupBox(tr("Stimulation Parameters"));
-    Intensity = new QGroupBox(tr("Pulse Magnitude (0.3 to 9.3 mA)"));
+    Intensity = new QGroupBox(tr("Pulse Magnitude (0.3 to 20.0 mA)"));
     Timing = new QGroupBox(tr("Timing Parameters"));
     Looping = new QGroupBox(tr("Looping Parameters"));
 
@@ -74,7 +74,7 @@ void OdinWindow::createLayout(){
         intensityLayout1->addWidget(pulseMagLabel[i]);
         pulseMag[i] = new QDoubleSpinBox;
         pulseMag[i]->setMinimum(0.0);
-        pulseMag[i]->setMaximum(9.3);
+        pulseMag[i]->setMaximum(20.0);
         pulseMag[i]->setSingleStep(0.1);
         pulseMag[i]->setValue(2.0);
         pulseMag[i]->setMaximumWidth(50);

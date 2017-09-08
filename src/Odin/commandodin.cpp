@@ -137,7 +137,8 @@ unsigned char CommandOdin::getPulseMagByte(int index){
         return 0;
     }
     else{
-        unsigned char temp = PulseMag[index]*PulseMag[index]*0.0012 + PulseMag[index]*25.556 - 6.601;
+//        unsigned char temp = PulseMag[index]*PulseMag[index]*0.0012 + PulseMag[index]*25.556 - 6.601;         // For 9.3mA
+        unsigned char temp = PulseMag[index]*PulseMag[index]*(-0.0045) + PulseMag[index]*13.243 - 8.5461;       // For 20.0mA
         return temp;
     }
 }
