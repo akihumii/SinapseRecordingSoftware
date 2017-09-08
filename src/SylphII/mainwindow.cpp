@@ -88,6 +88,9 @@ void MainWindow::createActions(){
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
 
+    classifierAction = new QAction(tr("Classifier"));
+    connect(classifierAction, SIGNAL(triggered(bool)), this, SLOT(on_classifier_triggered()));
+
     resetDefaultX = new QAction(tr("Default Time Scale"), this);
     resetDefaultX->setShortcut(tr("Ctrl+X"));
     connect(resetDefaultX, SIGNAL(triggered()), this, SLOT(on_resetX_triggered()));
@@ -156,6 +159,8 @@ void MainWindow::createMenus(){
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(classifierAction);
     fileMenu->addSeparator();
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
@@ -468,6 +473,11 @@ void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
     QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerII.exe";
     process->start(file);
+}
+
+void MainWindow::on_classifier_triggered(){
+    ClassifierDialog classifierDialog(data);
+    classifierDialog.exec();
 }
 
 void MainWindow::on_restart_triggered(){

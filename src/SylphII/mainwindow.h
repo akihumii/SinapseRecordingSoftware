@@ -9,6 +9,7 @@
 #include "../common/data.h"
 #include "../common/filter.h"
 #include "serialportdialog.h"
+#include "classifierdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
 
@@ -57,6 +58,7 @@ private:
     QAction *swapAction;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
+    QAction *classifierAction;
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
     QAction *timeFrame50ms;
@@ -122,6 +124,7 @@ private slots:
     void on_voltage5000u_triggered();
     void on_voltage10000u_triggered();
     void on_dataAnalyzer_triggered();
+    void on_classifier_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();

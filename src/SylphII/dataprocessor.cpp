@@ -14,6 +14,16 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData(fullWord_rawData);
         }
         ChannelData[0].append(fullWord_rawData*(0.000000195));
+        if(fullWord_rawData*(0.000000195) > classifierThreshold){
+            startSavingData = true;
+        }
+        if(startSavingData){
+            savedData.append(fullWord_rawData*(0.000000195));
+        }
+        if(savedData.size() > classifierWindowLength/period){
+            classifyFeature(computeFeature(0));
+            startSavingData = false;
+        }
 
         fullWord_rawData = ((quint8) rawData.at(i+2) << 8 | (quint8) rawData.at(i+3))-32768;
         appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
@@ -40,8 +50,54 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         X_axis.append(total_data_count*period);
     }
 //    playAudio(getAudioChannel());
+}
 
-    if(ChannelData[0].size() >  && ChannelData[1].size() > )
+float DataProcessor::computeFeature(int channel){
+    float x = 0;
+    for(int i = 0; i < ChannelData[channel].size(); i++){
+        if(ChannelData[channel].at(i) > x){
+            x = ChannelData[channel].at(i);
+        }
+    }
+    return x;
+}
+
+void DataProcessor::classifyFeature(float x){
+    if((classifierK + x*classifierL) > 0){
+        qDebug() << "More than 0";
+        emit groupIsignal();
+    }
+    else{
+        qDebug() << "Less than 0";
+        emit groupJsignal();
+    }
+    savedData.clear();
+}
+
+void DataProcessor::setClassifierK(float newValue){
+    qDebug () << "Classifier value K: " << newValue;
+    classifierK = newValue;
+}
+
+void DataProcessor::setClassifierL(float newValue){
+    qDebug () << "Classifier value L: " << newValue;
+    classifierL = newValue;
+}
+
+void DataProcessor::setClassifierWindowLength(float length){
+    classifierWindowLength = length;
+}
+
+float DataProcessor::getClassifierWindowLength(){
+    return classifierWindowLength;
+}
+
+void DataProcessor::setClassifierThreshold(float threshold){
+    classifierThreshold = threshold;
+}
+
+float DataProcessor::getClassifierThreshold(){
+    return classifierThreshold;
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){

@@ -23,9 +23,12 @@ public:
 public slots:
     void ReadImplantData();
     void ReadADCData();
+    void sendMovementOne();
+    void sendMovementTwo();
 private:
     QSerialPort *implantPort;
     QSerialPort *ADCPort;
+    QSerialPort *arduinoPort;
     DataProcessor *dataProcessor;
 
     bool checked = false;

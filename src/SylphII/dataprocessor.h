@@ -10,6 +10,7 @@
 
 class DataProcessor : public SignalAudio, public Data
 {
+    Q_OBJECT
 public:
     DataProcessor(float samplingRate_);
     Data *data;
@@ -20,6 +21,12 @@ public:
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
     bool isADCRecordEnabled();
+    void setClassifierK(float newValue);
+    void setClassifierL(float newValue);
+    void setClassifierWindowLength(float length);
+    float getClassifierWindowLength();
+    void setClassifierThreshold(float threshold);
+    float getClassifierThreshold();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
 
@@ -34,8 +41,20 @@ private:
     float samplingRate;
     float period;
 
-    float classifierK[2] = {0.214856, 299.9201};
-    float classifierL[2] = {0.850121, 120.5125};
+    float classifierWindowLength = 0.3;            // in seconds
+    float classifierThreshold = 0.0005;
+    float classifierK = -0.7325;
+    float classifierL = 1380.4;
+    bool startSavingData = false;
+    int numSavedData = 0;
+    QVector<double> savedData;
+
+    float computeFeature(int channel);
+    void classifyFeature(float x);
+
+signals:
+    void groupIsignal();
+    void groupJsignal();
 };
 
 #endif // DATAPROCESSOR_KA_H

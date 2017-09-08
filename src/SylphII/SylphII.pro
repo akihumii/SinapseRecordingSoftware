@@ -32,7 +32,8 @@ HEADERS += \
     serialportdialog.h \
     signalaudio.h \
     qtincludes.h \
-    socketsylph.h
+    socketsylph.h \
+    classifierdialog.h
 
 SOURCES += \
     dataprocessor.cpp \
@@ -41,4 +42,7 @@ SOURCES += \
     serialchannel.cpp \
     serialportdialog.cpp \
     signalaudio.cpp \
-    socketsylph.cpp
+    socketsylph.cpp \
+    classifierdialog.cpp
+
+FORMS +=
