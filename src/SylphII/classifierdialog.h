@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "dataprocessor.h"
+#include <iostream>
 
 namespace Ui {
 class ClassifierDialog;
@@ -18,6 +19,8 @@ public:
 
 private:
     DataProcessor *dataProcessor;
+    QLocalServer *matlabSocket;
+    QStringList fortunes;
 
     void createLayout();
 
@@ -30,6 +33,7 @@ private:
 private slots:
     void on_openClassifier_clicked();
     void on_openParameter_clicked();
+    void on_matlabData_ready();
 };
 
 #endif // CLASSIFERDIALOG_H
