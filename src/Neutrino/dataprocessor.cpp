@@ -6,10 +6,11 @@ DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
 
 QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     //qDebug() << data_store.size();
-    QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
-    uint16_t combine_10bit;
-    int numChannels = NeutrinoChannel->getNumChannels();
+    framePosition.clear();
+//    uint16_t combine_10bit;
+    numChannels = NeutrinoChannel->getNumChannels();
+
     if(leftOverData.size() > 0){
         for(int i=0;i<leftOverData.size();i++){
             data_store.prepend(leftOverData.at(i));
@@ -20,24 +21,14 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     {
         leftOverData.clear();
     }
+
     firstFrameMarker = first_10bitFrameMarker(data_store);
     lastFrameMarker = last_10bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker - (numChannels*2); j = j + 1){
-        if((uint8_t)data_store.at(j) == FM_A
-            && (uint8_t)data_store.at(j+1) == FM_5
-            && (uint8_t)data_store.at(j+2) == FM_0
-            && (uint8_t)data_store.at(j+3) == FM_F){
-            if((uint8_t)data_store.at(j+(numChannels*2 + 4)) == FM_A
-                && (uint8_t)data_store.at(j+(numChannels*2 + 5)) == FM_5
-                && (uint8_t)data_store.at(j+(numChannels*2 + 6)) == FM_0
-                && (uint8_t)data_store.at(j+(numChannels*2 + 7)) == FM_F){
-                for(int i = 0; i < numChannels; i++){
-                    combine_10bit = ((uint8_t)data_store.at(j+5+i*2) << 5) | (uint8_t)data_store.at(j+4+i*2);
-                    Plot_Y_AllDataPoint.append(combine_10bit);
-                }
-            }
-        }
-    }
+
+    framePosition = locateFrame(data_store);
+
+    appendFrame(data_store,framePosition);
+
     for(int i = lastFrameMarker; i < data_store.size(); i++){
         leftOverData.append(data_store.at(i));
     }
@@ -121,6 +112,42 @@ int DataProcessor::last_8bitFrameMarker(QByteArray data){
     return 0;
 }
 
+QVector<int> DataProcessor::locateFrame(QByteArray data_store)
+{
+    for(int i = firstFrameMarker ; i < lastFrameMarker - (numChannels*2); i++){
+        if((uint8_t)data_store.at(i) == FM_A
+            && (uint8_t)data_store.at(i+1) == FM_5
+            && (uint8_t)data_store.at(i+2) == FM_0
+            && (uint8_t)data_store.at(i+3) == FM_F){
+            framePosition.append(i);
+            i+= 3;
+        }
+    }
+    return framePosition;
+}
+
+void DataProcessor::appendFrame(QByteArray data_store,QVector<int> framePosition)
+{
+    uint16_t combine_10bit;
+    QVector<int> acceptedFrame;
+
+    for (int i = 0; i < framePosition.size();i++){
+        if (framePosition[i] == framePosition[i+1] - (2*numChannels+4)){
+            for (int j = 0; j<numChannels;j++){
+                combine_10bit = ((uint8_t)data_store.at(framePosition[i]+5+j*2) << 5)
+                        | (uint8_t)data_store.at(framePosition[i]+4+j*2);
+                Plot_Y_AllDataPoint.append(combine_10bit);
+
+            }
+            acceptedFrame.append(framePosition[i]);
+
+        }
+        else{
+        }
+    }
+//    qDebug()<< acceptedFrame;
+}
+
 int DataProcessor::first_8bitFrameMarker(QByteArray data){
     for(int i=0; i<data.size()-1;i++){
         if((uint8_t) data.at(i) == FM_5A
@@ -139,10 +166,25 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
             int k = 0;
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
-                    if(Plot_Y_AllDataPoint.at(i+k) > 200){
-                        //makqDebug() << Plot_Y_AllDataPoint.at(i+k);
-                        //qDebug() << ChannelIndex;
+
+                    //debug mode
+                    if (ChannelIndex == 6){
+                        if((Plot_Y_AllDataPoint.at(i+k) > 512)&&(Plot_Y_AllDataPoint.at(i+k) < 900)){
+                            if (((Plot_Y_AllDataPoint.at(i+k) >Plot_Y_AllDataPoint.at(i+k+1) + 100)
+                                 && (Plot_Y_AllDataPoint.at(i+k) > Plot_Y_AllDataPoint.at(i+k-1) + 100)
+                                  )||
+                                    ((Plot_Y_AllDataPoint.at(i+k) < Plot_Y_AllDataPoint.at(i+k+1) - 100)
+                                                                     && (Plot_Y_AllDataPoint.at(i+k) < Plot_Y_AllDataPoint.at(i+k-1) -100)
+                                                                      )
+                                    )
+                            qDebug() << "start " << Plot_Y_AllDataPoint.at(i+k-1) <<
+                                         " " << Plot_Y_AllDataPoint.at(i+k) <<
+                                        " " << Plot_Y_AllDataPoint.at(i+k+1) << " end";
+//                            qDebug() << Plot_Y_AllDataPoint.at(i+k);
+    //                        qDebug() << ChannelIndex;
+                        }
                     }
+
                     if(is8BitMode){
                         ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/256);
                     }

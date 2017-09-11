@@ -32,6 +32,8 @@ public:
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
     double signalReconstruction(QByteArray input);
 
+    QVector<quint16> Plot_Y_AllDataPoint;
+
 private:
     QTextStream *out;
     Data *data;
@@ -45,6 +47,9 @@ private:
     QByteArray leftOverData;
     QVector<quint8> ADC_Data;
 
+    int numChannels;
+    QVector<int> framePosition;
+
     bool is8BitMode;
 
     int first_10bitFrameMarker(QByteArray data);
@@ -52,6 +57,9 @@ private:
 
     int first_8bitFrameMarker(QByteArray data);
     int last_8bitFrameMarker(QByteArray data);
+
+    QVector<int> locateFrame(QByteArray data_store);
+    void appendFrame(QByteArray data_store,QVector<int> framePosition);
 
     int prevleftOverByteCount = 0;
 
