@@ -10,7 +10,7 @@
 class SocketThor : public SocketAbstract {
     Q_OBJECT
 public:
-    SocketThor(Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_);
+    SocketThor(QObject *parent, Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_);
     bool writeCommand(QByteArray Command);
     bool wifiEnabled = true;
     QByteArray getlastCommand();

@@ -36,11 +36,13 @@ private slots:
 
     void on_subSequenceChannel_selected();
     void on_subSeqParamSpinBox_changed();
+    void on_paramValueChange();
 
     void on_subSeqTimeStartEdit_changed(int channel);
     void on_subSeqMultipleStartComboBox_selected(int index);
     void on_subSeqTimeStopEdit_changed(int channel);
     void on_subSeqMultipleStopComboBox_selected(int index);
+
 
 private:
     SerialChannel *thorSerial;
@@ -52,6 +54,7 @@ private:
     DataProcessor *data;
     bool isWired = true;
     bool isConnected = false;
+    bool ok = true;
 
     amwFlash_mainWindow *amwFlash_init;
 //    MeasurementDialog *graph_init;
@@ -97,6 +100,12 @@ private:
     QSignalMapper *multipleStopMapper;
     QComboBox *subSeqMultipleStopComboBox[8];
     QVBoxLayout *subSequenceLayout;
+    QWidget *subsequenceWidget;
+
+    QVBoxLayout *StimulatorParamLayout;
+    QWidget *StimulatorParamWidget;
+    QLineEdit *paramEdit[16];
+    QHBoxLayout *paramLine[16];
 
     QHBoxLayout *allLayout;
 
@@ -105,6 +114,10 @@ private:
 
     void on_wired_triggered();
     void connectThor();
+    void createModeComboBox();
+    void createSubsequenceWidget();
+    void createStimulatorParamWidget();
+
 
 };
 

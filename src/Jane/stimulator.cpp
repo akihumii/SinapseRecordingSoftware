@@ -48,6 +48,25 @@ quint8 Stimulator::getMultiplier(quint8 arr[][2], int channel)
     return multiplierBits;
 }
 
+bool Stimulator::isStimulatorParamSetLower()
+{
+    for (int i = 0;i<8;i++){
+            if (paramValue[i].isEmpty())
+                return false;
+
+    }
+    return true;
+}
+
+bool Stimulator::isStimulatorParamSetUpper()
+{
+    for (int i = 8;i<16;i++){
+            if (paramValue[i].isEmpty())
+                return false;
+    }
+    return true;
+}
+
 QByteArray Stimulator::getSubSequence(int channelNumber)
 {
     quint8 subSequence = 0B00000000;

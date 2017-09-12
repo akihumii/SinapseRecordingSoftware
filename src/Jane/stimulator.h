@@ -25,6 +25,9 @@ public:
     Stimulator();
     quint8 getMultiplier(quint8 arr[][2], int channel);
 
+    bool isStimulatorParamSetLower();
+    bool isStimulatorParamSetUpper();
+
     QByteArray getSubSequence(int channelNumber);
     QByteArray getSubSequenceStart(int channelNumber);
     QByteArray getSubSequenceStop(int channelNumber);
@@ -49,6 +52,9 @@ public:
     void setStimParam(int channel, int paramNumber, int value);
     void *getStimParamArray();
 
+    QByteArray paramValue[16];
+
+
 private:
     bool subSeqSelect[8] = {1, 1, 1, 1, 1, 1, 1, 1};
     quint8 subSeqParam[8] = {1, 1, 1, 1, 1, 1, 1, 1};
@@ -56,7 +62,7 @@ private:
     quint8 subSeqStop[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
 
     int stimParam[16][5];
-    boolean triggerCmd[8] = {0,0,0,0,0,0,0,0};  //DEFXYabc
+    boolean triggerCmd[8] = {0};  //DEFXYabc
 
 };
 

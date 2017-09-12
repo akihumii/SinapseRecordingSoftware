@@ -41,6 +41,8 @@ void Command::addChipID()
     outgoingCommand.append((const char) chipID);    // Append chip ID
 }
 
+
+
 void Command::addData()
 {
     switch(OPModeSelect){
@@ -61,9 +63,33 @@ void Command::addData()
         }
         case 3:{                                    // Stimulator parameter program
             outgoingCommand.append((const char)STIM_PARAMETER);
+
+            if ((thorParam->isStimulatorParamSetLower()) && (thorParam->isStimulatorParamSetUpper())){
+                qDebug()<<"Stimulator parameter program: Lower + Upper";
+                //cont 1st cmd
+                outgoingCommand.append((const char)STIM_LOWER);
+                addStimulationParamSet(0,8);
+                addEndPulse();
+                //start 2nd cmd
+                addSyncPulse();
+                addChipID();
+                outgoingCommand.append((const char)STIM_UPPER);
+                addStimulationParamSet(8,16);
+            }
+            else if(thorParam->isStimulatorParamSetLower()){
+                qDebug()<< "Stimulator parameter program: Lower";
+                outgoingCommand.append((const char)STIM_LOWER);
+                addStimulationParamSet(0,8);
+            }
+            else if (thorParam->isStimulatorParamSetUpper()){
+                qDebug()<<"Stimulator parameter program: Upper";
+                outgoingCommand.append((const char)STIM_UPPER);
+                addStimulationParamSet(8,16);
+            }
             break;
         }
         case 4:{                                    // Stimulator subsequence program
+            qDebug()<<"Stimulator subsequence program: Lower + Upper";
             outgoingCommand.append((const char)STIM_SEQUENCE);
             outgoingCommand.append((const char) 0B00000000);
             for(int i = 0; i < 8; i++){
@@ -123,4 +149,11 @@ void Command::updateBER(int index, QString newBER) { BERbytesHex[index] = newBER
 void Command::updateTriggerCmd(int index, QString state)
 {
     thorParam->setTriggerCmd(index,(boolean) state.toInt());
+}
+
+void Command::addStimulationParamSet(int start, int end)
+{
+    for (int i=start;i<end;i++){
+            outgoingCommand.append(thorParam->paramValue[i]);
+    }
 }

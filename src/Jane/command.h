@@ -30,6 +30,9 @@ typedef enum operationMode{
     BITMODE_8           = 0B00110101,
     BIOIMP_MEASURE_8BIT = 0B01100101,
 
+    STIM_LOWER          = 0B01001100,
+    STIM_UPPER          = 0B00110011,
+
     CHANNEL_ON = 0B10011001
 
 } operationMode;
@@ -74,6 +77,7 @@ private:
     void addChipID();
     void addData();
     void addEndPulse();
+    void addStimulationParamSet(int start, int end);
 };
 
 #endif // COMMAND_H

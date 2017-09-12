@@ -1,6 +1,6 @@
 #include "socketthor.h"
 
-SocketThor::SocketThor(Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_){
+SocketThor::SocketThor(QObject *parent, Command *ThorCommand_, DataProcessor *ThorData_, Channel *ThorChannel_){
     ThorCommand = ThorCommand_;
     ThorData = ThorData_;
     ThorChannel = ThorChannel_;
@@ -10,6 +10,7 @@ SocketThor::SocketThor(Command *ThorCommand_, DataProcessor *ThorData_, Channel 
 
 void SocketThor::ReadCommand(){
     if(socketAbstract->bytesAvailable() > 5*maxSize/10 && wifiEnabled){
+        qDebug() << socketAbstract->read(maxSize);
         if(ThorData->isPlotEnabled()){
             //qDebug() << "Got 8 bit data";
             ThorData->MultiplexChannelData(ThorData->ParseFrameMarkers8bits(socketAbstract->read(maxSize)));
@@ -24,17 +25,18 @@ void SocketThor::ReadCommand(){
 bool SocketThor::writeCommand(QByteArray Command){
     lastSentCommand = Command;
     if(socketAbstract->state() == QAbstractSocket::ConnectedState){
-        if(Command.size()>5){
-            ThorData->setBitMode(true);
-            ThorData->setPlotEnabled(true);
-            ThorData->clearallChannelData();
-            ThorChannel->setNumChannels(getNumChannels(Command));
-        }
+//        if(Command.size()>5){
+//            ThorData->setBitMode(true);
+//            ThorData->setPlotEnabled(true);
+//            ThorData->clearallChannelData();
+//            ThorChannel->setNumChannels(getNumChannels(Command));
+//        }
         socketAbstract->write(Command);         //write the command itself
         return socketAbstract->waitForBytesWritten();
     }
     else
         return false;
+    return true;
 }
 
 int SocketThor::getNumChannels(QByteArray lastCommand){

@@ -13,25 +13,30 @@ SerialChannel::SerialChannel(QObject *parent, Command *ThorCommand_, DataProcess
 
 void SerialChannel::ReadData(){
     switch (ThorCommand->getOPMode()){
-        case 7:{
-
-            if(isData){
-                emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
-                serialData->readAll();
-            }
-            if((!isData) && (ThorData->first_AnalogMeasurementFrameMarker(serialData->readAll())!=0)){
-                isData=true;
-            }
-            break;
+    case 1:{        //BER
+        qDebug()<<"BER read";
+    }
+    case 2: {       //JTAG
+        qDebug()<<"jtag read";
+    }
+    case 7:{        //analog
+        qDebug()<<"analog read";
+        if(isData){
+            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
+            serialData->readAll();
         }
-        case 8:{
-//            emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
-//            serialData->readAll();
-             qDebug() << serialData->readAll();
-
-
-            break;
+        if((!isData) && (ThorData->first_AnalogMeasurementFrameMarker(serialData->readAll())!=0)){
+            isData=true;
         }
+        break;
+    }
+    case 8:{        //bioimp
+        qDebug()<<"bioimp read";
+        emit singleByteReady(ThorData->signalReconstruction(serialData->read(1)));
+        serialData->readAll();
+         qDebug() << serialData->readAll();
+        break;
+    }
     default:
         break;
     }
