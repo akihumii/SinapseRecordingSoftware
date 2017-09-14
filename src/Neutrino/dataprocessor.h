@@ -39,6 +39,13 @@ private:
     Data *data;
     Channel *NeutrinoChannel;
 
+    quint64 err_before = 0;
+    quint64 err_latest = 0;
+    quint64 minError = 1000;
+    quint8 frameCounter = 0;
+    quint8 frame_error = 0;
+
+
     int firstFrameMarker;
     quint8 currentFrameMarker;
     int currentFrameMarkerIndex;

@@ -361,7 +361,7 @@ MainWindow::~MainWindow(){
 void MainWindow::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
     if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
-        for(int i=0; i<10; i++){
+        for(int i=0; i<11; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0),
