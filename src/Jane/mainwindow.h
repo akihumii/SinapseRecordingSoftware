@@ -45,7 +45,6 @@ private slots:
 
 
 private:
-    SerialChannel *thorSerial;
     SocketThor *socketThor;
     Command *thorCommand;
     Stimulator *thorParam;
