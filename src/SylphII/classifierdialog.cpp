@@ -4,7 +4,7 @@ ClassifierDialog::ClassifierDialog(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
     matlabSocket = new QLocalServer(this);
 
-    connect(matlabSocket, SIGNAL(newConnection()), this, SLOT(on_matlabData_ready()));
+//    connect(matlabSocket, SIGNAL(newConnection()), this, SLOT(on_matlabData_ready()));
 
     createLayout();
 }
@@ -48,29 +48,29 @@ void ClassifierDialog::createLayout(){
 }
 
 void ClassifierDialog::on_matlabData_ready(){
-    qDebug() << "New connection";
+//    qDebug() << "New connection";
 
-    fortunes << tr("You've been leading a dog's life. Stay off the furniture.")
-             << tr("You've got to think about tomorrow.")
-             << tr("You will be surprised by a loud noise.")
-             << tr("You will feel hungry again in another hour.")
-             << tr("You might have mail.")
-             << tr("You cannot kill time without injuring eternity.")
-             << tr("Computers are not intelligent. They only think they are.");
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << (quint32)0;
-    out << fortunes.at(qrand() % fortunes.size());
-    out.device()->seek(0);
-    out << (quint32)(block.size() - sizeof(quint32));
-    QLocalSocket *clientConnection = matlabSocket->nextPendingConnection();
-    connect(clientConnection, SIGNAL(disconnected()),
-            clientConnection, SLOT(deleteLater()));
+//    fortunes << tr("You've been leading a dog's life. Stay off the furniture.")
+//             << tr("You've got to think about tomorrow.")
+//             << tr("You will be surprised by a loud noise.")
+//             << tr("You will feel hungry again in another hour.")
+//             << tr("You might have mail.")
+//             << tr("You cannot kill time without injuring eternity.")
+//             << tr("Computers are not intelligent. They only think they are.");
+//    QByteArray block;
+//    QDataStream out(&block, QIODevice::WriteOnly);
+//    out.setVersion(QDataStream::Qt_4_0);
+//    out << (quint32)0;
+//    out << fortunes.at(qrand() % fortunes.size());
+//    out.device()->seek(0);
+//    out << (quint32)(block.size() - sizeof(quint32));
+//    QLocalSocket *clientConnection = matlabSocket->nextPendingConnection();
+//    connect(clientConnection, SIGNAL(disconnected()),
+//            clientConnection, SLOT(deleteLater()));
 
-    clientConnection->write(block);
-    clientConnection->flush();
-    clientConnection->disconnectFromServer();
+//    clientConnection->write(block);
+//    clientConnection->flush();
+//    clientConnection->disconnectFromServer();
 }
 
 void ClassifierDialog::on_openClassifier_clicked(){
@@ -89,14 +89,14 @@ void ClassifierDialog::on_openClassifier_clicked(){
     }
     process->start(file);
 
-    if (!matlabSocket->listen("fortune")) {
-            QMessageBox::critical(this, tr("Fortune Server"),
-                                  tr("Unable to start the server: %1.")
-                                  .arg(matlabSocket->errorString()));
-            close();
-            return;
-    }
-    qDebug() << "Done";
+//    if (!matlabSocket->listen("fortune")) {
+//            QMessageBox::critical(this, tr("Fortune Server"),
+//                                  tr("Unable to start the server: %1.")
+//                                  .arg(matlabSocket->errorString()));
+//            close();
+//            return;
+//    }
+//    qDebug() << "Done";
 }
 
 void ClassifierDialog::on_openParameter_clicked(){
