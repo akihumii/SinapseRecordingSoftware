@@ -98,7 +98,7 @@ private:
 
     QMenu *connectivityMenu;
 
-    QCustomPlot *channelGraph[10];
+    QCustomPlot *channelGraph[11];
 
     QAction *tenby1Action;
     QAction *fiveby2Action;
@@ -111,6 +111,13 @@ private:
 
 //    QAction *wiredMode;
 //    QAction *wifiMode;
+
+
+    QList<QColor> colorList = {Qt::black,Qt::darkRed,Qt::darkGreen,
+                              Qt::darkCyan,Qt::blue,Qt::darkBlue,
+                              Qt::darkMagenta,Qt::darkYellow,Qt::darkGray,
+                              Qt::red,Qt::black};
+
 
 private slots:
     void updateData();

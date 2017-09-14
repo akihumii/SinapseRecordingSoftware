@@ -163,6 +163,7 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
     int numChannels = NeutrinoChannel->getNumChannels();
     if(!Plot_Y_AllDataPoint.isEmpty()){
         for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + numChannels){
+            bool isError = false;
             int k = 0;
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
@@ -174,14 +175,16 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                                  && (Plot_Y_AllDataPoint.at(i+k) > Plot_Y_AllDataPoint.at(i+k-1) + 100)
                                   )||
                                     ((Plot_Y_AllDataPoint.at(i+k) < Plot_Y_AllDataPoint.at(i+k+1) - 100)
-                                                                     && (Plot_Y_AllDataPoint.at(i+k) < Plot_Y_AllDataPoint.at(i+k-1) -100)
+                                       && (Plot_Y_AllDataPoint.at(i+k) < Plot_Y_AllDataPoint.at(i+k-1) -100)
                                                                       )
-                                    )
-                            qDebug() << "start " << Plot_Y_AllDataPoint.at(i+k-1) <<
-                                         " " << Plot_Y_AllDataPoint.at(i+k) <<
-                                        " " << Plot_Y_AllDataPoint.at(i+k+1) << " end";
-//                            qDebug() << Plot_Y_AllDataPoint.at(i+k);
-    //                        qDebug() << ChannelIndex;
+                                    ){
+                                isError = true;
+                                qDebug() << "start " << Plot_Y_AllDataPoint.at(i+k-1) <<
+                                             " " << Plot_Y_AllDataPoint.at(i+k) <<
+                                            " " << Plot_Y_AllDataPoint.at(i+k+1) << " end";
+    //                            qDebug() << Plot_Y_AllDataPoint.at(i+k);
+        //                        qDebug() << ChannelIndex;
+                            }
                         }
                     }
 
@@ -194,6 +197,9 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                     if(isRecordEnabled()){
                         RecordData(Plot_Y_AllDataPoint.at(i+k));
                     }
+
+
+
                     k++;
                 }
                 else{
@@ -203,6 +209,14 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                     ChannelData[ChannelIndex].append(-0.1);
                 }
             }
+
+//            if(isError){
+//                ChannelData[10].append(1);
+//            }
+//            else {
+//                ChannelData[10].append(0);
+//            }
+
             if(isRecordEnabled()){
                 RecordData(END_OF_LINE);
             }

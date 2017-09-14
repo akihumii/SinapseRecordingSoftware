@@ -132,18 +132,19 @@ void MainWindow::create10x1Layout(){
         channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
+        channelGraph[i]->graph()->setPen(QPen(colorList[i]));
     }
 
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
-    channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
-    channelGraph[3]->graph()->setPen(QPen(Qt::darkCyan));
-    channelGraph[4]->graph()->setPen(QPen(Qt::blue));
-    channelGraph[5]->graph()->setPen(QPen(Qt::darkBlue));
-    channelGraph[6]->graph()->setPen(QPen(Qt::darkMagenta));
-    channelGraph[7]->graph()->setPen(QPen(Qt::darkYellow));
-    channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
-    channelGraph[9]->graph()->setPen(QPen(Qt::red));
+//    channelGraph[0]->graph()->setPen(QPen(Qt::black));
+//    channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
+//    channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
+//    channelGraph[3]->graph()->setPen(QPen(Qt::darkCyan));
+//    channelGraph[4]->graph()->setPen(QPen(Qt::blue));
+//    channelGraph[5]->graph()->setPen(QPen(Qt::darkBlue));
+//    channelGraph[6]->graph()->setPen(QPen(Qt::darkMagenta));
+//    channelGraph[7]->graph()->setPen(QPen(Qt::darkYellow));
+//    channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
+//    channelGraph[9]->graph()->setPen(QPen(Qt::red));
 
     channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
 
@@ -154,38 +155,33 @@ void MainWindow::create10x1Layout(){
 
 void MainWindow::create5x2Layout(){
     QVBoxLayout *leftLayout = new QVBoxLayout;
-    for(int i=0;i<4;i++){
-        channelGraph[i] = new QCustomPlot;
-        leftLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
-        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-    }
-    channelGraph[4] = new QCustomPlot;
-    leftLayout->addWidget(channelGraph[4]);
-    channelGraph[4]->xAxis->setVisible(true);
-    channelGraph[4]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[4]->axisRect()->setMargins(QMargins(75,0,0,15));
-    channelGraph[4]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-
     QVBoxLayout *rightLayout = new QVBoxLayout;
-    for(int i=5;i<9;i++){
+    QVBoxLayout *lowerLayout = new QVBoxLayout;
+
+    for (int i=0;i<11;i++){
         channelGraph[i] = new QCustomPlot;
-        rightLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
         channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
     }
-    channelGraph[9] = new QCustomPlot;
-    rightLayout->addWidget(channelGraph[9]);
-    channelGraph[9]->xAxis->setVisible(true);
-    channelGraph[9]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
-    channelGraph[9]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+//    channelGraph[4]->axisRect()->setMargins(QMargins(75,0,0,15));
+//    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
+//    channelGraph[10]->axisRect()->setMargins(QMargins(75,0,0,30));
 
-    for(int i=0;i<10;i++){
+    for(int i=0;i<5;i++){
+        leftLayout->addWidget(channelGraph[i]);
+    }
+
+    for(int i=5;i<10;i++){
+        rightLayout->addWidget(channelGraph[i]);
+    }
+    channelGraph[10]->setMaximumHeight(250);
+    lowerLayout->addWidget(channelGraph[10]);
+
+
+
+    for(int i=0;i<11;i++){
         channelGraph[i]->addGraph();
         channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
@@ -194,23 +190,17 @@ void MainWindow::create5x2Layout(){
         channelGraph[i]->yAxis->setTickStep(0.25);
         channelGraph[i]->setInteractions(QCP::iRangeDrag);
         channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
+        channelGraph[i]->graph()->setPen(QPen(colorList[i]));
     }
 
-    channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[1]->graph()->setPen(QPen(Qt::darkRed));
-    channelGraph[2]->graph()->setPen(QPen(Qt::darkGreen));
-    channelGraph[3]->graph()->setPen(QPen(Qt::darkCyan));
-    channelGraph[4]->graph()->setPen(QPen(Qt::blue));
-    channelGraph[5]->graph()->setPen(QPen(Qt::darkBlue));
-    channelGraph[6]->graph()->setPen(QPen(Qt::darkMagenta));
-    channelGraph[7]->graph()->setPen(QPen(Qt::darkYellow));
-    channelGraph[8]->graph()->setPen(QPen(Qt::darkGray));
-    channelGraph[9]->graph()->setPen(QPen(Qt::red));
+    QHBoxLayout *uppperLayout = new QHBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
 
-    QHBoxLayout *mainLayout = new QHBoxLayout;
     QWidget *mainWidget = new QWidget;
-    mainLayout->addLayout(leftLayout);
-    mainLayout->addLayout(rightLayout);
+    uppperLayout->addLayout(leftLayout);
+    uppperLayout->addLayout(rightLayout);
+    mainLayout->addLayout(uppperLayout);
+    mainLayout->addLayout(lowerLayout);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
 }
@@ -446,7 +436,7 @@ void MainWindow::on_voltage50u_triggered(){
 }
 
 void MainWindow::on_voltage100u_triggered(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 11; i++){
         if(!data->isFilterEnabled()){
             channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
         }
@@ -511,7 +501,7 @@ void MainWindow::on_voltage2000u_triggered(){
 }
 
 void MainWindow::on_voltage5000u_triggered(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 11; i++){
         if(!data->isFilterEnabled()){
             channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
         }
