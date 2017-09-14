@@ -268,9 +268,9 @@ void MainWindow::on_sendCommand_clicked(){
         measurementDialog.exec();
 //        on_chipReset_clicked();
     }
-    if(thorSerial->isConnected()){
+    if(serialThor->isConnected()){
         qDebug()<< "send via wired: " << thorCommand -> cmd.toHex();
-        thorSerial->writeCommand(thorCommand->cmd);
+        serialThor->writeCommand(thorCommand->cmd);
     }
     if(socketThor->isConnected()){
         qDebug()<< "send via wifi: " << thorCommand -> cmd.toHex();
@@ -281,8 +281,8 @@ void MainWindow::on_sendCommand_clicked(){
 void MainWindow::on_chipReset_clicked()
 {
     qDebug() << thorCommand -> resetCommand();
-    if(thorSerial->isConnected()){
-        thorSerial->writeCommand(thorCommand->cmd);
+    if(serialThor->isConnected()){
+        serialThor->writeCommand(thorCommand->cmd);
     }
 }
 
