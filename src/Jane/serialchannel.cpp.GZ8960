@@ -156,7 +156,8 @@ void SerialChannel::InitializePort(QString portType, QString portName)
 bool SerialChannel::ConnectPort(QString portType)
 {
     qDebug() << "Attempt to connect for" << portType;
-    if (portType == PORT_TYPE_DATA){
+    if ( (portType == PORT_TYPE_DATA) && (portType == PORT_TYPE_CMD)){
+        qDebug()<< "Assume debug mode: ";
         return true;
     }
     if (serialCommand->open(QIODevice::ReadWrite)) {
@@ -169,7 +170,6 @@ bool SerialChannel::ConnectPort(QString portType)
         connected = false;
         return false;
     }
-
     qDebug() << "No such portType as " << portType;
     return false;
 

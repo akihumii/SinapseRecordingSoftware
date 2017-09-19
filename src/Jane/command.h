@@ -41,7 +41,7 @@ class Command
 {
 
 public:
-    QByteArray cmd;
+
     Command(Stimulator *thorParam_);
     QByteArray constructCommand();
     QByteArray resetCommand();
@@ -51,9 +51,9 @@ public:
     void clearBioImpBit(int index);
     quint8 getBioImp();
     quint8 getOPMode();
-    quint8 getJTAG(int index);
     quint8 getDCLMode();
     quint8 getChipID();
+    quint8 getJTAG(int index);
     void setJTAGBit(int index);
     void clearJTAGBit(int index);
     void setDCLMode(quint8 newDCL_Mode);
@@ -62,13 +62,15 @@ public:
     bool haveLastCommand();
     void setLastCommand(bool flags);
 
+    QByteArray getCmd() const;
+
 private:
-    QByteArray outgoingCommand;
+    QByteArray cmd;
     Stimulator *thorParam;
     quint8 chipID = 0;
     quint8 OPModeSelect = 2;
     quint8 bioimp = 0;
-    quint8 JTAGarray[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    quint8 JTAGarray[6] = {0, 0, 0, 0, 0, 0};
     quint8 DCL_Mode = DCL_EXIT;
     bool ok;
     int BERbytesHex[8];
@@ -78,6 +80,8 @@ private:
     void addData();
     void addEndPulse();
     void addStimulationParamSet(int start, int end);
+    void setCmd(const QByteArray &value);
+
 };
 
 #endif // COMMAND_H

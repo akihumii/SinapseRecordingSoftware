@@ -11,7 +11,7 @@ MainWindow::MainWindow()
     socketThor = new SocketThor(this, thorCommand, data, thorChannel);
     createLayout();
     createAction();
-    connectThor();
+//    connectThor();
 //    on_wired_triggered();
 
 
@@ -54,7 +54,7 @@ void MainWindow::createLayout()
     chipIDLayout -> addWidget(chipIDComboBox);
 
     QLabel *dataBERLabel = new QLabel;
-    dataBERLabel -> setText("Data BER Assessment");
+    dataBERLabel -> setText("Data BER Assessment (hex)");
     QHBoxLayout *BERLayout = new QHBoxLayout;
     for(int i = 0; i < 8; i++){
         BER_byte[i] = new QLineEdit;
@@ -69,7 +69,7 @@ void MainWindow::createLayout()
     dataBERLayout -> addLayout(BERLayout);
 
     QLabel *triggerBitLabel = new QLabel;
-    triggerBitLabel -> setText("DEFXYabc bit:");
+    triggerBitLabel -> setText("DEFXYabc (bit):");
     QHBoxLayout *triggerBitLayout = new QHBoxLayout;
     for(int i = 0; i < 8; i++){
         OP_bit[i] = new QLineEdit;
@@ -137,14 +137,17 @@ void MainWindow::createLayout()
 
     createSubsequenceWidget();
     createStimulatorParamWidget();
+    createJTAGWidget();
 
     allLayout = new QHBoxLayout();
     allLayout -> addLayout(mainLayout);
     allLayout -> addWidget(subsequenceWidget);
     allLayout -> addWidget(StimulatorParamWidget);
+    allLayout -> addWidget(JTAGTabWidget);
     allLayout -> setAlignment(Qt::AlignTop);
     subsequenceWidget->hide();
     StimulatorParamWidget->hide();
+    JTAGTabWidget->hide();
     on_mode_changed(0);
 
     setCentralWidget(new QWidget);
@@ -204,20 +207,29 @@ void MainWindow::loadDefault(){
 void MainWindow::on_mode_changed(int mode)
 {
     thorCommand -> setOPMode(mode);
-    if (mode ==3){
-        subsequenceWidget->hide();
+
+    subsequenceWidget->hide();
+    StimulatorParamWidget->hide();
+    JTAGTabWidget->hide();
+
+    switch(mode){
+    case 2:{
+        JTAGTabWidget->show();
+        break;
+    }
+    case 3:{
         StimulatorParamWidget->show();
+        break;
     }
-    else if (mode ==4){
-        StimulatorParamWidget->hide();
+    case 4:{
         subsequenceWidget->show();
-
+        break;
     }
-    else {
-        subsequenceWidget->hide();
-        StimulatorParamWidget->hide();
-
+    default:{
+        break;
     }
+    }
+    this->window()->resize(this->window()->minimumSizeHint());
 }
 
 void MainWindow::on_chipID_changed(int IDNum)
@@ -260,30 +272,48 @@ void MainWindow::on_DCL_toggled()
 }
 
 void MainWindow::on_sendCommand_clicked(){
-    qDebug() << "Constructed: " << thorCommand -> constructCommand().toHex();
-//    qDebug() << thorCommand -> cmd;
 
-    if(modeComboBox->currentIndex() == 7){
+    thorCommand -> constructCommand();
+    qDebug() << "Constructed: " << thorCommand->getCmd().toHex();
+
+    if( (modeComboBox->currentIndex() == 7) ||
+        (modeComboBox->currentIndex() == 8)
+       ){
         MeasurementDialog measurementDialog(serialThor);
         measurementDialog.exec();
-//        on_chipReset_clicked();
     }
     if(serialThor->isConnected()){
-        qDebug()<< "send via wired: " << thorCommand -> cmd.toHex();
-        serialThor->writeCommand(thorCommand->cmd);
+        qDebug()<< "send via wired: " << thorCommand->getCmd().toHex();
+        serialThor->writeCommand(thorCommand->getCmd());
     }
     if(socketThor->isConnected()){
-        qDebug()<< "send via wifi: " << thorCommand -> cmd.toHex();
-        socketThor->writeCommand(thorCommand->cmd);
+        qDebug()<< "send via wifi: " << thorCommand->getCmd().toHex();
+        socketThor->writeCommand(thorCommand->getCmd());
     }
 }
 
 void MainWindow::on_chipReset_clicked()
 {
-    qDebug() << thorCommand -> resetCommand();
+    qDebug() << thorCommand -> resetCommand().toHex();
     if(serialThor->isConnected()){
-        serialThor->writeCommand(thorCommand->cmd);
+        serialThor->writeCommand(thorCommand->getCmd());
     }
+}
+
+void MainWindow::on_JTAG_toggled()
+{
+    for(int i=0;i<48;i++){
+        if(JTAG[i]->isChecked()){
+            thorCommand->setJTAGBit(i);
+        }
+        else{
+            thorCommand->clearJTAGBit(i);
+        }
+    }
+    for (int i=0; i<6;i++){
+        qDebug()<<thorCommand->getJTAG(i);
+    }
+
 }
 
 void MainWindow::on_subSequenceChannel_selected()
@@ -480,7 +510,7 @@ void MainWindow::createStimulatorParamWidget()
 {
     StimulatorParamLayout = new QVBoxLayout();
     StimulatorParamWidget = new QWidget();
-    QLabel *mainLabel = new QLabel(tr("         6*8-bit Stimulator parameter: "));
+    QLabel *mainLabel = new QLabel(tr("         6 Stimulator parameter (hex): "));
     StimulatorParamLayout->addWidget(mainLabel);
     for (int i=0;i<16;i++){
         paramLine[i] = new QHBoxLayout;
@@ -497,4 +527,81 @@ void MainWindow::createStimulatorParamWidget()
     StimulatorParamLayout -> setAlignment(Qt::AlignTop);
 
     StimulatorParamWidget->setLayout(StimulatorParamLayout);
+}
+
+void MainWindow::createJTAGWidget()
+{
+    JTAGTabWidget = new QTabWidget;
+
+    DATAMOD = new QWidget;
+    OSCINT = new QWidget;
+    BIOIMPEDANCE = new QWidget;
+    VTUNEDAX = new QWidget;
+    JTAGREGISTER = new QWidget;
+
+    JTAGTabWidget->addTab(DATAMOD, tr("DATAMOD"));
+    JTAGTabWidget->addTab(OSCINT,tr("OSCINT"));
+    JTAGTabWidget->addTab(BIOIMPEDANCE,tr("BIOIMPEDANCE"));
+    JTAGTabWidget->addTab(VTUNEDAX,tr("VTUNEDAX"));
+    JTAGTabWidget->addTab(JTAGREGISTER,tr("JTAG REGISTER"));
+
+    for(int i=0; i<48; i++){
+        JTAG[i] = new QCheckBox(JTAGNames[i], this);
+        connect(JTAG[i], SIGNAL(toggled(bool)), this, SLOT(on_JTAG_toggled()));
+    }
+    QVBoxLayout *DATAMODLayout = new QVBoxLayout;
+    for(int i=0; i<5;i++){
+        DATAMODLayout->addWidget(JTAG[i]);
+    }
+    DATAMOD->setLayout(DATAMODLayout);
+
+    QVBoxLayout *OSCINTLayout = new QVBoxLayout;
+    for(int i=5;i<13;i++){
+        OSCINTLayout->addWidget(JTAG[i]);
+    }
+    OSCINT->setLayout(OSCINTLayout);
+
+    QVBoxLayout *BIOIMPEDANCELayout = new QVBoxLayout;
+    for(int i=13;i<20;i++){
+        BIOIMPEDANCELayout->addWidget(JTAG[i]);
+    }
+    BIOIMPEDANCE->setLayout(BIOIMPEDANCELayout);
+
+    QVBoxLayout *VTUNEDAXLayout = new QVBoxLayout;
+    for(int i=20;i<25;i++){
+        VTUNEDAXLayout->addWidget(JTAG[i]);
+    }
+    VTUNEDAX->setLayout(VTUNEDAXLayout);
+
+
+    QVBoxLayout *JTAGReg_1 = new QVBoxLayout;
+    QVBoxLayout *JTAGReg_2 = new QVBoxLayout;
+    QVBoxLayout *JTAGReg_3 = new QVBoxLayout;
+    JTAGReg_1->setAlignment(Qt::AlignTop);
+    JTAGReg_2->setAlignment(Qt::AlignTop);
+    JTAGReg_3->setAlignment(Qt::AlignTop);
+
+    for(int i=25;i<33;i++){
+        JTAGReg_1->addWidget(JTAG[i]);
+    }
+
+    QHBoxLayout *JTAGREGISTERLayout = new QHBoxLayout;
+    for(int i=25;i<33;i++){
+        JTAGReg_1->addWidget(JTAG[i]);
+    }
+    for(int i=33;i<41;i++){
+        JTAGReg_2->addWidget(JTAG[i]);
+    }
+    for(int i=41;i<48;i++){
+        JTAGReg_3->addWidget(JTAG[i]);
+    }
+
+    JTAGREGISTERLayout->addLayout(JTAGReg_1);
+    JTAGREGISTERLayout->addLayout(JTAGReg_2);
+    JTAGREGISTERLayout->addLayout(JTAGReg_3);
+
+    JTAGREGISTER->setLayout(JTAGREGISTERLayout);
+
+
+
 }

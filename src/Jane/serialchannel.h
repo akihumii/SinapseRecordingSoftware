@@ -7,6 +7,13 @@
 #include "channel.h"
 
 
+
+#define PORT_TYPE_CMD "CMD"
+#define PORT_TYPE_DATA "DATA"
+#define PORT_CMD "COM8"
+#define PORT_DATA "COM3"
+
+
 class SerialChannel : public QObject{
     Q_OBJECT
 public:
