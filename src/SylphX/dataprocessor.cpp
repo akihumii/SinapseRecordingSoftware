@@ -14,9 +14,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         QByteArray temp;
         for(int j = 2; j < 10; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
-            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
-            std::cout << fullWord_rawData;
+//            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
+//            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
+//            std::cout << fullWord_rawData;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -25,9 +25,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
-            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
-            std::cout << fullWord_rawData;
+//            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
+//            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
+//            std::cout << fullWord_rawData;
             appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
@@ -35,20 +35,20 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
         ChannelData[10].append((quint8) rawData.at(i));
-        temp.append(rawData.at(i));
+//        temp.append(rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
         ChannelData[11].append((quint8) rawData.at(i+21));
-        temp.append(rawData.at(i+21));
+//        temp.append(rawData.at(i+21));
         if(RecordEnabled){
             RecordData((quint8)rawData.at(i+21));
             RecordData(END_OF_LINE);
         }
 //        std::cout << temp;
-        qDebug() << process->write(temp);
+//        qDebug() << process->write(temp);
     }
 //    playAudio(getAudioChannel());
 }
