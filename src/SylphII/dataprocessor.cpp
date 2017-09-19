@@ -56,21 +56,24 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 
 float DataProcessor::computeFeature(int channel){
     float x = 0;
-    for(int i = 0; i < ChannelData[channel].size(); i++){
-        if(ChannelData[channel].at(i) > x){
-            x = ChannelData[channel].at(i);
+    for(int i = 0; i < savedData.size(); i++){
+        if(savedData.at(i) > x){
+            x = savedData.at(i);
         }
     }
     return x;
 }
 
 void DataProcessor::classifyFeature(float x){
-    if((classifierK + x*classifierL) > 0){
-        qDebug() << "More than 0";
+    qDebug() << "Feature value: " << x;
+    qDebug() << "K value: "<< classifierK;
+    qDebug() << "L value: "<< classifierL;
+    float temp = classifierK + x*classifierL;
+    qDebug() << "X VALUE: " << temp;
+    if(temp > 0){
         emit groupIsignal();
     }
     else{
-        qDebug() << "Less than 0";
         emit groupJsignal();
     }
     savedData.clear();

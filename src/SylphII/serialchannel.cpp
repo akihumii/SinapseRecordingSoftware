@@ -84,8 +84,14 @@ void SerialChannel::connectSylph(){
         qDebug() << "Manufacturer: " << info.manufacturer();
         qDebug() << "Serial Number: " << info.serialNumber();
     }
+    arduinoPort->setPortName("COM7");
+    arduinoPort->setBaudRate(9600);
+    arduinoPort->setDataBits(QSerialPort::Data8);
+    arduinoPort->setParity(QSerialPort::NoParity);
+    arduinoPort->setStopBits(QSerialPort::OneStop);
+    arduinoPort->setFlowControl(QSerialPort::NoFlowControl);
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).serialNumber() !="A50550HNA"){
+//        if(portInfo.at(i).serialNumber() !="A50550HNA"){
             if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
                 if(portInfo.at(i+1).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()
                         == portInfo.at(i).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()+1){
@@ -118,15 +124,9 @@ void SerialChannel::connectSylph(){
                 ADCPort->setFlowControl(QSerialPort::NoFlowControl);
                 break;
             }
-        }
-        else{
-            arduinoPort->setPortName(portInfo.at(i).portName());
-            arduinoPort->setBaudRate(9600);
-            arduinoPort->setDataBits(QSerialPort::Data8);
-            arduinoPort->setParity(QSerialPort::NoParity);
-            arduinoPort->setStopBits(QSerialPort::OneStop);
-            arduinoPort->setFlowControl(QSerialPort::NoFlowControl);
-        }
+//        }
+//        else{
+//        }
     }
     if (implantPort->open(QIODevice::ReadWrite)){
         implantConnected = true;
