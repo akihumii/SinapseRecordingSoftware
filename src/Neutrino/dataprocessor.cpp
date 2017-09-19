@@ -180,12 +180,12 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                                     ){
                                 isError = true;
 
-                                qDebug() << "start " << Plot_Y_AllDataPoint.at(i+k-numChannels) <<
-                                            " " << Plot_Y_AllDataPoint.at(i+k-1) <<
-                                             " " << Plot_Y_AllDataPoint.at(i+k) <<
-                                            " " << Plot_Y_AllDataPoint.at(i+k+1) <<
-                                            " " << Plot_Y_AllDataPoint.at(i+k+numChannels) <<
-                                            " end " << err_latest << " " << minError;
+                                qDebug() << "start" << Plot_Y_AllDataPoint.at(i+k-numChannels) <<
+                                            Plot_Y_AllDataPoint.at(i+k-1) <<
+                                            Plot_Y_AllDataPoint.at(i+k) <<
+                                            Plot_Y_AllDataPoint.at(i+k+1) <<
+                                            Plot_Y_AllDataPoint.at(i+k+numChannels) <<
+                                            "end" << ChannelIndex;
                             }
                         }
                     }
