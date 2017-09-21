@@ -18,7 +18,8 @@ SUBDIRS +=   \
     src/SylphX \
     src/Odin \
     src/Jane \
-    src/AMWFlash
+    src/AMWFlash \
+    src/NeuroModulation
 
 common.subdir = src/common
 Neutrino.subdir = src/Neutrino
