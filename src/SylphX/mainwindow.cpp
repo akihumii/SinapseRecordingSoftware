@@ -544,14 +544,14 @@ void MainWindow::on_dataAnalyzer_triggered(){
 }
 
 void MainWindow::on_pythonLaunch_triggered(){
-    pythonProcess->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
-    {
-        args->flags |= CREATE_NEW_CONSOLE;
-        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
-        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
-        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
-                                           | FOREGROUND_INTENSITY;
-    });
+//    pythonProcess->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
+//    {
+//        args->flags |= CREATE_NEW_CONSOLE;
+//        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
+//        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
+//        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
+//                                           | FOREGROUND_INTENSITY;
+//    });
     QString file;
     file = "python " + QFileDialog::getOpenFileName(this,
         tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));

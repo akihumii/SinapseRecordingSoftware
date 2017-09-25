@@ -5,7 +5,7 @@ namespace Odin {
 SocketOdin::SocketOdin(){
     udpSocket = new QUdpSocket(this);
 
-    udpSocket->bind(QHostAddress::Broadcast, 45454);
+//    udpSocket->bind(QHostAddress::Broadcast, 45454);
 
     qDebug() << "Binded UDP Socket";
 
