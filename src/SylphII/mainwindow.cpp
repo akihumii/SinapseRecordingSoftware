@@ -14,6 +14,8 @@ MainWindow::MainWindow(){
     createActions();
     createMenus();
     connectSylph();
+    data->setNumDataPoints(TimeFrames100ms, samplingRate);
+    on_timeFrame100_triggered();
     qDebug() << "Starting SYLPH..";
 }
 
@@ -22,7 +24,7 @@ void MainWindow::createLayout(){
     for(int i=0;i<4;i++){
         channelGraph[i] = new QCustomPlot;
         mainLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
+        channelGraph[i]->xAxis->setVisible(false);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(75,10,0,15));
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
@@ -316,20 +318,20 @@ void MainWindow::updateData(){
         on_restart_triggered();
         restartCount++;
     }
-    QVector<double> X_axis = data->retrieveXAxis();
-    if(X_axis.size() >= data->getNumDataPoints()){
+//    qDebug() << "Here";
+//    if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<4; i++){
-            if(!data->isEmpty(i)){
+//            if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*period, Qt::AlignLeft);
                 if(!pause){
                     channelGraph[i]->replot();
                 }
-                data->clearChannelData(i);
-            }
+//                data->clearChannelData(i);
+//            }
         }
-        data->removeXAxis();
-    }
+//        data->removeXAxis();
+//    }
 }
 
 void MainWindow::on_timeFrame10_triggered(){
@@ -374,6 +376,10 @@ void MainWindow::setTimeFrameTickStep(TimeFrames timeframe, double step){
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(step);
         channelGraph[i]->replot();
+    }
+    X_axis.resize(data->getNumDataPoints());
+    for(int i = 0; i < data->getNumDataPoints(); i++){
+        X_axis.append(i*period);
     }
 }
 

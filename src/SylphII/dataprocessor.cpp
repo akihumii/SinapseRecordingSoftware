@@ -6,14 +6,14 @@ DataProcessor::DataProcessor(float samplingRate_){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-//    qDebug() << rawData.size();
+    qDebug() << rawData.size();
     for(int i = 0; i < rawData.size(); i = i + 5){
         fullWord_rawData = ((quint8) rawData.at(i) << 8 | (quint8) rawData.at(i+1))-32768;
         appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
         if(RecordEnabled){
             RecordData(fullWord_rawData);
         }
-        ChannelData[0].append(fullWord_rawData*(0.000000195));
+        ChannelData[0].replace(index, fullWord_rawData*(0.000000195));
         if(classifierEnabled){
             if(fullWord_rawData*(0.000000195) > classifierThreshold){
                 startSavingData = true;
@@ -32,7 +32,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         if(RecordEnabled){
             RecordData(fullWord_rawData);
         }
-        ChannelData[1].append(fullWord_rawData*(0.000000195));
+        ChannelData[1].replace(index, fullWord_rawData*(0.000000195));
         if(RecordEnabled){
 //            if(ADC_Data.size()>0){
 //                RecordData(ADC_Data.at(0));
@@ -47,9 +47,17 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
 //            ADC_Data.remove(0, 1);
 //        }
-        ChannelData[3].append((quint8) rawData.at(i+4));
+        ChannelData[3].replace(index, (quint8) rawData.at(i+4));
         total_data_count++;
         X_axis.append(total_data_count*period);
+//        qDebug() << getNumDataPoints();
+        if(index < getNumDataPoints()){
+            index++;
+//            qDebug() << "adding" << index;
+        }
+        else{
+            index = 0;
+        }
     }
 //    playAudio(getAudioChannel());
 }

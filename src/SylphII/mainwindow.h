@@ -39,6 +39,7 @@ private:
     float samplingRate = 16671.0;
     float period = 1/samplingRate;
     bool pause = false;
+    QVector<double> X_axis;
 
     QStatusBar *statusBarMainWindow;
 

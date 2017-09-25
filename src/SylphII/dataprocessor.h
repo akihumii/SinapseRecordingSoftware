@@ -56,6 +56,7 @@ private:
     QVector<double> savedData;
     int classifierChannel = 1;
     bool classifierEnabled = false;
+    int index = 0;
 
     float computeFeature(int channel);
     void classifyFeature(float x);
