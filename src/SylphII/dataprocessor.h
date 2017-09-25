@@ -33,6 +33,7 @@ public:
     int getClassifierChannel();
     void setClassifierEnabled(bool flag);
     bool getClassifierEnabled();
+    void resizeArray();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
 
@@ -56,7 +57,7 @@ private:
     QVector<double> savedData;
     int classifierChannel = 1;
     bool classifierEnabled = false;
-    int index = 0;
+    int test = 0;
 
     float computeFeature(int channel);
     void classifyFeature(float x);

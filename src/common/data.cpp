@@ -131,8 +131,5 @@ void Data::setNumDataPoints(int timeFrames, double sampleFreq){
     default:
         numDataPoints = 0.1/(1/sampleFreq);
     }
-    for(int i = 0; i < 12; i++){
-        ChannelData[i].resize(numDataPoints);
-    }
 }
 

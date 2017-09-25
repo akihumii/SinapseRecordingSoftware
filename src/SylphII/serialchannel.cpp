@@ -15,8 +15,8 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-    if(implantPort->bytesAvailable() >= 2100 && checked){
-        dataProcessor->parseFrameMarkers(implantPort->read(2100));
+    if(implantPort->bytesAvailable() >= 210 && checked){
+        dataProcessor->parseFrameMarkers(implantPort->read(210));
     }
     else if(implantPort->bytesAvailable() >= 26 && !checked){
         qDebug() << "checking";
@@ -49,7 +49,7 @@ bool SerialChannel::enableImplantPort(QString portName){
     implantPort->setParity(QSerialPort::NoParity);
     implantPort->setStopBits(QSerialPort::OneStop);
     implantPort->setFlowControl(QSerialPort::NoFlowControl);
-    implantPort->setReadBufferSize(2100);
+    implantPort->setReadBufferSize(210);
 
     if (implantPort->open(QIODevice::ReadOnly)) {
         return 1;
@@ -66,7 +66,7 @@ bool SerialChannel::enableADCPort(QString portName){
     ADCPort->setParity(QSerialPort::NoParity);
     ADCPort->setStopBits(QSerialPort::OneStop);
     ADCPort->setFlowControl(QSerialPort::NoFlowControl);
-    ADCPort->setReadBufferSize(2100);
+    ADCPort->setReadBufferSize(210);
 
     if (ADCPort->open(QIODevice::ReadOnly)) {
         return 1;

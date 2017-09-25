@@ -8,7 +8,7 @@ MainWindow::MainWindow(){
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
+    dataTimer.start(10);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
@@ -24,7 +24,7 @@ void MainWindow::createLayout(){
     for(int i=0;i<4;i++){
         channelGraph[i] = new QCustomPlot;
         mainLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(false);
+        channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(75,10,0,15));
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
@@ -314,16 +314,17 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::updateData(){
-    if(restartCount < 15 && serialChannel->isConnected()){
-        on_restart_triggered();
-        restartCount++;
-    }
+//    if(restartCount < 15 && serialChannel->isConnected()){
+//        on_restart_triggered();
+//        restartCount++;
+//    }
 //    qDebug() << "Here";
 //    if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<4; i++){
 //            if(!data->isEmpty(i)){
+//            qDebug() << data->retrieveData(i).size();
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*period, Qt::AlignLeft);
+//                qDebug() << X_axis.size();
                 if(!pause){
                     channelGraph[i]->replot();
                 }
@@ -372,15 +373,20 @@ void MainWindow::on_timeFrame5000_triggered(){
 
 void MainWindow::setTimeFrameTickStep(TimeFrames timeframe, double step){
     data->setNumDataPoints(timeframe, samplingRate);
-    data->clearallChannelData();
+//    data->clearallChannelData();
+    data->resizeArray();
     for(int i=0;i<4;i++){
         channelGraph[i]->xAxis->setTickStep(step);
+        channelGraph[i]->xAxis->setRange(0, (float)data->getNumDataPoints()*period);
+//        qDebug() << "Setting X axis size: " << (float)data->getNumDataPoints()*period;
         channelGraph[i]->replot();
     }
-    X_axis.resize(data->getNumDataPoints());
+    X_axis.clear();
+//    X_axis.resize(data->getNumDataPoints());
     for(int i = 0; i < data->getNumDataPoints(); i++){
         X_axis.append(i*period);
     }
+
 }
 
 void MainWindow::on_voltage50u_triggered(){
@@ -512,7 +518,7 @@ void MainWindow::on_restart_triggered(){
     if(serialChannel->isImplantConnected()){
         serialChannel->closeImplantPort();
     }
-    data->clearallChannelData();
+//    data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
         socketSylph->discardData();
