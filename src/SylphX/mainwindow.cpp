@@ -5,7 +5,7 @@ namespace SylphX {
 MainWindow::MainWindow(){
     x = new Odin::OdinWindow();
     x->setFixedSize(x->sizeHint());
-    x->show();
+//    x->show();
     pythonProcess = new QProcess(this);
     QString version(APP_VERSION);
     timer.start();
@@ -353,6 +353,8 @@ void MainWindow::connectSylph(){
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
 //        socketSylph->doConnect("10.10.10.2", 8888);
         socketSylph->doConnect("192.168.4.2", 8888);
+        socketSylph->doConnect("192.168.4.3", 8888);
+        socketSylph->doConnect("192.168.4.4", 8888);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
