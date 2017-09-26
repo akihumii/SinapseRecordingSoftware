@@ -14,6 +14,7 @@ public:
     void writeCommand(QByteArray command);
     QString getConnectedPort();
     void sendStop();
+    void sendStart();
 
 signals:
     void shuHaoDisconnected();

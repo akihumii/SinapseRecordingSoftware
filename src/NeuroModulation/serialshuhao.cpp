@@ -63,3 +63,10 @@ void SerialShuHao::sendStop(){
     shuHaoPort->write(stop);
     qDebug() << "Sent stop";
 }
+
+void SerialShuHao::sendStart(){
+    QByteArray start;
+    start.append((char) 0xF8);
+    shuHaoPort->write(start);
+    qDebug() << "Sent start";
+}

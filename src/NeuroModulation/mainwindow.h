@@ -33,6 +33,7 @@ private:
     QPushButton *sendCommandButton;
 
     void sendStop();
+    void sendStart();
 
 private slots:
     void on_channelComboBox_changed(int index);
