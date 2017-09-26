@@ -532,6 +532,7 @@ void MainWindow::on_classifierEnable_triggered(){
                                                                         + "Threshold: " + QString::number(data->getClassifierThreshold()) + "\n"
                                                                         + "Channel Selected: " + QString::number(data->getClassifierChannel()) + "\n"
                                                                         + "You may close the dialog!");
+                break;
             }
         }
     }
