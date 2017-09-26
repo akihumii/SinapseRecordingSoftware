@@ -21,40 +21,48 @@ void MainWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     for(int i=0;i<4;i++){
         channelGraph[i] = new QCustomPlot;
-        mainLayout->addWidget(channelGraph[i]);
+//        mainLayout->addWidget(channelGraph[i]);
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(75,10,0,15));
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
-        channelGraph[i]->addGraph();
+//        channelGraph[i]->addGraph();
         channelGraph[i]->yAxis->setAutoTickStep(false);
         channelGraph[i]->xAxis->setAutoTickStep(false);
         channelGraph[i]->xAxis->setTickStep(0.01);
         channelGraph[i]->yAxis->setTickStep(0.0001);
     }
 
+    mainLayout->addWidget(channelGraph[0]);
+    mainLayout->addWidget(channelGraph[1]);
+    mainLayout->addWidget(channelGraph[3]);
+
+    channelGraph[0]->addGraph();
+    channelGraph[1]->addGraph();
+    channelGraph[3]->addGraph();
+
     connect(channelGraph[0], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph1_clicked()));
     connect(channelGraph[1], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph2_clicked()));
-    connect(channelGraph[2], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph3_clicked()));
+//    connect(channelGraph[2], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph3_clicked()));
 
     channelGraph[0]->yAxis->setLabel("Channel 1 (V)");
     channelGraph[0]->yAxis->setLabelFont(QFont(font().family(), 11));
     channelGraph[1]->yAxis->setLabel("Channel 2 (V)");
     channelGraph[1]->yAxis->setLabelFont(QFont(font().family(), 11));
-    channelGraph[2]->yAxis->setLabel("Sync Pulse (V)");
-    channelGraph[2]->yAxis->setLabelPadding(35);
-    channelGraph[2]->yAxis->setLabelFont(QFont(font().family(), 11));
+    //channelGraph[2]->yAxis->setLabel("Sync Pulse (V)");
+    //channelGraph[2]->yAxis->setLabelPadding(35);
+    //channelGraph[2]->yAxis->setLabelFont(QFont(font().family(), 11));
     channelGraph[3]->yAxis->setLabel("Frame Marker");
     channelGraph[3]->yAxis->setLabelPadding(35);
     channelGraph[3]->yAxis->setLabelFont(QFont(font().family(), 11));
 
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[1]->graph()->setPen(QPen(Qt::black));
-    channelGraph[2]->graph()->setPen(QPen(Qt::black));
+    //channelGraph[2]->graph()->setPen(QPen(Qt::black));
     channelGraph[3]->graph()->setPen(QPen(Qt::darkGreen));
 
-    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
-    channelGraph[2]->yAxis->setTickStep(0.5);
+    //channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    //channelGraph[2]->yAxis->setTickStep(0.5);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->yAxis->setTickStep(50);
     channelGraph[3]->axisRect()->setMargins(QMargins(75,10,0,15));
@@ -469,7 +477,7 @@ void MainWindow::on_resetY_triggered(){
         channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
         channelGraph[i]->replot();
     }
-    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    //channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
     channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[3]->replot();
     voltage500u->setChecked(true);
@@ -566,7 +574,7 @@ void MainWindow::about()
 void MainWindow::on_graph1_clicked(){
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[1]->graph()->setPen(QPen(Qt::black));
-    channelGraph[2]->graph()->setPen(QPen(Qt::black));
+    //channelGraph[2]->graph()->setPen(QPen(Qt::black));
     data->setAudioChannel(0);
     audio1->setChecked(true);
     audio2->setChecked(false);
@@ -576,14 +584,14 @@ void MainWindow::on_graph1_clicked(){
 void MainWindow::on_graph2_clicked(){
     channelGraph[1]->graph()->setPen(QPen(Qt::red));
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
-    channelGraph[2]->graph()->setPen(QPen(Qt::black));
+    //channelGraph[2]->graph()->setPen(QPen(Qt::black));
     data->setAudioChannel(1);
     audio1->setChecked(false);
     audio2->setChecked(true);
     audio3->setChecked(false);
 }
 void MainWindow::on_graph3_clicked(){
-    channelGraph[2]->graph()->setPen(QPen(Qt::red));
+    //channelGraph[2]->graph()->setPen(QPen(Qt::red));
     channelGraph[0]->graph()->setPen(QPen(Qt::black));
     channelGraph[1]->graph()->setPen(QPen(Qt::black));
     data->setAudioChannel(2);
