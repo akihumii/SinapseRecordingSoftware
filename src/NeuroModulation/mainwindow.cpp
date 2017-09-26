@@ -255,5 +255,14 @@ void MainWindow::on_adjDuration_editted(){
 }
 
 void MainWindow::on_sendCommand_clicked(){
+    sendCommandButton->setEnabled(false);
     serialShuHao->writeCommand(command->constructCommand());
+    QTimer::singleShot(6000, [=] {
+            sendStop();
+    });
+}
+
+void MainWindow::sendStop(){
+    serialShuHao->sendStop();
+    sendCommandButton->setEnabled(true);
 }

@@ -13,6 +13,7 @@ public:
     bool isShuHaoSerialConnected();
     void writeCommand(QByteArray command);
     QString getConnectedPort();
+    void sendStop();
 
 signals:
     void shuHaoDisconnected();
@@ -27,7 +28,6 @@ private:
     QString connectedPortName;
 
     bool shuHaoSerialConnected = false;
-
 };
 
 #endif // SERIALSHUHAO_H

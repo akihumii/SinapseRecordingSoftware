@@ -56,3 +56,10 @@ bool SerialShuHao::isShuHaoSerialConnected(){
 void SerialShuHao::writeCommand(QByteArray command){
     shuHaoPort->write(command);
 }
+
+void SerialShuHao::sendStop(){
+    QByteArray stop;
+    stop.append((char) 0x8F);
+    shuHaoPort->write(stop);
+    qDebug() << "Sent stop";
+}

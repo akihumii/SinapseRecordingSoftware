@@ -32,6 +32,8 @@ private:
 
     QPushButton *sendCommandButton;
 
+    void sendStop();
+
 private slots:
     void on_channelComboBox_changed(int index);
     void on_phaseComboBox_changed(int index);

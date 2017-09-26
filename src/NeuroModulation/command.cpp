@@ -6,6 +6,8 @@ Command::Command(){
 
 QByteArray Command::constructCommand(){
     QByteArray outgoingCommand;
+    outgoingCommand.append((char) 0xF8);
+    outgoingCommand.append(" ");
     outgoingCommand.append("STIM ");
     outgoingCommand.append(channel + " ");
     outgoingCommand.append(phaseType + " ");
