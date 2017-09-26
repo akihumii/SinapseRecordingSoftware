@@ -6,6 +6,7 @@ MainWindow::MainWindow(){
     command = new Command;
     serialShuHao = new SerialShuHao;
     createLayout();
+    serialShuHao->connectShuHao();
 }
 
 MainWindow::~MainWindow(){

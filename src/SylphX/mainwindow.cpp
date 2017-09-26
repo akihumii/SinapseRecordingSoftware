@@ -352,9 +352,12 @@ void MainWindow::connectSylph(){
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
 //        socketSylph->doConnect("10.10.10.2", 8888);
-        socketSylph->doConnect("192.168.4.2", 8888);
-        socketSylph->doConnect("192.168.4.3", 8888);
-        socketSylph->doConnect("192.168.4.4", 8888);
+        int i = 1;
+        do{
+            i++;
+            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
+            qDebug() << i;
+        } while(!socketSylph->isConnected() && i < 3);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
