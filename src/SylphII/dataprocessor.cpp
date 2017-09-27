@@ -14,7 +14,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData(fullWord_rawData);
         }
         ChannelData[0].append(fullWord_rawData*(0.000000195));
-        if(classifierEnabled){
+        if(classifierEnabled && classifierChannel == 1){
             if(fullWord_rawData*(0.000000195) > classifierThreshold){
                 startSavingData = true;
             }
@@ -33,6 +33,18 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData(fullWord_rawData);
         }
         ChannelData[1].append(fullWord_rawData*(0.000000195));
+        if(classifierEnabled && classifierChannel == 2){
+            if(fullWord_rawData*(0.000000195) > classifierThreshold){
+                startSavingData = true;
+            }
+            if(startSavingData){
+                savedData.append(fullWord_rawData*(0.000000195));
+            }
+            if(savedData.size() > classifierWindowLength/period){
+                classifyFeature(computeFeature(classifierChannel));
+                startSavingData = false;
+            }
+        }
         if(RecordEnabled){
 //            if(ADC_Data.size()>0){
 //                RecordData(ADC_Data.at(0));
