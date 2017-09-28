@@ -256,10 +256,8 @@ void MainWindow::on_adjDuration_editted(){
 }
 
 void MainWindow::on_sendCommand_clicked(){
-//    QTimer::singleShot(2000, [=] {
-            sendStart();
-//    });
-    QTimer::singleShot(2000, [=] {
+    sendStart();
+    QTimer::singleShot(300, [=] {
         serialShuHao->writeCommand(command->constructCommand());
     });
     QTimer::singleShot(6000, [=] {
