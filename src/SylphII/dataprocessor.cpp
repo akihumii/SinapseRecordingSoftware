@@ -83,13 +83,13 @@ void DataProcessor::classifyFeature(float x){
     float temp = classifierK + x*classifierL;
     qDebug() << "X VALUE: " << temp;
     if(temp > 0){
-        QMessageBox::information(this,
+        QMessageBox::information(nullptr,
                                  "Movement detected!",
                                  "<b><FONT COLOR='#ff0000' FONT SIZE = 12> Movement 1 Detected!</b>" );
         emit groupIsignal();
     }
     else{
-        QMessageBox::information(this,
+        QMessageBox::information(nullptr,
                                  "Movement detected!",
                                  "<b><FONT COLOR='#00ff00' FONT SIZE = 12> Movement 2 Detected!</b>" );
         emit groupJsignal();
