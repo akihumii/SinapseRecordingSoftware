@@ -25,9 +25,9 @@ void SocketOdin::writeCommand(QByteArray command){
 ////    udpSocket->flush();
 //    timeToRead = false;
 //    incomingCommand.clear();
-//    if(command.size() > 1){
-//        player->play();
-//    }
+    if(command.size() > 1){
+        player->play();
+    }
 //    commandTimer.start(15);
     udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
 }
