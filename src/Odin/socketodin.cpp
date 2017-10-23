@@ -14,7 +14,7 @@ SocketOdin::SocketOdin(){
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readCommand()));
 
     player = new QMediaPlayer;
-    player->setMedia(QUrl::fromLocalFile(QDir::currentPath() + "/coins.mp3"));
+    player->setMedia(QUrl::fromLocalFile(QDir::currentPath() +QDir::separator()+ "coins.mp3"));
     player->setVolume(50);
 }
 

@@ -9,16 +9,57 @@ SocketNeutrino::SocketNeutrino(Command *NeutrinoCommand_, DataProcessor *Neutrin
 }
 
 void SocketNeutrino::ReadCommand(){
-    if(socketAbstract->bytesAvailable() > 5*maxSize/10 && wifiEnabled){
-        if(NeutrinoData->isPlotEnabled()){
-            if(Mode_8Bit == true){
-//                qDebug() << "Got 8 bit data";
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketAbstract->read(maxSize)));
+    if(wifiEnabled){
+        switch (NeutrinoCommand->getOPMode()){
+            case 2:{
+                if(NeutrinoData->isPlotEnabled()){
+                    if(Mode_8Bit == true){
+//                        qDebug() << "Got 8 bit data";
+                        NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketAbstract->read(maxSize)));
+                    }
+                    break;
+                }
             }
-            else if(Mode_8Bit == false){
-//                qDebug() << "Got 10 bit data";
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketAbstract->read(maxSize)));
+            case 3:{
+                if(NeutrinoData->isPlotEnabled()){
+                    if(Mode_8Bit == false){
+//                        qDebug() << "Got 10 bit data";
+                        NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketAbstract->read(maxSize)));
+                    }
+                    break;
+                }
             }
+            case 5:{
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) socketAbstract->read(1).at(0)));
+//                socketAbstract->read(maxSize);
+                break;
+            }
+            case 6:{
+                QByteArray temp;
+                temp = socketAbstract->read(2);
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0), (char) temp.at(1)));
+                socketAbstract->read(maxSize);
+                break;
+            }
+            case 7:{
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) socketAbstract->read(1).at(0)));
+                socketAbstract->read(maxSize);
+                break;
+            }
+            case 8:{
+                QByteArray temp;
+                temp = socketAbstract->read(2);
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0), (char) temp.at(1)));
+                socketAbstract->read(maxSize);
+                break;
+            }
+            case 9:{
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) socketAbstract->read(1).at(0)));
+                socketAbstract->read(maxSize);
+                break;
+            }
+        default:
+            break;
         }
     }
 }

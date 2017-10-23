@@ -326,8 +326,10 @@ void CommandDialog::on_sendCommand_clicked(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
-    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 7){
-        MeasurementDialog measurementDialog(NeutrinoSerial);
+    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 6 ||
+            ModeComboBox->currentIndex() == 7 || ModeComboBox->currentIndex() == 8 ||
+            ModeComboBox->currentIndex() == 9){
+        MeasurementDialog measurementDialog(NeutrinoSerial, socketNeutrino);
         measurementDialog.exec();
         on_chipReset_clicked();
     }
@@ -457,7 +459,7 @@ void CommandDialog::on_amplifierSelect_toggled(){
 
 void CommandDialog::on_Mode_Changed(int Mode){
     NeutrinoCommand->setOPMode(Mode);
-    if(Mode == 5){
+    if(Mode == 5 || Mode == 6){
         JTAG[94]->setChecked(true);
         NeutrinoCommand->setJTAGbit(94);
     }
@@ -465,7 +467,7 @@ void CommandDialog::on_Mode_Changed(int Mode){
         JTAG[94]->setChecked(false);
         NeutrinoCommand->clearJTAGbit(94);
     }
-    if(Mode == 7){
+    if(Mode == 7 || Mode == 8){
         JTAG[10]->setChecked(true);
         NeutrinoCommand->setJTAGbit(10);
         BioImpData[4]->setChecked(true);

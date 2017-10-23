@@ -341,13 +341,13 @@ bool OdinWindow::connectOdin(){
         serialOdin->connectOdin();
         connectionStatus.clear();
         if(serialOdin->isOdinSerialConnected()){
-            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
+//            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
             sendButton->setEnabled(true);
             statusBarLabel->setText(connectionStatus);
             return true;
         }
         else{
-            connectionStatus.append("Connection to Odin failed");
+//            connectionStatus.append("Connection to Odin failed");
             statusBarLabel->setText(connectionStatus);
         }
     }
