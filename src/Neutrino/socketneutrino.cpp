@@ -31,14 +31,14 @@ void SocketNeutrino::ReadCommand(){
             }
             case 5:{
                 emit singleByteReady(NeutrinoData->signalReconstruction((char) socketAbstract->read(1).at(0)));
-//                socketAbstract->read(maxSize);
+                socketAbstract->read(maxSize);
                 break;
             }
             case 6:{
                 QByteArray temp;
                 temp = socketAbstract->read(2);
                 emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0), (char) temp.at(1)));
-                socketAbstract->read(maxSize);
+//                socketAbstract->read(maxSize);
                 break;
             }
             case 7:{
@@ -50,7 +50,7 @@ void SocketNeutrino::ReadCommand(){
                 QByteArray temp;
                 temp = socketAbstract->read(2);
                 emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0), (char) temp.at(1)));
-                socketAbstract->read(maxSize);
+//                socketAbstract->read(maxSize);
                 break;
             }
             case 9:{

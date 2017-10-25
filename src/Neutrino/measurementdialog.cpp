@@ -67,9 +67,22 @@ void MeasurementDialog::createLayout(){
         dataLabel[i] = new QLabel(defaultData[i]);
         dataLayout->addWidget(dataLabel[i]);
     }
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->addLayout(labelLayout);
-    mainLayout->addLayout(dataLayout);
+    resetStatistic = new QPushButton(tr("Reset"));
+    connect(resetStatistic, SIGNAL(clicked(bool)), this, SLOT(on_reset_clicked()));
+    QHBoxLayout *dispLayout = new QHBoxLayout;
+    dispLayout->addLayout(labelLayout);
+    dispLayout->addLayout(dataLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(dispLayout);
+    mainLayout->addWidget(resetStatistic);
     setLayout(mainLayout);
 //    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+}
+
+void MeasurementDialog::on_reset_clicked(){
+    max = 0;
+    min = 1.2;
+    avg = 0.5;
+    pk2pk = 0;
+    totalPoints = 0;
 }

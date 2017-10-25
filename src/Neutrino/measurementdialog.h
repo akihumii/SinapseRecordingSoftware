@@ -33,6 +33,7 @@ private:
                                "<b><FONT SIZE = 6> 1.5 </b>",
                                "<b><FONT SIZE = 6> 0 </b>"
                              };
+    QPushButton *resetStatistic;
 
     double min = 1.2;
     double max = 0;
@@ -45,6 +46,9 @@ private:
     double calcAverage(double data);
     double findMin(QVector<double> data);
     double findMax(QVector<double> data);
+
+private slots:
+    void on_reset_clicked();
 };
 
 #endif // MEASUREMENTDIALOG_H

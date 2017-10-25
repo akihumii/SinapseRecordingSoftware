@@ -49,7 +49,7 @@ double DataProcessor::signalReconstruction(char input){
 }
 
 double DataProcessor::signalReconstruction(char inputMSB, char inputLSB){
-    quint16 temp = (((quint8) inputMSB << 5) | ((quint8) inputLSB));
+    quint16 temp = ((((quint8) inputMSB << 5) | ((quint8) inputLSB)) & 0B0000001111111111);
     return (temp * 1.2/1024.0);
 }
 
