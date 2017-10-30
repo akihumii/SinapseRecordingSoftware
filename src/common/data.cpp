@@ -52,6 +52,7 @@ void Data::setRecordEnabled(bool enableFlag){
             qDebug() << "File failed to open";
         }
         out = new QTextStream(File);
+        recordHeader();
         qDebug() << "setting Record Enabled";
     }
     else{
@@ -63,6 +64,14 @@ void Data::setRecordEnabled(bool enableFlag){
 
 bool Data::isRecordEnabled(){
     return RecordEnabled;
+}
+
+void Data::recordHeader(){
+    *out << headerSettingString;
+}
+
+void Data::setHeader(QString header){
+    headerSettingString = header;
 }
 
 void Data::RecordData(int data){
