@@ -34,7 +34,6 @@ SignalAudio::SignalAudio(){
     audio->setBufferSize(1000);
     audioDevice = audio->start();
     audio->setVolume(0.1);
-    connect(audio, &QAudioOutput::stateChanged, this, &SignalAudio::handleStateChanged);
 }
 
 SignalAudio::~SignalAudio(){
@@ -63,28 +62,6 @@ bool SignalAudio::playAudio(int ChannelIndex){
 void SignalAudio::clearAudioBuffer(){
     for(int i = 0; i < 11; i++){
         audioBuffer[i].clear();
-    }
-}
-
-void SignalAudio::handleStateChanged(QAudio::State newState)
-{
-    switch (newState) {
-        case QAudio::IdleState:
-            // Finished playing (no more data)
-//            qDebug() << "Idled";
-            break;
-
-        case QAudio::StoppedState:
-            // Stopped for other reasons
-            if (audio->error() != QAudio::NoError) {
-                // Error handling
-                qDebug() << "Error: " << audio->error();
-            }
-            break;
-
-        default:
-            // ... other cases as appropriate
-            break;
     }
 }
 

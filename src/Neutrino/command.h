@@ -39,7 +39,6 @@ public:
     QByteArray resetCommand();
     void setOPMode(int Mode);
     void setChipID(int IDnum);
-
     void setBioImpBit(int Index);
     void clearBioImpBit(int index);
     quint8 getBioImp();

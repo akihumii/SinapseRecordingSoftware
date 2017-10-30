@@ -44,8 +44,13 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     return Plot_Y_AllDataPoint;
 }
 
-double DataProcessor::signalReconstruction(QByteArray input){
-    return ((quint8) input.at(0) * 1.2/256);
+double DataProcessor::signalReconstruction(char input){
+    return ((quint8) input * 1.2/256.0);
+}
+
+double DataProcessor::signalReconstruction(char inputMSB, char inputLSB){
+    quint16 temp = ((((quint8) inputMSB << 5) | ((quint8) inputLSB)) & 0B0000001111111111);
+    return (temp * 1.2/1024.0);
 }
 
 int DataProcessor::first_10bitFrameMarker(QByteArray data){

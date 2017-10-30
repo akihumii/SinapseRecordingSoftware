@@ -1,12 +1,19 @@
 #include "mainwindow.h"
 
+namespace SylphX {
+
 MainWindow::MainWindow(){
+    x = new Odin::OdinWindow();
+    x->setFixedSize(x->sizeHint());
+//    x->show();
+    pythonProcess = new QProcess(this);
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
-    data = new DataProcessor(samplingRate);
+    data = new DataProcessor(samplingRate, pythonProcess);
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
+    connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
@@ -62,7 +69,7 @@ void MainWindow::createLayout(){
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
 
-    channelGraph[10]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
+    channelGraph[10]->yAxis->setRange(-0.5, 2.5, Qt::AlignLeft);
     channelGraph[10]->yAxis->setTickStep(0.5);
     channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(50);
@@ -117,6 +124,9 @@ void MainWindow::createActions(){
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
+    odinAction = new QAction(tr("Odin Control Panel"));
+    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
+
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
     connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
@@ -129,13 +139,13 @@ void MainWindow::createActions(){
     chooseDirectoryAction->setShortcut(tr("Ctrl+S"));
     connect(chooseDirectoryAction, SIGNAL(triggered()), this, SLOT(on_chooseDirectory_triggered()));
 
-    restartAction = new QAction(tr("Restart serial port"), this);
-    restartAction->setShortcut(tr("Ctrl+A"));
-    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
-
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
+
+    pythonLaunchAction = new QAction(tr("&Python Launcher"), this);
+    pythonLaunchAction->setShortcut(tr("Ctrl+P"));
+    connect(pythonLaunchAction, SIGNAL(triggered()), this, SLOT(on_pythonLaunch_triggered()));
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+X"));
@@ -148,6 +158,15 @@ void MainWindow::createActions(){
     recordAction = new QAction(tr("Start &Recording"), this);
     recordAction->setShortcut(tr("Ctrl+R"));
     connect(recordAction, SIGNAL(triggered()), this, SLOT(on_record_triggered()));
+
+    isSmart = new QAction(tr("Smart Data Processor"), this);
+    connect(isSmart, SIGNAL(triggered(bool)), this, SLOT(on_smartDataProcessor_triggered()));
+    isDumb = new QAction(tr("Dumb Data Processor"), this);
+    connect(isDumb, SIGNAL(triggered(bool)), this, SLOT(on_dumbDataProcessor_triggered()));
+
+    restartAction = new QAction(tr("Resync data"), this);
+    restartAction->setShortcut(tr("Ctrl+A"));
+    connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
 
     timeFrame10ms = new QAction(tr("10 milliseconds"), this);
     timeFrame20ms = new QAction(tr("20 milliseconds"), this);
@@ -194,16 +213,18 @@ void MainWindow::createActions(){
 
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(odinAction);
+    fileMenu->addSeparator();
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(pythonLaunchAction);
     fileMenu->addSeparator();
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
     fileMenu->addAction(recordAction);
     fileMenu->addAction(chooseDirectoryAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(restartAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
@@ -284,6 +305,20 @@ void MainWindow::createMenus(){
     }
     audio[0]->setChecked(true);
 
+    processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
+    processorMenu->addAction(isSmart);
+    isSmart->setCheckable(true);
+    processorMenu->addAction(isDumb);
+    isDumb->setCheckable(true);
+
+    smartOrDumbGroup = new QActionGroup(this);
+    smartOrDumbGroup->addAction(isSmart);
+    smartOrDumbGroup->addAction(isDumb);
+    isSmart->setChecked(true);
+
+    processorMenu->addSeparator();
+    processorMenu->addAction(restartAction);
+
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
 }
@@ -316,10 +351,16 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(connectionStatus);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        socketSylph->doConnect("10.10.10.1", 30000);
+//        socketSylph->doConnect("10.10.10.2", 8888);
+        int i = 1;
+        do{
+            i++;
+            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
+            qDebug() << i;
+        } while(!socketSylph->isConnected() && i < 3);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
-            connectionStatus.append("Connected to Sylph WiFi Module at 10.10.10.1/30000");
+            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
         }
         else{
             connectionStatus.append("Failed to connect...");
@@ -331,7 +372,10 @@ void MainWindow::connectSylph(){
 }
 
 MainWindow::~MainWindow(){
-    socketSylph->doDisconnect();
+    if(socketSylph->isConnected()){
+        socketSylph->closeESP();
+        socketSylph->doDisconnect();
+    }
 }
 
 void MainWindow::updateData(){
@@ -443,13 +487,13 @@ void MainWindow::setVoltageTickStep(double position, double size, double step){
 void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
-        data->setADCRecordEnabled(true);
+//        data->setADCRecordEnabled(true);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
-        data->setADCRecordEnabled(false);
+//        data->setADCRecordEnabled(false);
         statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
@@ -481,6 +525,10 @@ void MainWindow::on_resetX_triggered(){
     timeFrame100ms->setChecked(true);
 }
 
+void MainWindow::on_odin_triggered(){
+    x->show();
+}
+
 void MainWindow::on_filterConfig_trigger(){
     FilterDialog filterDialog(data);
     filterDialog.exec();
@@ -498,6 +546,28 @@ void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
     QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
     process->start(file);
+}
+
+void MainWindow::on_pythonLaunch_triggered(){
+//    pythonProcess->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
+//    {
+//        args->flags |= CREATE_NEW_CONSOLE;
+//        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
+//        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
+//        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
+//                                           | FOREGROUND_INTENSITY;
+//    });
+    QString file;
+    file = "python " + QFileDialog::getOpenFileName(this,
+        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
+//    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
+    pythonProcess->start(file);
+    qDebug() << file;
+    QByteArray temp = pythonProcess->readAll();
+    qDebug() << temp;
+    if(!pythonProcess->waitForStarted())
+           qDebug() << "Failed to start";
+    qDebug() << "Starting data streamer";
 }
 
 void MainWindow::on_restart_triggered(){
@@ -518,6 +588,7 @@ void MainWindow::on_restart_triggered(){
     data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
+//        serialChannel->flushADC();
         socketSylph->discardData();
     }
 }
@@ -596,4 +667,14 @@ void MainWindow::activateChannelGraph(int index){
     channelGraph[index]->graph()->setPen(QPen(Qt::red));
     data->setAudioChannel(index);
     audio[index]->setChecked(true);
+}
+
+void MainWindow::on_smartDataProcessor_triggered(){
+    data->setSmartDataProcessor(true);
+}
+
+void MainWindow::on_dumbDataProcessor_triggered(){
+    data->setSmartDataProcessor(false);
+}
+
 }

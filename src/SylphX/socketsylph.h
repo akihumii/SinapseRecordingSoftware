@@ -5,18 +5,24 @@
 #include "../common/socketabstract.h"
 #include "dataprocessor.h"
 
+namespace SylphX {
+
 class SocketSylph : public SocketAbstract {
     Q_OBJECT
 public:
     SocketSylph(DataProcessor *dataProcessor_);
     bool wifiEnabled = true;
     void discardData();
+    void closeESP();
+
+public slots:
+    void appendSync();
 
 private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
 
-    qint64 maxSize = 25200;
+    qint64 maxSize = 352;
 
     bool checked = false;
     int initCount = 0;
@@ -24,5 +30,7 @@ private:
 private slots:
     void ReadCommand();
 };
+
+}
 
 #endif // SOCKETSYLPH_H

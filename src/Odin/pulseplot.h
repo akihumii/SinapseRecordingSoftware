@@ -4,6 +4,8 @@
 #include "../common/qtincludes.h"
 #include <QtMath>
 
+namespace Odin {
+
 class PulsePlot
 {
 public:
@@ -31,5 +33,7 @@ private:
 private slots:
 
 };
+
+}
 
 #endif // PULSEPLOT_H

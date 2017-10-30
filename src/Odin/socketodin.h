@@ -4,6 +4,8 @@
 #include "../common/qtincludes.h"
 #include "../common/socketabstract.h"
 
+namespace Odin {
+
 class SocketOdin: public SocketAbstract{
     Q_OBJECT
 public:
@@ -21,6 +23,7 @@ private slots:
     void readCommand();
 private:
     QTcpSocket *socketOdin;
+    QUdpSocket *udpSocket;
     QTimer commandTimer;
     QByteArray outgoingCommand;
     QByteArray incomingCommand;
@@ -29,5 +32,7 @@ private:
     bool timeToRead = false;
     int readDelay = 3000;
 };
+
+}
 
 #endif // SOCKETODIN_H

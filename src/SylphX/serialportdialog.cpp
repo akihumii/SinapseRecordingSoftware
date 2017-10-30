@@ -1,5 +1,7 @@
 #include "serialportdialog.h"
 
+namespace SylphX {
+
 SerialPortDialog::SerialPortDialog(SerialChannel *serialChannel_)
 {
     serialChannel = serialChannel_;
@@ -98,4 +100,6 @@ void SerialPortDialog::on_scanPorts_triggered(){
         portDescLabel[i]->setEnabled(false);
         portManuLabel[i]->setEnabled(false);
     }
+}
+
 }

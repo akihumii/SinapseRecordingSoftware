@@ -1,5 +1,7 @@
 #include "serialchannel.h"
 
+namespace SylphX {
+
 SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : QObject(parent = Q_NULLPTR)
 {
     implantPort = new QSerialPort(this);
@@ -35,7 +37,8 @@ void SerialChannel::closeADCPort(){
 }
 
 void SerialChannel::ReadADCData(){
-        dataProcessor->sortADCData(ADCPort->read(2100));
+//    qDebug() << "reading adc data";
+    dataProcessor->sortADCData(ADCPort->read(25200));
 }
 
 bool SerialChannel::enableImplantPort(QString portName){
@@ -112,14 +115,19 @@ void SerialChannel::connectSylph(){
     }
     if (implantPort->open(QIODevice::ReadWrite)){
         implantConnected = true;
-        for(int i = 0; i < 300; i++){
+        for(int i = 0; i < 3000; i++){
             implantPort->readAll();
+//            ADCPort->readAll();
         }
         checked = false;
         qDebug() << "Implant Port connnected!";
     }
     if (ADCPort->open(QIODevice::ReadWrite)){
         ADCConnected = true;
+        for(int i = 0; i < 3000; i++){
+//            implantPort->readAll();
+            ADCPort->readAll();
+        }
         qDebug() << "ADC Port connnected!";
     }
 }
@@ -182,4 +190,12 @@ void SerialChannel::swapPort(){
     }
     ADCPort->open(QIODevice::ReadWrite);
     implantPort->open(QIODevice::ReadWrite);
+}
+
+void SerialChannel::flushADC(){
+    for(int i = 0; i < 300000; i++){
+        ADCPort->readAll();
+    }
+}
+
 }

@@ -7,6 +7,8 @@
 #include <QThread>
 //#include <windows.h>
 
+namespace Odin {
+
 class LoopingThread : public QThread{
     Q_OBJECT
 public:
@@ -44,5 +46,7 @@ signals:
 
 private slots:
 };
+
+}
 
 #endif // LOOPINGTHREAD_H

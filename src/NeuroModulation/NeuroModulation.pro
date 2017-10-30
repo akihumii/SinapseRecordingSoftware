@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-12-01T14:14:05
+# Project created by QtCreator 2017-04-19T15:06:15
 #
 #-------------------------------------------------
 
@@ -8,11 +8,11 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Neutrino
+TARGET = NeuroModulation
 TEMPLATE = app
 
 # The application version
-VERSION = 1.1.1
+VERSION = 1.0.1
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -25,30 +25,12 @@ INCLUDEPATH += $$PWD../common
 
 DEPENDPATH += $$PWD../common
 
-HEADERS += \
-    channel.h \
-    command.h \
-    commanddialog.h \
-    dataprocessor.h \
-    mainwindow.h \
-    serialchannel.h \
-    serialportdialog.h \
-    signalchannel.h \
-    qtincludes.h \
-    socketneutrino.h \
-    measurementdialog.h
 
-SOURCES += \
-    channel.cpp \
-    command.cpp \
-    commanddialog.cpp \
-    dataprocessor.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    serialchannel.cpp \
-    serialportdialog.cpp \
-    signalchannel.cpp \
-    socketneutrino.cpp \
-    measurementdialog.cpp
+SOURCES += main.cpp\
+        mainwindow.cpp \
+    serialshuhao.cpp \
+    command.cpp
 
-FORMS +=
+HEADERS  += mainwindow.h \
+    serialshuhao.h \
+    command.h

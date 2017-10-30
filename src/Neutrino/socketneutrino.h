@@ -30,6 +30,8 @@ private:
 
 private slots:
     void ReadCommand();
+signals:
+    void singleByteReady(double temp);
 };
 
 #endif // SocketNeutrino_H

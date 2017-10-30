@@ -30,7 +30,8 @@ public:
     QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
     QVector<double> getChannelData(int ChannelIndex);
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
-    double signalReconstruction(QByteArray input);
+    double signalReconstruction(char input);
+    double signalReconstruction(char inputMSB, char inputLSB);
 
 private:
     QTextStream *out;

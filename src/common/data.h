@@ -40,15 +40,20 @@ public:
     void setDirectory(QString dir);
     QString getDirectory();
     void setNumDataPoints(int timeFrames, double sampleFreq);
+    void setHeader(QString header);
     int getNumDataPoints();
     double getSamplingRate();
 protected:
     QVector<double> X_axis;
     QVector<double> ChannelData[12];
 
+    quint8 headerSetting[14];
+    QString headerSettingString;
+
     quint64 total_data_count = 0;
     bool RecordEnabled = false;
     void RecordData(int data);
+    void recordHeader();
     QString directory = QDir::homePath() + "/Desktop/";
 
 private:

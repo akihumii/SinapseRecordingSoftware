@@ -20,12 +20,12 @@ void SerialChannel::ReadData(){
             }
         }
         case 5:{
-            emit singleByteReady(NeutrinoData->signalReconstruction(serialData->read(1)));
+            emit singleByteReady(NeutrinoData->signalReconstruction((char) serialData->read(1).at(0)));
             serialData->readAll();
             break;
         }
         case 7:{
-            emit singleByteReady(NeutrinoData->signalReconstruction(serialData->read(1)));
+            emit singleByteReady(NeutrinoData->signalReconstruction((char) serialData->read(1).at(0)));
             serialData->readAll();
             break;
         }

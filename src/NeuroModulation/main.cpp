@@ -1,13 +1,10 @@
-#include "odinwindow.h"
+#include "mainwindow.h"
 #include <QApplication>
-
-using namespace Odin;
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    OdinWindow w;
-    w.setFixedSize(w.sizeHint());
+    MainWindow w;
     w.show();
 
     return a.exec();
