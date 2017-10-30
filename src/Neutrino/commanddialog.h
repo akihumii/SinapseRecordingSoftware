@@ -55,6 +55,7 @@ private:
     void createJTAGLayout();
     void loadlastCommand();
     void loadDefault();
+    void updateHeader();
 
     QLabel *ModeLabel;
     QLabel *CIDLabel;
