@@ -618,7 +618,7 @@ void MainWindow::on_dataAnalyzer_triggered(){
 
 void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
-    CommandDialog commandDialog(socketNeutrino, NeutrinoCommand, NeutrinoChannel, serialNeutrino);
+    CommandDialog commandDialog(socketNeutrino, NeutrinoCommand, NeutrinoChannel, serialNeutrino, data);
     commandDialog.exec();
 
 }

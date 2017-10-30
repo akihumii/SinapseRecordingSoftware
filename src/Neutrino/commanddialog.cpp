@@ -1,10 +1,15 @@
 #include "commanddialog.h"
 
-CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_){
+CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_,
+                             Command *NeutrinoCommand_,
+                             Channel *NeutrinoChannel_,
+                             SerialChannel *NeutrinoSerial_,
+                             DataProcessor *dataProcessor_){
     socketNeutrino = socketNeutrino_;
     NeutrinoChannel = NeutrinoChannel_;
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoSerial = NeutrinoSerial_;
+    dataProcessor = dataProcessor_;
     setWindowTitle(tr("Neutrino Command"));
     createLayout();
     if(NeutrinoCommand->havelastCommand()){
@@ -332,6 +337,10 @@ void CommandDialog::on_sendCommand_clicked(){
         MeasurementDialog measurementDialog(NeutrinoSerial, socketNeutrino);
         measurementDialog.exec();
         on_chipReset_clicked();
+    }
+    for(int i = 0; i < 14; i++){
+        qDebug() << (quint8) NeutrinoCommand->getJTAG(i);
+        dataProcessor->setHeader(i, NeutrinoCommand->getJTAG(i));
     }
 }
 

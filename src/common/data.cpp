@@ -52,6 +52,8 @@ void Data::setRecordEnabled(bool enableFlag){
             qDebug() << "File failed to open";
         }
         out = new QTextStream(File);
+
+        recordHeader();
         qDebug() << "setting Record Enabled";
     }
     else{
@@ -63,6 +65,20 @@ void Data::setRecordEnabled(bool enableFlag){
 
 bool Data::isRecordEnabled(){
     return RecordEnabled;
+}
+
+void Data::recordHeader(){
+    for(int i = 0; i < 2; i++){
+        *out << "Neutrino Setting " << i << " : ,";
+        for(int j = 0; j < 7; j++){
+            *out << headerSetting[i*7+j] << " ,";
+        }
+        *out << "\n";
+    }
+}
+
+void Data::setHeader(int Index, quint8 byte){
+    headerSetting[Index] = byte;
 }
 
 void Data::RecordData(int data){
