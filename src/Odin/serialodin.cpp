@@ -80,6 +80,7 @@ void SerialOdin::checkConnectivity(){
             if(connectedPortName == info.portName())
                 return;
         }
+        odinSerialConnected = !odinSerialConnected;
         emit odinDisconnected();
     }
 }

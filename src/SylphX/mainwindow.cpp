@@ -360,7 +360,7 @@ void MainWindow::connectSylph(){
         } while(!socketSylph->isConnected() && i < 3);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
-            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.0.100/30000");
+            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
         }
         else{
             connectionStatus.append("Failed to connect...");

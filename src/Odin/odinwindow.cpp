@@ -653,7 +653,7 @@ void OdinWindow::setDelay(){
 
 void OdinWindow::on_odinDisconnected(){
     QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
-    this->close();
+//    this->close();
 }
 
 void OdinWindow::on_ConnectMenu_triggered(){
