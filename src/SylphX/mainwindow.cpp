@@ -352,7 +352,7 @@ void MainWindow::connectSylph(){
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
 //        socketSylph->doConnect("10.10.10.2", 8888);
-        int i = 1;
+        int i = 0;
         do{
             i++;
             socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
