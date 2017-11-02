@@ -5,6 +5,9 @@ namespace SylphX {
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
+
+    connect(dataProcessor, SIGNAL(groupIsignal()), this, SLOT(sendMovementOne()));
+    connect(dataProcessor, SIGNAL(groupJsignal()), this, SLOT(sendMovementTwo()));
 }
 
 void SocketSylph::discardData(){
@@ -34,6 +37,18 @@ void SocketSylph::ReadCommand(){
             qDebug() << "checked is true";
         }
     }
+}
+
+void SocketSylph::sendMovementOne(){
+    QString temp;
+    temp = "0";
+    qDebug() << "Movement " << temp;
+}
+
+void SocketSylph::sendMovementTwo(){
+    QString temp;
+    temp = "1";
+    qDebug() << "Movement " << temp;
 }
 
 void SocketSylph::appendSync(){

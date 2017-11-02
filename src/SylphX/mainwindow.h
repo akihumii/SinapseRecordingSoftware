@@ -61,6 +61,8 @@ private:
     QAction *resetDefaultY;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
+    QAction *classifierAction;
+    QAction *classifierEnableAction;
     QAction *pythonLaunchAction;
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
@@ -130,6 +132,8 @@ private slots:
     void on_voltage5000u_triggered();
     void on_voltage10000u_triggered();
     void on_dataAnalyzer_triggered();
+    void on_classifier_triggered();
+    void on_classifierEnable_triggered();
     void on_pythonLaunch_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();

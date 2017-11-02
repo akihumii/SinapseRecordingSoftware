@@ -22,6 +22,18 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             ChannelData[j-2].append(fullWord_rawData*(0.000000195));
+            if(classifierEnabled && classifierChannel == j-2){
+                if(fullWord_rawData*(0.000000195) > classifierThreshold){
+                    startSavingData = true;
+                }
+                if(startSavingData){
+                    savedData.append(fullWord_rawData*(0.000000195));
+                }
+                if(savedData.size() > classifierWindowLength/period){
+                    classifyFeature(computeFeature(classifierChannel));
+                    startSavingData = false;
+                }
+            }
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
@@ -33,6 +45,18 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
                 RecordData(fullWord_rawData);
             }
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
+            if(classifierEnabled && classifierChannel == j+8){
+                if(fullWord_rawData*(0.000000195) > classifierThreshold){
+                    startSavingData = true;
+                }
+                if(startSavingData){
+                    savedData.append(fullWord_rawData*(0.000000195));
+                }
+                if(savedData.size() > classifierWindowLength/period){
+                    classifyFeature(computeFeature(classifierChannel));
+                    startSavingData = false;
+                }
+            }
         }
         ChannelData[10].append((quint8) rawData.at(i));
 //        temp.append(rawData.at(i));
@@ -99,6 +123,87 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
         }
     }
 //    playAudio(getAudioChannel());
+}
+
+float DataProcessor::computeFeature(int channel){
+    float x = 0;
+    for(int i = 0; i < savedData.size(); i++){
+        if(savedData.at(i) > x){
+            x = savedData.at(i);
+        }
+    }
+    return x;
+}
+
+void DataProcessor::classifyFeature(float x){
+    qDebug() << "Feature value: " << x;
+    qDebug() << "K value: "<< classifierK;
+    qDebug() << "L value: "<< classifierL;
+    float temp = classifierK + x*classifierL;
+    qDebug() << "X VALUE: " << temp;
+    if(temp > 0){
+        QMessageBox::information(nullptr,
+                                 "Movement detected!",
+                                 "<b><FONT COLOR='#ff0000' FONT SIZE = 12> Movement 1 Detected!</b>" );
+        emit groupIsignal();
+    }
+    else{
+        QMessageBox::information(nullptr,
+                                 "Movement detected!",
+                                 "<b><FONT COLOR='#00ff00' FONT SIZE = 12> Movement 2 Detected!</b>" );
+        emit groupJsignal();
+    }
+    savedData.clear();
+}
+
+void DataProcessor::setClassifierK(float newValue){
+    qDebug () << "Classifier value K: " << newValue;
+    classifierK = newValue;
+}
+
+float DataProcessor::getClassifierK(){
+    return classifierK;
+}
+
+void DataProcessor::setClassifierL(float newValue){
+    qDebug () << "Classifier value L: " << newValue;
+    classifierL = newValue;
+}
+
+float DataProcessor::getClassifierL(){
+    return classifierL;
+}
+
+void DataProcessor::setClassifierWindowLength(float length){
+    classifierWindowLength = length;
+}
+
+float DataProcessor::getClassifierWindowLength(){
+    return classifierWindowLength;
+}
+
+void DataProcessor::setClassifierThreshold(float threshold){
+    classifierThreshold = threshold;
+}
+
+float DataProcessor::getClassifierThreshold(){
+    return classifierThreshold;
+}
+
+void DataProcessor::setClassifierChannel(int channel){
+    classifierChannel = channel;
+}
+
+int DataProcessor::getClassifierChannel(){
+    return classifierChannel;
+}
+
+void DataProcessor::setClassifierEnabled(bool flag){
+    classifierEnabled = flag;
+}
+
+bool DataProcessor::getClassifierEnabled(){
+    return classifierEnabled;
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){

@@ -143,6 +143,13 @@ void MainWindow::createActions(){
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
 
+    classifierAction = new QAction(tr("&Train Classifier"));
+    classifierAction->setShortcut(tr("Ctrl+T"));
+    connect(classifierAction, SIGNAL(triggered(bool)), this, SLOT(on_classifier_triggered()));
+    classifierEnableAction = new QAction(tr("Enable &classifier"));
+    classifierEnableAction->setShortcut(tr("Ctrl+C"));
+    connect(classifierEnableAction, SIGNAL(triggered(bool)), this, SLOT(on_classifierEnable_triggered()));
+
     pythonLaunchAction = new QAction(tr("&Python Launcher"), this);
     pythonLaunchAction->setShortcut(tr("Ctrl+P"));
     connect(pythonLaunchAction, SIGNAL(triggered()), this, SLOT(on_pythonLaunch_triggered()));
@@ -218,6 +225,10 @@ void MainWindow::createMenus(){
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
+    fileMenu->addAction(classifierAction);
+    fileMenu->addAction(classifierEnableAction);
+    classifierEnableAction->setCheckable(true);
+    fileMenu->addSeparator();
     fileMenu->addSeparator();
     fileMenu->addAction(pythonLaunchAction);
     fileMenu->addSeparator();
@@ -546,6 +557,58 @@ void MainWindow::on_dataAnalyzer_triggered(){
     QProcess *process = new QProcess(this);
     QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
     process->start(file);
+}
+
+void MainWindow::on_classifier_triggered(){
+    QProcess *process = new QProcess(this);
+    QString file = "C:/DrAmit/ClassifierProgram/ClassifierProgram.exe";
+    process->start(file);
+
+//    ClassifierDialog classifierDialog(data);
+//    classifierDialog.exec();
+}
+
+void MainWindow::on_classifierEnable_triggered(){
+    if(!data->getClassifierEnabled()){
+        QString file = "C:/DrAmit/Parameters/";
+        qDebug() << file;
+        for(int i = 100; i >= 0; i--){
+            QString tempFile = file + "parameters" + QString::number(i) + ".txt";
+            qDebug() << tempFile;
+            QFile parameterFile(tempFile);
+            if(parameterFile.exists()){
+                if(!parameterFile.open(QIODevice::ReadOnly | QIODevice::Text))
+                    return;
+                QTextStream in(&parameterFile);
+                QString temp;
+                temp = in.readLine();
+                data->setClassifierK(temp.toFloat());
+                qDebug() << "Classifier value K set to : " << temp;
+                temp = in.readLine();
+                data->setClassifierL(temp.toFloat());
+                qDebug() << "Classifier value L set to: " << temp;
+                temp = in.readLine();
+                data->setClassifierWindowLength(temp.toFloat());
+                qDebug() << "Window Length set to: " << temp;
+                temp = in.readLine();
+                data->setClassifierThreshold(temp.toFloat());
+                qDebug() << "Threshold set to: " << temp;
+                temp = in.readLine();
+                data->setClassifierChannel(temp.toInt());
+                qDebug() << "Classifier will perform on Channel " << temp;
+                QMessageBox::information(this, "Parameters set!", "K Value: " + QString::number(data->getClassifierK()) + "\n"
+                                                                        + "L Value: " + QString::number(data->getClassifierL()) + "\n"
+                                                                        + "Window Length: " + QString::number(data->getClassifierWindowLength()) + "\n"
+                                                                        + "Threshold: " + QString::number(data->getClassifierThreshold()) + "\n"
+                                                                        + "Channel Selected: " + QString::number(data->getClassifierChannel()) + "\n"
+                                                                        + "You may close the dialog!");
+                break;
+            }
+        }
+    }
+
+    data->setClassifierEnabled(!data->getClassifierEnabled());
+    classifierEnableAction->setChecked(data->getClassifierEnabled());
 }
 
 void MainWindow::on_pythonLaunch_triggered(){
