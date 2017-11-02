@@ -314,7 +314,7 @@ void MainWindow::createMenus(){
     smartOrDumbGroup = new QActionGroup(this);
     smartOrDumbGroup->addAction(isSmart);
     smartOrDumbGroup->addAction(isDumb);
-    isSmart->setChecked(true);
+    isDumb->setChecked(true);
 
     processorMenu->addSeparator();
     processorMenu->addAction(restartAction);
