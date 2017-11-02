@@ -17,8 +17,6 @@ public:
 
 public slots:
     void appendSync();
-    void sendMovementOne();
-    void sendMovementTwo();
 
 private:
     QTcpSocket *socketSylph;

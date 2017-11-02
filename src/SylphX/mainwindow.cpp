@@ -14,6 +14,8 @@ MainWindow::MainWindow(){
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
+    connect(data, SIGNAL(groupIsignal()), x, SLOT(sendMovementOne()));
+    connect(data, SIGNAL(groupJsignal()), x, SLOT(sendMovementTwo()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();

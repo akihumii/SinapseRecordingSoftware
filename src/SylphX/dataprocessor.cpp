@@ -59,6 +59,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
         }
         ChannelData[10].append((quint8) rawData.at(i));
+        if((quint8) rawData.at(i) == 255){
+            pauseClassifier(1800);
+        }
 //        temp.append(rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
@@ -204,6 +207,15 @@ void DataProcessor::setClassifierEnabled(bool flag){
 
 bool DataProcessor::getClassifierEnabled(){
     return classifierEnabled;
+}
+
+void DataProcessor::pauseClassifier(int msecDuration){
+    classifierEnabled = false;
+    qDebug() << "Pausing classifier...";
+    QTimer::singleShot(msecDuration, [=] {
+            classifierEnabled = true;
+            qDebug() << "Resuming classifier!";
+    });
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){

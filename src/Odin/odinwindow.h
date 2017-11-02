@@ -25,6 +25,8 @@ public:
 
     QLabel *statusBarLabel;
 public slots:
+    void sendMovementOne();
+    void sendMovementTwo();
 
 private:
     SerialOdin *serialOdin;

@@ -526,6 +526,19 @@ void OdinWindow::on_commandSent(){
     }
 }
 
+
+void OdinWindow::sendMovementOne(){
+    QString temp;
+    temp = "0";
+    qDebug() << "Movement " << temp;
+}
+
+void OdinWindow::sendMovementTwo(){
+    QString temp;
+    temp = "1";
+    qDebug() << "Movement " << temp;
+}
+
 void OdinWindow::on_commandReceived(bool received){
     if(!received){
 //        qDebug() << "Command didnt come back";

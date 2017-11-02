@@ -76,6 +76,7 @@ private:
 
     float computeFeature(int channel);
     void classifyFeature(float x);
+    void pauseClassifier(int msecDuration);
 
 signals:
     void groupIsignal();
