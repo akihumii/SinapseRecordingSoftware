@@ -506,7 +506,6 @@ void OdinWindow::on_commandSent(){
     commandCount++;
     commandOdin->sendCommand();
     sentLED->blink(50);
-    emit commandSent();
     if(commandOdin->getlastSentCommand().size() > 0){
         QString lastCommand;
         lastCommand.append("Command: ");
