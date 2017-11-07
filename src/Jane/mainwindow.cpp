@@ -581,10 +581,6 @@ void MainWindow::createJTAGWidget()
     JTAGReg_2->setAlignment(Qt::AlignTop);
     JTAGReg_3->setAlignment(Qt::AlignTop);
 
-    for(int i=25;i<33;i++){
-        JTAGReg_1->addWidget(JTAG[i]);
-    }
-
     QHBoxLayout *JTAGREGISTERLayout = new QHBoxLayout;
     for(int i=25;i<33;i++){
         JTAGReg_1->addWidget(JTAG[i]);
