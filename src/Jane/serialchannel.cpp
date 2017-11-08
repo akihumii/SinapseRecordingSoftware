@@ -87,7 +87,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i).portName());
-            serialCommand->setBaudRate(2400);
+            serialCommand->setBaudRate(48000);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
@@ -105,7 +105,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i+1).portName());
-            serialCommand->setBaudRate(2400);
+            serialCommand->setBaudRate(48000);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
@@ -138,7 +138,7 @@ void SerialChannel::InitializePort(QString portType, QString manufacturer)
         if(portInfo.at(i).manufacturer() == manufacturer){
             qDebug() << "setting up USB port for " <<portType;
             serialCommand->setPortName(portInfo.at(i).portName());
-            serialCommand->setBaudRate(2400);
+            serialCommand->setBaudRate(48000);
 
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
