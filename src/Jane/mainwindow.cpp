@@ -278,13 +278,6 @@ void MainWindow::on_sendCommand_clicked(){
 
     thorCommand -> constructCommand();
     qDebug() << "Constructed: " << thorCommand->getCmd().toHex();
-
-    if( (modeComboBox->currentIndex() == 7) ||
-        (modeComboBox->currentIndex() == 8)
-       ){
-        MeasurementDialog measurementDialog(serialThor);
-        measurementDialog.exec();
-    }
     if(serialThor->isConnected()){
         qDebug()<< "send via wired: " << thorCommand->getCmd().toHex();
         serialThor->writeCommand(thorCommand->getCmd());
@@ -292,6 +285,12 @@ void MainWindow::on_sendCommand_clicked(){
     if(socketThor->isConnected()){
         qDebug()<< "send via wifi: " << thorCommand->getCmd().toHex();
         socketThor->writeCommand(thorCommand->getCmd());
+    }
+    if( (modeComboBox->currentIndex() == 7) ||
+        (modeComboBox->currentIndex() == 8)
+       ){
+        MeasurementDialog measurementDialog(serialThor);
+        measurementDialog.exec();
     }
 }
 
@@ -521,7 +520,7 @@ void MainWindow::createStimulatorParamWidget()
         paramEdit[i] = new QLineEdit;
         paramEdit[i]->setAlignment(Qt::AlignCenter);
         paramEdit[i] -> setMaximumWidth(150);
-        paramEdit[i] -> setInputMask("HHHHHH");
+        paramEdit[i] -> setInputMask("HHHHHHHHHHHH");
         paramLine[i]->addWidget(setLabel);
         paramLine[i]->addWidget(paramEdit[i]);
 

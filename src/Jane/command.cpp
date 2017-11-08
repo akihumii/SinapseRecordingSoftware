@@ -100,18 +100,24 @@ void Command::addData()
         case 5:{                                    // Stimulator Trigger mode
             cmd.append((const char)STIM_TRIGGER);
             cmd.append(thorParam->getTriggerCmd());
+            break;
         }
         case 6:{                                    // Oscilator clock tuning
             cmd.append((const char)OSC_CLK_MODE);
             for (int i=0;i<6;i++){
                 cmd.append(JTAGarray[i]);
             }
+            break;
         }
         case 7:{                                    // 8-bit Analog Measurement
             cmd.append((const char)BITMODE_8);
+            qDebug() << thorParam->getTriggerCmd();
+            cmd.append(thorParam->getTriggerCmd());
+            break;
         }
         case 8:{                                    // Bioimpedance Measurement
             cmd.append((const char)BIOIMP_MEASURE_8BIT);
+            break;
         }
         default:
         break;
@@ -158,6 +164,7 @@ void Command::updateBER(int index, QString newBER) { BERbytesHex[index] = newBER
 
 void Command::updateTriggerCmd(int index, QString state)
 {
+    qDebug() << index << ": " << state;
     thorParam->setTriggerCmd(index,(bool) state.toInt());
 }
 

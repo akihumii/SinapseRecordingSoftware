@@ -121,7 +121,7 @@ QByteArray Stimulator::getTriggerCmd()
         cmd += triggerCmd[i]*pow(2,7-i);
     }
     trigger.append(cmd);
-//    qDebug()<< cmd;
+    qDebug()<< cmd;
     return trigger;
 }
 

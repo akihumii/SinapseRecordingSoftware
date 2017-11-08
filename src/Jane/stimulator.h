@@ -52,7 +52,7 @@ public:
     void setStimParam(int channel, int paramNumber, int value);
     void *getStimParamArray();
 
-    QByteArray paramValue[16];
+    QByteArray paramValue[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 
 private:
