@@ -225,6 +225,9 @@ void MainWindow::on_mode_changed(int mode)
         subsequenceWidget->show();
         break;
     }
+    case 6:{
+        JTAGTabWidget->show();
+    }
     default:{
         break;
     }

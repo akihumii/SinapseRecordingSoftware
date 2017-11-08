@@ -103,6 +103,9 @@ void Command::addData()
         }
         case 6:{                                    // Oscilator clock tuning
             cmd.append((const char)OSC_CLK_MODE);
+            for (int i=0;i<6;i++){
+                cmd.append(JTAGarray[i]);
+            }
         }
         case 7:{                                    // 8-bit Analog Measurement
             cmd.append((const char)BITMODE_8);
@@ -155,7 +158,7 @@ void Command::updateBER(int index, QString newBER) { BERbytesHex[index] = newBER
 
 void Command::updateTriggerCmd(int index, QString state)
 {
-    thorParam->setTriggerCmd(index,(boolean) state.toInt());
+    thorParam->setTriggerCmd(index,(bool) state.toInt());
 }
 
 void Command::addStimulationParamSet(int start, int end)

@@ -62,7 +62,7 @@ private:
     quint8 subSeqStop[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
 
     int stimParam[16][5];
-    boolean triggerCmd[8] = {0};  //DEFXYabc
+    bool triggerCmd[8] = {0};  //DEFXYabc
 
 };
 

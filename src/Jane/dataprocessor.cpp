@@ -140,7 +140,7 @@ int DataProcessor::first_10xA5FrameMarker(QByteArray data)
     for(int i=0; i<data.size()-1;i++){
 
         if(((uint8_t) data.at(i) == FM_A5) &&(i+9 <data.size())){
-            boolean isFrame = true;
+            bool isFrame = true;
             for (int j=0;j<9;j++){
                 if ((uint8_t)data.at(i+j) != FM_A5){
                     isFrame = false;
