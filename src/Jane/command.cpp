@@ -133,8 +133,8 @@ void Command::setBioImpBit(int index) {bioimp |= 1 << index;}
 void Command::clearBioImpBit(int index) {bioimp &= ~(1 << index);}
 quint8 Command::getBioImp() { return bioimp; }
 
-void Command::setJTAGBit(int index) { JTAGarray[(index/8)] |= 1 << (7-(index %8)); }
-void Command::clearJTAGBit(int index) { JTAGarray[(index/8)] &= ~(1 << (7-(index %8))); }
+void Command::setJTAGBit(int index) { JTAGarray[(index/8)] |= 1 << (index %8); }
+void Command::clearJTAGBit(int index) { JTAGarray[(index/8)] &= ~(1 << (index %8)); }
 quint8 Command::getJTAG(int index) { return JTAGarray[index]; }
 
 void Command::setDCLMode(quint8 newDCL_Mode) { DCL_Mode = newDCL_Mode; }
