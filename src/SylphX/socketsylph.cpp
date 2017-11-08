@@ -10,7 +10,7 @@ SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
 void SocketSylph::discardData(){
     for(int i = 0; i < 50; i++){
         socketAbstract->read(48000);
-//        qDebug() << "Discarding";
+        qDebug() << "Discarding";
     }
     checked = false;
 }
@@ -27,9 +27,9 @@ void SocketSylph::ReadCommand(){
             dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
         }
     }
-    else if(socketAbstract->bytesAvailable() >= 89 && !checked){
+    else if(socketAbstract->bytesAvailable() >= 93 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(89), 0)){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(93), 0)){
             checked = true;
             qDebug() << "checked is true";
         }

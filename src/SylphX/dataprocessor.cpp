@@ -9,11 +9,11 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-//    qDebug() << rawData.size();
-    for(int i = 0; i < rawData.size(); i = i + 22){
+    qDebug() << rawData.size();
+    for(int i = 0; i < rawData.size(); i = i + 23){
         QByteArray temp;
         for(int j = 2; j < 10; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+2+((2*j))) << 8 | (quint8) rawData.at(i+2+((2*j)+1)))-32768;
 //            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
 //            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
 //            std::cout << fullWord_rawData;
@@ -24,7 +24,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             ChannelData[j-2].append(fullWord_rawData*(0.000000195));
         }
         for(int j = 0; j < 2; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+2+((2*j))) << 8 | (quint8) rawData.at(i+2+((2*j)+1)))-32768;
 //            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
 //            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
 //            std::cout << fullWord_rawData;
@@ -34,14 +34,14 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
-        ChannelData[10].append((quint8) rawData.at(i));
+        ChannelData[10].append((quint8) rawData.at(i+1));
 //        temp.append(rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
-        ChannelData[11].append((quint8) rawData.at(i+21));
+        ChannelData[11].append((quint8) rawData.at(i+21) << 8 | (quint8) rawData.at(i+22));
 //        temp.append(rawData.at(i+21));
         if(RecordEnabled){
             RecordData((quint8)rawData.at(i+21));
@@ -102,50 +102,52 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-        if(((quint8) data.at(currentIndex + 22) == (quint8) data.at(currentIndex) + 1)){
+        if(((quint8) data.at(currentIndex + 23) == (quint8) data.at(currentIndex) + 1)){
         return true;
     }
-    else if((quint8)data.at(currentIndex) == 249
-                && (quint8)data.at(currentIndex+22) == 250){
-        return true;
-    }
-    else if((quint8)data.at(currentIndex) == 250
-                && (quint8)data.at(currentIndex+22) == 0){
-        return true;
-    }
+//    else if((quint8)data.at(currentIndex) == 249
+//                && (quint8)data.at(currentIndex+22) == 250){
+//        return true;
+//    }
+//    else if((quint8)data.at(currentIndex) == 250
+//                && (quint8)data.at(currentIndex+22) == 0){
+//        return true;
+//    }
     else{
         return false;
     }
 }
 
 int DataProcessor::findfirstFrameMarkers(QByteArray rawData){
-    for(int i = 0; i < rawData.size()-44; i++){
-        if((quint8)rawData.at(i+44) == (quint8)rawData.at(i+22)+1
-                && (quint8)rawData.at(i+22) == (quint8)rawData.at(i)+1){
+    qDebug() << "Finding first frame marker";
+    for(int i = 0; i < rawData.size()-46; i++){
+        if((quint8)rawData.at(i+46) == (quint8)rawData.at(i+23)+1
+                && (quint8)rawData.at(i+23) == (quint8)rawData.at(i)+1){
             return i;
         }
-        else if((quint8)rawData.at(i+44) == 1 && (quint8)rawData.at(i+22) == 0 && (quint8)rawData.at(i) == 250){
-            return i;
-        }
-        else if((quint8)rawData.at(i+44) == 0 && (quint8)rawData.at(i+22) == 250 && (quint8)rawData.at(i) == 249){
-            return i;
-        }
+//        else if((quint8)rawData.at(i+44) == 1 && (quint8)rawData.at(i+22) == 0 && (quint8)rawData.at(i) == 250){
+//            return i;
+//        }
+//        else if((quint8)rawData.at(i+44) == 0 && (quint8)rawData.at(i+22) == 250 && (quint8)rawData.at(i) == 249){
+//            return i;
+//        }
     }
     return 0;
 }
 
 int DataProcessor::findlastFrameMarkers(QByteArray rawData){
-    if(rawData.size()>42){
-        for(int i = rawData.size()-1; i > 43; i--){
-            if((quint8)rawData.at(i-22)+1 == (quint8)rawData.at(i) && (quint8)rawData.at(i-44)+1 == (quint8)rawData.at(i-22)){
+    qDebug() << "Finding last frame marker";
+    if(rawData.size()>44){
+        for(int i = rawData.size()-1; i > 45; i--){
+            if((quint8)rawData.at(i-23)+1 == (quint8)rawData.at(i) && (quint8)rawData.at(i-46)+1 == (quint8)rawData.at(i-23)){
                 return i;
             }
-            else if((quint8)rawData.at(i-44) == 249 && (quint8)rawData.at(i-22) == 250 && (quint8)rawData.at(i) == 0){
-                return i;
-            }
-            else if((quint8)rawData.at(i-44) == 250 && (quint8)rawData.at(i-22) == 0 && (quint8)rawData.at(i) == 1){
-                return i;
-            }
+//            else if((quint8)rawData.at(i-44) == 249 && (quint8)rawData.at(i-23) == 250 && (quint8)rawData.at(i) == 0){
+//                return i;
+//            }
+//            else if((quint8)rawData.at(i-44) == 250 && (quint8)rawData.at(i-22) == 0 && (quint8)rawData.at(i) == 1){
+//                return i;
+//            }
         }
     }
     return 0;

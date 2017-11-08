@@ -69,10 +69,10 @@ void MainWindow::createLayout(){
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
 
-    channelGraph[10]->yAxis->setRange(-0.5, 2.5, Qt::AlignLeft);
-    channelGraph[10]->yAxis->setTickStep(0.5);
-    channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
-    channelGraph[11]->yAxis->setTickStep(50);
+    channelGraph[10]->yAxis->setRange(-5, 260, Qt::AlignLeft);
+    channelGraph[10]->yAxis->setTickStep(50);
+    channelGraph[11]->yAxis->setRange(0, 65535, Qt::AlignLeft);
+    channelGraph[11]->yAxis->setTickStep(13000);
     channelGraph[11]->axisRect()->setMargins(QMargins(75,10,0,15));
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
@@ -357,7 +357,7 @@ void MainWindow::connectSylph(){
             i++;
             socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
             qDebug() << i;
-        } while(!socketSylph->isConnected() && i < 3);
+        } while(!socketSylph->isConnected() && i < 6);
         if(socketSylph->isConnected()){
             connectionStatus.clear();
             connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
