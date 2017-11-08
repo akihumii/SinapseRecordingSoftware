@@ -48,7 +48,7 @@ void SerialChannel::closePort(){
 
 bool SerialChannel::doConnect(){
     ListAllPort();
-    InitializePort(PORT_TYPE_CMD,PORT_CMD);
+    InitializePort(PORT_TYPE_CMD,PORT_MANUF_CMD);
 //    InitializePort(PORT_TYPE_DATA,PORT_DATA);
     return (ConnectPort(PORT_TYPE_CMD) && ConnectPort(PORT_TYPE_DATA));
 }
@@ -131,14 +131,14 @@ void SerialChannel::ListAllPort()
     }
 }
 
-void SerialChannel::InitializePort(QString portType, QString portName)
+void SerialChannel::InitializePort(QString portType, QString manufacturer)
 {
     qDebug() << "Finding USB port for " << portType;
     for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).portName() == portName){
+        if(portInfo.at(i).manufacturer() == manufacturer){
             qDebug() << "setting up USB port for " <<portType;
             serialCommand->setPortName(portInfo.at(i).portName());
-            serialCommand->setBaudRate(9600);
+            serialCommand->setBaudRate(19200);
 
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);

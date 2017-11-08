@@ -8,7 +8,7 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Jane
+TARGET = Mjolnir
 TEMPLATE = app
 
 # The application version

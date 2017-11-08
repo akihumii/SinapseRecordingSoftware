@@ -11,7 +11,7 @@ MainWindow::MainWindow()
     socketThor = new SocketThor(this, thorCommand, data, thorChannel);
     createLayout();
     createAction();
-//    connectThor();
+    connectThor();
 //    on_wired_triggered();
 
 

@@ -12,6 +12,8 @@
 #define PORT_TYPE_DATA "DATA"
 #define PORT_CMD "COM8"
 #define PORT_DATA "COM3"
+#define PORT_SERIAL_CMD "A10603RKA"
+#define PORT_MANUF_CMD "FTDI"
 
 
 class SerialChannel : public QObject{
