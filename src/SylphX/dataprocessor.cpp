@@ -9,22 +9,22 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-    qDebug() << rawData.size();
+//    qDebug() << rawData.size();
     for(int i = 0; i < rawData.size(); i = i + 23){
         QByteArray temp;
         for(int j = 2; j < 10; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+2+((2*j))) << 8 | (quint8) rawData.at(i+2+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
 //            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
 //            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
 //            std::cout << fullWord_rawData;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
+//            appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             ChannelData[j-2].append(fullWord_rawData*(0.000000195));
         }
         for(int j = 0; j < 2; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+2+((2*j))) << 8 | (quint8) rawData.at(i+2+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
 //            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
 //            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
 //            std::cout << fullWord_rawData;
@@ -34,7 +34,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
-        ChannelData[10].append((quint8) rawData.at(i+1));
+        ChannelData[10].append((quint8) rawData.at(i));
 //        temp.append(rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
@@ -44,7 +44,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         ChannelData[11].append((quint8) rawData.at(i+21) << 8 | (quint8) rawData.at(i+22));
 //        temp.append(rawData.at(i+21));
         if(RecordEnabled){
-            RecordData((quint8)rawData.at(i+21));
+            RecordData((quint8) rawData.at(i+21) << 8 | (quint8) rawData.at(i+22));
             RecordData(END_OF_LINE);
         }
 //        std::cout << temp;
