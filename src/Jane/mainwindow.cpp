@@ -190,7 +190,8 @@ void MainWindow::createAction()
         connect(subSeqMultipleStopComboBox[i], SIGNAL(currentIndexChanged(int)), multipleStopMapper, SLOT(map()));
     }
 
-    for (int i = 0; i<16;i++){
+    connect(paramSetSelect, SIGNAL(currentIndexChanged(int)), this, SLOT(on_paramSetSelect_changed()));
+    for (int i = 0; i<6;i++){
         connect(paramEdit[i],SIGNAL(textEdited(QString)),this,SLOT(on_paramValueChange()));
     }
 
@@ -337,21 +338,16 @@ void MainWindow::on_subSeqParamSpinBox_changed()
     }
 }
 
+void MainWindow::on_paramSetSelect_changed(){
+    for(int i = 0; i < 6; i++){
+        paramEdit[i]->setText(QString::number(thorParam->getStimParam(paramSetSelect->currentIndex(), i), 16));
+    }
+}
+
 void MainWindow::on_paramValueChange()
 {
-    QString subSet ="";
-    for (int i=0; i<16;i ++){
-        if (paramEdit[i]->isModified()){
-            QString paramSet = paramEdit[i]->text();
-
-            if (paramSet.length()==6){
-                thorParam->paramValue[i].clear();
-                thorParam->paramValue[i] = QByteArray::fromHex(paramSet.toLatin1());
-            }
-            if (paramSet.length()==0){
-                thorParam->paramValue[i].clear();
-            }
-        }
+    for(int i = 0; i < 6; i++){
+        thorParam->setStimParam(paramSetSelect->currentIndex(), i, paramEdit[i]->text().toInt(&ok,16));
     }
 }
 
@@ -432,8 +428,6 @@ void MainWindow::createModeComboBox()
     modeComboBox -> addItem("Analog Measurement Mode (8 Bits)");
     modeComboBox -> addItem("Bioimpedance Measurement Mode (8 Bits)");
     modeComboBox -> setCurrentIndex(0);
-
-
 }
 
 void MainWindow::createSubsequenceWidget()
@@ -512,20 +506,34 @@ void MainWindow::createStimulatorParamWidget()
 {
     StimulatorParamLayout = new QVBoxLayout();
     StimulatorParamWidget = new QWidget();
-    QLabel *mainLabel = new QLabel(tr("         6 Stimulator parameter (hex): "));
+    QLabel *mainLabel = new QLabel(tr("Stimulator parameter (hex): "));
     StimulatorParamLayout->addWidget(mainLabel);
-    for (int i=0;i<16;i++){
-        paramLine[i] = new QHBoxLayout;
-        QLabel *setLabel = new QLabel("         Set " + QString::number(i+1) + ":  ");
+    paramLine = new QHBoxLayout;
+    paramSetSelect = new QComboBox;
+    paramSetSelect->setMinimumWidth(70);
+    QHBoxLayout *labelsLayout = new QHBoxLayout;
+    for(int i = 0; i < 7; i++){
+        stimLabel[i] = new QLabel(StimParamNames[i]);
+        stimLabel[i]->setMinimumWidth(70);
+        stimLabel[i]->setAlignment(Qt::AlignCenter);
+        labelsLayout->addWidget(stimLabel[i]);
+    }
+    StimulatorParamLayout->addLayout(labelsLayout);
+    for(int i = 0; i < 16; i++){
+        paramSetSelect->addItem("Set " + QString::number(i+1));
+    }
+    paramLine->addWidget(paramSetSelect);
+    for(int i = 0; i < 6; i++){
         paramEdit[i] = new QLineEdit;
         paramEdit[i]->setAlignment(Qt::AlignCenter);
-        paramEdit[i] -> setMaximumWidth(150);
-        paramEdit[i] -> setInputMask("HHHHHHHHHHHH");
-        paramLine[i]->addWidget(setLabel);
-        paramLine[i]->addWidget(paramEdit[i]);
-
-        StimulatorParamLayout->addLayout(paramLine[i]);
+        paramEdit[i]->setInputMask("HH");
+        paramEdit[i]->setMinimumWidth(70);
+        paramEdit[i]->setText(QString::number(0));
+        paramLine->addWidget(paramEdit[i]);
     }
+
+    StimulatorParamLayout->addLayout(paramLine);
+
     StimulatorParamLayout -> setAlignment(Qt::AlignTop);
 
     StimulatorParamWidget->setLayout(StimulatorParamLayout);

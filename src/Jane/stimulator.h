@@ -49,17 +49,16 @@ public:
     void *getSubSeqStartArray();
     void *getSubSeqStopArray();
 
-    void setStimParam(int channel, int paramNumber, int value);
-    void *getStimParamArray();
-
-    QByteArray paramValue[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
+    void setStimParam(int channel, int paramOfSet, int value);
+    QVector<QVector<quint8>> getStimParamArray();
+    quint8 getStimParam(int set, int paramOfSet);
 
 private:
     bool subSeqSelect[8] = {1, 1, 1, 1, 1, 1, 1, 1};
     quint8 subSeqParam[8] = {1, 1, 1, 1, 1, 1, 1, 1};
     quint8 subSeqStart[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
     quint8 subSeqStop[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
+    QVector<QVector<quint8>> paramValue;
 
     int stimParam[16][5];
     bool triggerCmd[8] = {0};  //DEFXYabc

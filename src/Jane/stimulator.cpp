@@ -2,7 +2,13 @@
 
 Stimulator::Stimulator()
 {
-
+    paramValue.resize(16);
+    for(int i=0; i<16;i++){
+        paramValue[i].resize(6);
+        for(int j = 0; j < 6; j++){
+            paramValue[i][j] = 0;
+        }
+    }
 }
 
 quint8 Stimulator::getMultiplier(quint8 arr[][2], int channel)
@@ -141,5 +147,6 @@ void Stimulator::setSubSeqMultipleStop(int index, int multiple) { subSeqStop[ind
 void *Stimulator::getSubSeqStartArray() { return subSeqStart;}
 void *Stimulator::getSubSeqStopArray() { return subSeqStop;}
 
-void Stimulator::setStimParam(int channel, int paramNumber, int value) { stimParam[channel][paramNumber] = value; }
-void *Stimulator::getStimParamArray() { return stimParam; }
+void Stimulator::setStimParam(int set, int paramOfSet, int value) { paramValue[set][paramOfSet] = value; }
+QVector<QVector<quint8> > Stimulator::getStimParamArray() { return paramValue; }
+quint8 Stimulator::getStimParam(int set, int paramOfSet) { return paramValue[set][paramOfSet];}

@@ -62,28 +62,37 @@ void Command::addData()
         case 3:{                                    // Stimulator parameter program
             cmd.append((const char)STIM_PARAMETER);
 
-            if ((thorParam->isStimulatorParamSetLower()) && (thorParam->isStimulatorParamSetUpper())){
-                qDebug()<<"Stimulator parameter program: Lower + Upper";
-                //cont 1st cmd
-                cmd.append((const char)STIM_LOWER);
-                addStimulationParamSet(0,8);
-                addEndPulse();
-                //start 2nd cmd
-                addSyncPulse();
-                addChipID();
-                cmd.append((const char)STIM_UPPER);
-                addStimulationParamSet(8,16);
-            }
-            else if(thorParam->isStimulatorParamSetLower()){
-                qDebug()<< "Stimulator parameter program: Lower";
-                cmd.append((const char)STIM_LOWER);
-                addStimulationParamSet(0,8);
-            }
-            else if (thorParam->isStimulatorParamSetUpper()){
-                qDebug()<<"Stimulator parameter program: Upper";
-                cmd.append((const char)STIM_UPPER);
-                addStimulationParamSet(8,16);
-            }
+            cmd.append((const char)STIM_LOWER);
+            addStimulationParamSet(0,8);
+            addEndPulse();
+            //start 2nd cmd
+            addSyncPulse();
+            addChipID();
+            cmd.append((const char)STIM_UPPER);
+            addStimulationParamSet(8,16);
+
+//            if ((thorParam->isStimulatorParamSetLower()) && (thorParam->isStimulatorParamSetUpper())){
+//                qDebug()<<"Stimulator parameter program: Lower + Upper";
+//                //cont 1st cmd
+//                cmd.append((const char)STIM_LOWER);
+//                addStimulationParamSet(0,8);
+//                addEndPulse();
+//                //start 2nd cmd
+//                addSyncPulse();
+//                addChipID();
+//                cmd.append((const char)STIM_UPPER);
+//                addStimulationParamSet(8,16);
+//            }
+//            else if(thorParam->isStimulatorParamSetLower()){
+//                qDebug()<< "Stimulator parameter program: Lower";
+//                cmd.append((const char)STIM_LOWER);
+//                addStimulationParamSet(0,8);
+//            }
+//            else if (thorParam->isStimulatorParamSetUpper()){
+//                qDebug()<<"Stimulator parameter program: Upper";
+//                cmd.append((const char)STIM_UPPER);
+//                addStimulationParamSet(8,16);
+//            }
             break;
         }
         case 4:{                                    // Stimulator subsequence program
@@ -170,7 +179,11 @@ void Command::updateTriggerCmd(int index, QString state)
 
 void Command::addStimulationParamSet(int start, int end)
 {
+    QVector<QVector<quint8>> temp = thorParam->getStimParamArray();
     for (int i=start;i<end;i++){
-            cmd.append(thorParam->paramValue[i]);
+        for(int j=0; j<6; j++){
+            cmd.append(temp[i][j]);
+            qDebug() << "from temp: " << i << j << temp[i][j];
+        }
     }
 }

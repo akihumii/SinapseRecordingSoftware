@@ -37,6 +37,7 @@ private slots:
 
     void on_subSequenceChannel_selected();
     void on_subSeqParamSpinBox_changed();
+    void on_paramSetSelect_changed();
     void on_paramValueChange();
 
     void on_subSeqTimeStartEdit_changed(int channel);
@@ -74,6 +75,16 @@ private:
                               "ENBIOPIN",
                               "ETIRST"
                             };
+
+    QString StimParamNames[7] = { "Set",
+                                  "T1",
+                                  "I1",
+                                  "D1",
+                                  "T2",
+                                  "I2",
+                                  "PW"
+    };
+    QLabel *stimLabel[7];
     
     QRadioButton *DCLEnter_RadioButton;
     QRadioButton *DCLExit_RadioButton;
@@ -104,8 +115,9 @@ private:
 
     QVBoxLayout *StimulatorParamLayout;
     QWidget *StimulatorParamWidget;
-    QLineEdit *paramEdit[16];
-    QHBoxLayout *paramLine[16];
+    QComboBox *paramSetSelect;
+    QLineEdit *paramEdit[6];
+    QHBoxLayout *paramLine;
 
     QTabWidget *JTAGTabWidget;
     QWidget *DATAMOD;
