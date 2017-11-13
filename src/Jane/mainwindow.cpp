@@ -36,7 +36,7 @@ void MainWindow::createLayout()
 
     createModeComboBox();
     QLabel *chipIDLabel = new QLabel;
-    chipIDLabel -> setText("chip ID: ");
+    chipIDLabel -> setText("Chip ID: ");
     chipIDComboBox = new QComboBox;
     for(int i = 0; i < 8; i++)
         chipIDComboBox -> addItem("Chip " + QString::number(i));
@@ -114,7 +114,8 @@ void MainWindow::createLayout()
     buttonLayout -> addWidget(sendCommandButton);
     buttonLayout -> addWidget(chipResetButton);
 
-    amwFlashButton = new QPushButton(tr("amw flash"));
+    amwFlashButton = new QPushButton(tr("Programming Mode (Under development)"));
+    amwFlashButton->setEnabled(false);
 
 //    graphButton = new QPushButton(tr("Readings"));
 
@@ -228,6 +229,7 @@ void MainWindow::on_mode_changed(int mode)
     }
     case 6:{
         JTAGTabWidget->show();
+        break;
     }
     default:{
         break;
@@ -390,10 +392,10 @@ void MainWindow::connectThor()
         serialThor->doConnect();
         connectionStatus.clear();
         if(serialThor->isConnected()){
-            connectionStatus.append("Connected to Neutrino!!");
+            connectionStatus.append("Connected to Thor!!");
         }
         else{
-            connectionStatus.append("Connection to Neutrino failed");
+            connectionStatus.append("Connection to Thor failed");
         }
         qDebug()<<connectionStatus;
 //        statusBarLabel->setText(connectionStatus);
@@ -403,11 +405,11 @@ void MainWindow::connectThor()
         socketThor->doConnect("192.168.4.1", 8888);
         connectionStatus.clear();
         if(socketThor->isConnected()){
-            connectionStatus.append("Connected to Neutrino WiFi Module at 192.168.42.1/8888");
+            connectionStatus.append("Connected to Thor WiFi Module at 192.168.42.1/8888");
         }
         else{
-            connectionStatus.append("Connection to Neutrino failed! Restart this program after connecting Neutrino.");
-            QMessageBox::information(this, "Failed to connect!", "No Neutrino device detected.. \n"
+            connectionStatus.append("Connection to Thor failed! Restart this program after connecting Thor.");
+            QMessageBox::information(this, "Failed to connect!", "No Thor device detected.. \n"
                                                                  "Check your connections and run the program again..");
         }
         qDebug()<< connectionStatus;
@@ -435,12 +437,12 @@ void MainWindow::createSubsequenceWidget()
     subSequenceLayout = new QVBoxLayout();
     subsequenceWidget = new QWidget();
 
-    QLabel *subSequenceLabel = new QLabel(tr("         select subsequence"));
+    QLabel *subSequenceLabel = new QLabel(tr("Select subsequence"));
     subSequenceLayout -> addWidget(subSequenceLabel);
     for(int i = 0; i < 8; i++){
         subSeqLine[i] = new QHBoxLayout;
-        subSeqCheckBox[i] = new QCheckBox("  Channel " + QString::number(i+1) + ":", this);
-        QLabel *chooseParamLabel = new QLabel(tr("  parameter:  "));
+        subSeqCheckBox[i] = new QCheckBox("Channel " + QString::number(i+1) + ":", this);
+        QLabel *chooseParamLabel = new QLabel(tr("Parameter:  "));
 
         subSeqParamSpinBox[i] = new QSpinBox;
         subSeqParamSpinBox[i] -> setMinimum(0);
@@ -450,7 +452,7 @@ void MainWindow::createSubsequenceWidget()
         subSeqParamSpinBox[i] -> setMaximumWidth(100);
         subSeqParamSpinBox[i] -> setAlignment(Qt::AlignCenter);
 
-        QLabel *timeStartLabel = new QLabel(tr("  start:  "));
+        QLabel *timeStartLabel = new QLabel(tr("Start:  "));
         subSeqTimeStartEdit[i] = new QLineEdit;
         subSeqTimeStartEdit[i] -> setAlignment(Qt::AlignCenter);
         subSeqTimeStartEdit[i] -> setMaximumWidth(100);
@@ -467,7 +469,7 @@ void MainWindow::createSubsequenceWidget()
         subSeqMultipleStartComboBox[i] -> addItem("X128");
         multipleStartMapper -> setMapping(subSeqMultipleStartComboBox[i], i);
 
-        QLabel *timeStopLabel = new QLabel(tr("   stop:  "));
+        QLabel *timeStopLabel = new QLabel(tr("Stop:  "));
         subSeqTimeStopEdit[i] = new QLineEdit;
         subSeqTimeStopEdit[i] -> setAlignment(Qt::AlignCenter);
         subSeqTimeStopEdit[i] -> setMaximumWidth(100);

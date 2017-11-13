@@ -10,13 +10,13 @@ typedef enum subSequenceChoosed{
 
 typedef enum multiplier{
     X1      = 0B00000000,
-    X2      = 0B00000100,
-    X4      = 0B00000010,
-    X8      = 0B00000110,
-    X16     = 0B00000001,
-    X32     = 0B00000101,
-    X64     = 0B00000011,
-    X128    = 0B00000111
+    X2      = 0B10000000,
+    X4      = 0B01000000,
+    X8      = 0B11000000,
+    X16     = 0B00100000,
+    X32     = 0B10100000,
+    X64     = 0B01100000,
+    X128    = 0B11100000
 }multipler;
 
 class Stimulator
