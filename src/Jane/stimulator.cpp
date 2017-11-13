@@ -106,7 +106,7 @@ QByteArray Stimulator::getSubSequenceStop(int channelNumber)
     quint8 timeStop = 0B00000000;
 
     timeStop |= (subSeqStop[channelNumber][1] - 1);
-    timeStop = Stimulator::getMultiplier(subSeqStop, channelNumber) | timeStopArray;
+    timeStop = Stimulator::getMultiplier(subSeqStop, channelNumber) | timeStop;
 
     QByteArray timeStopArray;
     timeStopArray.append((const char)timeStop);

@@ -128,7 +128,7 @@ void MainWindow::createLayout()
     mainLayout -> addLayout(BIOnDCL);
     mainLayout -> addLayout(buttonLayout);
     mainLayout -> addWidget(amwFlashButton);
-    mainLayout->setAlignment(Qt::AlignTop);
+//    mainLayout->setAlignment(Qt::AlignTop);
 //    mainLayout -> addWidget(graphButton);
 
     timeStartMapper = new QSignalMapper(this);
@@ -145,14 +145,16 @@ void MainWindow::createLayout()
     allLayout -> addWidget(subsequenceWidget);
     allLayout -> addWidget(StimulatorParamWidget);
     allLayout -> addWidget(JTAGTabWidget);
-    allLayout -> setAlignment(Qt::AlignTop);
+//    allLayout -> setAlignment(Qt::AlignTop);
     subsequenceWidget->hide();
     StimulatorParamWidget->hide();
     JTAGTabWidget->hide();
     on_mode_changed(0);
 
-    setCentralWidget(new QWidget);
-    centralWidget() -> setLayout(allLayout);
+    QWidget *mainWidget = new QWidget;
+    allLayout->setSizeConstraint( QLayout::SetFixedSize );
+    mainWidget->setLayout(allLayout);
+    this->setCentralWidget(mainWidget);
 }
 
 void MainWindow::createAction()
@@ -210,32 +212,48 @@ void MainWindow::on_mode_changed(int mode)
 {
     thorCommand -> setOPMode(mode);
 
-    subsequenceWidget->hide();
-    StimulatorParamWidget->hide();
-    JTAGTabWidget->hide();
+    if(!subsequenceWidget->isHidden()){
+        subsequenceWidget->hide();
+    }
+    if(!StimulatorParamWidget->isHidden()){
+        StimulatorParamWidget->hide();
+    }
+    if(!JTAGTabWidget->isHidden()){
+        JTAGTabWidget->hide();
+    }
 
     switch(mode){
     case 2:{
-        JTAGTabWidget->show();
+        if(JTAGTabWidget->isHidden()){
+            JTAGTabWidget->show();
+        }
         break;
     }
     case 3:{
-        StimulatorParamWidget->show();
+        if(StimulatorParamWidget->isHidden()){
+            StimulatorParamWidget->show();
+        }
         break;
     }
     case 4:{
-        subsequenceWidget->show();
+        if(subsequenceWidget->isHidden()){
+            subsequenceWidget->show();
+        }
         break;
     }
     case 6:{
-        JTAGTabWidget->show();
+        if(JTAGTabWidget->isHidden()){
+            JTAGTabWidget->show();
+        }
         break;
     }
     default:{
+//        this->window()->resize(QSize(397,441));
         break;
     }
     }
     this->window()->resize(this->window()->minimumSizeHint());
+//    qDebug() << this->window()->minimumSize();
 }
 
 void MainWindow::on_chipID_changed(int IDNum)
@@ -512,11 +530,11 @@ void MainWindow::createStimulatorParamWidget()
     StimulatorParamLayout->addWidget(mainLabel);
     paramLine = new QHBoxLayout;
     paramSetSelect = new QComboBox;
-    paramSetSelect->setMinimumWidth(70);
+    paramSetSelect->setFixedWidth(70);
     QHBoxLayout *labelsLayout = new QHBoxLayout;
     for(int i = 0; i < 7; i++){
         stimLabel[i] = new QLabel(StimParamNames[i]);
-        stimLabel[i]->setMinimumWidth(70);
+        stimLabel[i]->setFixedWidth(70);
         stimLabel[i]->setAlignment(Qt::AlignCenter);
         labelsLayout->addWidget(stimLabel[i]);
     }
@@ -529,8 +547,8 @@ void MainWindow::createStimulatorParamWidget()
         paramEdit[i] = new QLineEdit;
         paramEdit[i]->setAlignment(Qt::AlignCenter);
         paramEdit[i]->setInputMask("HH");
-        paramEdit[i]->setMinimumWidth(70);
-        paramEdit[i]->setText(QString::number(0));
+        paramEdit[i]->setFixedWidth(70);
+        paramEdit[i]->setText(QString::number(00));
         paramLine->addWidget(paramEdit[i]);
     }
 

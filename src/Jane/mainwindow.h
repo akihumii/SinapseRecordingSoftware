@@ -131,6 +131,8 @@ private:
     QWidget *JTAGREGISTER;
     QCheckBox *JTAG[48];
 
+    QSize windowSizes[2];
+
     QHBoxLayout *allLayout;
 
     QList<QSerialPortInfo> portInfo;
