@@ -31,6 +31,9 @@ private:
     QLineEdit *adjDurationLineEdit;
 
     QPushButton *sendCommandButton;
+    QPushButton *startStopButton;
+
+    bool start = false;
 
     void sendStop();
     void sendStart();
@@ -46,6 +49,7 @@ private slots:
     void on_numPulse_editted();
     void on_adjDuration_editted();
     void on_sendCommand_clicked();
+    void on_startStop_clicked();
 };
 
 #endif // MAINWINDOW_H

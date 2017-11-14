@@ -98,6 +98,9 @@ void MainWindow::createLayout(){
     sendCommandButton = new QPushButton(tr("Send Command!"));
     connect(sendCommandButton, SIGNAL(clicked(bool)), this, SLOT(on_sendCommand_clicked()));
 
+    startStopButton = new QPushButton(tr("Send Start"));
+    connect(startStopButton, SIGNAL(clicked(bool)), this, SLOT(on_startStop_clicked()));
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(channelLayout);
     mainLayout->addLayout(phaseTypeLayout);
@@ -109,6 +112,7 @@ void MainWindow::createLayout(){
     mainLayout->addLayout(numPulseLayout);
     mainLayout->addLayout(adjDurationLayout);
     mainLayout->addWidget(sendCommandButton);
+    mainLayout->addWidget(startStopButton);
 
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -265,12 +269,25 @@ void MainWindow::on_sendCommand_clicked(){
     });
 }
 
+void MainWindow::on_startStop_clicked(){
+    if(!start){
+        sendStart();
+        start = !start;
+    }
+    else{
+        sendStop();
+        start = !start;
+    }
+}
+
 void MainWindow::sendStop(){
     serialShuHao->sendStop();
     sendCommandButton->setEnabled(true);
+    startStopButton->setText("Send Start");
 }
 
 void MainWindow::sendStart(){
     serialShuHao->sendStart();
     sendCommandButton->setEnabled(false);
+    startStopButton->setText("Send Stop");
 }
