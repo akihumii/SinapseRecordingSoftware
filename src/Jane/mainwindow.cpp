@@ -53,60 +53,49 @@ void MainWindow::createLayout()
     chipIDLayout -> addWidget(chipIDLabel);
     chipIDLayout -> addWidget(chipIDComboBox);
 
-    QLabel *dataBERLabel = new QLabel;
-    dataBERLabel -> setText("Data BER Assessment (hex)");
+    berGroupBox = new QGroupBox(tr("Data BER Assessment"));
     QHBoxLayout *BERLayout = new QHBoxLayout;
     for(int i = 0; i < 8; i++){
         BER_byte[i] = new QLineEdit;
         BER_byte[i] -> setInputMask("HH");
-        BER_byte[i] -> setMaximumWidth(35);
+        BER_byte[i] -> setFixedWidth(45);
         BER_byte[i] -> setAlignment(Qt::AlignCenter);
         BERLayout -> addWidget(BER_byte[i]);
     }
+    berGroupBox -> setLayout(BERLayout);
 
-    QVBoxLayout *dataBERLayout = new QVBoxLayout;
-    dataBERLayout -> addWidget(dataBERLabel);
-    dataBERLayout -> addLayout(BERLayout);
-
-    QLabel *triggerBitLabel = new QLabel;
-    triggerBitLabel -> setText("DEFXYabc (bit):");
+    triggerGroupBox = new QGroupBox(tr("DEFXYabc"));
     QHBoxLayout *triggerBitLayout = new QHBoxLayout;
     for(int i = 0; i < 8; i++){
         OP_bit[i] = new QLineEdit;
         OP_bit[i] -> setInputMask("B");
-        OP_bit[i] -> setMaximumWidth(35);
+        OP_bit[i] -> setFixedWidth(45);
         OP_bit[i] -> setAlignment(Qt::AlignCenter);
         triggerBitLayout -> addWidget(OP_bit[i]);
     }
+    triggerGroupBox -> setLayout(triggerBitLayout);
 
-    QVBoxLayout *dataTriggerBitLayout = new QVBoxLayout;
-    dataTriggerBitLayout -> addWidget(triggerBitLabel);
-    dataTriggerBitLayout -> addLayout(triggerBitLayout);
-
-
+    bioImpGroupBox = new QGroupBox(tr("Bio Impedance"));
     QVBoxLayout *BioImpLayout = new QVBoxLayout;
-    QLabel *BioImpLabel = new QLabel;
-    BioImpLabel -> setText("Bio Impedance");
-    BioImpLayout -> addWidget(BioImpLabel);
     for(int i = 0; i < 6; i++){
         BioImpData[i] = new QCheckBox;
         BioImpData[i] -> setText(BioImpName[i]);
         BioImpLayout -> addWidget(BioImpData[i]);
     }
-    
+    bioImpGroupBox -> setLayout(BioImpLayout);
+
+    dclGroupBox = new QGroupBox(tr("Digital Command Loopback"));
     QVBoxLayout *DCLLayout = new QVBoxLayout;
-    QLabel *DCLLabel = new QLabel;
-    DCLLabel -> setText("Digital Command Loopback");
     DCLEnter_RadioButton = new QRadioButton(tr("Enter"));
     DCLExit_RadioButton = new QRadioButton(tr("Exit"));
-    DCLLayout -> addWidget(DCLLabel);
     DCLLayout -> addWidget(DCLEnter_RadioButton);
     DCLLayout -> addWidget(DCLExit_RadioButton);
     DCLLayout -> setAlignment(Qt::AlignTop);
+    dclGroupBox -> setLayout(DCLLayout);
 
     QHBoxLayout *BIOnDCL = new QHBoxLayout;
-    BIOnDCL -> addLayout(BioImpLayout);
-    BIOnDCL -> addLayout(DCLLayout);
+    BIOnDCL -> addWidget(bioImpGroupBox);
+    BIOnDCL -> addWidget(dclGroupBox);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     sendCommandButton = new QPushButton(tr("Send Command"));
@@ -117,38 +106,32 @@ void MainWindow::createLayout()
     amwFlashButton = new QPushButton(tr("Programming Mode (Under development)"));
     amwFlashButton->setEnabled(false);
 
-//    graphButton = new QPushButton(tr("Readings"));
-
-
-    mainLayout = new QVBoxLayout();
-    mainLayout -> addLayout(modeLayout);
-    mainLayout -> addLayout(chipIDLayout);
-    mainLayout -> addLayout(dataBERLayout);
-    mainLayout -> addLayout(dataTriggerBitLayout);
-    mainLayout -> addLayout(BIOnDCL);
-    mainLayout -> addLayout(buttonLayout);
-    mainLayout -> addWidget(amwFlashButton);
-//    mainLayout->setAlignment(Qt::AlignTop);
-//    mainLayout -> addWidget(graphButton);
-
     timeStartMapper = new QSignalMapper(this);
     timeStopMapper = new QSignalMapper(this);
     multipleStartMapper = new QSignalMapper(this);
     multipleStopMapper = new QSignalMapper(this);
+    createStimulatorParamWidget();
+
+    mainLayout = new QVBoxLayout();
+    mainLayout -> addLayout(modeLayout);
+    mainLayout -> addLayout(chipIDLayout);
+    mainLayout -> addWidget(berGroupBox);
+    mainLayout -> addWidget(triggerGroupBox);
+    mainLayout -> addWidget(stimParaGroupBox);
+    mainLayout -> addLayout(BIOnDCL);
+    mainLayout -> addLayout(buttonLayout);
+    mainLayout -> addWidget(amwFlashButton);
 
     createSubsequenceWidget();
-    createStimulatorParamWidget();
     createJTAGWidget();
+
+    topLeftLayout = new QVBoxLayout();
+    topLeftLayout -> addWidget(subSequenceGroupBox);
+    topLeftLayout -> addWidget(JTAGTabWidget);
 
     allLayout = new QHBoxLayout();
     allLayout -> addLayout(mainLayout);
-    allLayout -> addWidget(subsequenceWidget);
-    allLayout -> addWidget(StimulatorParamWidget);
-    allLayout -> addWidget(JTAGTabWidget);
-//    allLayout -> setAlignment(Qt::AlignTop);
-    subsequenceWidget->hide();
-    StimulatorParamWidget->hide();
-    JTAGTabWidget->hide();
+    allLayout -> addLayout(topLeftLayout);
     on_mode_changed(0);
 
     QWidget *mainWidget = new QWidget;
@@ -211,49 +194,6 @@ void MainWindow::loadDefault(){
 void MainWindow::on_mode_changed(int mode)
 {
     thorCommand -> setOPMode(mode);
-
-    if(!subsequenceWidget->isHidden()){
-        subsequenceWidget->hide();
-    }
-    if(!StimulatorParamWidget->isHidden()){
-        StimulatorParamWidget->hide();
-    }
-    if(!JTAGTabWidget->isHidden()){
-        JTAGTabWidget->hide();
-    }
-
-    switch(mode){
-    case 2:{
-        if(JTAGTabWidget->isHidden()){
-            JTAGTabWidget->show();
-        }
-        break;
-    }
-    case 3:{
-        if(StimulatorParamWidget->isHidden()){
-            StimulatorParamWidget->show();
-        }
-        break;
-    }
-    case 4:{
-        if(subsequenceWidget->isHidden()){
-            subsequenceWidget->show();
-        }
-        break;
-    }
-    case 6:{
-        if(JTAGTabWidget->isHidden()){
-            JTAGTabWidget->show();
-        }
-        break;
-    }
-    default:{
-//        this->window()->resize(QSize(397,441));
-        break;
-    }
-    }
-    this->window()->resize(this->window()->minimumSizeHint());
-//    qDebug() << this->window()->minimumSize();
 }
 
 void MainWindow::on_chipID_changed(int IDNum)
@@ -452,11 +392,8 @@ void MainWindow::createModeComboBox()
 
 void MainWindow::createSubsequenceWidget()
 {
+    subSequenceGroupBox = new QGroupBox(tr("Subsequence Settings"));
     subSequenceLayout = new QVBoxLayout();
-    subsequenceWidget = new QWidget();
-
-    QLabel *subSequenceLabel = new QLabel(tr("Select subsequence"));
-    subSequenceLayout -> addWidget(subSequenceLabel);
     for(int i = 0; i < 8; i++){
         subSeqLine[i] = new QHBoxLayout;
         subSeqCheckBox[i] = new QCheckBox("Channel " + QString::number(i+1) + ":", this);
@@ -518,26 +455,25 @@ void MainWindow::createSubsequenceWidget()
     }
     subSequenceLayout -> setAlignment(Qt::AlignTop);
 
-    subsequenceWidget->setLayout(subSequenceLayout);
+    subSequenceGroupBox ->setLayout(subSequenceLayout);
 
 }
 
 void MainWindow::createStimulatorParamWidget()
 {
+    stimParaGroupBox = new QGroupBox(tr("Stimulator parameter"));
     StimulatorParamLayout = new QVBoxLayout();
-    StimulatorParamWidget = new QWidget();
-    QLabel *mainLabel = new QLabel(tr("Stimulator parameter (hex): "));
-    StimulatorParamLayout->addWidget(mainLabel);
     paramLine = new QHBoxLayout;
     paramSetSelect = new QComboBox;
     paramSetSelect->setFixedWidth(70);
     QHBoxLayout *labelsLayout = new QHBoxLayout;
     for(int i = 0; i < 7; i++){
         stimLabel[i] = new QLabel(StimParamNames[i]);
-        stimLabel[i]->setFixedWidth(70);
-        stimLabel[i]->setAlignment(Qt::AlignCenter);
+        stimLabel[i]->setFixedWidth(50);
+        stimLabel[i]->setAlignment(Qt::AlignLeft);
         labelsLayout->addWidget(stimLabel[i]);
     }
+    stimLabel[0]->setFixedWidth(70);
     StimulatorParamLayout->addLayout(labelsLayout);
     for(int i = 0; i < 16; i++){
         paramSetSelect->addItem("Set " + QString::number(i+1));
@@ -547,7 +483,7 @@ void MainWindow::createStimulatorParamWidget()
         paramEdit[i] = new QLineEdit;
         paramEdit[i]->setAlignment(Qt::AlignCenter);
         paramEdit[i]->setInputMask("HH");
-        paramEdit[i]->setFixedWidth(70);
+        paramEdit[i]->setFixedWidth(50);
         paramEdit[i]->setText(QString::number(00));
         paramLine->addWidget(paramEdit[i]);
     }
@@ -556,7 +492,9 @@ void MainWindow::createStimulatorParamWidget()
 
     StimulatorParamLayout -> setAlignment(Qt::AlignTop);
 
-    StimulatorParamWidget->setLayout(StimulatorParamLayout);
+    stimParaGroupBox -> setLayout(StimulatorParamLayout);
+
+//    StimulatorParamWidget->setLayout(StimulatorParamLayout);
 }
 
 void MainWindow::createJTAGWidget()

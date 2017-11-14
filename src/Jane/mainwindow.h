@@ -60,6 +60,13 @@ private:
     amwFlash_mainWindow *amwFlash_init;
 //    MeasurementDialog *graph_init;
 
+    QGroupBox *berGroupBox;
+    QGroupBox *bioImpGroupBox;
+    QGroupBox *dclGroupBox;
+    QGroupBox *triggerGroupBox;
+    QGroupBox *stimParaGroupBox;
+    QGroupBox *subSequenceGroupBox;
+
     QComboBox *modeComboBox;
     QComboBox *chipIDComboBox;
 
@@ -134,6 +141,7 @@ private:
     QSize windowSizes[2];
 
     QHBoxLayout *allLayout;
+    QVBoxLayout *topLeftLayout;
 
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
