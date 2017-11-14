@@ -191,9 +191,57 @@ void MainWindow::loadDefault(){
 
 }
 
-void MainWindow::on_mode_changed(int mode)
-{
+void MainWindow::on_mode_changed(int mode){
     thorCommand -> setOPMode(mode);
+
+    dclGroupBox -> setEnabled(false);
+    berGroupBox -> setEnabled(false);
+    subSequenceGroupBox -> setEnabled(false);
+    stimParaGroupBox -> setEnabled(false);
+    bioImpGroupBox -> setEnabled(false);
+    JTAGTabWidget -> setEnabled(false);
+    triggerGroupBox -> setEnabled(false);
+
+
+    switch (mode){
+    case 0:{
+        dclGroupBox -> setEnabled(true);
+        break;
+    }
+    case 1:{
+        berGroupBox -> setEnabled(true);
+        break;
+    }
+    case 2:{
+        JTAGTabWidget -> setEnabled(true);
+        break;
+    }
+    case 3:{
+        stimParaGroupBox -> setEnabled(true);
+        break;
+    }
+    case 4:{
+        subSequenceGroupBox -> setEnabled(true);
+        break;
+    }
+    case 5:{
+        triggerGroupBox -> setEnabled(true);
+        break;
+    }
+    case 6:{
+        JTAGTabWidget -> setEnabled(true);
+        break;
+    }
+    case 8:{
+        bioImpGroupBox -> setEnabled(true);
+        JTAGTabWidget -> setEnabled(true);
+        break;
+    }
+    default:{
+        break;
+    }
+    }
+
 }
 
 void MainWindow::on_chipID_changed(int IDNum)
@@ -375,8 +423,7 @@ void MainWindow::connectThor()
     }
 }
 
-void MainWindow::createModeComboBox()
-{
+void MainWindow::createModeComboBox(){
     modeComboBox = new QComboBox;
     modeComboBox -> addItem("Digital Command Loopback");
     modeComboBox -> addItem("Data BER Assessment");
@@ -456,11 +503,9 @@ void MainWindow::createSubsequenceWidget()
     subSequenceLayout -> setAlignment(Qt::AlignTop);
 
     subSequenceGroupBox ->setLayout(subSequenceLayout);
-
 }
 
-void MainWindow::createStimulatorParamWidget()
-{
+void MainWindow::createStimulatorParamWidget(){
     stimParaGroupBox = new QGroupBox(tr("Stimulator parameter"));
     StimulatorParamLayout = new QVBoxLayout();
     paramLine = new QHBoxLayout;
@@ -493,12 +538,9 @@ void MainWindow::createStimulatorParamWidget()
     StimulatorParamLayout -> setAlignment(Qt::AlignTop);
 
     stimParaGroupBox -> setLayout(StimulatorParamLayout);
-
-//    StimulatorParamWidget->setLayout(StimulatorParamLayout);
 }
 
-void MainWindow::createJTAGWidget()
-{
+void MainWindow::createJTAGWidget(){
     JTAGTabWidget = new QTabWidget;
 
     DATAMOD = new QWidget;
@@ -565,7 +607,4 @@ void MainWindow::createJTAGWidget()
     JTAGREGISTERLayout->addLayout(JTAGReg_3);
 
     JTAGREGISTER->setLayout(JTAGREGISTERLayout);
-
-
-
 }
