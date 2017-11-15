@@ -126,6 +126,11 @@ void Command::addData()
         }
         case 8:{                                    // Bioimpedance Measurement
             cmd.append((const char)BIOIMP_MEASURE_8BIT);
+            cmd.append((const char) bioimp);
+            cmd.append((const char) bioChSelect);
+            for (int i=0;i<6;i++){
+                cmd.append(JTAGarray[i]);
+            }
             break;
         }
         default:
@@ -147,6 +152,10 @@ quint8 Command::getChipID() { return chipID; }
 void Command::setBioImpBit(int index) {bioimp |= 1 << index;}
 void Command::clearBioImpBit(int index) {bioimp &= ~(1 << index);}
 quint8 Command::getBioImp() { return bioimp; }
+
+void Command::setBioCHSelect(int index) {bioChSelect |= 1 << index;}
+void Command::clearBioCHSelect(int index) {bioChSelect &= ~(1 << index);}
+quint8 Command::getBioCHSelect() {return bioChSelect;}
 
 void Command::setJTAGBit(int index) { JTAGarray[(index/8)] |= 1 << (index %8); }
 void Command::clearJTAGBit(int index) { JTAGarray[(index/8)] &= ~(1 << (index %8)); }

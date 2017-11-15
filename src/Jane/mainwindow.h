@@ -74,13 +74,18 @@ private:
     QLineEdit *OP_bit[8];
 
 
-    QCheckBox *BioImpData[8];
-    QString BioImpName[8] = { "BIOCHSEL<1>",
-                              "BIOCHSEL<2>",
-                              "BIOCHSEL<3>",
-                              "BIOCHSEL<4>",
-                              "ENBIOPIN",
-                              "ETIRST"
+    QCheckBox *BioImpData[11];
+    QString BioImpName[11] = {"ENBIOPIN",
+                              "ETIRST",
+                              "BIOPASSTHRU",
+                              "BIOCHSEL_INN<1>",
+                              "BIOCHSEL_INN<2>",
+                              "BIOCHSEL_INN<3>",
+                              "BIOCHSEL_INN<4>",
+                              "BIOCHSEL_INP<1>",
+                              "BIOCHSEL_INP<2>",
+                              "BIOCHSEL_INP<3>",
+                              "BIOCHSEL_INP<4>"
                             };
 
     QString StimParamNames[7] = { "Set",
@@ -146,20 +151,13 @@ private:
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
 
-    QString BioImpNames[8] = {  "BIOCHSEL<1>",
-                                "BIOCHSEL<2>",
-                                "BIOCHSEL<3>",
-                                "BIOCHSEL<4>",
-                                "ENBIOPIN",
-                                "ETIRST"
-                                };
     QString JTAGNames[48] = {  "INVDAT",           "OFFDATA",          "D3",               "D2",               "D1",
                                 "OSCINT<8>",        "OSCINT<7>",        "OSCINT<6>",        "OSCINT<5>",        "OSCINT<4>",        "OSCINT<3>",        "OSCINT<2>",    "OSCINT<1>",
                                 "D<7>",             "D<6>",             "D<5>",             "D<4>",             "D<3>",             "D<2>",             "D<1>",
                                 "D<5>",             "D<4>",             "D<3>",             "D<2>",             "D<1>",
                                 "Reg1_RFU<6>",      "Reg1_RFU<5>",      "Reg1_RFU<4>",      "Reg1_RFU<3>",      "Reg1_RFU<2>",      "Reg1_RFU<1>",      "Reg1_DLSTIM",  "Reg1_DUSTIM",
                                 "Reg2_RFU<8>",      "Reg2_RFU<7>",      "Reg2_RFU<6>",      "Reg2_RFU<5>",      "Reg2_RFU<4>",      "Reg2_RFU<3>",      "Reg2_RFU<2>",  "Reg2_RFU<1>",
-                                "Reg3_RFU<2>",      "Reg3_RFU<1>",      "Reg3_INTRES4",     "Reg3_INTRES3",     "Reg3_D<4>",     "Reg3_INTRES2",     "Reg3_INTRES1",
+                                "Reg3_RFU",         "Reg3_INTRES4",     "Reg3_INTRES3",     "Reg3_D<4>",        "Reg3_INTRES2",     "Reg3_INTRES1",     "Reg3_OFFOSC"
                                 };  //5+8+7+5 + 8+8+7
 //    QString JTAGNames[112] = {  "DATAMOD",          "OFFDATABUFFS",     "DATAMOD<2>",       "DATAMOD<1>",       "DATAMOD<0>",       "OSCINT<5>",        "OSCINT<4>",    "OSCINT<3>",
 //                                "OSCINT<2>",        "OSCINT<1>",        "BIO<7>",           "BIO<6>",           "BIO<5>",           "BIO<4>",           "BIO<3>",       "BIO<2>",

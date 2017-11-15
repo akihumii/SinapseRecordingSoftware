@@ -58,7 +58,7 @@ void MainWindow::createLayout()
     for(int i = 0; i < 8; i++){
         BER_byte[i] = new QLineEdit;
         BER_byte[i] -> setInputMask("HH");
-        BER_byte[i] -> setFixedWidth(45);
+        BER_byte[i] -> setFixedWidth(55);
         BER_byte[i] -> setAlignment(Qt::AlignCenter);
         BERLayout -> addWidget(BER_byte[i]);
     }
@@ -69,19 +69,28 @@ void MainWindow::createLayout()
     for(int i = 0; i < 8; i++){
         OP_bit[i] = new QLineEdit;
         OP_bit[i] -> setInputMask("B");
-        OP_bit[i] -> setFixedWidth(45);
+        OP_bit[i] -> setFixedWidth(55);
         OP_bit[i] -> setAlignment(Qt::AlignCenter);
         triggerBitLayout -> addWidget(OP_bit[i]);
     }
     triggerGroupBox -> setLayout(triggerBitLayout);
 
     bioImpGroupBox = new QGroupBox(tr("Bio Impedance"));
-    QVBoxLayout *BioImpLayout = new QVBoxLayout;
+    QVBoxLayout *BioImpLayout1 = new QVBoxLayout;
     for(int i = 0; i < 6; i++){
         BioImpData[i] = new QCheckBox;
         BioImpData[i] -> setText(BioImpName[i]);
-        BioImpLayout -> addWidget(BioImpData[i]);
+        BioImpLayout1 -> addWidget(BioImpData[i]);
     }
+    QVBoxLayout *BioImpLayout2 = new QVBoxLayout;
+    for(int i = 6; i < 11; i++){
+        BioImpData[i] = new QCheckBox;
+        BioImpData[i] -> setText(BioImpName[i]);
+        BioImpLayout2 -> addWidget(BioImpData[i]);
+    }
+    QHBoxLayout *BioImpLayout = new QHBoxLayout;
+    BioImpLayout->addLayout(BioImpLayout1);
+    BioImpLayout->addLayout(BioImpLayout2);
     bioImpGroupBox -> setLayout(BioImpLayout);
 
     dclGroupBox = new QGroupBox(tr("Digital Command Loopback"));
@@ -152,7 +161,7 @@ void MainWindow::createAction()
         connect(OP_bit[i], SIGNAL(textEdited(QString)), this, SLOT(on_OP_Trigger_TextEditted()));
     }
 
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < 11; i++){
         connect(BioImpData[i], SIGNAL(toggled(bool)), this, SLOT(on_BioImp_toggled()));
     }
     connect(DCLEnter_RadioButton, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
@@ -226,10 +235,16 @@ void MainWindow::on_mode_changed(int mode){
     }
     case 5:{
         triggerGroupBox -> setEnabled(true);
+        triggerGroupBox -> setTitle("DEFXYabc");
         break;
     }
     case 6:{
         JTAGTabWidget -> setEnabled(true);
+        break;
+    }
+    case 7:{
+        triggerGroupBox -> setEnabled(true);
+        triggerGroupBox -> setTitle("00XYdcba");
         break;
     }
     case 8:{
@@ -264,11 +279,18 @@ void MainWindow::on_OP_Trigger_TextEditted()
 
 void MainWindow::on_BioImp_toggled()
 {
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < 3; i++){
         if(BioImpData[i] -> isChecked())
             thorCommand -> setBioImpBit(i);
         else{
             thorCommand -> clearBioImpBit(i);
+        }
+    }
+    for(int i = 0; i < 8; i++){
+        if(BioImpData[i+3] -> isChecked())
+            thorCommand -> setBioCHSelect(i);
+        else{
+            thorCommand -> clearBioCHSelect(i);
         }
     }
 }
@@ -510,7 +532,7 @@ void MainWindow::createStimulatorParamWidget(){
     StimulatorParamLayout = new QVBoxLayout();
     paramLine = new QHBoxLayout;
     paramSetSelect = new QComboBox;
-    paramSetSelect->setFixedWidth(70);
+    paramSetSelect->setFixedWidth(75);
     QHBoxLayout *labelsLayout = new QHBoxLayout;
     for(int i = 0; i < 7; i++){
         stimLabel[i] = new QLabel(StimParamNames[i]);
@@ -518,7 +540,7 @@ void MainWindow::createStimulatorParamWidget(){
         stimLabel[i]->setAlignment(Qt::AlignLeft);
         labelsLayout->addWidget(stimLabel[i]);
     }
-    stimLabel[0]->setFixedWidth(70);
+    stimLabel[0]->setFixedWidth(80);
     StimulatorParamLayout->addLayout(labelsLayout);
     for(int i = 0; i < 16; i++){
         paramSetSelect->addItem("Set " + QString::number(i+1));
@@ -528,7 +550,7 @@ void MainWindow::createStimulatorParamWidget(){
         paramEdit[i] = new QLineEdit;
         paramEdit[i]->setAlignment(Qt::AlignCenter);
         paramEdit[i]->setInputMask("HH");
-        paramEdit[i]->setFixedWidth(50);
+        paramEdit[i]->setFixedWidth(70);
         paramEdit[i]->setText(QString::number(00));
         paramLine->addWidget(paramEdit[i]);
     }

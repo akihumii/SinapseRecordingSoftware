@@ -49,6 +49,9 @@ public:
     void setChipID(int IDNum);
     void setBioImpBit(int index);
     void clearBioImpBit(int index);
+    void setBioCHSelect(int index);
+    void clearBioCHSelect(int index);
+    quint8 getBioCHSelect();
     quint8 getBioImp();
     quint8 getOPMode();
     quint8 getDCLMode();
@@ -70,6 +73,7 @@ private:
     quint8 chipID = 0;
     quint8 OPModeSelect = 2;
     quint8 bioimp = 0;
+    quint8 bioChSelect = 0;
     quint8 JTAGarray[6] = {0, 0, 0, 0, 0, 0};
     quint8 DCL_Mode = DCL_EXIT;
     bool ok;
