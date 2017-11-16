@@ -29,6 +29,7 @@ private slots:
     void on_chipID_changed(int IDNum);
     void on_BER_TextEditted();
     void on_OP_Trigger_TextEditted();
+    void on_globalEnd_TextEditted();
     void on_BioImp_toggled();
     void on_DCL_toggled();
     void on_sendCommand_clicked();
@@ -66,6 +67,7 @@ private:
     QGroupBox *triggerGroupBox;
     QGroupBox *stimParaGroupBox;
     QGroupBox *subSequenceGroupBox;
+    QGroupBox *globalEndGroupBox;
 
     QComboBox *modeComboBox;
     QComboBox *chipIDComboBox;
@@ -73,6 +75,8 @@ private:
     QLineEdit *BER_byte[8];
     QLineEdit *OP_bit[8];
 
+    QComboBox *globalEndMultiplier;
+    QSpinBox *globalEndValue;
 
     QCheckBox *BioImpData[11];
     QString BioImpName[11] = {"ENBIOPIN",

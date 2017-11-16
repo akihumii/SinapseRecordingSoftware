@@ -155,11 +155,12 @@ void MainWindow::createAction()
     connect(chipIDComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_chipID_changed(int)));
     for(int i = 0; i < 8; i++){
         connect(BER_byte[i], SIGNAL(textEdited(QString)), this, SLOT(on_BER_TextEditted()));
+        connect(OP_bit[i], SIGNAL(textEdited(QString)), this, SLOT(on_OP_Trigger_TextEditted()));
+//        connect(globalEnd[i], SIGNAL(textEdited(QString)), this, SLOT(on_globalEnd_TextEditted()));
     }
 
-    for(int i = 0; i < 8; i++){
-        connect(OP_bit[i], SIGNAL(textEdited(QString)), this, SLOT(on_OP_Trigger_TextEditted()));
-    }
+    connect(globalEndMultiplier, SIGNAL(currentIndexChanged(int)), this, SLOT(on_globalEnd_TextEditted()));
+    connect(globalEndValue, SIGNAL(valueChanged(int)), this, SLOT(on_globalEnd_TextEditted()));
 
     for(int i = 0; i < 11; i++){
         connect(BioImpData[i], SIGNAL(toggled(bool)), this, SLOT(on_BioImp_toggled()));
@@ -275,6 +276,11 @@ void MainWindow::on_OP_Trigger_TextEditted()
     for(int i = 0; i < 8; i++){
         thorCommand -> updateTriggerCmd(i, OP_bit[i] -> text());
     }
+}
+
+void MainWindow::on_globalEnd_TextEditted(){
+    thorParam->setGlobalEndMultiplier(globalEndMultiplier->currentIndex());
+    thorParam->setGlobalEndValue(globalEndValue->text().toInt());
 }
 
 void MainWindow::on_BioImp_toggled()
@@ -463,6 +469,30 @@ void MainWindow::createSubsequenceWidget()
 {
     subSequenceGroupBox = new QGroupBox(tr("Subsequence Settings"));
     subSequenceLayout = new QVBoxLayout();
+    globalEndGroupBox = new QGroupBox(tr("Global End"));
+    QHBoxLayout *globalEndLayout = new QHBoxLayout;
+    globalEndMultiplier = new QComboBox;
+    globalEndMultiplier-> addItem("X1");
+    globalEndMultiplier-> addItem("X2");
+    globalEndMultiplier-> addItem("X4");
+    globalEndMultiplier-> addItem("X8");
+    globalEndMultiplier-> addItem("X16");
+    globalEndMultiplier-> addItem("X32");
+    globalEndMultiplier-> addItem("X64");
+    globalEndMultiplier-> addItem("X128");
+    QLabel *globalEndLabel = new QLabel(tr("  *80us*  "));
+    globalEndValue = new QSpinBox;
+    globalEndValue -> setMinimum(0);
+    globalEndValue -> setMaximum(32);
+    globalEndValue -> setSingleStep(1);
+    globalEndValue -> setValue(1);
+//    globalEndValue -> setMaximumWidth(100);
+    globalEndValue -> setAlignment(Qt::AlignCenter);
+    globalEndLayout->addWidget(globalEndMultiplier);
+    globalEndLayout->addWidget(globalEndLabel);
+    globalEndLayout->addWidget(globalEndValue);
+    globalEndGroupBox -> setLayout(globalEndLayout);
+    subSequenceLayout->addWidget(globalEndGroupBox);
     for(int i = 0; i < 8; i++){
         subSeqLine[i] = new QHBoxLayout;
         subSeqCheckBox[i] = new QCheckBox("Channel " + QString::number(i+1) + ":", this);

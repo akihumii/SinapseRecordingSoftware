@@ -73,7 +73,7 @@ bool Stimulator::isStimulatorParamSetUpper()
     return true;
 }
 
-QByteArray Stimulator::getSubSequence(int channelNumber)
+quint8 Stimulator::getSubSequence(int channelNumber)
 {
     quint8 subSequence = 0B00000000;
     subSequence |= (subSeqParam[channelNumber] - 1);
@@ -84,33 +84,33 @@ QByteArray Stimulator::getSubSequence(int channelNumber)
         subSequence = (subSequence << 4) | (int)SUBSEQ_UNCHOSEN;
     }
 
-    QByteArray subSequenceArray;
-    subSequenceArray.append((const char)subSequence);
-    return subSequenceArray;
+//    QByteArray subSequenceArray;
+//    subSequenceArray.append((const char)subSequence);
+    return subSequence;
 }
 
-QByteArray Stimulator::getSubSequenceStart(int channelNumber)
+quint8 Stimulator::getSubSequenceStart(int channelNumber)
 {
     quint8 timeStart = 0B00000000;
 
     timeStart |= (subSeqStart[channelNumber][1] - 1);
     timeStart = Stimulator::getMultiplier(subSeqStart, channelNumber) | timeStart;
 
-    QByteArray timeStartArray;
-    timeStartArray.append((const char)timeStart);
-    return timeStartArray;
+//    QByteArray timeStartArray;
+//    timeStartArray.append((const char)timeStart);
+    return timeStart;
 }
 
-QByteArray Stimulator::getSubSequenceStop(int channelNumber)
+quint8 Stimulator::getSubSequenceStop(int channelNumber)
 {
     quint8 timeStop = 0B00000000;
 
     timeStop |= (subSeqStop[channelNumber][1] - 1);
     timeStop = Stimulator::getMultiplier(subSeqStop, channelNumber) | timeStop;
 
-    QByteArray timeStopArray;
-    timeStopArray.append((const char)timeStop);
-    return timeStopArray;
+//    QByteArray timeStopArray;
+//    timeStopArray.append((const char)timeStop);
+    return timeStop;
 }
 
 QByteArray Stimulator::getParameter()
@@ -146,6 +146,55 @@ void Stimulator::setSubSeqTimeStop(int index, int value) { subSeqStop[index][1] 
 void Stimulator::setSubSeqMultipleStop(int index, int multiple) { subSeqStop[index][2] = multiple; }
 void *Stimulator::getSubSeqStartArray() { return subSeqStart;}
 void *Stimulator::getSubSeqStopArray() { return subSeqStop;}
+
+void Stimulator::setGlobalEndMultiplier(int index){
+    globalEndByte &= 0B00011111;
+    switch (index){
+        case 0:{
+            globalEndByte &= (quint8)X1;
+            break;
+        }
+        case 1:{
+            globalEndByte &= (quint8)X2;
+            break;
+        }
+        case 2:{
+            globalEndByte &= (quint8)X4;
+            break;
+        }
+        case 3:{
+            globalEndByte &= (quint8)X8;
+            break;
+        }
+        case 4:{
+            globalEndByte &= (quint8)X16;
+            break;
+        }
+        case 5:{
+            globalEndByte &= (quint8)X32;
+            break;
+        }
+        case 6:{
+            globalEndByte &= (quint8)X64;
+            break;
+        }
+        case 7:{
+            globalEndByte &= (quint8)X128;
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+void Stimulator::setGlobalEndValue(int value ){
+    globalEndByte &= 0B11100000;
+    globalEndByte &= value;
+}
+
+quint8 Stimulator::getGlobalEndByte(){
+    return globalEndByte;
+}
 
 void Stimulator::setStimParam(int set, int paramOfSet, int value) { paramValue[set][paramOfSet] = value; }
 QVector<QVector<quint8> > Stimulator::getStimParamArray() { return paramValue; }

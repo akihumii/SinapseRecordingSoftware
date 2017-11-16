@@ -10,12 +10,12 @@ typedef enum subSequenceChoosed{
 
 typedef enum multiplier{
     X1      = 0B00000000,
-    X2      = 0B10000000,
+    X2      = 0B00100000,
     X4      = 0B01000000,
-    X8      = 0B11000000,
-    X16     = 0B00100000,
+    X8      = 0B01100000,
+    X16     = 0B10000000,
     X32     = 0B10100000,
-    X64     = 0B01100000,
+    X64     = 0B11000000,
     X128    = 0B11100000
 }multipler;
 
@@ -28,9 +28,9 @@ public:
     bool isStimulatorParamSetLower();
     bool isStimulatorParamSetUpper();
 
-    QByteArray getSubSequence(int channelNumber);
-    QByteArray getSubSequenceStart(int channelNumber);
-    QByteArray getSubSequenceStop(int channelNumber);
+    quint8 getSubSequence(int channelNumber);
+    quint8 getSubSequenceStart(int channelNumber);
+    quint8 getSubSequenceStop(int channelNumber);
 
     QByteArray getParameter();
     QByteArray getTriggerCmd();
@@ -49,6 +49,10 @@ public:
     void *getSubSeqStartArray();
     void *getSubSeqStopArray();
 
+    void setGlobalEndMultiplier(int index);
+    void setGlobalEndValue(int value);
+    quint8 getGlobalEndByte();
+
     void setStimParam(int channel, int paramOfSet, int value);
     QVector<QVector<quint8>> getStimParamArray();
     quint8 getStimParam(int set, int paramOfSet);
@@ -58,6 +62,7 @@ private:
     quint8 subSeqParam[8] = {1, 1, 1, 1, 1, 1, 1, 1};
     quint8 subSeqStart[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
     quint8 subSeqStop[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
+    quint8 globalEndByte;
     QVector<QVector<quint8>> paramValue;
 
     int stimParam[16][5];

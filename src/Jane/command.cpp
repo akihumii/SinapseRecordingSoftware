@@ -99,10 +99,11 @@ void Command::addData()
             qDebug()<<"Stimulator subsequence program:";
             cmd.append((const char)STIM_SEQUENCE);
             cmd.append((const char) 0B00000000);
+            cmd.append((const char) thorParam->getGlobalEndByte());
             for(int i = 0; i < 8; i++){
-                cmd.append(thorParam -> getSubSequence(i));
-                cmd.append(thorParam -> getSubSequenceStart(i));
-                cmd.append(thorParam -> getSubSequenceStop(i));
+                cmd.append((const char) thorParam -> getSubSequence(i));
+                cmd.append((const char) thorParam -> getSubSequenceStart(i));
+                cmd.append((const char) thorParam -> getSubSequenceStop(i));
             }
             break;
         }
