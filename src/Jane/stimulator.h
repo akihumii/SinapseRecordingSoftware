@@ -62,7 +62,7 @@ private:
     quint8 subSeqParam[8] = {1, 1, 1, 1, 1, 1, 1, 1};
     quint8 subSeqStart[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
     quint8 subSeqStop[8][2] = {{32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}, {32, 0}};
-    quint8 globalEndByte;
+    quint8 globalEndByte = 0;
     QVector<QVector<quint8>> paramValue;
 
     int stimParam[16][5];

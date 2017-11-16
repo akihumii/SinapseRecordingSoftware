@@ -100,6 +100,7 @@ void Command::addData()
             cmd.append((const char)STIM_SEQUENCE);
             cmd.append((const char) 0B00000000);
             cmd.append((const char) thorParam->getGlobalEndByte());
+            qDebug() << thorParam->getGlobalEndByte();
             for(int i = 0; i < 8; i++){
                 cmd.append((const char) thorParam -> getSubSequence(i));
                 cmd.append((const char) thorParam -> getSubSequenceStart(i));

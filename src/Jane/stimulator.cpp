@@ -149,37 +149,38 @@ void *Stimulator::getSubSeqStopArray() { return subSeqStop;}
 
 void Stimulator::setGlobalEndMultiplier(int index){
     globalEndByte &= 0B00011111;
+    qDebug() << " multiplier :" << index;
     switch (index){
         case 0:{
-            globalEndByte &= (quint8)X1;
+            globalEndByte |= X1;
             break;
         }
         case 1:{
-            globalEndByte &= (quint8)X2;
+            globalEndByte |= X2;
             break;
         }
         case 2:{
-            globalEndByte &= (quint8)X4;
+            globalEndByte |= X4;
             break;
         }
         case 3:{
-            globalEndByte &= (quint8)X8;
+            globalEndByte |= X8;
             break;
         }
         case 4:{
-            globalEndByte &= (quint8)X16;
+            globalEndByte |= X16;
             break;
         }
         case 5:{
-            globalEndByte &= (quint8)X32;
+            globalEndByte |= X32;
             break;
         }
         case 6:{
-            globalEndByte &= (quint8)X64;
+            globalEndByte |=X64;
             break;
         }
         case 7:{
-            globalEndByte &= (quint8)X128;
+            globalEndByte |= X128;
             break;
         }
         default:
@@ -187,12 +188,15 @@ void Stimulator::setGlobalEndMultiplier(int index){
     }
 }
 
-void Stimulator::setGlobalEndValue(int value ){
-    globalEndByte &= 0B11100000;
-    globalEndByte &= value;
+void Stimulator::setGlobalEndValue(int value){
+    qDebug() << " param:" <<value;
+    globalEndByte &= 0b11100000;
+    globalEndByte |=  value;
+//    globalEndByte &= value;
 }
 
 quint8 Stimulator::getGlobalEndByte(){
+    qDebug() << "global end byte: " << globalEndByte;
     return globalEndByte;
 }
 
