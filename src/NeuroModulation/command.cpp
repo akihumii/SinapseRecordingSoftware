@@ -15,7 +15,8 @@ QByteArray Command::constructCommand(){
     outgoingCommand.append(cathodicAmp + " ");
     outgoingCommand.append(cathodicDuration + " ");
     outgoingCommand.append(numPulse + " ");
-    outgoingCommand.append(adjDuration + "\r");
+    outgoingCommand.append(adjDuration + " ");
+    outgoingCommand.append(interPhaseInterval + "\r");
     qDebug() << outgoingCommand;
     return outgoingCommand;
 }
@@ -56,6 +57,10 @@ void Command::setAdjDuration(QString duration){
     adjDuration = duration;
 }
 
+void Command::setInterPhaseInterval(QString duration){
+    interPhaseInterval = duration;
+}
+
 QString Command::getChannel(){ return channel; }
 QString Command::getPhaseType(){ return phaseType; }
 QString Command::getPolarity(){ return polarity; }
@@ -65,3 +70,4 @@ QString Command::getCathodicAmp(){ return cathodicAmp; }
 QString Command::getCathodicDuration(){ return cathodicDuration; }
 QString Command::getNumPulse(){ return numPulse; }
 QString Command::getAdjDuration(){ return adjDuration; }
+QString Command::getInterPhaseInterval(){ return interPhaseInterval; }

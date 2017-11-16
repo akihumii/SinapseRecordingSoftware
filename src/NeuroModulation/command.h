@@ -37,6 +37,7 @@ public:
     void setCathodicDuration(QString duration);
     void setNumPulse(QString number);
     void setAdjDuration(QString duration);
+    void setInterPhaseInterval(QString duration);
     QString getChannel();
     QString getPhaseType();
     QString getPolarity();
@@ -46,6 +47,7 @@ public:
     QString getCathodicDuration();
     QString getNumPulse();
     QString getAdjDuration();
+    QString getInterPhaseInterval();
 
 private:
     QString channel = "0";
@@ -57,6 +59,7 @@ private:
     QString cathodicDuration = "0";
     QString numPulse = "0";
     QString adjDuration = "0";
+    QString interPhaseInterval = "0";
 };
 
 #endif // COMMAND_H

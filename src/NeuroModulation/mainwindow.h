@@ -29,6 +29,7 @@ private:
     QLineEdit *cathodicDurationLineEdit;
     QLineEdit *numPulseLineEdit;
     QLineEdit *adjDurationLineEdit;
+    QLineEdit *interPhaseIntervalLineEdit;
 
     QPushButton *sendCommandButton;
     QPushButton *startStopButton;
@@ -48,6 +49,7 @@ private slots:
     void on_cathodicDuration_editted();
     void on_numPulse_editted();
     void on_adjDuration_editted();
+    void on_interPhaseInterval_editted();
     void on_sendCommand_clicked();
     void on_startStop_clicked();
 };

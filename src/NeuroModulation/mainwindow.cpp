@@ -16,7 +16,7 @@ MainWindow::~MainWindow(){
 void MainWindow::createLayout(){
     QHBoxLayout *channelLayout = new QHBoxLayout;
     QLabel *channelLabel = new QLabel(tr("Channel: "));
-    channelLabel->setMinimumWidth(150);
+    channelLabel->setFixedWidth(200);
     channelComboBox = new QComboBox;
     for(int i = 0; i < 4; i++){
         channelComboBox->addItem("Channel " + QString::number(i));
@@ -27,7 +27,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *phaseTypeLayout = new QHBoxLayout;
     QLabel *phaseTypeLabel = new QLabel(tr("Phase Type:"));
-    phaseTypeLabel->setMinimumWidth(150);
+    phaseTypeLabel->setFixedWidth(200);
     phaseTypeComboBox = new QComboBox;
     phaseTypeComboBox->addItem("None");
     phaseTypeComboBox->addItem("MonoPhasic");
@@ -38,7 +38,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *polarityLayout = new QHBoxLayout;
     QLabel *polarityLabel = new QLabel(tr("Polarity Type: "));
-    polarityLabel->setMinimumWidth(150);
+    polarityLabel->setFixedWidth(200);
     polarityComboBox = new QComboBox;
     polarityComboBox->addItem("None");
     polarityComboBox->addItem("Anodic Pulse First");
@@ -49,7 +49,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *anodicAmpLayout = new QHBoxLayout;
     QLabel *anodicAmpLabel = new QLabel(tr("Anodic Amplitude (uA):"));
-    anodicAmpLabel->setMinimumWidth(150);
+    anodicAmpLabel->setFixedWidth(200);
     anodicAmpLineEdit = new QLineEdit;
     connect(anodicAmpLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_anodicAmp_editted()));
     anodicAmpLayout->addWidget(anodicAmpLabel);
@@ -57,7 +57,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *anodicDurationLayout = new QHBoxLayout;
     QLabel *anodicDurationLabel = new QLabel(tr("Anodic Duration (us):"));
-    anodicDurationLabel->setMinimumWidth(150);
+    anodicDurationLabel->setFixedWidth(200);
     anodicDurationLineEdit = new QLineEdit;
     connect(anodicDurationLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_anodicDuration_editted()));
     anodicDurationLayout->addWidget(anodicDurationLabel);
@@ -65,7 +65,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *cathodicAmpLayout = new QHBoxLayout;
     QLabel *cathodicAmpLabel = new QLabel(tr("Cathodic Amplitude (uA):"));
-    cathodicAmpLabel->setMinimumWidth(150);
+    cathodicAmpLabel->setFixedWidth(200);
     cathodicAmpLineEdit = new QLineEdit;
     connect(cathodicAmpLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_cathodicAmp_editted()));
     cathodicAmpLayout->addWidget(cathodicAmpLabel);
@@ -73,7 +73,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *cathodicDurationLayout = new QHBoxLayout;
     QLabel *cathodicDurationLabel = new QLabel(tr("Cathodic Duration (us):"));
-    cathodicDurationLabel->setMinimumWidth(150);
+    cathodicDurationLabel->setFixedWidth(200);
     cathodicDurationLineEdit = new QLineEdit;
     connect(cathodicDurationLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_cathodicDuration_editted()));
     cathodicDurationLayout->addWidget(cathodicDurationLabel);
@@ -81,7 +81,7 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *numPulseLayout = new QHBoxLayout;
     QLabel *numPulseLabel = new QLabel(tr("Pulse Number:"));
-    numPulseLabel->setMinimumWidth(150);
+    numPulseLabel->setFixedWidth(200);
     numPulseLineEdit = new QLineEdit;
     connect(numPulseLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_numPulse_editted()));
     numPulseLayout->addWidget(numPulseLabel);
@@ -89,11 +89,19 @@ void MainWindow::createLayout(){
 
     QHBoxLayout *adjDurationLayout = new QHBoxLayout;
     QLabel *adjDurationLabel = new QLabel(tr("Adjacent Duration (ms):"));
-    adjDurationLabel->setMinimumWidth(150);
+    adjDurationLabel->setFixedWidth(200);
     adjDurationLineEdit = new QLineEdit;
     connect(adjDurationLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_adjDuration_editted()));
     adjDurationLayout->addWidget(adjDurationLabel);
     adjDurationLayout->addWidget(adjDurationLineEdit);
+
+    QHBoxLayout *interPhaseIntervalLayout = new QHBoxLayout;
+    QLabel *interPhaseIntervalLabel = new QLabel(tr("Interphase Interval (us):"));
+    interPhaseIntervalLabel->setFixedWidth(200);
+    interPhaseIntervalLineEdit = new QLineEdit;
+    connect(interPhaseIntervalLineEdit, SIGNAL(textEdited(QString)), this, SLOT(on_interPhaseInterval_editted()));
+    interPhaseIntervalLayout->addWidget(interPhaseIntervalLabel);
+    interPhaseIntervalLayout->addWidget(interPhaseIntervalLineEdit);
 
     sendCommandButton = new QPushButton(tr("Send Command!"));
     connect(sendCommandButton, SIGNAL(clicked(bool)), this, SLOT(on_sendCommand_clicked()));
@@ -111,6 +119,7 @@ void MainWindow::createLayout(){
     mainLayout->addLayout(cathodicDurationLayout);
     mainLayout->addLayout(numPulseLayout);
     mainLayout->addLayout(adjDurationLayout);
+    mainLayout->addLayout(interPhaseIntervalLayout);
     mainLayout->addWidget(sendCommandButton);
     mainLayout->addWidget(startStopButton);
 
@@ -256,6 +265,17 @@ void MainWindow::on_adjDuration_editted(){
     else{
         QMessageBox::warning(this, "Value error!", "Please key in a value between 0 to 1000!");
         adjDurationLineEdit->clear();
+    }
+}
+
+void MainWindow::on_interPhaseInterval_editted(){
+    if(interPhaseIntervalLineEdit->text().toInt() < 1000 && interPhaseIntervalLineEdit->text().toInt() > 0){
+        command->setInterPhaseInterval(interPhaseIntervalLineEdit->text());
+        qDebug() << "Adjacent Duration set to: " << command->getInterPhaseInterval();
+    }
+    else{
+        QMessageBox::warning(this, "Value error!", "Please key in a value between 0 to 1000!");
+        interPhaseIntervalLineEdit->clear();
     }
 }
 
