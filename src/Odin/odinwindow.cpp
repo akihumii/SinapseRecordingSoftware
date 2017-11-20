@@ -353,22 +353,22 @@ bool OdinWindow::connectOdin(){
     }
     if(!serialOdin->isOdinSerialConnected()){
 //        socketOdin->doConnect("10.10.10.1", 30000);
-//        socketOdin->doConnect("192.168.0.104", 30000);
-//        connectionStatus.clear();
-//        if(socketOdin->isConnected()){
-//            connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
-//            statusBarLabel->setText(connectionStatus);
-//            sendButton->setEnabled(true);
+        socketOdin->doConnect("192.168.4.1", 30000);
+        connectionStatus.clear();
+        if(socketOdin->isConnected()){
+            connectionStatus.append("Connected to Odin WiFi Module at 192.168.4.1/30000");
+            statusBarLabel->setText(connectionStatus);
+            sendButton->setEnabled(true);
             return true;
-//        }
-//        else{
-//            sendButton->setDisabled(true);
-//            connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
-//            QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
-//                                                                 "Check your connections and run the program again..");
-//            statusBarLabel->setText(connectionStatus);
-//            return false;
-//        }
+        }
+        else{
+            sendButton->setDisabled(true);
+            connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
+            QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
+                                                                 "Check your connections and run the program again..");
+            statusBarLabel->setText(connectionStatus);
+            return false;
+        }
     }
     return false;
 }
@@ -527,9 +527,9 @@ void OdinWindow::on_commandSent(){
 
 void OdinWindow::on_commandReceived(bool received){
     if(!received){
-//        qDebug() << "Command didnt come back";
+        qDebug() << "Command came back wrong";
         if(socketOdin->isConnected()){
-//            qDebug() << "Trying to display error";
+            qDebug() << "Trying to display error";
             displayError(socketOdin->getIncomingCommand(), socketOdin->getOutgoingCommand());
         }
         if(serialOdin->isOdinSerialConnected()){
@@ -544,12 +544,12 @@ void OdinWindow::on_commandReceived(bool received){
 void OdinWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCommand){
     QString temp;
 //    qDebug() << "Checking error";
-    for(int i = 0; i < incomingCommand.size(); i++){
-        if((quint8) incomingCommand.at(i) < 16){
-            temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + " ");
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        if((quint8) outgoingCommand.at(i) < 16){
+            temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) outgoingCommand.at(i), 16).toUpper() + " ");
         }
         else{
-            temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + " ");
+            temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) outgoingCommand.at(i), 16).toUpper() + " ");
         }
         if((i+1)%4 == 0){
             temp.append("\n");
@@ -558,7 +558,7 @@ void OdinWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCom
     temp.append("\n");
     for(int i = 0; i < incomingCommand.size(); i++){
         if((quint8) incomingCommand.at(i) != (quint8) outgoingCommand.at(i)){
-//            qDebug() << "Checking error byte by byte " << i;
+            qDebug() << "Checking error byte by byte " << i;
             temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + ") \n");
         }
     }

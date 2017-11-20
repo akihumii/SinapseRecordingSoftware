@@ -148,13 +148,13 @@ unsigned char CommandOdin::getPulseMagByte(int index){
             QString temp;
             temp = in.readLine();
             a = temp.toFloat();
-            qDebug() << "a: " << temp;
+//            qDebug() << "a: " << temp;
             temp = in.readLine();
             b = temp.toFloat();
-            qDebug() << "b: " << temp;
+//            qDebug() << "b: " << temp;
             temp = in.readLine();
             c = temp.toFloat();
-            qDebug() << "c: " << temp;
+//            qDebug() << "c: " << temp;
         }
 // =================================================== HACK JOB =============================================================//
         unsigned char temp = PulseMag[index]*PulseMag[index]*a + PulseMag[index]*b - c;       // For 20.0mA

@@ -11,7 +11,7 @@ SocketOdin::SocketOdin(){
 
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
     connect(udpSocket, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
-    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readCommand()));
+    connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(readCommand()));
 
     player = new QMediaPlayer;
     player->setMedia(QUrl::fromLocalFile(QDir::currentPath() +QDir::separator()+ "coins.mp3"));
@@ -28,8 +28,12 @@ void SocketOdin::writeCommand(QByteArray command){
     if(command.size() > 1){
         player->play();
     }
+    outgoingCommand = command;
 //    commandTimer.start(15);
     udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
+    QTimer::singleShot(readDelay, [=] {
+            timeToRead = true;
+    });
 }
 
 void SocketOdin::on_socketDisconnected(){
@@ -37,10 +41,11 @@ void SocketOdin::on_socketDisconnected(){
 }
 
 void SocketOdin::readCommand(){
-    if(timeToRead){
-//        incomingCommand.append(socketAbstract->readAll());
+    qDebug() << "Reading";
+//    if(timeToRead){
+        incomingCommand.append(socketAbstract->readAll());
         if(incomingCommand.size() >= 16){
-//            qDebug() << incomingCommand.toHex();
+            qDebug() << incomingCommand.toHex();
             for(int i = 0; i < incomingCommand.size(); i++){
                 if((quint8) incomingCommand.at(0) != (quint8) 0xAA){
                     incomingCommand.remove(0, 1);
@@ -51,12 +56,12 @@ void SocketOdin::readCommand(){
             }
             if(incomingCommand.size() >= 16){
                 for(int i = 0; i < 16; i++){
-                    if(outgoingCommand.at(i) == incomingCommand.at(i)){
-    //                    qDebug() << "Byte " << i << " is correct";
+                    if((quint8) outgoingCommand.at(i) == (quint8) incomingCommand.at(i)){
+                        qDebug() << "Byte " << i << " is correct";
                         emit commandReceived(true);
                     }
                     else{
-    //                    qDebug() << "There is a wrong byte!";
+                        qDebug() << "There is a wrong byte!";
                         emit commandReceived(false);
                         break;
                     }
@@ -65,10 +70,10 @@ void SocketOdin::readCommand(){
             }
             incomingCommand.clear();
         }
-    }
-    else{
-//        socketAbstract->readAll();
-    }
+//    }
+//    else{
+        socketAbstract->readAll();
+//    }
 }
 
 QByteArray SocketOdin::getIncomingCommand(){
