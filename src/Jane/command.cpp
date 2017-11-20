@@ -68,6 +68,7 @@ void Command::addData()
             //start 2nd cmd
             addSyncPulse();
             addChipID();
+            cmd.append((const char)STIM_PARAMETER);
             cmd.append((const char)STIM_UPPER);
             addStimulationParamSet(8,16);
 
