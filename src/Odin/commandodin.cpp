@@ -76,6 +76,7 @@ void CommandOdin::sendStop(){
 //    else if(socketOdin->isConnected()){
         qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
+        constructCommand();
 //    }
 }
 

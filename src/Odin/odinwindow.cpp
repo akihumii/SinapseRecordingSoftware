@@ -527,10 +527,12 @@ void OdinWindow::on_commandSent(){
 
 void OdinWindow::on_commandReceived(bool received){
     if(!received){
+        if(socketOdin->getOutgoingCommand().size() > 1){
         qDebug() << "Command came back wrong";
-        if(socketOdin->isConnected()){
-            qDebug() << "Trying to display error";
-            displayError(socketOdin->getIncomingCommand(), socketOdin->getOutgoingCommand());
+            if(socketOdin->isConnected()){
+                qDebug() << "Trying to display error";
+                displayError(socketOdin->getIncomingCommand(), socketOdin->getOutgoingCommand());
+            }
         }
         if(serialOdin->isOdinSerialConnected()){
             displayError(serialOdin->getIncomingCommand(), serialOdin->getOutgoingCommand());
@@ -661,6 +663,8 @@ void OdinWindow::on_ConnectMenu_triggered(){
 }
 
 OdinWindow::~OdinWindow(){
+    socketOdin->sendDisconnectSignal();
+    socketOdin->doDisconnect();
 }
 
 }

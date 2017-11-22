@@ -10,7 +10,9 @@ class SocketOdin: public SocketAbstract{
     Q_OBJECT
 public:
     SocketOdin();
+    ~SocketOdin();
     void writeCommand(QByteArray command);
+    void sendDisconnectSignal();
     void setReadDelay(int delay);
     QByteArray getIncomingCommand();
     QByteArray getOutgoingCommand();

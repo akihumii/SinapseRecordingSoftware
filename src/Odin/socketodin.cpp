@@ -17,6 +17,8 @@ SocketOdin::SocketOdin(){
     player->setMedia(QUrl::fromLocalFile(QDir::currentPath() +QDir::separator()+ "coins.mp3"));
     player->setVolume(50);
 }
+SocketOdin::~SocketOdin(){
+}
 
 void SocketOdin::writeCommand(QByteArray command){
 //    qDebug() << "Started command timer";
@@ -34,6 +36,14 @@ void SocketOdin::writeCommand(QByteArray command){
     QTimer::singleShot(readDelay, [=] {
             timeToRead = true;
     });
+}
+
+void SocketOdin::sendDisconnectSignal(){
+    qDebug() << "Sending disconnect signals";
+    QByteArray temp;
+    temp.append("DISCONNECT!!!!!!!");
+    socketAbstract->write(temp);
+    socketAbstract->waitForBytesWritten(1000);
 }
 
 void SocketOdin::on_socketDisconnected(){
@@ -70,9 +80,10 @@ void SocketOdin::readCommand(){
             }
             incomingCommand.clear();
         }
+    incomingCommand.clear();
 //    }
 //    else{
-        socketAbstract->readAll();
+    socketAbstract->readAll();
 //    }
 }
 
