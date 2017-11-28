@@ -53,6 +53,37 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //    playAudio(getAudioChannel());
 }
 
+void DataProcessor::parseFrameMarkersSerial(QByteArray rawData){
+    for(int i = 0; i < rawData.size(); i = i + 22){
+        QByteArray temp;
+        for(int j = 2; j < 10; j++){
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
+            if(RecordEnabled){
+                RecordData(fullWord_rawData);
+            }
+            ChannelData[j-2].append(fullWord_rawData*(0.000000195));
+        }
+        for(int j = 0; j < 2; j++){
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
+            if(RecordEnabled){
+                RecordData(fullWord_rawData);
+            }
+            ChannelData[j+8].append(fullWord_rawData*(0.000000195));
+        }
+//        ChannelData[10].append((quint8) rawData.at(i));
+//        if(RecordEnabled){
+//            RecordData((quint8) rawData.at(i));
+//        }
+        total_data_count++;
+        X_axis.append(total_data_count*period);
+        ChannelData[11].append((quint8) rawData.at(i+20) << 8 | (quint8) rawData.at(i+21));
+        if(RecordEnabled){
+            RecordData((quint8) rawData.at(i+20) << 8 | (quint8) rawData.at(i+21));
+            RecordData(END_OF_LINE);
+        }
+    }
+}
+
 void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 //    qDebug() << rawData.size();
     if(leftOverData.size() > 0){
@@ -105,14 +136,15 @@ bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
         if(((quint8) data.at(currentIndex + 23) == (quint8) data.at(currentIndex) + 1)){
         return true;
     }
-//    else if((quint8)data.at(currentIndex) == 249
-//                && (quint8)data.at(currentIndex+22) == 250){
-//        return true;
-//    }
-//    else if((quint8)data.at(currentIndex) == 250
-//                && (quint8)data.at(currentIndex+22) == 0){
-//        return true;
-//    }
+    else{
+        return false;
+    }
+}
+
+bool DataProcessor::checkNextFrameMarkerSerial(QByteArray data, int currentIndex){
+        if(((quint8) data.at(currentIndex + 22) == (quint8) data.at(currentIndex) + 1)){
+        return true;
+    }
     else{
         return false;
     }
@@ -125,12 +157,6 @@ int DataProcessor::findfirstFrameMarkers(QByteArray rawData){
                 && (quint8)rawData.at(i+23) == (quint8)rawData.at(i)+1){
             return i;
         }
-//        else if((quint8)rawData.at(i+44) == 1 && (quint8)rawData.at(i+22) == 0 && (quint8)rawData.at(i) == 250){
-//            return i;
-//        }
-//        else if((quint8)rawData.at(i+44) == 0 && (quint8)rawData.at(i+22) == 250 && (quint8)rawData.at(i) == 249){
-//            return i;
-//        }
     }
     return 0;
 }
@@ -142,12 +168,6 @@ int DataProcessor::findlastFrameMarkers(QByteArray rawData){
             if((quint8)rawData.at(i-23)+1 == (quint8)rawData.at(i) && (quint8)rawData.at(i-46)+1 == (quint8)rawData.at(i-23)){
                 return i;
             }
-//            else if((quint8)rawData.at(i-44) == 249 && (quint8)rawData.at(i-23) == 250 && (quint8)rawData.at(i) == 0){
-//                return i;
-//            }
-//            else if((quint8)rawData.at(i-44) == 250 && (quint8)rawData.at(i-22) == 0 && (quint8)rawData.at(i) == 1){
-//                return i;
-//            }
         }
     }
     return 0;
