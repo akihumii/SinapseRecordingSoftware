@@ -1,5 +1,7 @@
 #include "pulseplot.h"
 
+namespace Odin {
+
 PulsePlot::PulsePlot()
 {
     xValues.reserve(2550);
@@ -71,4 +73,6 @@ void PulsePlot::updateYvalues(){
     for(int i = 0; i < 2550; i ++){
 //        qDebug() << yValues.at(i);
     }
+}
+
 }

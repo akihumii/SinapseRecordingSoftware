@@ -4,6 +4,8 @@
 #include "../common/qtincludes.h"
 #include <QObject>
 
+namespace Odin {
+
 class SerialOdin: public QObject{
     Q_OBJECT
 public:
@@ -41,5 +43,7 @@ private:
     bool timeToRead = false;
     int readDelay = 3000;
 };
+
+}
 
 #endif // SERIALODIN_H

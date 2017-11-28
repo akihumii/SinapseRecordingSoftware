@@ -35,7 +35,7 @@ private:
     QTimer dataTimer;
 
     int restartCount = 0;
-    float samplingRate = 20864.0;
+    float samplingRate = 16671.0;
     float period = 1/samplingRate;
     bool pause = false;
 

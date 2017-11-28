@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef ODINWINDOW_H
+#define ODINWINDOW_H
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
@@ -13,13 +13,15 @@
 #include "pulseplot.h"
 #include <QtMath>
 
-class MainWindow : public QMainWindow
+namespace Odin {
+
+class OdinWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow();
-    ~MainWindow();
+    OdinWindow();
+    ~OdinWindow();
 
     QLabel *statusBarLabel;
 public slots:
@@ -123,6 +125,11 @@ private slots:
     void on_odinDisconnected();
     void on_ConnectMenu_triggered();
     void on_commandReceived(bool received);
+
+signals:
+    void commandSent();
 };
 
-#endif // MAINWINDOW_H
+}
+
+#endif // ODINWINDOW_H

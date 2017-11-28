@@ -1,10 +1,15 @@
 #include "commanddialog.h"
 
-CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_){
+CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_,
+                             Command *NeutrinoCommand_,
+                             Channel *NeutrinoChannel_,
+                             SerialChannel *NeutrinoSerial_,
+                             DataProcessor *dataProcessor_){
     socketNeutrino = socketNeutrino_;
     NeutrinoChannel = NeutrinoChannel_;
     NeutrinoCommand = NeutrinoCommand_;
     NeutrinoSerial = NeutrinoSerial_;
+    dataProcessor = dataProcessor_;
     setWindowTitle(tr("Neutrino Command"));
     createLayout();
     if(NeutrinoCommand->havelastCommand()){
@@ -168,7 +173,6 @@ void CommandDialog::createLayout(){
     topLayout->addLayout(AmplifierSelectLayout);
 //------------------------------------------------------------------ TO ADD AMPLIFIER ENABLE CHECKBOXES -------------------------------------------------------//
 
-
     JTAGextension = new QPushButton(tr("Show JTAG"));
     connect(JTAGextension, SIGNAL(clicked(bool)), this, SLOT(on_JTAGextension_clicked()));
 
@@ -177,9 +181,6 @@ void CommandDialog::createLayout(){
     connect(JTAGreset, SIGNAL(clicked(bool)), this, SLOT(on_JTAGreset_clicked()));
 
     createJTAGLayout();
-
-    ModeComboBox->setCurrentIndex(2);
-    on_Mode_Changed(2);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(topLayout);
@@ -326,11 +327,26 @@ void CommandDialog::on_sendCommand_clicked(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
-    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 7){
-        MeasurementDialog measurementDialog(NeutrinoSerial);
+    if(ModeComboBox->currentIndex() == 5 || ModeComboBox->currentIndex() == 6 ||
+            ModeComboBox->currentIndex() == 7 || ModeComboBox->currentIndex() == 8 ||
+            ModeComboBox->currentIndex() == 9){
+        MeasurementDialog measurementDialog(NeutrinoSerial, socketNeutrino);
         measurementDialog.exec();
         on_chipReset_clicked();
     }
+    updateHeader();
+}
+
+void CommandDialog::updateHeader(){
+    QString temp;
+    for(int i = 0; i < 2; i++){
+        temp.append("Neutrino Setting " + QString::number(i) + " : ,");
+        for(int j = 0; j < 7; j++){
+            temp.append(QString::number(NeutrinoCommand->getJTAG(i*7+j)) + " ,");
+        }
+        temp.append("\n");
+    }
+    dataProcessor->setHeader(temp);
 }
 
 void CommandDialog::on_chipReset_clicked(){
@@ -457,7 +473,8 @@ void CommandDialog::on_amplifierSelect_toggled(){
 
 void CommandDialog::on_Mode_Changed(int Mode){
     NeutrinoCommand->setOPMode(Mode);
-    if(Mode == 5){
+    qDebug() << Mode;
+    if(Mode == 5 || Mode == 6){
         JTAG[94]->setChecked(true);
         NeutrinoCommand->setJTAGbit(94);
     }
@@ -465,7 +482,7 @@ void CommandDialog::on_Mode_Changed(int Mode){
         JTAG[94]->setChecked(false);
         NeutrinoCommand->clearJTAGbit(94);
     }
-    if(Mode == 7){
+    if(Mode == 7 || Mode == 8){
         JTAG[10]->setChecked(true);
         NeutrinoCommand->setJTAGbit(10);
         BioImpData[4]->setChecked(true);
@@ -510,6 +527,7 @@ void CommandDialog::on_BER_textEdited(){
 }
 
 void CommandDialog::loadlastCommand(){
+    qDebug() << "Loading from last command";
     ModeComboBox->setCurrentIndex(NeutrinoCommand->getOPMode());
     CIDComboBox->setCurrentIndex(NeutrinoCommand->getChipID());
     quint8 lastBioImp = NeutrinoCommand->getBioImp();
@@ -545,6 +563,8 @@ void CommandDialog::loadlastCommand(){
 }
 
 void CommandDialog::loadDefault(){
+    ModeComboBox->setCurrentIndex(2);
+    on_Mode_Changed(2);
     for(int i=0;i<112;i++){
         JTAG[i]->setChecked(false);
     }

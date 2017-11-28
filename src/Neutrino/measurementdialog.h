@@ -4,13 +4,14 @@
 #include <QDialog>
 #include "../common/qtincludes.h"
 #include "serialchannel.h"
+#include "socketneutrino.h"
 
 class MeasurementDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    MeasurementDialog(SerialChannel *NeutrinoSerial_);
+    MeasurementDialog(SerialChannel *NeutrinoSerial_, SocketNeutrino *socketNeutrino_);
     ~MeasurementDialog();
 
 public slots:
@@ -18,19 +19,21 @@ public slots:
 
 private:
     SerialChannel *NeutrinoSerial;
+    SocketNeutrino *socketNeutrino;
 
     QLabel *labels[4];
-    QString labelNames[4] = {   "Minimum:",
-                                "Maximum:",
-                                "Average:",
-                                "Pk to Pk:"
+    QString labelNames[4] = {   "<b><FONT SIZE = 6> Minimum: </b>",
+                                "<b><FONT SIZE = 6> Maximum: </b>",
+                                "<b><FONT SIZE = 6> Average: </b>",
+                                "<b><FONT SIZE = 6> Pk to Pk: </b>"
     };
     QLabel *dataLabel[4];
-    QString defaultData[4] = { "1.2",
-                               "0",
-                               "1.5",
-                               "0"
+    QString defaultData[4] = { "<b><FONT SIZE = 6> 1.2 </b>",
+                               "<b><FONT SIZE = 6> 0 </b>",
+                               "<b><FONT SIZE = 6> 1.5 </b>",
+                               "<b><FONT SIZE = 6> 0 </b>"
                              };
+    QPushButton *resetStatistic;
 
     double min = 1.2;
     double max = 0;
@@ -43,6 +46,9 @@ private:
     double calcAverage(double data);
     double findMin(QVector<double> data);
     double findMax(QVector<double> data);
+
+private slots:
+    void on_reset_clicked();
 };
 
 #endif // MEASUREMENTDIALOG_H

@@ -8,7 +8,7 @@ QT       += core gui network serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Jane
+TARGET = Mjolnir
 TEMPLATE = app
 
 # The application version
@@ -35,6 +35,27 @@ INCLUDEPATH += $$PWD../common
 DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    amwflash_mainwindow.cpp \
+    console.cpp \
+    settingdialog.cpp \
+    command.cpp \
+    stimulator.cpp\
+    socketthor.cpp\
+    dataprocessor.cpp\
+    channel.cpp\
+    serialchannel.cpp \
+    measurementdialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    amwflash_mainwindow.h \
+    console.h \
+    settingdialog.h \
+    command.h \
+    stimulator.h\
+    socketthor.h\
+    dataprocessor.h\
+    channel.h\
+    serialchannel.h \
+    measurementdialog.h
+

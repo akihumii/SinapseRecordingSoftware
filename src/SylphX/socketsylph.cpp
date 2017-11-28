@@ -1,5 +1,7 @@
 #include "socketsylph.h"
 
+namespace SylphX {
+
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
@@ -18,13 +20,32 @@ void SocketSylph::ReadCommand(){
         initCount++;
     }
     else if(socketAbstract->bytesAvailable() >= maxSize && checked){
-        dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
+        if(dataProcessor->isSmart()){
+            dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
+        }
+        else{
+            dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
+        }
     }
-    else if(socketAbstract->bytesAvailable() >= 106 && !checked){
+    else if(socketAbstract->bytesAvailable() >= 93 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(106), 0)){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(93), 0)){
             checked = true;
             qDebug() << "checked is true";
         }
     }
+}
+
+void SocketSylph::appendSync(){
+    qDebug() << "Sync pulse detected!";
+//    socketAbstract->write(QByteArray::number(255, 10));
+}
+
+void SocketSylph::closeESP(){
+    qDebug() << "Closing ESP";
+    QByteArray closingMSG = "DISCONNECT!!!!!!!";
+    socketAbstract->write(closingMSG);
+    socketAbstract->waitForBytesWritten(1000);
+}
+
 }

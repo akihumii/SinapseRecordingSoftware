@@ -17,7 +17,11 @@ class CommandDialog : public QDialog
     Q_OBJECT
 
 public:
-    CommandDialog(SocketNeutrino *socketNeutrino_, Command *NeutrinoCommand_, Channel *NeutrinoChannel_, SerialChannel *NeutrinoSerial_);
+    CommandDialog(SocketNeutrino *socketNeutrino_,
+                  Command *NeutrinoCommand_,
+                  Channel *NeutrinoChannel_,
+                  SerialChannel *NeutrinoSerial_,
+                  DataProcessor *dataProcessor_);
     ~CommandDialog();
 
 private slots:
@@ -45,11 +49,13 @@ private:
     Command *NeutrinoCommand;
     Channel *NeutrinoChannel;
     SerialChannel *NeutrinoSerial;
+    DataProcessor *dataProcessor;
 
     void createLayout();
     void createJTAGLayout();
     void loadlastCommand();
     void loadDefault();
+    void updateHeader();
 
     QLabel *ModeLabel;
     QLabel *CIDLabel;

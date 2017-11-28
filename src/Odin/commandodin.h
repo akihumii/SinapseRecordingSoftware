@@ -5,6 +5,8 @@
 #include "socketodin.h"
 #include "../common/qtincludes.h"
 
+namespace Odin {
+
 typedef enum MODE{
     FLATSINGLE = 0x55,
     GRADEDAMPLITUDE = 0x65,
@@ -86,6 +88,9 @@ private:
     int PulseDuration = 200;
     char PulseNum = 2;
     int interPulseDuration = 75;
+    float a = -0.0045;
+    float b = 13.243;
+    float c = 8.5461;
 
     QByteArray outgoingCommand;
 
@@ -108,5 +113,7 @@ private:
         0x00
     };
 };
+
+}
 
 #endif // COMMANDODIN_H

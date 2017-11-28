@@ -12,7 +12,7 @@ TARGET = SylphX
 TEMPLATE = app
 
 # The application version
-VERSION = 1.1.0
+VERSION = 1.3.2
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -30,8 +30,14 @@ HEADERS += \
     mainwindow.h \
     serialchannel.h \
     serialportdialog.h \
-    qtincludes.h \
-    socketsylph.h
+    socketsylph.h \
+    ../Odin/serialodin.h \
+    ../Odin/commandodin.h \
+    ../Odin/socketodin.h \
+    ../Odin/loopingthread.h \
+    ../Odin/pulseplot.h \
+    ../Odin/odinwindow.h
+
 
 SOURCES += \
     dataprocessor.cpp \
@@ -39,4 +45,9 @@ SOURCES += \
     mainwindow.cpp \
     serialchannel.cpp \
     serialportdialog.cpp \
-    socketsylph.cpp
+    socketsylph.cpp \
+    ../Odin/serialodin.cpp \
+    ../Odin/commandodin.cpp \
+    ../Odin/socketodin.cpp \
+    ../Odin/pulseplot.cpp \
+    ../Odin/odinwindow.cpp

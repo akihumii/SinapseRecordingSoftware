@@ -1,6 +1,8 @@
-#include "mainwindow.h"
+#include "odinwindow.h"
 
-MainWindow::MainWindow(){
+namespace Odin {
+
+OdinWindow::OdinWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Odin Stimulator Software V") + version);
     serialOdin = new SerialOdin(this);
@@ -27,7 +29,7 @@ MainWindow::MainWindow(){
     connectOdin();
 }
 
-void MainWindow::createLayout(){
+void OdinWindow::createLayout(){
     QHBoxLayout *modeLayout = new QHBoxLayout;
     ModeLabel = new QLabel(tr("Mode"));
     ModeComboBox = new QComboBox;
@@ -57,7 +59,7 @@ void MainWindow::createLayout(){
     connect(channelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_channel_Changed(int)));
 
     Parameters = new QGroupBox(tr("Stimulation Parameters"));
-    Intensity = new QGroupBox(tr("Pulse Magnitude (0.3 to 9.3 mA)"));
+    Intensity = new QGroupBox(tr("Pulse Magnitude (0.3 to 20.0 mA)"));
     Timing = new QGroupBox(tr("Timing Parameters"));
     Looping = new QGroupBox(tr("Looping Parameters"));
 
@@ -72,7 +74,7 @@ void MainWindow::createLayout(){
         intensityLayout1->addWidget(pulseMagLabel[i]);
         pulseMag[i] = new QDoubleSpinBox;
         pulseMag[i]->setMinimum(0.0);
-        pulseMag[i]->setMaximum(9.3);
+        pulseMag[i]->setMaximum(20.0);
         pulseMag[i]->setSingleStep(0.1);
         pulseMag[i]->setValue(2.0);
         pulseMag[i]->setMaximumWidth(50);
@@ -325,35 +327,36 @@ void MainWindow::createLayout(){
     plotPulse();
 }
 
-void MainWindow::createStatusBar(){
+void OdinWindow::createStatusBar(){
     statusBarLabel = new QLabel;
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
 }
 
-bool MainWindow::connectOdin(){
+bool OdinWindow::connectOdin(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
     if(portInfo.size()>0){
         serialOdin->connectOdin();
         connectionStatus.clear();
         if(serialOdin->isOdinSerialConnected()){
-            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
+//            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
             sendButton->setEnabled(true);
             statusBarLabel->setText(connectionStatus);
             return true;
         }
         else{
-            connectionStatus.append("Connection to Odin failed");
+//            connectionStatus.append("Connection to Odin failed");
             statusBarLabel->setText(connectionStatus);
         }
     }
     if(!serialOdin->isOdinSerialConnected()){
-        socketOdin->doConnect("10.10.10.1", 30000);
+//        socketOdin->doConnect("10.10.10.1", 30000);
+        socketOdin->doConnect("192.168.4.1", 30000);
         connectionStatus.clear();
         if(socketOdin->isConnected()){
-            connectionStatus.append("Connected to Odin WiFi Module at 10.10.10.1/30000");
+            connectionStatus.append("Connected to Odin WiFi Module at 192.168.4.1/30000");
             statusBarLabel->setText(connectionStatus);
             sendButton->setEnabled(true);
             return true;
@@ -370,7 +373,7 @@ bool MainWindow::connectOdin(){
     return false;
 }
 
-void MainWindow::sendCommand(){
+void OdinWindow::sendCommand(){
     start = !start;
     commandOdin->constructCommand();
     setDelay();
@@ -392,7 +395,7 @@ void MainWindow::sendCommand(){
     }
 }
 
-void MainWindow::on_Mode_Changed(int Mode){
+void OdinWindow::on_Mode_Changed(int Mode){
     if(ModeComboBox->currentIndex() < 4){
         multiChannel->setDisabled(true);
         channelComboBox->setEnabled(true);
@@ -422,11 +425,11 @@ void MainWindow::on_Mode_Changed(int Mode){
     commandOdin->setMode(Mode);
 }
 
-void MainWindow::on_channel_Changed(int channel){
+void OdinWindow::on_channel_Changed(int channel){
     commandOdin->setChannelNumber((CHANNELNUMBER) channel);
 }
 
-void MainWindow::on_pulseMag_Changed(){
+void OdinWindow::on_pulseMag_Changed(){
     for(int i = 0; i < 5; i++){
         commandOdin->setPulseMag(i, pulseMag[i]->value());
         pulsePlot->setAmplitude(pulseMag[0]->value());
@@ -436,23 +439,23 @@ void MainWindow::on_pulseMag_Changed(){
     plotPulse();
 }
 
-void MainWindow::on_pulseDuration_Changed(){
+void OdinWindow::on_pulseDuration_Changed(){
     pulsePlot->setPulseDuration(pulseDurationSpinBox->value());
     plotPulse();
     commandOdin->setPulseDuration(pulseDurationSpinBox->value());
 }
 
-void MainWindow::on_numPulse_Changed(){
+void OdinWindow::on_numPulse_Changed(){
     commandOdin->setPulseNum((char) numPulseSpinBox->value());
     setDelay();
 }
 
-void MainWindow::on_interPulseDuration_Changed(){
+void OdinWindow::on_interPulseDuration_Changed(){
     commandOdin->setInterPulseDuration((char) interPulseDurationSpinBox->value());
     setDelay();
 }
 
-void MainWindow::on_channelSeq_Changed(){
+void OdinWindow::on_channelSeq_Changed(){
     int *temp = commandOdin->getMultiChannelSequence();
     for(int i = 0; i < 4; i++){
         if(channelSeqComboBox[i]->currentIndex() != temp[i]){
@@ -469,25 +472,25 @@ void MainWindow::on_channelSeq_Changed(){
                                          (CHANNELNUMBER) channelSeqComboBox[3]->currentIndex());
 }
 
-void MainWindow::on_zoneSelector_Changed(){
+void OdinWindow::on_zoneSelector_Changed(){
     for(int i = 0; i < 7; i++){
         commandOdin->setTimeZone(i, (TIMEZONE) zoneSelector[i]->currentIndex());
     }
 }
 
-void MainWindow::on_zoneMask_Changed(){
+void OdinWindow::on_zoneMask_Changed(){
     commandOdin->setZoneMask((ZONEMASK) ~(1<<(maskSelector->currentIndex())));
 }
 
-void MainWindow::on_numPulseTrain_Changed(){
+void OdinWindow::on_numPulseTrain_Changed(){
     loopingThread->num = numPulseTrainSpinBox->value();
 }
 
-void MainWindow::on_interPulseTrainDelay_Changed(){
+void OdinWindow::on_interPulseTrainDelay_Changed(){
     setDelay();
 }
 
-void MainWindow::on_finishedSending(){
+void OdinWindow::on_finishedSending(){
     numPulseTrainSpinBox->setEnabled(true);
     interPulseTrainDelaySpinBox->setEnabled(true);
     sendButton->setText("Start!");
@@ -499,7 +502,7 @@ void MainWindow::on_finishedSending(){
     start = false;
 }
 
-void MainWindow::on_commandSent(){
+void OdinWindow::on_commandSent(){
     commandCount++;
     commandOdin->sendCommand();
     sentLED->blink(50);
@@ -522,12 +525,14 @@ void MainWindow::on_commandSent(){
     }
 }
 
-void MainWindow::on_commandReceived(bool received){
+void OdinWindow::on_commandReceived(bool received){
     if(!received){
-//        qDebug() << "Command didnt come back";
-        if(socketOdin->isConnected()){
-//            qDebug() << "Trying to display error";
-            displayError(socketOdin->getIncomingCommand(), socketOdin->getOutgoingCommand());
+        if(socketOdin->getOutgoingCommand().size() > 1){
+        qDebug() << "Command came back wrong";
+            if(socketOdin->isConnected()){
+                qDebug() << "Trying to display error";
+                displayError(socketOdin->getIncomingCommand(), socketOdin->getOutgoingCommand());
+            }
         }
         if(serialOdin->isOdinSerialConnected()){
             displayError(serialOdin->getIncomingCommand(), serialOdin->getOutgoingCommand());
@@ -538,15 +543,15 @@ void MainWindow::on_commandReceived(bool received){
     }
 }
 
-void MainWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCommand){
+void OdinWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCommand){
     QString temp;
 //    qDebug() << "Checking error";
-    for(int i = 0; i < incomingCommand.size(); i++){
-        if((quint8) incomingCommand.at(i) < 16){
-            temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + " ");
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        if((quint8) outgoingCommand.at(i) < 16){
+            temp.append("Byte " + QString::number(i+1) + ": 0x0" + QString::number((quint8) outgoingCommand.at(i), 16).toUpper() + " ");
         }
         else{
-            temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + " ");
+            temp.append("Byte " + QString::number(i+1) + ": 0x" + QString::number((quint8) outgoingCommand.at(i), 16).toUpper() + " ");
         }
         if((i+1)%4 == 0){
             temp.append("\n");
@@ -555,7 +560,7 @@ void MainWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCom
     temp.append("\n");
     for(int i = 0; i < incomingCommand.size(); i++){
         if((quint8) incomingCommand.at(i) != (quint8) outgoingCommand.at(i)){
-//            qDebug() << "Checking error byte by byte " << i;
+            qDebug() << "Checking error byte by byte " << i;
             temp.append("Byte " + QString::number(i+1) + " has error! (0x" + QString::number((quint8) incomingCommand.at(i), 16).toUpper() + ") \n");
         }
     }
@@ -565,15 +570,15 @@ void MainWindow::displayError(QByteArray incomingCommand, QByteArray outgoingCom
     }
 }
 
-void MainWindow::plotPulse(){
+void OdinWindow::plotPulse(){
     pulsePlot->updateYvalues();
     pulseGraph->graph()->setData(pulsePlot->retrieveXaxis(), pulsePlot->retrieveYaxis());
     pulseGraph->xAxis->setRange(0, 2550*0.000001, Qt::AlignLeft);
     pulseGraph->replot();
 }
 
-void MainWindow::setDelay(){
-    int additionalDelay;
+void OdinWindow::setDelay(){
+    int additionalDelay = 0;
     switch(ModeComboBox->currentIndex()){
     case 0:{
         additionalDelay = (int) (( 1.0 / (interPulseDurationSpinBox->value()) * 1000.0) * 10.0 *  numPulseSpinBox->value());
@@ -647,15 +652,19 @@ void MainWindow::setDelay(){
     serialOdin->setReadDelay(additionalDelay-20);
 }
 
-void MainWindow::on_odinDisconnected(){
+void OdinWindow::on_odinDisconnected(){
     QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
-    this->close();
+//    this->close();
 }
 
-void MainWindow::on_ConnectMenu_triggered(){
+void OdinWindow::on_ConnectMenu_triggered(){
     ConnectionDialog connectionDialog(socketOdin);
     connectionDialog.exec();
 }
 
-MainWindow::~MainWindow(){
+OdinWindow::~OdinWindow(){
+    socketOdin->sendDisconnectSignal();
+    socketOdin->doDisconnect();
+}
+
 }

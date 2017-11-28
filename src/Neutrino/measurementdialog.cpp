@@ -1,9 +1,11 @@
 #include "measurementdialog.h"
 
-MeasurementDialog::MeasurementDialog(SerialChannel *NeutrinoSerial_)
+MeasurementDialog::MeasurementDialog(SerialChannel *NeutrinoSerial_, SocketNeutrino *socketNeutrino_)
 {
     NeutrinoSerial = NeutrinoSerial_;
+    socketNeutrino = socketNeutrino_;
     connect(NeutrinoSerial, SIGNAL(singleByteReady(double)), this, SLOT(updataData(double)));
+    connect(socketNeutrino, SIGNAL(singleByteReady(double)), this, SLOT(updataData(double)));
     createLayout();
 }
 
@@ -12,7 +14,7 @@ MeasurementDialog::~MeasurementDialog()
 }
 
 void MeasurementDialog::updataData(double data){
-    if(data > max){
+    if(data > max && data < 1.201){
         max = data;
     }
     if(data < min){
@@ -26,10 +28,10 @@ void MeasurementDialog::updataData(double data){
         pk2pk = findMax(data_store) - findMin(data_store);
         data_store.clear();
     }
-    dataLabel[0]->setText(QString::number(min));
-    dataLabel[1]->setText(QString::number(max));
-    dataLabel[2]->setText(QString::number(avg));
-    dataLabel[3]->setText(QString::number(pk2pk));
+    dataLabel[0]->setText("<b><FONT SIZE = 6>" + QString::number(min) + "</b>");
+    dataLabel[1]->setText("<b><FONT SIZE = 6>" + QString::number(max) + "</b>");
+    dataLabel[2]->setText("<b><FONT SIZE = 6>" + QString::number(avg) + "</b>");
+    dataLabel[3]->setText("<b><FONT SIZE = 6>" + QString::number(pk2pk) + "</b>");
 }
 
 double MeasurementDialog::calcAverage(double data){
@@ -65,9 +67,22 @@ void MeasurementDialog::createLayout(){
         dataLabel[i] = new QLabel(defaultData[i]);
         dataLayout->addWidget(dataLabel[i]);
     }
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->addLayout(labelLayout);
-    mainLayout->addLayout(dataLayout);
+    resetStatistic = new QPushButton(tr("Reset"));
+    connect(resetStatistic, SIGNAL(clicked(bool)), this, SLOT(on_reset_clicked()));
+    QHBoxLayout *dispLayout = new QHBoxLayout;
+    dispLayout->addLayout(labelLayout);
+    dispLayout->addLayout(dataLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(dispLayout);
+    mainLayout->addWidget(resetStatistic);
     setLayout(mainLayout);
 //    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+}
+
+void MeasurementDialog::on_reset_clicked(){
+    max = 0;
+    min = 1.2;
+    avg = 0.5;
+    pk2pk = 0;
+    totalPoints = 0;
 }

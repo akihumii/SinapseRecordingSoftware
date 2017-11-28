@@ -1,5 +1,7 @@
 #include "serialodin.h"
 
+namespace Odin {
+
 SerialOdin::SerialOdin(QObject *parent) : QObject(parent = Q_NULLPTR){
     odinPort = new QSerialPort(this);
 
@@ -78,6 +80,7 @@ void SerialOdin::checkConnectivity(){
             if(connectedPortName == info.portName())
                 return;
         }
+        odinSerialConnected = !odinSerialConnected;
         emit odinDisconnected();
     }
 }
@@ -136,4 +139,6 @@ void SerialOdin::sendCommand(){
 
 void SerialOdin::setReadDelay(int delay){
     readDelay = delay;
+}
+
 }

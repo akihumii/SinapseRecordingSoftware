@@ -11,9 +11,12 @@
 #include "serialportdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
+#include "../Odin/odinwindow.h"
 
 class QComboBox;
 class QCustomPlot;
+
+namespace SylphX {
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +30,8 @@ public:
     SerialChannel *serialChannel;
     DataProcessor *data;
 
+    Odin::OdinWindow *x;
+
 public slots:
 
 private:
@@ -34,7 +39,7 @@ private:
     QTimer dataTimer;
 
     int restartCount = 0;
-    float samplingRate = 4190.0;
+    float samplingRate = 1777.0;
     float period = 1/samplingRate;
     bool pause = false;
 
@@ -44,6 +49,7 @@ private:
     QMenu *voltageMenu;
     QMenu *timeFrameMenu;
     QMenu *audioOutputMenu;
+    QMenu *processorMenu;
     QMenu *helpMenu;
 
     QAction *exitAction;
@@ -55,6 +61,7 @@ private:
     QAction *resetDefaultY;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
+    QAction *pythonLaunchAction;
     QAction *timeFrame10ms;
     QAction *timeFrame20ms;
     QAction *timeFrame50ms;
@@ -74,7 +81,11 @@ private:
     QAction *voltage10000u;
     QAction *audio[11];
     QAction *aboutAction;
+    QAction *odinAction;
+    QAction *isSmart;
+    QAction *isDumb;
 
+    QActionGroup *smartOrDumbGroup;
     QActionGroup *timeFrameGroup;
     QActionGroup *voltageGroup;
     QActionGroup *audioGroup;
@@ -85,6 +96,7 @@ private:
 
     QCustomPlot *channelGraph[12];
     SocketSylph *socketSylph;
+    QProcess *pythonProcess;
 
     void createStatusBar();
     void createActions();
@@ -118,11 +130,15 @@ private slots:
     void on_voltage5000u_triggered();
     void on_voltage10000u_triggered();
     void on_dataAnalyzer_triggered();
+    void on_pythonLaunch_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
     void on_filterConfig_trigger();
     void on_restart_triggered();
+    void on_odin_triggered();
+    void on_smartDataProcessor_triggered();
+    void on_dumbDataProcessor_triggered();
 
     void on_graph1_clicked();
     void on_graph2_clicked();
@@ -137,5 +153,7 @@ private slots:
     void on_graph11_clicked();
     void about();
 };
+
+}
 
 #endif // MainWindow_H
