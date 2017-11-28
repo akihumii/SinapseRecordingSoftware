@@ -43,8 +43,9 @@ void SocketSylph::appendSync(){
 
 void SocketSylph::closeESP(){
     qDebug() << "Closing ESP";
-    QByteArray closingMSG = "Closing ESP";
+    QByteArray closingMSG = "DISCONNECT!!!!!!!";
     socketAbstract->write(closingMSG);
+    socketAbstract->waitForBytesWritten(1000);
 }
 
 }
