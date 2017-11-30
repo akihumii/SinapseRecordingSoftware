@@ -64,6 +64,16 @@ QByteArray Command::constructCommand()
             outgoingCommand.append((const char) PWR_LVL_MEASURE);
             break;
         }
+        case 10:{                //Bioimpedance Measurement (8-bit)
+            outgoingCommand.append((const char) BIOIMP_MEASURE_8BIT);
+            outgoingCommand.append((const char) bioimp);
+            break;
+        }
+        case 11:{                //Bioimpedance Measurement (8-bit)
+            outgoingCommand.append((const char) BIOIMP_MEASURE_8BIT);
+            outgoingCommand.append((const char) bioimp);
+            break;
+        }
         default:
         break;
     }

@@ -13,6 +13,7 @@ public:
     bool writeCommand(QByteArray Command);
     bool wifiEnabled = true;
     QByteArray getlastCommand();
+    char getCurrentByte();
 
 private:
     QTcpSocket *socketNeutrino;

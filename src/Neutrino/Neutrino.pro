@@ -36,7 +36,9 @@ HEADERS += \
     signalchannel.h \
     qtincludes.h \
     socketneutrino.h \
-    measurementdialog.h
+    measurementdialog.h \
+    bioimpedance.h \
+    bioimpedancedialog.h
 
 SOURCES += \
     channel.cpp \
@@ -49,6 +51,8 @@ SOURCES += \
     serialportdialog.cpp \
     signalchannel.cpp \
     socketneutrino.cpp \
-    measurementdialog.cpp
+    measurementdialog.cpp \
+    bioimpedance.cpp \
+    bioimpedancedialog.cpp
 
 FORMS +=

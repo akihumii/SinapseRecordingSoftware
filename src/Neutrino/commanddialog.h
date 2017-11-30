@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "../common/qtincludes.h"
+#include "bioimpedance.h"
 #include "socketneutrino.h"
 #include "command.h"
 #include "serialchannel.h"
@@ -50,12 +51,14 @@ private:
     Channel *NeutrinoChannel;
     SerialChannel *NeutrinoSerial;
     DataProcessor *dataProcessor;
+    QMessageBox *mboxWait;
 
     void createLayout();
     void createJTAGLayout();
     void loadlastCommand();
     void loadDefault();
     void updateHeader();
+    void runAutoBioImpedanceMeasurement();
 
     QLabel *ModeLabel;
     QLabel *CIDLabel;
@@ -115,8 +118,8 @@ private:
                                 "ETIRST"
                                 };
     QString JTAGNames[112] = {  "DATAMOD",          "OFFDATABUFFS",     "DATAMOD<2>",       "DATAMOD<1>",       "DATAMOD<0>",       "OSCINT<5>",        "OSCINT<4>",    "OSCINT<3>",
-                                "OSCINT<2>",        "OSCINT<1>",        "BIO<7>",           "BIO<6>",           "BIO<5>",           "BIO<4>",           "BIO<3>",       "BIO<2>",
-                                "BIO<1>",           "Ch10<5>",          "Ch10<4>",          "Ch10<3>",          "Ch10<2>",          "Ch10_OFF",         "Ch9<5>",       "Ch9<4>",
+                                "OSCINT<2>",        "OSCINT<1>",        "PDN",              "A1",               "A0",               "SEL_LNA GAIN",     "ISEL_1",       "ISEL_0",
+                                "SEL_IQ",           "Ch10<5>",          "Ch10<4>",          "Ch10<3>",          "Ch10<2>",          "Ch10_OFF",         "Ch9<5>",       "Ch9<4>",
                                 "Ch9<3>",           "Ch9<2>",           "Ch9_OFF",          "Ch8<5>",           "Ch8<4>",           "Ch8<3>",           "Ch8<2>",       "Ch8_OFF",
                                 "Ch7<5>",           "Ch7<4>",           "Ch7<3>",           "Ch7<2>",           "Ch7_OFF",          "Ch6<5>",           "Ch6<4>",       "Ch6<3>",
                                 "Ch6<2>",           "Ch6_OFF",          "Ch5<5>",           "Ch5<4>",           "Ch5<3>",           "Ch5<2>",           "Ch5_OFF",      "Ch4<5>",

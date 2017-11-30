@@ -58,10 +58,26 @@ void SocketNeutrino::ReadCommand(){
                 socketAbstract->read(maxSize);
                 break;
             }
+            case 10:{
+
+//                socketAbstract->read(1);
+                break;
+            }
+            case 11:{
+
+//                socketAbstract->read(1);
+                break;
+            }
         default:
             break;
         }
     }
+}
+
+char SocketNeutrino::getCurrentByte(){
+    socketAbstract->read(maxSize);
+    char temp = (char) socketAbstract->read(1).at(0);
+    return temp;
 }
 
 bool SocketNeutrino::writeCommand(QByteArray Command){
@@ -89,6 +105,7 @@ bool SocketNeutrino::writeCommand(QByteArray Command){
             }
         }
         socketAbstract->write(Command);         //write the command itself
+        qDebug() << Command;
         return socketAbstract->waitForBytesWritten();
     }
     else
