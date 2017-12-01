@@ -9,7 +9,7 @@ SocketNeutrino::SocketNeutrino(Command *NeutrinoCommand_, DataProcessor *Neutrin
 }
 
 void SocketNeutrino::ReadCommand(){
-    if(wifiEnabled){
+//    if(wifiEnabled){
         switch (NeutrinoCommand->getOPMode()){
             case 2:{
                 if(NeutrinoData->isPlotEnabled()){
@@ -59,23 +59,22 @@ void SocketNeutrino::ReadCommand(){
                 break;
             }
             case 10:{
-
+                socketAbstract->read(maxSize);
 //                socketAbstract->read(1);
                 break;
             }
             case 11:{
-
+                socketAbstract->read(maxSize);
 //                socketAbstract->read(1);
                 break;
             }
         default:
             break;
         }
-    }
+//    }
 }
 
 char SocketNeutrino::getCurrentByte(){
-    socketAbstract->read(maxSize);
     char temp = (char) socketAbstract->read(1).at(0);
     return temp;
 }
