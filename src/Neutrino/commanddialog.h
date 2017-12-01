@@ -52,6 +52,7 @@ private:
     SerialChannel *NeutrinoSerial;
     DataProcessor *dataProcessor;
     QMessageBox *mboxWait;
+    QByteArray bioImpedanceData;
 
     void createLayout();
     void createJTAGLayout();

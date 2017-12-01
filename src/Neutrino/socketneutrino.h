@@ -26,7 +26,7 @@ private:
     QByteArray lastSentCommand;
 
     bool Mode_8Bit = false;
-
+    char currentByte;
     int getNumChannels(QByteArray lastCommand);
 
 private slots:

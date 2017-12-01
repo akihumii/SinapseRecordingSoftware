@@ -59,13 +59,11 @@ void SocketNeutrino::ReadCommand(){
                 break;
             }
             case 10:{
-                socketAbstract->read(maxSize);
-//                socketAbstract->read(1);
+                currentByte = (char) socketAbstract->read(2048).at(0);
                 break;
             }
             case 11:{
-                socketAbstract->read(maxSize);
-//                socketAbstract->read(1);
+                currentByte = (char) socketAbstract->read(2048).at(0);
                 break;
             }
         default:
@@ -75,8 +73,7 @@ void SocketNeutrino::ReadCommand(){
 }
 
 char SocketNeutrino::getCurrentByte(){
-    char temp = (char) socketAbstract->read(1).at(0);
-    return temp;
+    return currentByte;
 }
 
 bool SocketNeutrino::writeCommand(QByteArray Command){
