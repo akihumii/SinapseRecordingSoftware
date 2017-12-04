@@ -61,6 +61,8 @@ private:
     void updateHeader();
     void runAutoBioImpedanceMeasurement();
 
+    double bioImpGain = 80.0;
+
     QLabel *ModeLabel;
     QLabel *CIDLabel;
     QLabel *DataBERLabel;

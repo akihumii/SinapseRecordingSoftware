@@ -355,6 +355,8 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
         setWindowTitle(tr("Neutrino Command - Running Auto BioImpedance Measurement"));
         JTAG[10]->setChecked(true);
         NeutrinoCommand->setJTAGbit(10);    //PDN of BIOIMPEDANCE
+        JTAG[13]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(13);    // SEL_LNA GAIN (x40)
         BioImpData[0]->setChecked(false);
         BioImpData[1]->setChecked(false);
         BioImpData[2]->setChecked(false);
@@ -497,9 +499,6 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
     QTimer::singleShot(186000, [=] {
             qDebug() << (quint8) socketNeutrino->getCurrentByte();
             bioImpedanceData.append(socketNeutrino->getCurrentByte());
-            for(int i = 0; i < bioImpedanceData.size(); i++){
-                qDebug() << (quint8) bioImpedanceData.at(i);
-            }
             JTAG[10]->setChecked(false);
             NeutrinoCommand->clearJTAGbit(10);
             JTAG[14]->setChecked(false);
@@ -518,7 +517,7 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
             on_JTAG_toggled();
             on_BioImp_toggled();
             mboxWait->hide();
-            BioImpedance bioImpedance(bioImpedanceData);
+            BioImpedance bioImpedance(bioImpedanceData, bioImpGain);
             qDebug() << "Total bytes:" << bioImpedanceData.size();
     });
 }
@@ -597,6 +596,42 @@ void CommandDialog::on_JTAG_toggled(){
         }
         else{
             NeutrinoCommand->clearJTAGbit(i);
+        }
+    }
+    if(JTAG[13]->isChecked()){          // SEL_LNA GAIN X40
+        if(JTAG[12]->isChecked()){      // JTAG[12] = A0 | JTAG[11] = A1
+            if(JTAG[11]->isChecked()){  // A0 = A1 = 1
+                bioImpGain = 40.0 * 8.0;
+            }
+            else{                       // A0 = 0, A1 = 1
+                bioImpGain = 40.0 * 6.0;
+            }
+        }
+        else{
+            if(JTAG[11]->isChecked()){  // A0 = 1, A1 = 0
+                bioImpGain = 40.0 * 4.0;
+            }
+            else{                       // A0 = A1 = 0
+                bioImpGain = 40.0 * 2.0;
+            }
+        }
+    }
+    else{
+        if(JTAG[12]->isChecked()){      // JTAG[12] = A0 | JTAG[11] = A1
+            if(JTAG[11]->isChecked()){  // A0 = A1 = 1
+                bioImpGain = 20.0 * 8.0;
+            }
+            else{                       // A0 = 0, A1 = 1
+                bioImpGain = 20.0 * 6.0;
+            }
+        }
+        else{
+            if(JTAG[11]->isChecked()){  // A0 = 1, A1 = 0
+                bioImpGain = 20.0 * 4.0;
+            }
+            else{                       // A0 = A1 = 0
+                bioImpGain = 20.0 * 2.0;
+            }
         }
     }
 }
