@@ -97,10 +97,10 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     qDebug() << lastFrameMarker;
     qDebug() << firstFrameMarker;
     if(lastFrameMarker > 0){
-        for(int i = 0; i < lastFrameMarker - 20; i = i + 1){
+        for(int i = 0; i < lastFrameMarker - 22; i = i + 1){
             if (i%23 == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 for(int j = 2; j < 10; j++){
-                    fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+                    fullWord_rawData = ((quint8) rawData.at(i-21+((2*j))) << 8 | (quint8) rawData.at(i-21+((2*j)+1)))-32768;
                     appendAudioBuffer(j-2, rawData.at(i+(2*j)+2), rawData.at(i+(2*j)+1));
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
@@ -108,14 +108,14 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     ChannelData[j-2].append(fullWord_rawData*(0.000000195));
                 }
                 for(int j = 0; j < 2; j++){
-                    fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+                    fullWord_rawData = ((quint8) rawData.at(i-21+((2*j))) << 8 | (quint8) rawData.at(i-21+((2*j)+1)))-32768;
                     appendAudioBuffer(j+8, rawData.at(i+(2*j)+2), rawData.at(i+(2*j)+1));
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
                     ChannelData[j+8].append(fullWord_rawData*(0.000000195));
                 }
-                ChannelData[10].append((quint8) rawData.at(i-2));
+                ChannelData[10].append((quint8) rawData.at(i-22));
                 ChannelData[11].append((quint8) rawData.at(i-1) << 8 | (quint8) rawData.at(i));
                 total_data_count = total_data_count+1;
                 X_axis.append(total_data_count*period);
@@ -134,12 +134,24 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-        if(((quint8) data.at(currentIndex + 23) == (quint8) data.at(currentIndex) + 1)){
-        return true;
+//    if(((quint8) data.at(currentIndex + 23) == (quint8) data.at(currentIndex) + 1)){
+//        return true;
+//    }
+//    else{
+//        return false;
+//    }
+    bool flag = false;
+    for(int i = 0; i < data.size()-23; i = i + 1){
+        if(((quint8) data.at(i + 23) == (quint8) data.at(i) + 1)){
+            flag = true;
+            i = i + 22;
+        }
+        else{
+            flag = false;
+            break;
+        }
     }
-    else{
-        return false;
-    }
+    return flag;
 }
 
 bool DataProcessor::checkNextFrameMarkerSerial(QByteArray data, int currentIndex){
