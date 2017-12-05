@@ -296,28 +296,28 @@ void MainWindow::createMenus(){
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
 
-    audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
-    audioGroup = new QActionGroup(this);
-    for(int i = 0; i < 11; i++){
-        audioOutputMenu->addAction(audio[i]);
-        audio[i]->setCheckable(true);
-        audioGroup->addAction(audio[i]);
-    }
-    audio[0]->setChecked(true);
+//    audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
+//    audioGroup = new QActionGroup(this);
+//    for(int i = 0; i < 11; i++){
+//        audioOutputMenu->addAction(audio[i]);
+//        audio[i]->setCheckable(true);
+//        audioGroup->addAction(audio[i]);
+//    }
+//    audio[0]->setChecked(true);
 
-    processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
-    processorMenu->addAction(isSmart);
-    isSmart->setCheckable(true);
-    processorMenu->addAction(isDumb);
-    isDumb->setCheckable(true);
+//    processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
+//    processorMenu->addAction(isSmart);
+//    isSmart->setCheckable(true);
+//    processorMenu->addAction(isDumb);
+//    isDumb->setCheckable(true);
 
-    smartOrDumbGroup = new QActionGroup(this);
-    smartOrDumbGroup->addAction(isSmart);
-    smartOrDumbGroup->addAction(isDumb);
-    isDumb->setChecked(true);
+//    smartOrDumbGroup = new QActionGroup(this);
+//    smartOrDumbGroup->addAction(isSmart);
+//    smartOrDumbGroup->addAction(isDumb);
+//    isDumb->setChecked(true);
 
-    processorMenu->addSeparator();
-    processorMenu->addAction(restartAction);
+//    processorMenu->addSeparator();
+//    processorMenu->addAction(restartAction);
 
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
@@ -571,14 +571,6 @@ void MainWindow::on_pythonLaunch_triggered(){
 }
 
 void MainWindow::on_restart_triggered(){
-    if(data->isADCRecordEnabled()){
-        data->setADCRecordEnabled(false);
-        data->setADCRecordEnabled(true);
-    }
-    if(data->isRecordEnabled()){
-        data->setRecordEnabled(false);
-        data->setRecordEnabled(true);
-    }
     if(serialChannel->isADCConnected()){
         serialChannel->closeADCPort();
     }
@@ -588,7 +580,6 @@ void MainWindow::on_restart_triggered(){
     data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
-//        serialChannel->flushADC();
         socketSylph->discardData();
     }
 }
