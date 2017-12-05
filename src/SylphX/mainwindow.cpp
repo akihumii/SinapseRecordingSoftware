@@ -571,14 +571,6 @@ void MainWindow::on_pythonLaunch_triggered(){
 }
 
 void MainWindow::on_restart_triggered(){
-    if(data->isADCRecordEnabled()){
-        data->setADCRecordEnabled(false);
-        data->setADCRecordEnabled(true);
-    }
-    if(data->isRecordEnabled()){
-        data->setRecordEnabled(false);
-        data->setRecordEnabled(true);
-    }
     if(serialChannel->isADCConnected()){
         serialChannel->closeADCPort();
     }
@@ -588,7 +580,6 @@ void MainWindow::on_restart_triggered(){
     data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
-//        serialChannel->flushADC();
         socketSylph->discardData();
     }
 }
