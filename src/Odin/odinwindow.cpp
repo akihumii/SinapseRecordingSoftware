@@ -184,6 +184,8 @@ void OdinWindow::createLayout(){
 
     sendButton = new QPushButton(tr("Send!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
+    characterisationButton = new QPushButton(tr("Start characterisation!"));
+    connect(characterisationButton, SIGNAL(clicked(bool)), this, SLOT(startCharacterisation()));
 
     multiChannel = new QGroupBox(tr("Multi-Channel Settings"));
 
@@ -310,6 +312,7 @@ void OdinWindow::createLayout(){
 //    mainLayout->addWidget(pulseGraph);
     mainLayout->addLayout(LEDLayout);
     mainLayout->addWidget(sendButton);
+    mainLayout->addWidget(characterisationButton);
     QWidget *mainWidget = new QWidget;
     multiChannel->setDisabled(true);
     mainWidget->setLayout(mainLayout);
@@ -384,6 +387,48 @@ void OdinWindow::sendCommand(){
         numPulseTrainSpinBox->setDisabled(true);
         interPulseTrainDelaySpinBox->setDisabled(true);
         sendButton->setText("Stop!");
+    }
+    else{
+        commandOdin->sendStop();
+        loopingThread->send = false;
+        loopingThread->quit();
+        mboxStop->setText("Stopping Odin.. Please wait...");
+        mboxStop->setStandardButtons(0);
+        mboxStop->show();
+    }
+}
+
+void OdinWindow::startCharacterisation(){
+    qDebug() << "Start Characterisation!";
+    start = !start;
+    commandOdin->constructCommand();
+    setDelay();
+    if(start){
+        commandOdin->sendStart();
+        loopingThread->send = true;
+        loopingThread->start();
+        numPulseTrainSpinBox->setDisabled(true);
+        interPulseTrainDelaySpinBox->setDisabled(true);
+        sendButton->setText("Stop!");
+        characterisationButton->setEnabled(false);
+
+        for(int i = 0; i < numPulseTrainSpinBox->value(); i++){
+            QTimer::singleShot(i*loopingThread->delay, [=] {
+                double temp = 1+ qrand()%19;
+                qDebug() << "Random amplitude: " << temp;
+                pulseMag[0]->setValue(temp);
+                temp = (2 + (qrand() % 23))*10.0;
+                qDebug() << "Random frequency: " << temp;
+                interPulseDurationSpinBox->setValue(temp);
+                temp = ((qrand() % 12))*100.0 + 20.0;
+                qDebug() << "Random pulse duration: "<< temp;
+                pulseDurationSpinBox->setValue(temp);
+                temp = (1 + qrand() % 24) * 10.0;
+                qDebug() << "Random number of pulse: "<< temp;
+                numPulseSpinBox->setValue(temp);
+                setDelay();
+            });
+        }
     }
     else{
         commandOdin->sendStop();
@@ -494,6 +539,7 @@ void OdinWindow::on_finishedSending(){
     numPulseTrainSpinBox->setEnabled(true);
     interPulseTrainDelaySpinBox->setEnabled(true);
     sendButton->setText("Start!");
+    characterisationButton->setEnabled(true);
     mboxStop->hide();
     mbox->setText("Finished sending commands " + QString::number(commandCount, 10) + " times");
     mbox->show();

@@ -35,6 +35,7 @@ private:
     QStatusBar *statusBarMainWindow2;
 
     QPushButton *sendButton;
+    QPushButton *characterisationButton;
 
     QLabel *ModeLabel;
     QComboBox *ModeComboBox;
@@ -109,6 +110,7 @@ private:
     void displayError(QByteArray incomingCommand, QByteArray outgoingCommand);
 private slots:
     void sendCommand();
+    void startCharacterisation();
     void on_Mode_Changed(int Mode);
     void on_channel_Changed(int channel);
     void on_pulseMag_Changed();
