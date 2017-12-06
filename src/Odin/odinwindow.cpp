@@ -426,7 +426,7 @@ void OdinWindow::startCharacterisation(){
 //                temp = (1 + qrand() % 24) * 10.0;
 //                qDebug() << "Random number of pulse: "<< temp;
 //                numPulseSpinBox->setValue(temp);
-                setDelay();
+//                setDelay();
             });
         }
     }
