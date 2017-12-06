@@ -417,16 +417,16 @@ void OdinWindow::startCharacterisation(){
                 double temp = 1+ qrand()%19;
                 qDebug() << "Random amplitude: " << temp;
                 pulseMag[0]->setValue(temp);
-                temp = (2 + (qrand() % 23))*10.0;
-                qDebug() << "Random frequency: " << temp;
-                interPulseDurationSpinBox->setValue(temp);
-                temp = ((qrand() % 12))*100.0 + 20.0;
-                qDebug() << "Random pulse duration: "<< temp;
-                pulseDurationSpinBox->setValue(temp);
-                temp = (1 + qrand() % 24) * 10.0;
-                qDebug() << "Random number of pulse: "<< temp;
-                numPulseSpinBox->setValue(temp);
-                setDelay();
+//                temp = (2 + (qrand() % 23))*10.0;
+//                qDebug() << "Random frequency: " << temp;
+//                interPulseDurationSpinBox->setValue(temp);
+//                temp = ((qrand() % 12))*100.0 + 20.0;
+//                qDebug() << "Random pulse duration: "<< temp;
+//                pulseDurationSpinBox->setValue(temp);
+//                temp = (1 + qrand() % 24) * 10.0;
+//                qDebug() << "Random number of pulse: "<< temp;
+//                numPulseSpinBox->setValue(temp);
+//                setDelay();
             });
         }
     }
