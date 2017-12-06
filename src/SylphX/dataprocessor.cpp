@@ -28,12 +28,23 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
 //            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
 //            std::cout << fullWord_rawData;
-            appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
+//            appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
             ChannelData[j+8].append(fullWord_rawData*(0.000000195));
         }
+//        for(int j = 0; j < 10; j++){
+//            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+////            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
+////            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
+////            std::cout << fullWord_rawData;
+//            if(RecordEnabled){
+//                RecordData(fullWord_rawData);
+//            }
+////            appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
+//            ChannelData[j].append(fullWord_rawData*(0.000000195));
+//        }
         ChannelData[10].append((quint8) rawData.at(i));
 //        temp.append(rawData.at(i));
         if(RecordEnabled){
