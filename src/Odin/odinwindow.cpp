@@ -414,7 +414,7 @@ void OdinWindow::startCharacterisation(){
 
         for(int i = 0; i < numPulseTrainSpinBox->value(); i++){
             QTimer::singleShot(i*loopingThread->delay, [=] {
-                double temp = 1+ qrand()%19;
+                double temp = 1 + qrand()%20;
                 qDebug() << "Random amplitude: " << temp;
                 pulseMag[0]->setValue(temp);
 //                temp = (2 + (qrand() % 23))*10.0;
