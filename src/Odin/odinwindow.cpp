@@ -387,6 +387,17 @@ void OdinWindow::sendCommand(){
         numPulseTrainSpinBox->setDisabled(true);
         interPulseTrainDelaySpinBox->setDisabled(true);
         sendButton->setText("Stop!");
+        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File opened";
+        }
+        else{
+            qDebug() << "File failed to open";
+        }
+        out = new QTextStream(File);
+//        recordHeader();
+        qDebug() << "setting Record Enabled";
     }
     else{
         commandOdin->sendStop();
@@ -412,11 +423,11 @@ void OdinWindow::startCharacterisation(){
         sendButton->setText("Stop!");
         characterisationButton->setEnabled(false);
 
-        for(int i = 0; i < numPulseTrainSpinBox->value(); i++){
-            QTimer::singleShot(i*loopingThread->delay, [=] {
-                double temp = 1 + qrand()%20;
-                qDebug() << "Random amplitude: " << temp;
-                pulseMag[0]->setValue(temp);
+//        for(int i = 0; i < numPulseTrainSpinBox->value(); i++){
+//            QTimer::singleShot(i*loopingThread->delay, [=] {
+//                double temp = 1 + qrand()%20;
+//                qDebug() << "Random amplitude: " << temp;
+//                pulseMag[0]->setValue(temp);
 //                temp = (2 + (qrand() % 23))*10.0;
 //                qDebug() << "Random frequency: " << temp;
 //                interPulseDurationSpinBox->setValue(temp);
@@ -427,8 +438,8 @@ void OdinWindow::startCharacterisation(){
 //                qDebug() << "Random number of pulse: "<< temp;
 //                numPulseSpinBox->setValue(temp);
 //                setDelay();
-            });
-        }
+//            });
+//        }
     }
     else{
         commandOdin->sendStop();
@@ -546,10 +557,17 @@ void OdinWindow::on_finishedSending(){
     commandOdin->sendStop();
     commandCount = 0;
     start = false;
+//    File->close();
+//    qDebug() << "setting Record disabled";
 }
 
 void OdinWindow::on_commandSent(){
     commandCount++;
+    if(!characterisationButton->isEnabled()){
+        double temp = 1 + qrand()%20;
+        qDebug() << "Random amplitude: " << temp;
+        pulseMag[0]->setValue(temp);
+    }
     commandOdin->sendCommand();
     sentLED->blink(50);
     if(commandOdin->getlastSentCommand().size() > 0){

@@ -102,6 +102,12 @@ private:
 
     int commandCount = 0;
 
+    QFile *File;
+    QTextStream *out;
+
+    QString fileName;
+    QString directory = QDir::homePath() + "/Desktop/";
+
     bool connectOdin();
     void createLayout();
     void createStatusBar();
