@@ -414,18 +414,18 @@ void OdinWindow::startCharacterisation(){
 
         for(int i = 0; i < numPulseTrainSpinBox->value(); i++){
             QTimer::singleShot(i*loopingThread->delay, [=] {
-                double temp = 1+ qrand()%19;
+                double temp = 1 + qrand()%20;
                 qDebug() << "Random amplitude: " << temp;
                 pulseMag[0]->setValue(temp);
-                temp = (2 + (qrand() % 23))*10.0;
-                qDebug() << "Random frequency: " << temp;
-                interPulseDurationSpinBox->setValue(temp);
-                temp = ((qrand() % 12))*100.0 + 20.0;
-                qDebug() << "Random pulse duration: "<< temp;
-                pulseDurationSpinBox->setValue(temp);
-                temp = (1 + qrand() % 24) * 10.0;
-                qDebug() << "Random number of pulse: "<< temp;
-                numPulseSpinBox->setValue(temp);
+//                temp = (2 + (qrand() % 23))*10.0;
+//                qDebug() << "Random frequency: " << temp;
+//                interPulseDurationSpinBox->setValue(temp);
+//                temp = ((qrand() % 12))*100.0 + 20.0;
+//                qDebug() << "Random pulse duration: "<< temp;
+//                pulseDurationSpinBox->setValue(temp);
+//                temp = (1 + qrand() % 24) * 10.0;
+//                qDebug() << "Random number of pulse: "<< temp;
+//                numPulseSpinBox->setValue(temp);
                 setDelay();
             });
         }
