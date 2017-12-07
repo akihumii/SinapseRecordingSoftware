@@ -305,7 +305,7 @@ void MainWindow::createMenus(){
 //    }
 //    audio[0]->setChecked(true);
 
-//    processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
+    processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
 //    processorMenu->addAction(isSmart);
 //    isSmart->setCheckable(true);
 //    processorMenu->addAction(isDumb);
@@ -317,7 +317,7 @@ void MainWindow::createMenus(){
 //    isDumb->setChecked(true);
 
 //    processorMenu->addSeparator();
-//    processorMenu->addAction(restartAction);
+    processorMenu->addAction(restartAction);
 
     helpMenu = menuBar()->addMenu(tr("Help"));
     helpMenu->addAction(aboutAction);
