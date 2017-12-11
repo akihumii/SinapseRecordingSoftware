@@ -387,17 +387,6 @@ void OdinWindow::sendCommand(){
         numPulseTrainSpinBox->setDisabled(true);
         interPulseTrainDelaySpinBox->setDisabled(true);
         sendButton->setText("Stop!");
-        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
-        File->setFileName(fileName);
-        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
-            qDebug()<< "File opened";
-        }
-        else{
-            qDebug() << "File failed to open";
-        }
-        out = new QTextStream(File);
-//        recordHeader();
-        qDebug() << "setting Record Enabled";
     }
     else{
         commandOdin->sendStop();
@@ -422,6 +411,18 @@ void OdinWindow::startCharacterisation(){
         interPulseTrainDelaySpinBox->setDisabled(true);
         sendButton->setText("Stop!");
         characterisationButton->setEnabled(false);
+
+        File = new QFile;
+        fileName = directory + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File opened";
+        }
+        else{
+            qDebug() << "File failed to open";
+        }
+        out = new QTextStream(File);
+        qDebug() << "setting Record Enabled";
 
 //        for(int i = 0; i < numPulseTrainSpinBox->value(); i++){
 //            QTimer::singleShot(i*loopingThread->delay, [=] {
@@ -557,8 +558,10 @@ void OdinWindow::on_finishedSending(){
     commandOdin->sendStop();
     commandCount = 0;
     start = false;
-//    File->close();
-//    qDebug() << "setting Record disabled";
+    if(File->isOpen()){
+        File->close();
+        qDebug() << "setting Record disabled";
+    }
 }
 
 void OdinWindow::on_commandSent(){
@@ -566,6 +569,7 @@ void OdinWindow::on_commandSent(){
     if(!characterisationButton->isEnabled()){
         double temp = 1 + qrand()%20;
         qDebug() << "Random amplitude: " << temp;
+        *out << temp << " \n";
         pulseMag[0]->setValue(temp);
     }
     commandOdin->sendCommand();
