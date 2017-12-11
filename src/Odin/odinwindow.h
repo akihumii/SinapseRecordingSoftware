@@ -103,6 +103,9 @@ private:
     int commandCount = 0;
 
     QFile *File;
+    QFile *amplitudeFile;
+    QByteArray amplitudeArray;
+    QTextStream *in;
     QTextStream *out;
 
     QString fileName;
