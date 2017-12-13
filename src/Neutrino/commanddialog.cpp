@@ -380,9 +380,9 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
         }
     });
     for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 2; j++){
-            for(int k = 0; k < 3; k++){
-                QTimer::singleShot((6000 + 9000*j + 18000*i + 3000*k), [=] {
+        for(int k = 0; k < 4; k++){
+            for(int j = 0; j < 2; j++){
+                QTimer::singleShot((6000 + 6000*k + 24000*i), [=] {
                     switch (k){
                         case 0:{
                             JTAG[14]->setChecked(false);
@@ -399,15 +399,17 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
                             JTAG[15]->setChecked(true);
                             break;
                         }
+                        case 3:{
+                            JTAG[14]->setChecked(false);
+                            JTAG[15]->setChecked(false);
+                            BioImpData[5]->setChecked(false);    // STEP 2: Check ETIRST
+                            on_BioImp_toggled();
+                            break;
+                        }
                     }
                     on_JTAG_toggled();
-                    if(socketNeutrino->isConnected()){
-                        qDebug() << (quint8) socketNeutrino->getCurrentByte();
-                        bioImpedanceData.append(socketNeutrino->getCurrentByte());
-                        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
-                    }
                 });
-                QTimer::singleShot((6000 + 9000*j + 18000*i), [=] {
+                QTimer::singleShot((6000 + 6000*k + 24000*i + 3000*j), [=] {
                     if(j%2 != 0){
                         JTAG[16]->setChecked(true);
                         NeutrinoCommand->setJTAGbit(16);
@@ -416,9 +418,16 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
                         JTAG[16]->setChecked(false);
                         NeutrinoCommand->clearJTAGbit(16);
                     }
+                    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
+                    on_BioImp_toggled();
                     on_JTAG_toggled();
+                    if(socketNeutrino->isConnected()){
+                        qDebug() << (quint8) socketNeutrino->getCurrentByte();
+                        bioImpedanceData.append(socketNeutrino->getCurrentByte());
+                        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+                    }
                 });
-                QTimer::singleShot((6000 + 18000*i), [=] {
+                QTimer::singleShot((6000 + 24000*i), [=] {
                     switch (i){
                         case 0:{
                             BioImpData[0]->setChecked(false);
@@ -496,7 +505,7 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
             }
         }
     }
-    QTimer::singleShot(186000, [=] {
+    QTimer::singleShot(246000, [=] {
             qDebug() << (quint8) socketNeutrino->getCurrentByte();
             bioImpedanceData.append(socketNeutrino->getCurrentByte());
             JTAG[10]->setChecked(false);

@@ -5,9 +5,9 @@ BioImpedance::BioImpedance(QByteArray data_, double gain_){
     allocate3Darray(RX_Data);
     allocate2Darray(impedance);
     gain = gain_;
-    if(data_.size() == 62){
+    if(data_.size() == 82){
         sortBioImpedanceData(data_);
-        impedanceElimination();
+//        impedanceElimination();
         for(int i = 0; i < 10; i++){
             qDebug() << "Channel : " << i;
             qDebug() << "Impedance (R) : " << impedance[i][0];
@@ -29,9 +29,9 @@ void BioImpedance::allocate2Darray(QVector<QVector<double>> &array2D){
 void BioImpedance::allocate3Darray(QVector<QVector<QVector<double>>> &array3D){
     array3D.resize(10);
     for(int j = 0; j < 10; j++){
-        array3D[j].resize(2);
-        for(int k = 0; k < 2; k++){
-            array3D[j][k].resize(3);
+        array3D[j].resize(4);
+        for(int k = 0; k < 4; k++){
+            array3D[j][k].resize(2);
         }
     }
 }
@@ -44,17 +44,37 @@ void BioImpedance::sortBioImpedanceData(QByteArray data_temp){
     qDebug() << "Something Else is " << somethingElse;
 
     for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 2; j++){
-            for(int k = 0; k < 3; k++){
-                sortedData[i][j][k] = convertVoltage((quint8) data_temp.at(i * 6 + j * 3 + k + 2));
+        for(int j = 0; j < 4; j++){
+            for(int k = 0; k < 2; k++){
+                sortedData[i][j][k] = convertVoltage((quint8) data_temp.at(i * 6 + j * 2 + k + 2));
+                qDebug() << sortedData[i][j][k];
             }
-            if(j%2 == 0){
-                calculateResistance(i, sortedData.at(i).at(j).at(0), sortedData.at(i).at(j).at(1), sortedData.at(i).at(j).at(2));
-            }
-            else{
-                calculateCapacitance(i, sortedData.at(i).at(j).at(0), sortedData.at(i).at(j).at(1), sortedData.at(i).at(j).at(2));
-            }
+//            if(j%2 == 0){
+//                calculateResistance(i, sortedData.at(i).at(j).at(0), sortedData.at(i).at(j).at(1), sortedData.at(i).at(j).at(2));
+//            }
+//            else{
+//                calculateCapacitance(i, sortedData.at(i).at(j).at(0), sortedData.at(i).at(j).at(1), sortedData.at(i).at(j).at(2));
+//            }
         }
+    }
+    calculateImpedance(sortedData);
+}
+
+void BioImpedance::calculateImpedance(QVector<QVector<QVector<double>>> &data){
+    for(int i = 0; i < 10; i++){
+        RX_Data[channel][0][0] = (double) ((data[] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain);
+        RX_Data[channel][0][1] = (double) ((medium - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain);
+        RX_Data[channel][0][2] = (double) ((large - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain);
+        qDebug() << "Channel " << channel << "small (R) : " << RX_Data[channel][0][0];
+        qDebug() << "Channel " << channel << "medium (R) : " << RX_Data[channel][0][1];
+        qDebug() << "Channel " << channel << "large (R) : " << RX_Data[channel][0][2];
+
+        RX_Data[channel][1][0] = (double) 3.232 * ((8 * 0.0000000011 * gain) / (PI * PI * (small - resetVoltage)));
+        RX_Data[channel][1][1] = (double) 3.232 * ((8 * 0.0000000111 * gain) / (PI * PI * (medium - resetVoltage)));
+        RX_Data[channel][1][2] = (double) 3.232 * ((8 * 0.0000001111 * gain) / (PI * PI * (large - resetVoltage)));
+        qDebug() << "Channel " << channel << "small (C) : " << RX_Data[channel][1][0];
+        qDebug() << "Channel " << channel << "medium (C) : " << RX_Data[channel][1][1];
+        qDebug() << "Channel " << channel << "large (C) : " << RX_Data[channel][1][2];
     }
 }
 
