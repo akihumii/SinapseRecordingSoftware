@@ -11,6 +11,10 @@ class BioImpedance
 public:
     BioImpedance(QByteArray data_, double gain_);
 private:
+    QFile *File;
+    QString directory = QDir::homePath() + "/Desktop/";
+    QTextStream *out;
+    QString fileName;
     double resetVoltage;
     double somethingElse;
     double gain = 80.0;
@@ -24,6 +28,7 @@ private:
     void impedanceElimination();
     bool withinRange(double value, double min, double max);
     void sortBioImpedanceData(QByteArray data_temp);
+    void calculateImpedance(QVector<QVector<QVector<double>>> &data);
     void calculateResistance(int channel, double small, double medium, double large);
     void calculateCapacitance(int channel, double small, double medium, double large);
 };
