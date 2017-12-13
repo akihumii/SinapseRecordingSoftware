@@ -17,7 +17,7 @@ private:
     QByteArray data;
     QVector<QVector<QVector<double>>> sortedData;
     QVector<QVector<QVector<double>>> RX_Data;
-    QVector<QVector<double>> impedance;
+    QVector<QVector<QVector<double>>> impedance;
     double convertVoltage(quint8 temp);
     void allocate3Darray(QVector<QVector<QVector<double> > > &array3D);
     void allocate2Darray(QVector<QVector<double>> &array2D);
