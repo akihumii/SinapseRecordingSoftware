@@ -22,16 +22,18 @@ void SerialChannel::ReadData(){
             }
         }
         case 5:{
-            emit singleByteReady(NeutrinoData->signalReconstruction((char) serialData->read(1).at(0)));
             if(record){
                 QByteArray temp;
                 temp = serialData->read(2048);
                 for(int i = 0; i < temp.size(); i++){
                     *out << (int) temp.at(i) << "\n";
                 }
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
             }
             else{
-                serialData->read(2048);
+                QByteArray temp;
+                temp = serialData->read(2048);
+                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
             }
             break;
         }

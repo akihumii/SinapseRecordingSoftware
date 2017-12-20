@@ -67,7 +67,7 @@ void MeasurementDialog::createLayout(){
         dataLabel[i] = new QLabel(defaultData[i]);
         dataLayout->addWidget(dataLabel[i]);
     }
-    recordButton = new QPushButton(tr("Record"));
+    recordButton = new QPushButton(tr("Start Recording!"));
     resetStatistic = new QPushButton(tr("Reset"));
     connect(recordButton, SIGNAL(clicked(bool)), this, SLOT(on_record_clicked()));
     connect(resetStatistic, SIGNAL(clicked(bool)), this, SLOT(on_reset_clicked()));
@@ -88,6 +88,12 @@ void MeasurementDialog::on_record_clicked(){
     }
     if(socketNeutrino->isConnected()){
         socketNeutrino->setRecordEnabled(!record);
+    }
+    if(record){
+        recordButton->setText("Start Recording!");
+    }
+    else{
+        recordButton->setText("Stop Recording!");
     }
     record = !record;
 }
