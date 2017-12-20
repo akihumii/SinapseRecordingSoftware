@@ -99,7 +99,7 @@ bool SerialChannel::doConnect(){
                 qDebug() << "Data connected to " << portInfo.at(i).portName();
 
                 serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(19200);
+                serialCommand->setBaudRate(38400);
                 qDebug() << "Command connected to " << portInfo.at(i+1).portName();
                 serialData->setDataBits(QSerialPort::Data8);
                 serialData->setParity(QSerialPort::NoParity);
@@ -122,7 +122,7 @@ bool SerialChannel::doConnect(){
                 qDebug() << "Data connected to " << portInfo.at(i).portName();
 
                 serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(19200);
+                serialCommand->setBaudRate(38400);
                 qDebug() << "Command connected to " << portInfo.at(i+1).portName();
                 serialData->setDataBits(QSerialPort::Data8);
                 serialData->setParity(QSerialPort::NoParity);
@@ -205,7 +205,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i).portName());
-            serialCommand->setBaudRate(19200);
+            serialCommand->setBaudRate(38400);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
@@ -223,7 +223,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i+1).portName());
-            serialCommand->setBaudRate(19200);
+            serialCommand->setBaudRate(38400);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
