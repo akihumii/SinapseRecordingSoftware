@@ -17,6 +17,7 @@ public:
     bool isConnected();
     bool writeCommand(QByteArray Command);
     void swapPort();
+    char getCurrentByte();
 public slots:
     void ReadData();
 private:
@@ -30,6 +31,7 @@ private:
 
     QList<QSerialPortInfo> portInfo;
     bool connected = false;
+    char currentByte;
     int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
 signals:

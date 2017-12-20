@@ -373,6 +373,9 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
         BioImpData[5]->setChecked(false);
         on_JTAG_toggled();
         on_BioImp_toggled();
+        if(NeutrinoSerial->isConnected()){
+            NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+        }
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
 //            qDebug() << "Reset: " << (quint8) socketNeutrino->getCurrentByte();
@@ -381,6 +384,11 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
     QTimer::singleShot(3000, [=] {
         BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
         on_BioImp_toggled();
+        if(NeutrinoSerial->isConnected()){
+            qDebug() << "Reset On:" << (quint8) NeutrinoSerial->getCurrentByte();
+            bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
+            NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+        }
         if(socketNeutrino->isConnected()){
             qDebug() << "Reset On:" << (quint8) socketNeutrino->getCurrentByte();
             bioImpedanceData.append(socketNeutrino->getCurrentByte());
@@ -429,6 +437,11 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
                     BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
                     on_BioImp_toggled();
                     on_JTAG_toggled();
+                    if(NeutrinoSerial->isConnected()){
+                        qDebug() << (quint8) NeutrinoSerial->getCurrentByte();
+                        bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
+                        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+                    }
                     if(socketNeutrino->isConnected()){
                         qDebug() << (quint8) socketNeutrino->getCurrentByte();
                         bioImpedanceData.append(socketNeutrino->getCurrentByte());
@@ -514,37 +527,43 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
         }
     }
     QTimer::singleShot(246000, [=] {
+        if(NeutrinoSerial->isConnected()){
+            qDebug() << (quint8) NeutrinoSerial->getCurrentByte();
+            bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
+        }
+        if(socketNeutrino->isConnected()){
             qDebug() << (quint8) socketNeutrino->getCurrentByte();
             bioImpedanceData.append(socketNeutrino->getCurrentByte());
-            JTAG[10]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(10);
-            JTAG[14]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(14);
-            JTAG[15]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(15);
-            JTAG[16]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(16);
-            JTAG[82]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(82);    // OFFCMFB
-            JTAG[89]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(89);    //INVBIASRESET
-            JTAG[96]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(96);    //PDS2
-            JTAG[97]->setChecked(false);
-            NeutrinoCommand->clearJTAGbit(97);    //PDS1
-            BioImpData[0]->setChecked(false);
-            BioImpData[1]->setChecked(false);
-            BioImpData[2]->setChecked(false);
-            BioImpData[3]->setChecked(false);
-            BioImpData[4]->setChecked(false);
-            BioImpData[5]->setChecked(false);
-            on_chipReset_clicked();
-            on_JTAG_toggled();
-            on_BioImp_toggled();
-            mboxWait->hide();
-            BioImpedance bioImpedance(bioImpedanceData, bioImpGain);
-            qDebug() << "Total bytes:" << bioImpedanceData.size();
-            setWindowTitle(tr("Neutrino Command"));
+        }
+        JTAG[10]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(10);
+        JTAG[14]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(14);
+        JTAG[15]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(15);
+        JTAG[16]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(16);
+        JTAG[82]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(82);    // OFFCMFB
+        JTAG[89]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(89);    //INVBIASRESET
+        JTAG[96]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(96);    //PDS2
+        JTAG[97]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(97);    //PDS1
+        BioImpData[0]->setChecked(false);
+        BioImpData[1]->setChecked(false);
+        BioImpData[2]->setChecked(false);
+        BioImpData[3]->setChecked(false);
+        BioImpData[4]->setChecked(false);
+        BioImpData[5]->setChecked(false);
+        on_chipReset_clicked();
+        on_JTAG_toggled();
+        on_BioImp_toggled();
+        mboxWait->hide();
+        BioImpedance bioImpedance(bioImpedanceData, bioImpGain);
+        qDebug() << "Total bytes:" << bioImpedanceData.size();
+        setWindowTitle(tr("Neutrino Command"));
     });
 }
 

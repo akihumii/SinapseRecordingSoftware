@@ -29,9 +29,21 @@ void SerialChannel::ReadData(){
             serialData->readAll();
             break;
         }
+        case 10:{
+            currentByte = (char) serialData->read(2048).at(0);
+            break;
+        }
+        case 11:{
+            currentByte = (char) serialData->read(2048).at(0);
+            break;
+        }
     default:
         break;
     }
+}
+
+char SerialChannel::getCurrentByte(){
+    return currentByte;
 }
 
 void SerialChannel::closePort(){
