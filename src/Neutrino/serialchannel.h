@@ -18,6 +18,7 @@ public:
     bool writeCommand(QByteArray Command);
     void swapPort();
     char getCurrentByte();
+    void setRecordEnabled(bool flag);
 public slots:
     void ReadData();
 private:
@@ -31,9 +32,17 @@ private:
 
     QList<QSerialPortInfo> portInfo;
     bool connected = false;
+    bool record = false;
     char currentByte;
     int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
+
+    QFile *File;
+    QTextStream *out;
+
+    QString fileName;
+    QString directory = QDir::homePath() + "/Desktop/";
+
 signals:
     void singleByteReady(double temp);
 };

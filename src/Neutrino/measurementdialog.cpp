@@ -67,16 +67,29 @@ void MeasurementDialog::createLayout(){
         dataLabel[i] = new QLabel(defaultData[i]);
         dataLayout->addWidget(dataLabel[i]);
     }
+    recordButton = new QPushButton(tr("Record"));
     resetStatistic = new QPushButton(tr("Reset"));
+    connect(recordButton, SIGNAL(clicked(bool)), this, SLOT(on_record_clicked()));
     connect(resetStatistic, SIGNAL(clicked(bool)), this, SLOT(on_reset_clicked()));
     QHBoxLayout *dispLayout = new QHBoxLayout;
     dispLayout->addLayout(labelLayout);
     dispLayout->addLayout(dataLayout);
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(dispLayout);
+    mainLayout->addWidget(recordButton);
     mainLayout->addWidget(resetStatistic);
     setLayout(mainLayout);
 //    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+}
+
+void MeasurementDialog::on_record_clicked(){
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->setRecordEnabled(!record);
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->setRecordEnabled(!record);
+    }
+    record = !record;
 }
 
 void MeasurementDialog::on_reset_clicked(){

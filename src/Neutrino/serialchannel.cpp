@@ -8,6 +8,8 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
     NeutrinoData = NeutrinoData_;
     NeutrinoChannel = NeutrinoChannel_;
 
+    File = new QFile;
+
     connect(serialData, SIGNAL(readyRead()), this, SLOT(ReadData()));
 }
 
@@ -21,7 +23,16 @@ void SerialChannel::ReadData(){
         }
         case 5:{
             emit singleByteReady(NeutrinoData->signalReconstruction((char) serialData->read(1).at(0)));
-            serialData->readAll();
+            if(record){
+                QByteArray temp;
+                temp = serialData->read(2048);
+                for(int i = 0; i < temp.size(); i++){
+                    *out << (int) temp.at(i) << "\n";
+                }
+            }
+            else{
+                serialData->read(2048);
+            }
             break;
         }
         case 7:{
@@ -40,6 +51,25 @@ void SerialChannel::ReadData(){
     default:
         break;
     }
+}
+
+void SerialChannel::setRecordEnabled(bool flag){
+    if(flag){
+        fileName = directory + QDateTime::currentDateTime().toString("'Analog_'yyyyMMdd_HHmmss'.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File opened";
+        }
+        else{
+            qDebug() << "File failed to open";
+        }
+        out = new QTextStream(File);
+    }
+    else{
+        File->close();
+        qDebug() << "File closed";
+    }
+    record = flag;
 }
 
 char SerialChannel::getCurrentByte(){
@@ -67,7 +97,7 @@ bool SerialChannel::doConnect(){
                 qDebug() << "Data connected to " << portInfo.at(i).portName();
 
                 serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(38400);
+                serialCommand->setBaudRate(19200);
                 qDebug() << "Command connected to " << portInfo.at(i+1).portName();
                 serialData->setDataBits(QSerialPort::Data8);
                 serialData->setParity(QSerialPort::NoParity);
@@ -90,7 +120,7 @@ bool SerialChannel::doConnect(){
                 qDebug() << "Data connected to " << portInfo.at(i).portName();
 
                 serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(38400);
+                serialCommand->setBaudRate(19200);
                 qDebug() << "Command connected to " << portInfo.at(i+1).portName();
                 serialData->setDataBits(QSerialPort::Data8);
                 serialData->setParity(QSerialPort::NoParity);
@@ -173,7 +203,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i).portName());
-            serialCommand->setBaudRate(38400);
+            serialCommand->setBaudRate(19200);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
@@ -191,7 +221,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i+1).portName());
-            serialCommand->setBaudRate(38400);
+            serialCommand->setBaudRate(19200);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);

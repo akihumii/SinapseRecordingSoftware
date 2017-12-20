@@ -5,6 +5,8 @@ SocketNeutrino::SocketNeutrino(Command *NeutrinoCommand_, DataProcessor *Neutrin
     NeutrinoData = NeutrinoData_;
     NeutrinoChannel = NeutrinoChannel_;
 
+    File = new QFile;
+
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
 }
 
@@ -31,7 +33,16 @@ void SocketNeutrino::ReadCommand(){
             }
             case 5:{
                 emit singleByteReady(NeutrinoData->signalReconstruction((char) socketAbstract->read(1).at(0)));
-                socketAbstract->read(maxSize);
+                if(record){
+                    QByteArray temp;
+                    temp = socketAbstract->read(maxSize);
+                    for(int i = 0; i < temp.size(); i++){
+                        *out << temp.at(i) << "\n";
+                    }
+                }
+                else{
+                    socketAbstract->read(maxSize);
+                }
                 break;
             }
             case 6:{
@@ -70,6 +81,25 @@ void SocketNeutrino::ReadCommand(){
             break;
         }
 //    }
+}
+
+void SocketNeutrino::setRecordEnabled(bool flag){
+    if(flag){
+        fileName = directory + QDateTime::currentDateTime().toString("'Analog_'yyyyMMdd_HHmmss'.csv'");
+        File->setFileName(fileName);
+        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
+            qDebug()<< "File opened";
+        }
+        else{
+            qDebug() << "File failed to open";
+        }
+        out = new QTextStream(File);
+    }
+    else{
+        File->close();
+        qDebug() << "File closed";
+    }
+    record = flag;
 }
 
 char SocketNeutrino::getCurrentByte(){
