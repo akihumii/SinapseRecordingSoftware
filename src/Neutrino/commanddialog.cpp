@@ -570,7 +570,7 @@ void CommandDialog::runAutoBioImpedanceMeasurement(){
 void CommandDialog::updateHeader(){
     QString temp;
     for(int i = 0; i < 2; i++){
-        temp.append("Neutrino Setting " + QString::number(i) + " : ,");
+        temp.append("Neutrino Setting " + QString::number(i) + " :,");
         for(int j = 0; j < 7; j++){
             temp.append(QString::number(NeutrinoCommand->getJTAG(i*7+j)) + " ,");
         }
