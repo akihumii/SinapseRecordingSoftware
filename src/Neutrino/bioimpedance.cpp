@@ -78,13 +78,13 @@ void BioImpedance::calculateImpedance(QVector<QVector<QVector<double>>> &data){
         else{
             RX_Data[i][0][0] = 0.0;
         }
-        if( (double) ((data[i][1][0] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain) > 0){
+        if( (double) ((data[i][1][0] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain) > 0){
             RX_Data[i][1][0] = (double) ((data[i][1][0] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain);
         }
         else{
             RX_Data[i][1][0] = 0.0;
         }
-        if( (double) ((data[i][2][0] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain) > 0){
+        if( (double) ((data[i][2][0] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain) > 0){
             RX_Data[i][2][0] = (double) ((data[i][2][0] - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain);
         }
         else{
@@ -161,13 +161,13 @@ void BioImpedance::calculateResistance(int channel, double small, double medium,
     else{
         RX_Data[channel][0][0] = 0.0;
     }
-    if( (double) ((medium - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain) > 0){
+    if( (double) ((medium - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain) > 0){
         RX_Data[channel][0][1] = (double) ((medium - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain);
     }
     else{
         RX_Data[channel][0][1] = 0.0;
     }
-    if( (double) ((large - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain) > 0){
+    if( (double) ((large - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain) > 0){
         RX_Data[channel][0][2] = (double) ((large - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain);
     }
     else{

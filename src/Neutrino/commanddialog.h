@@ -13,6 +13,16 @@ using namespace std;
 
 class Command;
 
+typedef enum CURRENT_TYPE{
+    SMALL_CURRENT = 0,
+    MEDIUM_CURRENT = 1,
+    LARGE_CURRENT = 2
+} CURRENT_TYPE;
+
+typedef enum GAIN{
+
+}
+
 class CommandDialog : public QDialog
 {
     Q_OBJECT
@@ -24,6 +34,9 @@ public:
                   SerialChannel *NeutrinoSerial_,
                   DataProcessor *dataProcessor_);
     ~CommandDialog();
+
+signals:
+    void closeWaitingMBox();
 
 private slots:
     void on_sendCommand_clicked();
@@ -44,6 +57,8 @@ private slots:
     void on_amplifierSelectNone_clicked();
     void on_shortRefToGND_clicked();
     void on_amplifierSelect_toggled();
+    void on_startBioImpedanceMeasurement();
+    void on_exitBioImpedanceMeasurement();
 
 private:
     SocketNeutrino *socketNeutrino;
@@ -59,7 +74,10 @@ private:
     void loadlastCommand();
     void loadDefault();
     void updateHeader();
-    void runAutoBioImpedanceMeasurement();
+    void setBioImpedanceChannel(int channel);
+    void setCurrentType(CURRENT_TYPE type);
+    void runFullBioImpedanceMeasurement();
+    void runAutoRangedBioImpedanceMeasurement();
 
     double bioImpGain = 80.0;
 
