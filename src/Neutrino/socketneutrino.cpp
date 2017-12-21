@@ -37,7 +37,7 @@ void SocketNeutrino::ReadCommand(){
                     QByteArray temp;
                     temp = socketAbstract->read(maxSize);
                     for(int i = 0; i < temp.size(); i++){
-                        *out << temp.at(i) << "\n";
+                        *out << (uint8_t) temp.at(i) << "\n";
                     }
                 }
                 else{
@@ -53,15 +53,25 @@ void SocketNeutrino::ReadCommand(){
                 break;
             }
             case 7:{
-                emit singleByteReady(NeutrinoData->signalReconstruction((char) socketAbstract->read(1).at(0)));
-                socketAbstract->read(maxSize);
+                if(record){
+                    QByteArray temp;
+                    temp = socketAbstract->read(maxSize);
+                    for(int i = 0; i < temp.size(); i++){
+                        *out << (uint8_t) temp.at(i) << "\n";
+                    }
+                    emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
+                }
+                else{
+                    QByteArray temp;
+                    temp = socketAbstract->read(maxSize);
+                    emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
+                }
                 break;
             }
             case 8:{
                 QByteArray temp;
                 temp = socketAbstract->read(2);
                 emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0), (char) temp.at(1)));
-//                socketAbstract->read(maxSize);
                 break;
             }
             case 9:{
@@ -85,7 +95,12 @@ void SocketNeutrino::ReadCommand(){
 
 void SocketNeutrino::setRecordEnabled(bool flag){
     if(flag){
-        fileName = directory + QDateTime::currentDateTime().toString("'Analog_'yyyyMMdd_HHmmss'.csv'");
+        if(NeutrinoCommand->getOPMode() == 5){
+            fileName = directory + QDateTime::currentDateTime().toString("'Analog_'yyyyMMdd_HHmmss'.csv'");
+        }
+        else if(NeutrinoCommand->getOPMode() == 7){
+            fileName = directory + QDateTime::currentDateTime().toString("'BioImpedance_'yyyyMMdd_HHmmss'.csv'");
+        }
         File->setFileName(fileName);
         if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
             qDebug()<< "File opened";

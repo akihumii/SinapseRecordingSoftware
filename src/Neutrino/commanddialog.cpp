@@ -383,7 +383,7 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
         for(int k = 0; k < 4; k++){
             for(int j = 0; j < 2; j++){
                 QTimer::singleShot((6000 + 6000*k + 24000*i), [=] {
-                    setCurrentType(k);
+                    setCurrentType((CURRENT_TYPE) k);
                     on_JTAG_toggled();
                 });
                 QTimer::singleShot((6000 + 6000*k + 24000*i + 3000*j), [=] {

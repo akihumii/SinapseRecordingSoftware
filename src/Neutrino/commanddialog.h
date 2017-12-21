@@ -21,7 +21,7 @@ typedef enum CURRENT_TYPE{
 
 typedef enum GAIN{
 
-}
+} GAIN;
 
 class CommandDialog : public QDialog
 {
@@ -76,6 +76,7 @@ private:
     void updateHeader();
     void setBioImpedanceChannel(int channel);
     void setCurrentType(CURRENT_TYPE type);
+    void setBioImpedanceGain(GAIN gain);
     void runFullBioImpedanceMeasurement();
     void runAutoRangedBioImpedanceMeasurement();
 
