@@ -71,18 +71,22 @@ private:
     DataProcessor *dataProcessor;
     QMessageBox *mboxWait;
     QByteArray bioImpedanceData;
-//    DelayThread *delayThread;
+    DelayThread *delayThread;
 
     void createLayout();
     void createJTAGLayout();
     void loadlastCommand();
     void loadDefault();
     void updateHeader();
+    void setInlineQuad(int input);
     void setBioImpedanceChannel(int channel);
     void setCurrentType(CURRENT_TYPE type);
     void setBioImpedanceGain(GAIN gain);
+    void runMediumCurrentMeasurement(BioImpedance bioImpedance);
+    void runLowCurrentMeasurement(BioImpedance bioImpedance);
     void runFullBioImpedanceMeasurement();
     void runAutoRangedBioImpedanceMeasurement();
+    void delay3seconds();
 
     double bioImpGain = 80.0;
 

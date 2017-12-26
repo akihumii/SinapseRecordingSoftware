@@ -26,6 +26,10 @@ CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_,
     mboxWait->setText("Please wait... \nMeasurement in progress...");
     mboxWait->setStandardButtons(0);
 
+    delayThread = new DelayThread();
+    QThread *thread = new QThread;
+    delayThread->moveToThread(thread);
+
     connect(this, SIGNAL(closeWaitingMBox()), this, SLOT(on_exitBioImpedanceMeasurement()));
 }
 
@@ -385,14 +389,7 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
                     setCurrentType((CURRENT_TYPE) k);
                 });
                 QTimer::singleShot((6000 + 6000*k + 24000*i + 3000*j), [=] {
-                    if(j%2 != 0){
-                        JTAG[16]->setChecked(true);
-                        NeutrinoCommand->setJTAGbit(16);
-                    }
-                    else{
-                        JTAG[16]->setChecked(false);
-                        NeutrinoCommand->clearJTAGbit(16);
-                    }
+                    setInlineQuad(j);
                     BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
                     on_BioImp_toggled();
                     on_JTAG_toggled();
@@ -504,6 +501,17 @@ void CommandDialog::setBioImpedanceChannel(int channel){
     on_BioImp_toggled();
 }
 
+void CommandDialog::setInlineQuad(int input){
+    if(input%2 != 0){
+        JTAG[16]->setChecked(true);
+        NeutrinoCommand->setJTAGbit(16);
+    }
+    else{
+        JTAG[16]->setChecked(false);
+        NeutrinoCommand->clearJTAGbit(16);
+    }
+}
+
 void CommandDialog::setCurrentType(CURRENT_TYPE type){
     switch (type){
         case SMALL_CURRENT:{
@@ -564,6 +572,7 @@ void CommandDialog::setBioImpedanceGain(GAIN gain){
 
 void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
     // Initialise default command with A0 = 1
+    BioImpedance bioImpedance;
     setBioImpedanceGain(MEDIUM_GAIN);
     on_startBioImpedanceMeasurement();
 
@@ -575,57 +584,140 @@ void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
 
-    qDebug()<<"From main thread: "<<QThread::currentThreadId();
-
-    // Delay for 3s
-    DelayThread *delayThread = new DelayThread();
-    QThread *thread = new QThread;
-    delayThread->moveToThread(thread);
-    delayThread->start();
-    delayThread->wait();
+    delay3seconds();
 
     // Read reset Voltage
     if(NeutrinoSerial->isConnected()){
         qDebug() << "Reset On:" << (quint8) NeutrinoSerial->getCurrentByte();
-        bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
-//        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+        bioImpedance.setResetVoltage(NeutrinoSerial->getCurrentByte());
     }
     if(socketNeutrino->isConnected()){
         qDebug() << "Reset On:" << (quint8) socketNeutrino->getCurrentByte();
-        bioImpedanceData.append(socketNeutrino->getCurrentByte());
-//        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+        bioImpedance.setResetVoltage(socketNeutrino->getCurrentByte());
     }
 
     // Turn off Reset voltage command
     BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
     on_BioImp_toggled();
 
-    // Set Medium Current
-    setCurrentType(MEDIUM_CURRENT);
-
-    if(NeutrinoSerial->isConnected()){
-        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
-    }
-    if(socketNeutrino->isConnected()){
-        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
-    }
-
-    qDebug()<<"From main thread: "<<QThread::currentThreadId();
-
-    // Delay for 3s
-    delayThread->start();
-    delayThread->wait();
-
-    if(NeutrinoSerial->isConnected()){
-        qDebug() << (quint8) NeutrinoSerial->getCurrentByte();
-        bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
-    }
-    if(socketNeutrino->isConnected()){
-        qDebug() << (quint8) socketNeutrino->getCurrentByte();
-        bioImpedanceData.append(socketNeutrino->getCurrentByte());
-    }
+    runMediumCurrentMeasurement(bioImpedance);
+    runLowCurrentMeasurement(bioImpedance);
 
     on_exitBioImpedanceMeasurement();
+}
+
+void CommandDialog::runMediumCurrentMeasurement(BioImpedance bioImpedance){
+    // Set Medium Current
+    setCurrentType(MEDIUM_CURRENT);
+    for(int i = 0; i < 10; i++){
+        setBioImpedanceChannel(i);
+        for(int j = 0; j < 2; j++){
+            setInlineQuad(j);
+            if(NeutrinoSerial->isConnected()){
+                NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+            }
+            if(socketNeutrino->isConnected()){
+                socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+            }
+
+            delay3seconds();
+            if(j == 0){
+                double inlineVoltage;
+                if(NeutrinoSerial->isConnected()){
+                    inlineVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+                }
+                if(socketNeutrino->isConnected()){
+                    inlineVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+                }
+                if((inlineVoltage - bioImpedance.getResetVoltage()) < ((8.0/255.0)*1.2)){
+                    bioImpedance.setHighCurrentInline(i, true);
+                }
+                else{
+                    bioImpedance.setTempInline(i, inlineVoltage);
+                    bioImpedance.setLowCurrentInline(i, true);
+                }
+            }
+            else{
+                double quadVoltage;
+                if(NeutrinoSerial->isConnected()){
+                    quadVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+                }
+                if(socketNeutrino->isConnected()){
+                    quadVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+                }
+                if((bioImpedance.getResetVoltage() - quadVoltage) < ((8.0/255.0)*1.2)){
+                    bioImpedance.setHighCurrentQuad(i, true);
+                }
+                else{
+                    bioImpedance.setTempQuad(i, quadVoltage);
+                    bioImpedance.setLowCurrentQuad(i, true);
+                }
+            }
+        }
+    }
+}
+
+void CommandDialog::runLowCurrentMeasurement(BioImpedance bioImpedance){
+    setCurrentType(LOW_CURRENT);
+    for(int i = 0; i < 10; i++){
+        setBioImpedanceChannel(i);
+        if(bioImpedance.getLowCurrentInline(i)){
+            setInlineQuad(0);
+            if(NeutrinoSerial->isConnected()){
+                NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+            }
+            if(socketNeutrino->isConnected()){
+                socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+            }
+            delay3seconds();
+            double inlineVoltage;
+            if(NeutrinoSerial->isConnected()){
+                inlineVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+            }
+            if(socketNeutrino->isConnected()){
+                inlineVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+            }
+            if((inlineVoltage - bioImpedance.getResetVoltage()) < ((8.0/255.0)*1.2)){
+                bioImpedance.setHighCurrentInline(i, true);
+            }
+            else{
+                bioImpedance.setTempInline(i, inlineVoltage);
+                bioImpedance.setLowCurrentInline(i, true);
+            }
+        }
+
+        if(bioImpedance.getLowCurrentInline(i)){
+            setInlineQuad(1);
+            if(NeutrinoSerial->isConnected()){
+                NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+            }
+            if(socketNeutrino->isConnected()){
+                socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+            }
+            delay3seconds();
+            double quadVoltage;
+            if(NeutrinoSerial->isConnected()){
+                quadVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+            }
+            if(socketNeutrino->isConnected()){
+                quadVoltage = ((NeutrinoSerial->getCurrentByte()/255.0)*1.2);
+            }
+            if((bioImpedance.getResetVoltage() - quadVoltage) < ((8.0/255.0)*1.2)){
+                bioImpedance.setHighCurrentQuad(i, true);
+            }
+            else{
+                bioImpedance.setTempQuad(i, quadVoltage);
+                bioImpedance.setLowCurrentQuad(i, true);
+            }
+        }
+    }
+}
+
+void CommandDialog::delay3seconds(){
+    delayThread->start();
+    while (!delayThread->isFinished())
+            QCoreApplication::processEvents();
+    delayThread->wait();
 }
 
 void CommandDialog::on_startBioImpedanceMeasurement(){

@@ -50,6 +50,83 @@ void BioImpedance::allocate3Darray(QVector<QVector<QVector<double>>> &array3D){
     }
 }
 
+void BioImpedance::setResetVoltage(char value){
+    resetVoltage = convertVoltage((quint8) value);
+}
+
+double BioImpedance::getResetVoltage(){
+    return resetVoltage;
+}
+
+bool BioImpedance::compareVoltages(char value){
+    double temp = convertVoltage((quint8) value);
+    return ((temp-resetVoltage) < ((resolution/255.0)*1.2));
+}
+
+void BioImpedance::setHighCurrentInline(int channel, bool flag){
+    highCurrentInline[channel] = flag;
+}
+
+bool BioImpedance::getHighCurrentInline(int channel){
+    return highCurrentInline[channel];
+}
+
+void BioImpedance::setLowCurrentInline(int channel, bool flag){
+    lowCurrentInline[channel] = flag;
+}
+
+bool BioImpedance::getLowCurrentInline(int channel){
+    return lowCurrentInline[channel];
+}
+
+void BioImpedance::setHighCurrentHighGainInline(int channel, bool flag){
+    highCurrentHighGainInline[channel] = flag;
+}
+
+bool BioImpedance::getHighCurrentHighGainQuad(int channel){
+    return highCurrentHighGainQuad[channel];
+}
+
+void BioImpedance::setHighCurrentQuad(int channel, bool flag){
+    highCurrentQuad[channel] = flag;
+}
+
+bool BioImpedance::getHighCurrentQuad(int channel){
+    return highCurrentQuad[channel];
+}
+
+void BioImpedance::setLowCurrentQuad(int channel, bool flag){
+    lowCurrentQuad[channel] = flag;
+}
+
+bool BioImpedance::getLowCurrentQuad(int channel){
+    return lowCurrentQuad[channel];
+}
+
+void BioImpedance::setHighCurrentHighGainQuad(int channel, bool flag){
+    highCurrentHighGainQuad[channel] = flag;
+}
+
+bool BioImpedance::getHighCurrentHighGainQuad(int channel){
+    return highCurrentHighGainQuad[channel];
+}
+
+void BioImpedance::setTempInline(int channel, double value){
+    tempInline[channel] = value;
+}
+
+void BioImpedance::setTempQuad(int channel, double value){
+    tempQuad[channel] = value;
+}
+
+double BioImpedance::getTempInline(int channel){
+    return tempInline[channel];
+}
+
+double BioImpedance::getTempQuad(int channel){
+    return tempQuad[channel];
+}
+
 void BioImpedance::sortBioImpedanceData(QByteArray data_temp){
     resetVoltage = convertVoltage((quint8) data_temp.at(0));
     qDebug() << "Reset Voltage is " << resetVoltage;
