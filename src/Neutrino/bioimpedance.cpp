@@ -27,6 +27,12 @@ BioImpedance::BioImpedance(QByteArray data_, double gain_){
     }
 }
 
+BioImpedance::BioImpedance(){
+    allocate3Darray(sortedData);
+    allocate3Darray(RX_Data);
+    allocate3Darray(impedance);
+}
+
 void BioImpedance::allocate2Darray(QVector<QVector<double>> &array2D){
     array2D.resize(10);
     for(int i = 0; i < 10; i++){
@@ -59,12 +65,6 @@ void BioImpedance::sortBioImpedanceData(QByteArray data_temp){
                 sortedData[i][j][k] = convertVoltage((quint8) data_temp.at(i * 8 + j * 2 + k + 2));
                 qDebug() << "Sorted Data at X: " << i << "Y: " << j << "Z: "<< k << sortedData[i][j][k];
             }
-//            if(j%2 == 0){
-//                calculateResistance(i, sortedData.at(i).at(j).at(0), sortedData.at(i).at(j).at(1), sortedData.at(i).at(j).at(2));
-//            }
-//            else{
-//                calculateCapacitance(i, sortedData.at(i).at(j).at(0), sortedData.at(i).at(j).at(1), sortedData.at(i).at(j).at(2));
-//            }
         }
     }
     calculateImpedance(sortedData);

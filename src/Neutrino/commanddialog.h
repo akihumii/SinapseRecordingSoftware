@@ -8,6 +8,7 @@
 #include "command.h"
 #include "serialchannel.h"
 #include "measurementdialog.h"
+#include "delaythread.h"
 
 using namespace std;
 
@@ -20,7 +21,9 @@ typedef enum CURRENT_TYPE{
 } CURRENT_TYPE;
 
 typedef enum GAIN{
-
+    MEDIUM_GAIN = 80,
+    HIGH_GAIN = 160,
+    SUPER_HIGH_GAIN = 320
 } GAIN;
 
 class CommandDialog : public QDialog
@@ -68,6 +71,7 @@ private:
     DataProcessor *dataProcessor;
     QMessageBox *mboxWait;
     QByteArray bioImpedanceData;
+//    DelayThread *delayThread;
 
     void createLayout();
     void createJTAGLayout();

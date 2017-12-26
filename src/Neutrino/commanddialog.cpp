@@ -23,10 +23,10 @@ CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_,
     on_amplifierSelectAll_clicked();
 
     mboxWait = new QMessageBox;
-    mboxWait->setText("Please wait...");
+    mboxWait->setText("Please wait... \nMeasurement in progress...");
     mboxWait->setStandardButtons(0);
 
-    connect(this, SIGNAL(closeWaitingMBox()), this, SLOT(on_closeWaitingMBox()));
+    connect(this, SIGNAL(closeWaitingMBox()), this, SLOT(on_exitBioImpedanceMeasurement()));
 }
 
 CommandDialog::~CommandDialog(){
@@ -333,7 +333,7 @@ void CommandDialog::on_sendCommand_clicked(){
         runFullBioImpedanceMeasurement();
     }
     else if(ModeComboBox->currentIndex() == 11){
-        runFullBioImpedanceMeasurement();
+        runAutoRangedBioImpedanceMeasurement();
     }
     else{
         if(NeutrinoSerial->isConnected()){
@@ -362,7 +362,6 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
         }
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
-//            qDebug() << "Reset: " << (quint8) socketNeutrino->getCurrentByte();
         }
     });
     QTimer::singleShot(3000, [=] {
@@ -384,7 +383,6 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
             for(int j = 0; j < 2; j++){
                 QTimer::singleShot((6000 + 6000*k + 24000*i), [=] {
                     setCurrentType((CURRENT_TYPE) k);
-                    on_JTAG_toggled();
                 });
                 QTimer::singleShot((6000 + 6000*k + 24000*i + 3000*j), [=] {
                     if(j%2 != 0){
@@ -411,7 +409,6 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
                 });
                 QTimer::singleShot((6000 + 24000*i), [=] {
                     setBioImpedanceChannel(i);
-                    on_BioImp_toggled();
                 });
             }
         }
@@ -504,6 +501,7 @@ void CommandDialog::setBioImpedanceChannel(int channel){
             break;
         }
     }
+    on_BioImp_toggled();
 }
 
 void CommandDialog::setCurrentType(CURRENT_TYPE type){
@@ -531,14 +529,103 @@ void CommandDialog::setCurrentType(CURRENT_TYPE type){
             break;
         }
     }
+    on_JTAG_toggled();
 }
 
 void CommandDialog::setBioImpedanceGain(GAIN gain){
-
+    switch (gain){
+        case MEDIUM_GAIN:{
+            JTAG[12]->setChecked(true);             // A0 = 1
+            JTAG[12]->setChecked(false);            // A1 = 0
+            JTAG[13]->setChecked(false);            // SEL_LNA = 0
+            break;
+        }
+        case HIGH_GAIN:{
+            JTAG[11]->setChecked(true);             // A0 = 1
+            JTAG[12]->setChecked(true);             // A1 = 1
+            JTAG[13]->setChecked(false);            // SEL_LNA = 0
+            break;
+        }
+        case SUPER_HIGH_GAIN:{
+            JTAG[11]->setChecked(true);             // A0 = 1
+            JTAG[12]->setChecked(true);             // A1 = 1
+            JTAG[13]->setChecked(true);             // SEL_LNA = 1
+            break;
+        }
+        default:{
+            JTAG[11]->setChecked(false);            // A0 = 0
+            JTAG[12]->setChecked(false);            // A1 = 0
+            JTAG[13]->setChecked(false);            // SEL_LNA = 0
+            break;
+        }
+    }
+    on_JTAG_toggled();
 }
 
 void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
+    // Initialise default command with A0 = 1
+    setBioImpedanceGain(MEDIUM_GAIN);
+    on_startBioImpedanceMeasurement();
 
+    // Send reset voltage command
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+
+    qDebug()<<"From main thread: "<<QThread::currentThreadId();
+
+    // Delay for 3s
+    DelayThread *delayThread = new DelayThread();
+    QThread *thread = new QThread;
+    delayThread->moveToThread(thread);
+    delayThread->start();
+    delayThread->wait();
+
+    // Read reset Voltage
+    if(NeutrinoSerial->isConnected()){
+        qDebug() << "Reset On:" << (quint8) NeutrinoSerial->getCurrentByte();
+        bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
+//        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        qDebug() << "Reset On:" << (quint8) socketNeutrino->getCurrentByte();
+        bioImpedanceData.append(socketNeutrino->getCurrentByte());
+//        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+
+    // Turn off Reset voltage command
+    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
+    on_BioImp_toggled();
+
+    // Set Medium Current
+    setCurrentType(MEDIUM_CURRENT);
+
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+
+    qDebug()<<"From main thread: "<<QThread::currentThreadId();
+
+    // Delay for 3s
+    delayThread->start();
+    delayThread->wait();
+
+    if(NeutrinoSerial->isConnected()){
+        qDebug() << (quint8) NeutrinoSerial->getCurrentByte();
+        bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
+    }
+    if(socketNeutrino->isConnected()){
+        qDebug() << (quint8) socketNeutrino->getCurrentByte();
+        bioImpedanceData.append(socketNeutrino->getCurrentByte());
+    }
+
+    on_exitBioImpedanceMeasurement();
 }
 
 void CommandDialog::on_startBioImpedanceMeasurement(){
@@ -547,15 +634,13 @@ void CommandDialog::on_startBioImpedanceMeasurement(){
     JTAG[10]->setChecked(true);
     NeutrinoCommand->setJTAGbit(10);    //PDN of BIOIMPEDANCE
     JTAG[82]->setChecked(true);
-    NeutrinoCommand->setJTAGbit(82);    // OFFCMFB
+    NeutrinoCommand->setJTAGbit(82);    //OFFCMFB
     JTAG[89]->setChecked(true);
     NeutrinoCommand->setJTAGbit(89);    //INVBIASRESET
     JTAG[96]->setChecked(true);
     NeutrinoCommand->setJTAGbit(96);    //PDS2
     JTAG[97]->setChecked(true);
     NeutrinoCommand->setJTAGbit(97);    //PDS1
-//        JTAG[13]->setChecked(true);
-//        NeutrinoCommand->setJTAGbit(13);    // SEL_LNA GAIN (x40)
     BioImpData[0]->setChecked(false);
     BioImpData[1]->setChecked(false);
     BioImpData[2]->setChecked(false);

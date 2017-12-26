@@ -10,6 +10,7 @@ class BioImpedance
 {
 public:
     BioImpedance(QByteArray data_, double gain_);
+    BioImpedance();
 private:
     QFile *File;
     QString directory = QDir::homePath() + "/Desktop/";

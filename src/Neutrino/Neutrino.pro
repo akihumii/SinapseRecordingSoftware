@@ -38,7 +38,8 @@ HEADERS += \
     socketneutrino.h \
     measurementdialog.h \
     bioimpedance.h \
-    bioimpedancedialog.h
+    bioimpedancedialog.h \
+    delaythread.h
 
 SOURCES += \
     channel.cpp \
