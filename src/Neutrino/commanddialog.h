@@ -72,6 +72,7 @@ private:
     QMessageBox *mboxWait;
     QByteArray bioImpedanceData;
     DelayThread *delayThread;
+    BioImpedance *bioImpedance;
 
     void createLayout();
     void createJTAGLayout();
@@ -82,13 +83,17 @@ private:
     void setBioImpedanceChannel(int channel);
     void setCurrentType(CURRENT_TYPE type);
     void setBioImpedanceGain(GAIN gain);
-    void runMediumCurrentMeasurement(BioImpedance bioImpedance);
-    void runLowCurrentMeasurement(BioImpedance bioImpedance);
+    void measureResetVoltage(BioImpedance *bioImpedance);
+    void runMediumCurrentMeasurement(int i, BioImpedance *bioImpedance);
+    void runLowCurrentMeasurement(int i, BioImpedance *bioImpedance);
+    void runHighCurrentMeasurement(int i, BioImpedance *bioImpedance);
+    void runHighCurrentHighGainMeasurement(int i, BioImpedance *bioImpedance);
     void runFullBioImpedanceMeasurement();
     void runAutoRangedBioImpedanceMeasurement();
     void delay3seconds();
 
     double bioImpGain = 80.0;
+    double resolution = 8.0;
 
     QLabel *ModeLabel;
     QLabel *CIDLabel;

@@ -58,9 +58,22 @@ double BioImpedance::getResetVoltage(){
     return resetVoltage;
 }
 
-bool BioImpedance::compareVoltages(char value){
-    double temp = convertVoltage((quint8) value);
-    return ((temp-resetVoltage) < ((resolution/255.0)*1.2));
+void BioImpedance::setFinalInline(int channel, double value){
+    qDebug() << "Final Inline Value for Channel " << channel + 1 << " is Voltage: " << value;
+    finalInline[channel] = value;
+}
+
+double BioImpedance::getFinalInline(int channel){
+    return finalInline[channel];
+}
+
+void BioImpedance::setFinalQuad(int channel, double value){
+    qDebug() << "Final Quad Value for Channel " << channel + 1 << " is Voltage: " << value;
+    finalQuad[channel] = value;
+}
+
+double BioImpedance::getFinalQuad(int channel){
+    return finalQuad[channel];
 }
 
 void BioImpedance::setHighCurrentInline(int channel, bool flag){
@@ -83,8 +96,8 @@ void BioImpedance::setHighCurrentHighGainInline(int channel, bool flag){
     highCurrentHighGainInline[channel] = flag;
 }
 
-bool BioImpedance::getHighCurrentHighGainQuad(int channel){
-    return highCurrentHighGainQuad[channel];
+bool BioImpedance::getHighCurrentHighGainInline(int channel){
+    return highCurrentHighGainInline[channel];
 }
 
 void BioImpedance::setHighCurrentQuad(int channel, bool flag){
