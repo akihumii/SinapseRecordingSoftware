@@ -577,9 +577,11 @@ void CommandDialog::setBioImpedanceGain(GAIN gain){
 void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
     // Initialise default command with A0 = 1
     bioImpedance = new BioImpedance;
-    setBioImpedanceGain(MEDIUM_GAIN);
 
-    measureResetVoltage(bioImpedance);
+    setBioImpedanceGain(MEDIUM_GAIN);
+    measureResetVoltage(bioImpedance, MEDIUM_GAIN);
+    setBioImpedanceGain(SUPER_HIGH_GAIN);
+    measureResetVoltage(bioImpedance, SUPER_HIGH_GAIN);
 
     // Turn off Reset voltage command
     BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
@@ -595,17 +597,24 @@ void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
     }
 
     for(int i = 0; i < 10; i++){
-        qDebug() << "Final Inline Value for Channel " << i + 1 << " is Voltage: " << bioImpedance->getFinalInline(i);
-        qDebug() << "Final Quad Value for Channel " << i + 1 << " is Voltage: " << bioImpedance->getFinalQuad(i);
+        qDebug() << "Final Magnitude for Channel " << i + 1 << " is: " << bioImpedance->calculateMagnitude(i);
+        qDebug() << "Final Phase for Channel " << i + 1 << " is: " << bioImpedance->calculatePhase(i);
+        qDebug() << " ";
     }
 
     on_exitBioImpedanceMeasurement();
+
+    BioImpedanceDialog bioImpedanceDialog(bioImpedance);
+    bioImpedanceDialog.exec();
 }
 
-void CommandDialog::measureResetVoltage(BioImpedance *bioImpedance){
+void CommandDialog::measureResetVoltage(BioImpedance *bioImpedance, GAIN gain){
     on_startBioImpedanceMeasurement();
 
     // Send reset voltage command
+    BioImpData[5]->setChecked(false);    // STEP 2: Check ETIRST false
+    on_BioImp_toggled();
+
     if(NeutrinoSerial->isConnected()){
         NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
     }
@@ -613,17 +622,35 @@ void CommandDialog::measureResetVoltage(BioImpedance *bioImpedance){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
 
-    delay3seconds();
+    delaySeconds(3);
 
     // Read reset Voltage
     if(NeutrinoSerial->isConnected()){
         qDebug() << "Reset Voltage:" << (((quint8) NeutrinoSerial->getCurrentByte() / 255.0) * 1.2);
-        bioImpedance->setResetVoltage(NeutrinoSerial->getCurrentByte());
+        bioImpedance->setResetVoltage(NeutrinoSerial->getCurrentByte(), gain);
     }
     if(socketNeutrino->isConnected()){
         qDebug() << "Reset Voltage:" << (((quint8) socketNeutrino->getCurrentByte() / 255.0) * 1.2);
-        bioImpedance->setResetVoltage(socketNeutrino->getCurrentByte());
+        bioImpedance->setResetVoltage(socketNeutrino->getCurrentByte(), gain);
     }
+
+    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST true
+    on_BioImp_toggled();
+}
+
+void CommandDialog::bioReset(){
+    BioImpData[5]->setChecked(false);    // STEP 2: Check ETIRST false
+
+    if(NeutrinoSerial->isConnected()){
+        NeutrinoSerial->writeCommand(NeutrinoCommand->constructCommand());
+    }
+    if(socketNeutrino->isConnected()){
+        socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
+    }
+
+    delaySeconds(3);
+
+    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST true
 }
 
 void CommandDialog::runMediumCurrentMeasurement(int i, BioImpedance *bioImpedance){
@@ -640,7 +667,7 @@ void CommandDialog::runMediumCurrentMeasurement(int i, BioImpedance *bioImpedanc
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
 
-        delay3seconds();
+        delaySeconds(3);
         if(j == 0){
             double inlineVoltage;
             if(NeutrinoSerial->isConnected()){
@@ -649,7 +676,7 @@ void CommandDialog::runMediumCurrentMeasurement(int i, BioImpedance *bioImpedanc
             if(socketNeutrino->isConnected()){
                 inlineVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
             }
-            if((inlineVoltage - bioImpedance->getResetVoltage()) < ((resolution/255.0)*1.2)){
+            if((inlineVoltage - bioImpedance->getResetVoltage(MEDIUM_GAIN)) < ((resolution/255.0)*1.2)){
                 bioImpedance->setHighCurrentInline(i, true);
                 qDebug() << "Channel " << i+1 << "'s Inline Voltage is not enough at Medium Current, Voltage is " << inlineVoltage;
             }
@@ -667,7 +694,7 @@ void CommandDialog::runMediumCurrentMeasurement(int i, BioImpedance *bioImpedanc
             if(socketNeutrino->isConnected()){
                 quadVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
             }
-            if((bioImpedance->getResetVoltage() - quadVoltage) < ((resolution/255.0)*1.2)){
+            if((bioImpedance->getResetVoltage(MEDIUM_GAIN) - quadVoltage) < ((resolution/255.0)*1.2)){
                 bioImpedance->setHighCurrentQuad(i, true);
                 qDebug() << "Channel " << i+1 << "'s Quad Voltage is not enough at Medium Current, Voltage is " << quadVoltage;
             }
@@ -696,7 +723,7 @@ void CommandDialog::runLowCurrentMeasurement(int i, BioImpedance *bioImpedance){
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delay3seconds();
+        delaySeconds(3);
         double inlineVoltage;
         if(NeutrinoSerial->isConnected()){
             inlineVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -704,12 +731,12 @@ void CommandDialog::runLowCurrentMeasurement(int i, BioImpedance *bioImpedance){
         if(socketNeutrino->isConnected()){
             inlineVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
         }
-        if((inlineVoltage - bioImpedance->getResetVoltage()) < ((resolution/255.0)*1.2)){
-            bioImpedance->setFinalInline(i, bioImpedance->getTempInline(i));
+        if((inlineVoltage - bioImpedance->getResetVoltage(MEDIUM_GAIN)) < ((resolution/255.0)*1.2)){
+            bioImpedance->setFinalInline(i, bioImpedance->getTempInline(i), MEDIUM_GAIN, MEDIUM_CURRENT);
             qDebug() << "Channel " << i+1 << "'s Inline voltage finalised at Medium Current, Voltage: " << bioImpedance->getTempInline(i);
         }
         else{
-            bioImpedance->setFinalInline(i, inlineVoltage);
+            bioImpedance->setFinalInline(i, inlineVoltage, MEDIUM_GAIN, SMALL_CURRENT);
             qDebug() << "Channel " << i+1 << "'s Inline voltage finalised at Small Current, Voltage: " << inlineVoltage;
         }
     }
@@ -723,7 +750,7 @@ void CommandDialog::runLowCurrentMeasurement(int i, BioImpedance *bioImpedance){
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delay3seconds();
+        delaySeconds(3);
         double quadVoltage;
         if(NeutrinoSerial->isConnected()){
             quadVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -731,12 +758,12 @@ void CommandDialog::runLowCurrentMeasurement(int i, BioImpedance *bioImpedance){
         if(socketNeutrino->isConnected()){
             quadVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
         }
-        if((bioImpedance->getResetVoltage() - quadVoltage) < ((resolution/255.0)*1.2)){
-            bioImpedance->setFinalQuad(i, bioImpedance->getTempQuad(i));
+        if((bioImpedance->getResetVoltage(MEDIUM_GAIN) - quadVoltage) < ((resolution/255.0)*1.2)){
+            bioImpedance->setFinalQuad(i, bioImpedance->getTempQuad(i), MEDIUM_GAIN, MEDIUM_CURRENT);
             qDebug() << "Channel " << i+1 << "'s Quad voltage finalised at Medium Current, Voltage: " << bioImpedance->getTempQuad(i);
         }
         else{
-            bioImpedance->setFinalQuad(i, quadVoltage);
+            bioImpedance->setFinalQuad(i, quadVoltage, MEDIUM_GAIN, SMALL_CURRENT);
             qDebug() << "Channel " << i+1 << "'s Quad voltage finalised at Small Current, Voltage: " << quadVoltage;
         }
     }
@@ -758,7 +785,7 @@ void CommandDialog::runHighCurrentMeasurement(int i, BioImpedance *bioImpedance)
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delay3seconds();
+        delaySeconds(3);
         double inlineVoltage;
         if(NeutrinoSerial->isConnected()){
             inlineVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -766,12 +793,12 @@ void CommandDialog::runHighCurrentMeasurement(int i, BioImpedance *bioImpedance)
         if(socketNeutrino->isConnected()){
             inlineVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
         }
-        if((inlineVoltage - bioImpedance->getResetVoltage()) < ((resolution/255.0)*1.2)){
+        if((inlineVoltage - bioImpedance->getResetVoltage(MEDIUM_GAIN)) < ((resolution/255.0)*1.2)){
             bioImpedance->setHighCurrentHighGainInline(i, true);
             qDebug() << "Channel " << i+1 << "'s Inline Voltage at High Current is still not enough, Voltage is " << inlineVoltage;
         }
         else{
-            bioImpedance->setFinalInline(i, inlineVoltage);
+            bioImpedance->setFinalInline(i, inlineVoltage, MEDIUM_GAIN, LARGE_CURRENT);
             qDebug() << "Channel " << i+1 << "'s Inline Voltage finalised at High Current, Voltage: " << inlineVoltage;
         }
     }
@@ -786,7 +813,7 @@ void CommandDialog::runHighCurrentMeasurement(int i, BioImpedance *bioImpedance)
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delay3seconds();
+        delaySeconds(3);
         double quadVoltage;
         if(NeutrinoSerial->isConnected()){
             quadVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -794,12 +821,12 @@ void CommandDialog::runHighCurrentMeasurement(int i, BioImpedance *bioImpedance)
         if(socketNeutrino->isConnected()){
             quadVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
         }
-        if((bioImpedance->getResetVoltage() - quadVoltage) < ((resolution/255.0)*1.2)){
+        if((bioImpedance->getResetVoltage(MEDIUM_GAIN) - quadVoltage) < ((resolution/255.0)*1.2)){
             bioImpedance->setHighCurrentHighGainQuad(i, true);
             qDebug() << "Channel " << i+1 << "'s Quad Voltage at High Current is still not enough, Voltage is " << quadVoltage;
         }
         else{
-            bioImpedance->setFinalQuad(i, quadVoltage);
+            bioImpedance->setFinalQuad(i, quadVoltage, MEDIUM_GAIN, LARGE_CURRENT);
             qDebug() << "Channel " << i+1 << "'s quad Voltage finalised at High Current, Voltage: " << quadVoltage;
         }
     }
@@ -811,7 +838,7 @@ void CommandDialog::runHighCurrentHighGainMeasurement(int i, BioImpedance *bioIm
     setBioImpedanceGain(SUPER_HIGH_GAIN);
     setBioImpedanceChannel(i);
 
-    measureResetVoltage(bioImpedance);
+    bioReset();
 
     // Measurement for LARGE CURRENT INLINE
     if(bioImpedance->getHighCurrentHighGainInline(i)){
@@ -822,7 +849,7 @@ void CommandDialog::runHighCurrentHighGainMeasurement(int i, BioImpedance *bioIm
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delay3seconds();
+        delaySeconds(3);
         double inlineVoltage;
         if(NeutrinoSerial->isConnected()){
             inlineVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -830,7 +857,7 @@ void CommandDialog::runHighCurrentHighGainMeasurement(int i, BioImpedance *bioIm
         if(socketNeutrino->isConnected()){
             inlineVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
         }
-        bioImpedance->setFinalInline(i, inlineVoltage);
+        bioImpedance->setFinalInline(i, inlineVoltage, SUPER_HIGH_GAIN, LARGE_CURRENT);
         qDebug() << "Channel " << i+1 << "'s Inline Voltage finalised at High Current High Gain, Voltage: " << inlineVoltage;
     }
 
@@ -844,7 +871,7 @@ void CommandDialog::runHighCurrentHighGainMeasurement(int i, BioImpedance *bioIm
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delay3seconds();
+        delaySeconds(3);
         double quadVoltage;
         if(NeutrinoSerial->isConnected()){
             quadVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -852,12 +879,15 @@ void CommandDialog::runHighCurrentHighGainMeasurement(int i, BioImpedance *bioIm
         if(socketNeutrino->isConnected()){
             quadVoltage = (((quint8)socketNeutrino->getCurrentByte()/255.0)*1.2);
         }
-        bioImpedance->setFinalQuad(i, quadVoltage);
+        bioImpedance->setFinalQuad(i, quadVoltage, SUPER_HIGH_GAIN, LARGE_CURRENT);
         qDebug() << "Channel " << i+1 << "'s quad Voltage finalised at High Current High Gain, Voltage: " << quadVoltage;
     }
+
+    bioReset();
 }
 
-void CommandDialog::delay3seconds(){
+void CommandDialog::delaySeconds(int delay){
+    delayThread->delay = delay*1000;
     delayThread->start();
     while (!delayThread->isFinished())
             QCoreApplication::processEvents();

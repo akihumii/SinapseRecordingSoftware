@@ -14,7 +14,7 @@ public:
 
     void run() Q_DECL_OVERRIDE {
         this->msleep(delay);
-        qDebug() << "3 Seconds passed";
+        qDebug() << delay/1000 << " Seconds passed";
     }
 signals:
 

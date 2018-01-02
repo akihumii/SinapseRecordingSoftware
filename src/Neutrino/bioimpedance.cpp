@@ -50,26 +50,100 @@ void BioImpedance::allocate3Darray(QVector<QVector<QVector<double>>> &array3D){
     }
 }
 
-void BioImpedance::setResetVoltage(char value){
-    resetVoltage = convertVoltage((quint8) value);
+void BioImpedance::setResetVoltage(char value, GAIN gain){
+    if(gain == MEDIUM_GAIN)
+        resetVoltageArray[0] = convertVoltage((quint8) value);
+    else if(gain == SUPER_HIGH_GAIN)
+        resetVoltageArray[1] = convertVoltage((quint8) value);
 }
 
-double BioImpedance::getResetVoltage(){
-    return resetVoltage;
+double BioImpedance::getResetVoltage(GAIN gain){
+    if(gain == MEDIUM_GAIN)
+        return resetVoltageArray[0];
+    else if(gain == SUPER_HIGH_GAIN)
+        return resetVoltageArray[1];
 }
 
-void BioImpedance::setFinalInline(int channel, double value){
-    qDebug() << "Final Inline Value for Channel " << channel + 1 << " is Voltage: " << value;
-    finalInline[channel] = value;
+void BioImpedance::setFinalInline(int channel, double value, GAIN gainType, CURRENT_TYPE currentType){
+    double current;
+    switch (currentType){
+        case SMALL_CURRENT:{
+            current = 0.00000000109;
+            break;
+        }
+        case MEDIUM_CURRENT:{
+            current = 0.0000000127;
+            break;
+        }
+        case LARGE_CURRENT:{
+            current = 0.000000136;
+            break;
+        }
+    }
+
+    double tempReset;
+    switch (gainType){
+        case MEDIUM_GAIN:{
+            tempReset = resetVoltageArray[0];
+            break;
+        }
+        case SUPER_HIGH_GAIN:{
+            tempReset = resetVoltageArray[1];
+            break;
+        }
+    }
+
+    finalInline[channel] = (double) ((value - tempReset) * PI * PI) / (3.232 * 8 * current * (double) gainType);
+    qDebug() << "Final Inline Value for Channel " << channel + 1 << " is: " << finalInline[channel] << " | Voltage :" << value;
+}
+
+double BioImpedance::calculateMagnitude(int channel){
+    return sqrt(pow(finalInline[channel], 2.0) + pow(finalQuad[channel], 2.0));
+}
+
+double BioImpedance::calculatePhase(int channel){
+    return (atan(finalQuad[channel] / finalInline[channel]) * 180.0 / PI);
 }
 
 double BioImpedance::getFinalInline(int channel){
     return finalInline[channel];
 }
 
-void BioImpedance::setFinalQuad(int channel, double value){
-    qDebug() << "Final Quad Value for Channel " << channel + 1 << " is Voltage: " << value;
-    finalQuad[channel] = value;
+void BioImpedance::setFinalQuad(int channel, double value, GAIN gainType, CURRENT_TYPE currentType){
+    double current;
+    switch (currentType){
+        case SMALL_CURRENT:{
+            current = 0.0000000011;
+            break;
+        }
+        case MEDIUM_CURRENT:{
+            current = 0.0000000111;
+            break;
+        }
+        case LARGE_CURRENT:{
+            current = 0.0000001111;
+            break;
+        }
+    }
+
+    double tempReset;
+    switch (gainType){
+        case MEDIUM_GAIN:{
+            tempReset = resetVoltageArray[0];
+            break;
+        }
+        case SUPER_HIGH_GAIN:{
+            tempReset = resetVoltageArray[1];
+            break;
+        }
+        default:{
+            tempReset = resetVoltageArray[0];
+            break;
+        }
+    }
+
+    finalQuad[channel] = (double) 1.0 / (3.232 * ((8 * current * (double) gainType) / (PI * PI * (value - tempReset))));
+    qDebug() << "Final Quad Value for Channel " << channel + 1 << " is: " << finalQuad[channel] << " | Voltage :" << value;
 }
 
 double BioImpedance::getFinalQuad(int channel){
@@ -209,70 +283,22 @@ void BioImpedance::impedanceElimination(){
     for(int i = 0; i < 10; i++){
         for(int j = 0; j < 3; j++){
             for(int k = 0; k < 2; k++){
-//                if(sortedData[i][j][k] == 1.2 || sortedData[i][j][k] == 0.0){
-//                    impedance[i][j][k] = 0.0;
-//                    if(k == 0){
-//                        qDebug() << "Channel " << i+1 << "Magnitude: " << impedance[i][j][k];
-//                    }
-//                    else{
-//                        qDebug() << "Channel " << i+1 << "Phase angle: " << impedance[i][j][k];
-//                    }
-//                }
-//                else{
-                    if(k == 0){
-                        impedance[i][j][k] = sqrt(pow(RX_Data[i][j][0], 2.0) + pow(RX_Data[i][j][1], 2.0));
-                        qDebug() << "Channel " << i+1 << "Magnitude: " << impedance[i][j][k];
-                        *out << "Channel " << i+1 << " Magnitude: " << impedance[i][j][k] << "\n";
-                    }
-                    else{
-                        impedance[i][j][k] = atan(RX_Data[i][j][1] / RX_Data[i][j][0]) * 180.0 / PI;
-                        qDebug() << "Channel " << i+1 << "Phase angle: " << impedance[i][j][k];
-                        *out << "Channel " << i+1 << " Phase angle: " << impedance[i][j][k] << "\n";
-                    }
-//                }
+                if(k == 0){
+                    impedance[i][j][k] = sqrt(pow(RX_Data[i][j][0], 2.0) + pow(RX_Data[i][j][1], 2.0));
+                    qDebug() << "Channel " << i+1 << "Magnitude: " << impedance[i][j][k];
+                    *out << "Channel " << i+1 << " Magnitude: " << impedance[i][j][k] << "\n";
+                }
+                else{
+                    impedance[i][j][k] = atan(RX_Data[i][j][1] / RX_Data[i][j][0]) * 180.0 / PI;
+                    qDebug() << "Channel " << i+1 << "Phase angle: " << impedance[i][j][k];
+                    *out << "Channel " << i+1 << " Phase angle: " << impedance[i][j][k] << "\n";
+                }
             }
         }
         *out << "\n";
     }
 }
 
-bool BioImpedance::withinRange(double value, double min, double max){
-    return ((value > min) && (value < max));
-}
-
 double BioImpedance::convertVoltage(quint8 temp){
     return ((temp / 255.0) * 1.2);
-}
-
-void BioImpedance::calculateResistance(int channel, double small, double medium, double large){
-    if( (double) ((small - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain) > 0){
-        RX_Data[channel][0][0] = (double) ((small - resetVoltage) * PI * PI) / (3.232 * 8 * 0.00000000109 * gain);
-    }
-    else{
-        RX_Data[channel][0][0] = 0.0;
-    }
-    if( (double) ((medium - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain) > 0){
-        RX_Data[channel][0][1] = (double) ((medium - resetVoltage) * PI * PI) / (3.232 * 8 * 0.0000000127 * gain);
-    }
-    else{
-        RX_Data[channel][0][1] = 0.0;
-    }
-    if( (double) ((large - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain) > 0){
-        RX_Data[channel][0][2] = (double) ((large - resetVoltage) * PI * PI) / (3.232 * 8 * 0.000000136 * gain);
-    }
-    else{
-        RX_Data[channel][0][2] = 0.0;
-    }
-    qDebug() << "Channel " << channel+1 << "'s small current (RESISTANCE) : " << RX_Data[channel][0][0] << " | Voltage: " << small;
-    qDebug() << "Channel " << channel+1 << "'s medium current (RESISTANCE) : " << RX_Data[channel][0][1] << " | Voltage: " << medium;
-    qDebug() << "Channel " << channel+1 << "'s large current (RESISTANCE) : " << RX_Data[channel][0][2] << " | Voltage: " << large;
-}
-
-void BioImpedance::calculateCapacitance(int channel, double small, double medium, double large){
-    RX_Data[channel][1][0] = (double) 1.0 / (3.232 * ((8 * 0.0000000011 * gain) / (PI * PI * (small - resetVoltage))));
-    RX_Data[channel][1][1] = (double) 1.0 / (3.232 * ((8 * 0.0000000111 * gain) / (PI * PI * (medium - resetVoltage))));
-    RX_Data[channel][1][2] = (double) 1.0 / (3.232 * ((8 * 0.0000001111 * gain) / (PI * PI * (large - resetVoltage))));
-    qDebug() << "Channel " << channel+1 << "'s small current (CAPACITANCE) : " << RX_Data[channel][1][0] << " | Voltage: " << small;
-    qDebug() << "Channel " << channel+1 << "'s medium current (CAPACITANCE) : " << RX_Data[channel][1][1] << " | Voltage: " << medium;
-    qDebug() << "Channel " << channel+1 << "'s large current (CAPACITANCE) : " << RX_Data[channel][1][2] << " | Voltage: " << large;
 }

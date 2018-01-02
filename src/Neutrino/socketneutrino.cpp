@@ -146,7 +146,7 @@ bool SocketNeutrino::writeCommand(QByteArray Command){
             }
         }
         socketAbstract->write(Command);         //write the command itself
-        qDebug() << Command;
+//        qDebug() << Command;
         return socketAbstract->waitForBytesWritten();
     }
     else

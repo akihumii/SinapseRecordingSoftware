@@ -9,22 +9,11 @@
 #include "serialchannel.h"
 #include "measurementdialog.h"
 #include "delaythread.h"
+#include "bioimpedancedialog.h"
 
 using namespace std;
 
 class Command;
-
-typedef enum CURRENT_TYPE{
-    SMALL_CURRENT = 0,
-    MEDIUM_CURRENT = 1,
-    LARGE_CURRENT = 2
-} CURRENT_TYPE;
-
-typedef enum GAIN{
-    MEDIUM_GAIN = 80,
-    HIGH_GAIN = 160,
-    SUPER_HIGH_GAIN = 320
-} GAIN;
 
 class CommandDialog : public QDialog
 {
@@ -79,21 +68,22 @@ private:
     void loadlastCommand();
     void loadDefault();
     void updateHeader();
+    void bioReset();
     void setInlineQuad(int input);
     void setBioImpedanceChannel(int channel);
     void setCurrentType(CURRENT_TYPE type);
     void setBioImpedanceGain(GAIN gain);
-    void measureResetVoltage(BioImpedance *bioImpedance);
+    void measureResetVoltage(BioImpedance *bioImpedance, GAIN gain);
     void runMediumCurrentMeasurement(int i, BioImpedance *bioImpedance);
     void runLowCurrentMeasurement(int i, BioImpedance *bioImpedance);
     void runHighCurrentMeasurement(int i, BioImpedance *bioImpedance);
     void runHighCurrentHighGainMeasurement(int i, BioImpedance *bioImpedance);
     void runFullBioImpedanceMeasurement();
     void runAutoRangedBioImpedanceMeasurement();
-    void delay3seconds();
+    void delaySeconds(int delay);
 
     double bioImpGain = 80.0;
-    double resolution = 8.0;
+    double resolution = 5.0;
 
     QLabel *ModeLabel;
     QLabel *CIDLabel;
