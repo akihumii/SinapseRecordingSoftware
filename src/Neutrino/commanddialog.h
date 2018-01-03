@@ -74,10 +74,7 @@ private:
     void setCurrentType(CURRENT_TYPE type);
     void setBioImpedanceGain(GAIN gain);
     void measureResetVoltage(BioImpedance *bioImpedance, GAIN gain);
-    void runMediumCurrentMeasurement(int i, BioImpedance *bioImpedance);
-    void runLowCurrentMeasurement(int i, BioImpedance *bioImpedance);
-    void runHighCurrentMeasurement(int i, BioImpedance *bioImpedance);
-    void runHighCurrentHighGainMeasurement(int i, BioImpedance *bioImpedance);
+    void runCurrentMeasurement(int i, BioImpedance *bioImpedance, GAIN bioGain, CURRENT_TYPE bioCurrent);
     void runFullBioImpedanceMeasurement();
     void runAutoRangedBioImpedanceMeasurement();
     void delaySeconds(int delay);

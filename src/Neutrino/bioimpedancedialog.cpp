@@ -58,5 +58,5 @@ void BioImpedanceDialog::on_saveButton_clicked(){
 
 void BioImpedanceDialog::on_exitButton_clicked(){
     qDebug() << "Exiting...";
-    this->close();
+    this->done(0);
 }
