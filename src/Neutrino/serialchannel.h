@@ -19,6 +19,7 @@ public:
     void swapPort();
     char getCurrentByte();
     void setRecordEnabled(bool flag);
+    void setBaudRate(int baud);
 public slots:
     void ReadData();
 private:

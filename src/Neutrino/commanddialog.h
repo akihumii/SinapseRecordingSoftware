@@ -43,12 +43,14 @@ private slots:
     void on_SELCHN_toggled();
     void on_BioImp_toggled();
     void on_DCL_toggled();
+    void on_baud_toggled();
     void on_BER_textEdited();
     void on_CMReset_clicked();
     void on_amplifierSelectAll_clicked();
     void on_amplifierSelectNone_clicked();
     void on_shortRefToGND_clicked();
     void on_amplifierSelect_toggled();
+    void on_bioImpDelay_changed();
     void on_startBioImpedanceMeasurement();
     void on_exitBioImpedanceMeasurement();
 
@@ -77,7 +79,7 @@ private:
     void runCurrentMeasurement(int i, BioImpedance *bioImpedance, GAIN bioGain, CURRENT_TYPE bioCurrent);
     void runFullBioImpedanceMeasurement();
     void runAutoRangedBioImpedanceMeasurement();
-    void delaySeconds(int delay);
+    void delaySeconds();
 
     double bioImpGain = 80.0;
     double resolution = 5.0;
@@ -91,6 +93,7 @@ private:
     QComboBox *ModeComboBox;
     QComboBox *CIDComboBox;
 
+    QLineEdit *bioImpDelayLineEdit;
     QCheckBox *ETIRST;
     QCheckBox *ENBIOPIN;
     QCheckBox *BIOCHSEL4;
@@ -128,6 +131,8 @@ private:
 
     QRadioButton *Exit;
     QRadioButton *Enter;
+
+    QComboBox *baudRateComboBox;
 
     QLineEdit *BER_byte[8];
 

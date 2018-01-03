@@ -70,6 +70,18 @@ void CommandDialog::createLayout(){
     BioImpLabel->setText("Bio Impedance");
     BioImpLayout->addWidget(BioImpLabel);
 
+    QHBoxLayout *bioDelayLayout = new QHBoxLayout;
+    QLabel *bioImpDelay = new QLabel(tr("Delay (Milli-Seconds):"));
+    bioImpDelay->setFixedWidth(100);
+    bioImpDelayLineEdit = new QLineEdit;
+    bioImpDelayLineEdit->setText("1000");
+    bioImpDelayLineEdit->setFixedWidth(50);
+    bioDelayLayout->addWidget(bioImpDelay);
+    bioDelayLayout->addWidget(bioImpDelayLineEdit);
+    BioImpLayout->addLayout(bioDelayLayout);
+
+//    connect(bioImpDelayLineEdit, SIGNAL(editingFinished()), this, SLOT(on_bioImpDelay_changed()));
+
     for(int i=0;i<6;i++){
         BioImpData[i] = new QCheckBox;
         BioImpData[i]->setText(BioImpNames[i]);
@@ -93,6 +105,14 @@ void CommandDialog::createLayout(){
     connect(Exit, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
     connect(Enter, SIGNAL(toggled(bool)), this, SLOT(on_DCL_toggled()));
 
+
+    QLabel *baudLabel = new QLabel("Baud Rate:");
+    baudRateComboBox = new QComboBox;
+    baudRateComboBox->addItem("19200 bps");
+    baudRateComboBox->addItem("38400 bps");
+
+    connect(baudRateComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_baud_toggled()));
+
     CMReset = new QPushButton(tr("CM Reset"));
     connect(CMReset, SIGNAL(clicked(bool)), this, SLOT(on_CMReset_clicked()));
 
@@ -105,7 +125,8 @@ void CommandDialog::createLayout(){
     DCL->addWidget(DigComLoopback);
     DCL->addWidget(Exit);
     DCL->addWidget(Enter);
-    DCL->addSpacing(40);
+    DCL->addWidget(baudLabel);
+    DCL->addWidget(baudRateComboBox);
     DCL->addWidget(shortRefToGND);
     DCL->addWidget(CMReset);
     DCL->addWidget(ChipReset);
@@ -357,6 +378,15 @@ void CommandDialog::on_sendCommand_clicked(){
     updateHeader();
 }
 
+void CommandDialog::on_baud_toggled(){
+    if(baudRateComboBox->currentIndex() == 0){
+        NeutrinoSerial->setBaudRate(19200);
+    }
+    else{
+        NeutrinoSerial->setBaudRate(38400);
+    }
+}
+
 void CommandDialog::runFullBioImpedanceMeasurement(){
     bioImpedanceData.clear();
     QTimer::singleShot(0, [=] {
@@ -423,6 +453,10 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
         BioImpedance bioImpedance(bioImpedanceData, bioImpGain);
         qDebug() << "Total bytes:" << bioImpedanceData.size();
     });
+}
+
+void CommandDialog::on_bioImpDelay_changed(){
+//    delayThread->delay((int) QString::number(bioImpDelayLineEdit->text()));
 }
 
 void CommandDialog::setBioImpedanceChannel(int channel){
@@ -578,6 +612,9 @@ void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
     // Initialise default command with A0 = 1
     bioImpedance = new BioImpedance;
 
+    QTime myTimer;
+    myTimer.start();
+
     setBioImpedanceGain(MEDIUM_GAIN);
     measureResetVoltage(bioImpedance, MEDIUM_GAIN);
     setBioImpedanceGain(SUPER_HIGH_GAIN);
@@ -604,6 +641,10 @@ void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
 
     on_exitBioImpedanceMeasurement();
 
+    int nMilliseconds = myTimer.elapsed();
+
+    qDebug() << "Total time taken for BioImpedance Measurement: " << nMilliseconds << "ms";
+
     BioImpedanceDialog bioImpedanceDialog(bioImpedance);
     bioImpedanceDialog.exec();
 }
@@ -622,7 +663,7 @@ void CommandDialog::measureResetVoltage(BioImpedance *bioImpedance, GAIN gain){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
 
-    delaySeconds(3);
+    delaySeconds();
 
     // Read reset Voltage
     if(NeutrinoSerial->isConnected()){
@@ -648,7 +689,7 @@ void CommandDialog::bioReset(){
         socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
     }
 
-    delaySeconds(3);
+    delaySeconds();
 
     BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST true
 }
@@ -699,7 +740,7 @@ void CommandDialog::runCurrentMeasurement(int i, BioImpedance *bioImpedance, GAI
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delaySeconds(3);
+        delaySeconds();
         double inlineVoltage;
         if(NeutrinoSerial->isConnected()){
             inlineVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -749,7 +790,7 @@ void CommandDialog::runCurrentMeasurement(int i, BioImpedance *bioImpedance, GAI
         if(socketNeutrino->isConnected()){
             socketNeutrino->writeCommand(NeutrinoCommand->constructCommand());
         }
-        delaySeconds(3);
+        delaySeconds();
         double quadVoltage;
         if(NeutrinoSerial->isConnected()){
             quadVoltage = (((quint8)NeutrinoSerial->getCurrentByte()/255.0)*1.2);
@@ -793,8 +834,8 @@ void CommandDialog::runCurrentMeasurement(int i, BioImpedance *bioImpedance, GAI
 }
 
 
-void CommandDialog::delaySeconds(int delay){
-    delayThread->delay = delay*1000;
+void CommandDialog::delaySeconds(){
+    delayThread->delay = (int) bioImpDelayLineEdit->text().toInt();
     delayThread->start();
     while (!delayThread->isFinished())
             QCoreApplication::processEvents();

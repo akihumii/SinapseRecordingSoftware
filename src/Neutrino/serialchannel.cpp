@@ -168,6 +168,11 @@ bool SerialChannel::isConnected(){
     return connected;
 }
 
+void SerialChannel::setBaudRate(int baud){
+    serialCommand->setBaudRate(baud);
+    qDebug() << "Baud rate set to: " << baud;
+}
+
 bool SerialChannel::writeCommand(QByteArray Command){
     if(connected){
         if(Command.size()>5){
