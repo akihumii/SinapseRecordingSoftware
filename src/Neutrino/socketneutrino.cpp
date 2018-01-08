@@ -81,12 +81,16 @@ void SocketNeutrino::ReadCommand(){
             }
             case 10:{
                 QByteArray temp = socketAbstract->read(2048);
-                currentByte = (char) (temp.at(temp.size()-1) + temp.at(temp.size()-2) + temp.at(temp.size()-3) + temp.at(temp.size()-4) + temp.at(temp.size()-5) + temp.at(temp.size()-6) + temp.at(temp.size()-7) + temp.at(temp.size()-8) + temp.at(temp.size()-9) + temp.at(temp.size()-10))/10;
+                quint32 tempChar = temp.at(0) + temp.at(1) + temp.at(2) + temp.at(3);
+                tempChar = tempChar/4;
+                currentByte = (char) tempChar;
                 break;
             }
             case 11:{
                 QByteArray temp = socketAbstract->read(2048);
-                currentByte = (char) (temp.at(temp.size()-1) + temp.at(temp.size()-2) + temp.at(temp.size()-3) + temp.at(temp.size()-4) + temp.at(temp.size()-5) + temp.at(temp.size()-6) + temp.at(temp.size()-7) + temp.at(temp.size()-8) + temp.at(temp.size()-9) + temp.at(temp.size()-10))/10;
+                quint32 tempChar = temp.at(0) + temp.at(1) + temp.at(2) + temp.at(3);
+                tempChar = tempChar/4;
+                currentByte = (char) tempChar;
                 break;
             }
         default:
