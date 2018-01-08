@@ -54,11 +54,17 @@ void SerialChannel::ReadData(){
             break;
         }
         case 10:{
-            currentByte = (char) serialData->read(2048).at(0);
+            QByteArray temp = serialData->read(2048);
+            quint32 tempChar = temp.at(0) + temp.at(1) + temp.at(2) + temp.at(3);
+            tempChar = tempChar/4;
+            currentByte = (char) tempChar;
             break;
         }
         case 11:{
-            currentByte = (char) serialData->read(2048).at(0);
+            QByteArray temp = serialData->read(2048);
+            quint32 tempChar = temp.at(0) + temp.at(1) + temp.at(2) + temp.at(3);
+            tempChar = tempChar/4;
+            currentByte = (char) tempChar;
             break;
         }
     default:
