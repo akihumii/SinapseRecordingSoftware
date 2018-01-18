@@ -20,17 +20,11 @@ void SocketSylph::ReadCommand(){
         initCount++;
     }
     else if(socketAbstract->bytesAvailable() >= maxSize && checked){
-//        if(dataProcessor->isSmart()){
-//            dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
-//        }
-//        else{
-//        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(93), 0)){
             dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
-//        }
     }
-    else if(socketAbstract->bytesAvailable() >= 116 && !checked){
+    else if(socketAbstract->bytesAvailable() >= 76 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(116), 0)){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(76), 0)){
             checked = true;
             qDebug() << "checked is true";
         }
@@ -39,7 +33,6 @@ void SocketSylph::ReadCommand(){
 
 void SocketSylph::appendSync(){
     qDebug() << "Sync pulse detected!";
-//    socketAbstract->write(QByteArray::number(255, 10));
 }
 
 void SocketSylph::closeESP(){

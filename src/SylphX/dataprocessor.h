@@ -7,6 +7,12 @@
 #include "time.h"
 #include "../Odin/socketodin.h"
 
+#define NUM_CHANNELS 6
+#define NUM_BYTES_PER_CHANNEL 2
+#define NUM_BYTES_COUNTER 2
+#define NUM_BYTES_SYNC 1
+#define TOTAL_BYTES_PER_PACKET (NUM_CHANNELS * NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC)
+
 namespace SylphX {
 
 #define END_OF_LINE 2779058
