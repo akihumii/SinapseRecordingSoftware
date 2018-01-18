@@ -9,59 +9,40 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-//    qDebug() << rawData.size();
-    for(int i = 0; i < rawData.size(); i = i + TOTAL_BYTES_PER_PACKET){
-        QByteArray temp;
-        for(int j = 2; j < NUM_CHANNELS; j++){
+    for(int i = 0; i < rawData.size(); i = i + 15){
+        for(int j = 2; j < 6; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-//            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
-//            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
-//            std::cout << fullWord_rawData;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-//            appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             ChannelData[j-2].append(fullWord_rawData*(0.000000195));
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-//            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
-//            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
-//            std::cout << fullWord_rawData;
-//            appendAudioBuffer(j+8, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195));
+            ChannelData[j+(6-2)].append(fullWord_rawData*(0.000000195));
         }
-//        for(int j = 0; j < 10; j++){
+        for(int j = 6; j < 10; j++){
 //            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-////            temp.append((quint8) rawData.at(i+1+((2*j))) << 8);
-////            temp.append((quint8) rawData.at(i+1+((2*j)+1)));
-////            std::cout << fullWord_rawData;
-//            if(RecordEnabled){
-//                RecordData(fullWord_rawData);
-//            }
-////            appendAudioBuffer(j-2, rawData.at(i+1+(2*j)+1), rawData.at(i+1+(2*j)));
-//            ChannelData[j].append(fullWord_rawData*(0.000000195));
-//        }
+            if(RecordEnabled){
+                RecordData(0);
+            }
+            ChannelData[j].append(0*(0.000000195));
+        }
         ChannelData[10].append((quint8) rawData.at(i));
-//        temp.append(rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
-        ChannelData[11].append((quint8) rawData.at(i+(TOTAL_BYTES_PER_PACKET-2)) << 8 | (quint8) rawData.at(i+TOTAL_BYTES_PER_PACKET-1));
-//        temp.append(rawData.at(i+21));
+        ChannelData[11].append((quint8) rawData.at(i+(15-2)) << 8 | (quint8) rawData.at(i+15-1));
         if(RecordEnabled){
-            RecordData((quint8) rawData.at(i+(TOTAL_BYTES_PER_PACKET-2)) << 8 | (quint8) rawData.at(i+(TOTAL_BYTES_PER_PACKET-1)));
+            RecordData((quint8) rawData.at(i+(15-2)) << 8 | (quint8) rawData.at(i+(15-1)));
             RecordData(END_OF_LINE);
         }
-//        std::cout << temp;
-//        qDebug() << process->write(temp);
     }
-//    playAudio(getAudioChannel());
 }
 
 void DataProcessor::parseFrameMarkersSerial(QByteArray rawData){
@@ -143,14 +124,16 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
     bool flag = false;
-    for(int i = 0; i < data.size()-TOTAL_BYTES_PER_PACKET; i = i + 1){
-        if(((quint8) data.at(i + TOTAL_BYTES_PER_PACKET) == (quint8) data.at(i) + 1)){
-            flag = true;
-            i = i + TOTAL_BYTES_PER_PACKET - 1;
-        }
-        else{
-            flag = false;
-            break;
+    if(data.size() > 16){
+        for(int i = 0; i < data.size()-15; i = i + 1){
+            if(((quint8) data.at(i + 15) == (quint8) data.at(i) + 1)){
+                flag = true;
+                i = i + 15 - 1;
+            }
+            else{
+                flag = false;
+                break;
+            }
         }
     }
     return flag;

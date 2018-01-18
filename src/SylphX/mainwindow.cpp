@@ -392,8 +392,8 @@ void MainWindow::updateData(){
                 if(!pause){
                     channelGraph[i]->replot();
                 }
-                data->clearChannelData(i);
             }
+            data->clearChannelData(i);
         }
         data->removeXAxis();
     }
@@ -543,9 +543,9 @@ void MainWindow::on_resetY_triggered(){
 }
 
 void MainWindow::on_dataAnalyzer_triggered(){
-    QProcess *process = new QProcess(this);
-    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
-    process->start(file);
+//    QProcess *process = new QProcess(this);
+//    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
+//    process->start(file);
 }
 
 void MainWindow::on_pythonLaunch_triggered(){
@@ -557,17 +557,17 @@ void MainWindow::on_pythonLaunch_triggered(){
 //        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
 //                                           | FOREGROUND_INTENSITY;
 //    });
-    QString file;
-    file = "python " + QFileDialog::getOpenFileName(this,
-        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
-//    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
-    pythonProcess->start(file);
-    qDebug() << file;
-    QByteArray temp = pythonProcess->readAll();
-    qDebug() << temp;
-    if(!pythonProcess->waitForStarted())
-           qDebug() << "Failed to start";
-    qDebug() << "Starting data streamer";
+//    QString file;
+//    file = "python " + QFileDialog::getOpenFileName(this,
+//        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
+////    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
+//    pythonProcess->start(file);
+//    qDebug() << file;
+//    QByteArray temp = pythonProcess->readAll();
+//    qDebug() << temp;
+//    if(!pythonProcess->waitForStarted())
+//           qDebug() << "Failed to start";
+//    qDebug() << "Starting data streamer";
 }
 
 void MainWindow::on_restart_triggered(){
