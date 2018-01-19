@@ -22,7 +22,7 @@ private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
 
-    qint64 packetSize = 11;
+    qint64 packetSize = 23;
     qint64 maxSize = packetSize*16;
 
     bool checked = false;

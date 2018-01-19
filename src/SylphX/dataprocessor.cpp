@@ -24,12 +24,12 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195));
         }
-        for(int j = NUM_CHANNELS; j < 10; j++){
-            if(RecordEnabled){
-                RecordData(0);
-            }
-            ChannelData[j].append(0*(0.000000195));
-        }
+//        for(int j = NUM_CHANNELS; j < 10; j++){
+//            if(RecordEnabled){
+//                RecordData(0);
+//            }
+//            ChannelData[j].append(0*(0.000000195));
+//        }
         ChannelData[10].append((quint8) rawData.at(i));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i));
