@@ -9,8 +9,8 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
 }
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
-    for(int i = 0; i < rawData.size(); i = i + 15){
-        for(int j = 2; j < 6; j++){
+    for(int i = 0; i < rawData.size(); i = i + packetSize){
+        for(int j = 2; j < NUM_CHANNELS; j++){
             fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
@@ -22,10 +22,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j+(6-2)].append(fullWord_rawData*(0.000000195));
+            ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195));
         }
-        for(int j = 6; j < 10; j++){
-//            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+        for(int j = NUM_CHANNELS; j < 10; j++){
             if(RecordEnabled){
                 RecordData(0);
             }
@@ -37,9 +36,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
-        ChannelData[11].append((quint8) rawData.at(i+(15-2)) << 8 | (quint8) rawData.at(i+15-1));
+        ChannelData[11].append((quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+packetSize-1));
         if(RecordEnabled){
-            RecordData((quint8) rawData.at(i+(15-2)) << 8 | (quint8) rawData.at(i+(15-1)));
+            RecordData((quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+(packetSize-1)));
             RecordData(END_OF_LINE);
         }
     }
@@ -124,11 +123,11 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
     bool flag = false;
-    if(data.size() > 16){
-        for(int i = 0; i < data.size()-15; i = i + 1){
-            if(((quint8) data.at(i + 15) == (quint8) data.at(i) + 1)){
+    if(data.size() > packetSize+1){
+        for(int i = 0; i < data.size()-packetSize; i = i + 1){
+            if(((quint8) data.at(i + packetSize) == (quint8) data.at(i) + 1)){
                 flag = true;
-                i = i + 15 - 1;
+                i = i + packetSize - 1;
             }
             else{
                 flag = false;
