@@ -7,7 +7,7 @@
 #include "time.h"
 #include "../Odin/socketodin.h"
 
-#define NUM_CHANNELS 10
+#define NUM_CHANNELS 4
 #define NUM_BYTES_PER_CHANNEL 2
 #define NUM_BYTES_COUNTER 2
 #define NUM_BYTES_SYNC 1
