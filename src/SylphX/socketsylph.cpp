@@ -8,7 +8,7 @@ SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
 }
 
 void SocketSylph::discardData(){
-    for(int i = 0; i < 50; i++){
+    for(int i = 0; i < 10; i++){
         socketAbstract->read(48000);
         qDebug() << "Discarding";
     }

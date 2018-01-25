@@ -11,14 +11,14 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
     for(int i = 0; i < rawData.size(); i = i + packetSize){
         for(int j = 2; j < NUM_CHANNELS; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
             ChannelData[j-2].append(fullWord_rawData*(0.000000195));
         }
         for(int j = 0; j < 2; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -30,9 +30,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             ChannelData[j].append(0*(0.000000195));
         }
-        ChannelData[10].append((quint8) rawData.at(i));
+        ChannelData[10].append((quint8) rawData.at(i-3));
         if(RecordEnabled){
-            RecordData((quint8) rawData.at(i));
+            RecordData((quint8) rawData.at(i-3));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
