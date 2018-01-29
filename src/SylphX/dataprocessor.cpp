@@ -24,21 +24,21 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             }
             ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195));
         }
-        for(int j = NUM_CHANNELS; j < 10; j++){
-            if(RecordEnabled){
-                RecordData(0);
-            }
-            ChannelData[j].append(0*(0.000000195));
-        }
-        ChannelData[10].append((quint8) rawData.at(i-3));
+//        for(int j = NUM_CHANNELS; j < 10; j++){
+//            if(RecordEnabled){
+//                RecordData(0);
+//            }
+//            ChannelData[j].append(0*(0.000000195));
+//        }
+        ChannelData[10].append((quint8) rawData.at(i+packetSize-3));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i-3));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);
-        ChannelData[11].append((quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+packetSize-1));
+        ChannelData[11].append((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3));
         if(RecordEnabled){
-            RecordData((quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+(packetSize-1)));
+            RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
             RecordData(END_OF_LINE);
         }
     }
@@ -122,20 +122,22 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-    bool flag = false;
-    if(data.size() > packetSize+1){
-        for(int i = 0; i < data.size()-packetSize; i = i + 1){
-            if(((quint8) data.at(i + packetSize) == (quint8) data.at(i) + 1)){
-                flag = true;
-                i = i + packetSize - 1;
-            }
-            else{
-                flag = false;
-                break;
-            }
-        }
-    }
-    return flag;
+//    if(data.size() > packetSize+1){
+//        for(int i = 0; i < data.size()-packetSize; i = i + 1){
+//            if(((quint8) data.at(i + packetSize) == (quint8) data.at(i) + 1)){
+//                flag = true;
+//                i = i + packetSize - 1;
+//            }
+//            else{
+//                flag = false;
+//                break;
+//            }
+//        }
+//    }
+    if((quint8) data.at(0) == 165 && (quint8) data.at(1+(NUM_CHANNELS*2)) == 0 && data.at(4+(NUM_CHANNELS*2)) == 90)
+        return true;
+    else
+        return false;
 }
 
 bool DataProcessor::checkNextFrameMarkerSerial(QByteArray data, int currentIndex){

@@ -7,7 +7,7 @@
 #include "time.h"
 #include "../Odin/socketodin.h"
 
-#define NUM_CHANNELS 4
+#define NUM_CHANNELS 10
 #define NUM_BYTES_PER_CHANNEL 2
 #define NUM_BYTES_COUNTER 2
 #define NUM_BYTES_SYNC 1
@@ -55,7 +55,7 @@ private:
     bool ADCRecordEnabled = false;
     bool smartDataProcessor = false;
 
-    qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC;
+    qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC + 2;
     float samplingRate;
     float period;
     int syncPulse = 0;

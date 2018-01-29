@@ -353,12 +353,12 @@ bool OdinWindow::connectOdin(){
     }
     if(!serialOdin->isOdinSerialConnected()){
 //        socketOdin->doConnect("10.10.10.1", 30000);
-        int i = 130;
-        do{
-            i++;
-            socketOdin->doConnect("192.168.137."+QString::number(i), 30000);
-            qDebug() << i;
-        } while(!socketOdin->isConnected() && i < 6);
+//        int i = 130;
+//        do{
+//            i++;
+//            socketOdin->doConnect("192.168.137."+QString::number(i), 30000);
+//            qDebug() << i;
+//        } while(!socketOdin->isConnected() && i < 6);
         if(socketOdin->isConnected()){
             connectionStatus.append("Connected to Odin WiFi Module at 192.168.4.1/30000");
             statusBarLabel->setText(connectionStatus);

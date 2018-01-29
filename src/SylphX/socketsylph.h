@@ -22,8 +22,8 @@ private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
 
-    qint64 packetSize = 11;
-    qint64 maxSize = packetSize*16;
+    qint64 packetSize = 25;
+    qint64 maxSize = packetSize*200;
 
     bool checked = false;
     int initCount = 0;
