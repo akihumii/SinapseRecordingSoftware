@@ -30,9 +30,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //            }
 //            ChannelData[j].append(0*(0.000000195));
 //        }
-        ChannelData[10].append((quint8) rawData.at(i+packetSize-3));
+        ChannelData[10].append((quint8) rawData.at(i+packetSize-5));
         if(RecordEnabled){
-            RecordData((quint8) rawData.at(i-3));
+            RecordData((quint8) rawData.at(i-5));
         }
         total_data_count++;
         X_axis.append(total_data_count*period);

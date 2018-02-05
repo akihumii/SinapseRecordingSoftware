@@ -334,7 +334,7 @@ void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
     if(portInfo.size()>1){
-        serialChannel->connectSylph();
+//        serialChannel->connectSylph();
         connectionStatus.clear();
         if(serialChannel->isImplantConnected()){
             connectionStatus.append("Connected to Implant Port |");
@@ -355,7 +355,7 @@ void MainWindow::connectSylph(){
         int i = 0;
         do{
             i++;
-            socketSylph->doConnect("192.168.42."+QString::number(i), 8888);
+            socketSylph->doConnect("192.168.10."+QString::number(i), 8888);
             qDebug() << i;
         } while(!socketSylph->isConnected() && i < 6);
         if(socketSylph->isConnected()){
