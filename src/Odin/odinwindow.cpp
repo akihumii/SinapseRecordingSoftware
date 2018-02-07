@@ -21,11 +21,6 @@ OdinWindow::OdinWindow(){
 
     createLayout();
     createStatusBar();
-//    fileMenu = menuBar()->addMenu(tr("&Connect"));
-//    connectAction = new QAction(tr("&Connect"), this);
-//    connectAction->setShortcut(tr("Ctrl+C"));
-//    connect(connectAction, SIGNAL(triggered()), this, SLOT(on_ConnectMenu_triggered()));
-//    fileMenu->addAction(connectAction);
     connectOdin();
 }
 
@@ -243,7 +238,6 @@ void OdinWindow::createLayout(){
     zonerightLayout[3] = new QHBoxLayout;
     maskSelector = new QComboBox;
     maskSelector->setFixedWidth(120);
-//    maskSelector->addItem("Mask None");
     maskSelector->addItem("Simult4");
     maskSelector->addItem("Simult3-Single1");
     maskSelector->addItem("Single1-Simult3");
@@ -338,7 +332,7 @@ bool OdinWindow::connectOdin(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
     if(portInfo.size()>0){
-        serialOdin->connectOdin();
+//        serialOdin->connectOdin();
         connectionStatus.clear();
         if(serialOdin->isOdinSerialConnected()){
             connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
@@ -353,10 +347,10 @@ bool OdinWindow::connectOdin(){
     }
     if(!serialOdin->isOdinSerialConnected()){
 //        socketOdin->doConnect("10.10.10.1", 30000);
-        int i = 1;
+        int i = 0;
         do{
             i++;
-            socketOdin->doConnect("192.168.10."+QString::number(i), 30000);
+            socketOdin->doConnect("192.168.4."+QString::number(i), 30000);
             qDebug() << i;
         } while(!socketOdin->isConnected() && i < 6);
         if(socketOdin->isConnected()){
@@ -658,7 +652,6 @@ void OdinWindow::setDelay(){
 
 void OdinWindow::on_odinDisconnected(){
     QMessageBox::warning(this, tr("Odin Disconnected!"), tr("Please restart the program after reconnecting to Odin"));
-//    this->close();
 }
 
 void OdinWindow::on_ConnectMenu_triggered(){
