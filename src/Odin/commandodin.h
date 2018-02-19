@@ -27,11 +27,13 @@ public:
     void sendCommand();
     void setAmplitude(int channel, double value);
     void setPulseDuration(int channel, int duration);
-    void setFrequency(char value);
+    void setFrequency(int value);
     double getAmplitude(int channel);
     unsigned char getAmplitudeByte(int index);
-    char getPulseDuration(int channel);
-    char getFrequency();
+    char getPulseDurationByte(int channel);
+    int getPulseDuration(int channel);
+    char getFrequencyByte();
+    int getFrequency();
     void sendStart();
     void sendStop();
     void constructCommand();
@@ -42,8 +44,8 @@ private:
 
     double amplitude[4] = {0.0, 0.0, 0.0, 0.0};
     bool channelEnabled[4] = {false, false, false, false};
-    int pulseDuration[4] = {0, 0, 0, 0};
-    int frequency = 0;
+    int pulseDuration[4] = {200, 200, 200, 200};
+    int frequency = 50;
     int numChannels = 0;
 
     float a = -0.0045;

@@ -90,17 +90,25 @@ void CommandOdin::setPulseDuration(int channel, int duration){
     pulseDuration[channel] = duration;
 }
 
-char CommandOdin::getPulseDuration(int channel){
+char CommandOdin::getPulseDurationByte(int channel){
     return (char) ((pulseDuration[channel]/5) - 3);
 }
 
-void CommandOdin::setFrequency(char value){
+int CommandOdin::getPulseDuration(int channel){
+    return pulseDuration[channel];
+}
+
+void CommandOdin::setFrequency(int value){
     frequency = value;
 }
 
-char CommandOdin::getFrequency(){
+char CommandOdin::getFrequencyByte(){
     char temp = (char) ((((1000000/(quint8)frequency) - amplitude[0] - amplitude[1] - amplitude[2] - amplitude[3]) - (710*numChannels)) / 267);
     return temp;
+}
+
+int CommandOdin::getFrequency(){
+    return frequency;
 }
 
 }

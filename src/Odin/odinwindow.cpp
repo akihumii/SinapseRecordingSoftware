@@ -154,11 +154,19 @@ void OdinWindow::on_amplitude_Changed(){
 }
 
 void OdinWindow::on_pulseDuration_Changed(){
-    qDebug()<<"Testing pulse Duration";
+    for(int i = 0; i < 4; i++){
+        if(pulseDurationSpinBox[i]->text().toInt() !=  commandOdin->getPulseDuration(i)){
+            commandOdin->setPulseDuration(i, pulseDurationSpinBox[i]->text().toInt());
+            qDebug() << "Set channel " << i << "pulse duration to : " << pulseDurationSpinBox[i]->text().toInt();
+        }
+    }
 }
 
 void OdinWindow::on_frequency_Changed(){
-    qDebug()<<"Testing frequency";
+    if(frequencySpinBox->text().toInt() != commandOdin->getFrequency()){
+        commandOdin->setFrequency(frequencySpinBox->text().toInt());
+        qDebug() << "Set frequency to : " << frequencySpinBox->text().toInt();
+    }
 }
 
 void OdinWindow::on_odinDisconnected(){
