@@ -11,6 +11,7 @@
 #define NUM_BYTES_PER_CHANNEL 2
 #define NUM_BYTES_COUNTER 2
 #define NUM_BYTES_SYNC 1
+#define NUM_BYTES_FRAME 2
 
 namespace SylphX {
 
@@ -55,7 +56,7 @@ private:
     bool ADCRecordEnabled = false;
     bool smartDataProcessor = false;
 
-    qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC + 2;
+    qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC + NUM_BYTES_FRAME;
     float samplingRate;
     float period;
     int syncPulse = 0;

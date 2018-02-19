@@ -24,7 +24,7 @@ void SocketSylph::ReadCommand(){
     }
     else if(socketAbstract->bytesAvailable() >= packetSize+1 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(packetSize+1), 0)){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(packetSize+1))){
             checked = true;
             qDebug() << "checked is true";
         }

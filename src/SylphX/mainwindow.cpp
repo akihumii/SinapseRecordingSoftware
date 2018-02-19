@@ -334,7 +334,7 @@ void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
     if(portInfo.size()>1){
-//        serialChannel->connectSylph();
+        serialChannel->connectSylph();
         connectionStatus.clear();
         if(serialChannel->isImplantConnected()){
             connectionStatus.append("Connected to Implant Port |");
