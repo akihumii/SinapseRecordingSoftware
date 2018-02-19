@@ -26,10 +26,8 @@ public:
     SignalAudio *signalAudio;
 
     void parseFrameMarkers(QByteArray rawData);
-    void parseFrameMarkersSerial(QByteArray rawData);
     void parseFrameMarkersWithChecks(QByteArray rawData);
-    bool checkNextFrameMarker(QByteArray data, int currentIndex);
-    bool checkNextFrameMarkerSerial(QByteArray data, int currentIndex);
+    bool checkNextFrameMarker(QByteArray data);
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
     bool isADCRecordEnabled();
