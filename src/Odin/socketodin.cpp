@@ -5,7 +5,7 @@ namespace Odin {
 SocketOdin::SocketOdin(){
     udpSocket = new QUdpSocket(this);
 
-//    udpSocket->bind(QHostAddress::Broadcast, 45454);
+    udpSocket->bind(QHostAddress::Broadcast, 45454);
 
     qDebug() << "Binded UDP Socket";
 
@@ -21,21 +21,12 @@ SocketOdin::~SocketOdin(){
 }
 
 void SocketOdin::writeCommand(QByteArray command){
-//    qDebug() << "Started command timer";
-//    outgoingCommand = command;
-////    udpSocket->readAll();
-////    udpSocket->flush();
-//    timeToRead = false;
-//    incomingCommand.clear();
     if(command.size() > 1){
         player->play();
     }
     outgoingCommand = command;
-//    commandTimer.start(15);
     udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
-    QTimer::singleShot(readDelay, [=] {
-            timeToRead = true;
-    });
+    qDebug() << "Sent command of a size" << command.size() << "via udp socket: " << (quint8) command.at(0) << (quint8) command.at(1);
 }
 
 void SocketOdin::sendDisconnectSignal(){

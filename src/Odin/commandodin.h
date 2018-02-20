@@ -36,6 +36,9 @@ public:
     int getFrequency();
     void sendStart();
     void sendStop();
+    void sendAmplitude(int channel);
+    void sendPulseDuration(int channel);
+    void sendFrequency();
     void constructCommand();
     QByteArray getlastSentCommand();
 private:

@@ -13,7 +13,7 @@ OdinWindow::OdinWindow(){
 
     createLayout();
     createStatusBar();
-//    connectOdin();
+    connectOdin();
 }
 
 void OdinWindow::createLayout(){
@@ -149,6 +149,7 @@ void OdinWindow::on_amplitude_Changed(){
         if(amplitudeSpinBox[i]->text().toDouble() !=  commandOdin->getAmplitude(i)){
             commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
             qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
+            commandOdin->sendAmplitude(i);
         }
     }
 }
@@ -158,6 +159,7 @@ void OdinWindow::on_pulseDuration_Changed(){
         if(pulseDurationSpinBox[i]->text().toInt() !=  commandOdin->getPulseDuration(i)){
             commandOdin->setPulseDuration(i, pulseDurationSpinBox[i]->text().toInt());
             qDebug() << "Set channel " << i << "pulse duration to : " << pulseDurationSpinBox[i]->text().toInt();
+            commandOdin->sendPulseDuration(i);
         }
     }
 }
