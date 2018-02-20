@@ -9,7 +9,7 @@ CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_) {
 
 void CommandOdin::initialiseCommand(){
     sendStart();
-    QThread::msleep(50);
+    QThread::msleep(200);
     sendFrequency();
     for(int i = 0; i < 4; i++){
         sendPulseDuration(i);

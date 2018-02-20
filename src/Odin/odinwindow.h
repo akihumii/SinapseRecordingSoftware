@@ -34,6 +34,7 @@ private:
     QStatusBar *statusBarMainWindow;
 
     QPushButton *sendButton;
+    QPushButton *recordButton;
 
     QGroupBox *stimParameters;
     QHBoxLayout *stimParaLayout[5];
@@ -52,6 +53,7 @@ private:
     Led *receivedLED;
 
     bool start = false;
+    bool record = false;
 
     int commandCount = 0;
 
@@ -60,6 +62,7 @@ private:
     void createStatusBar();
 private slots:
     void sendCommand();
+    void on_record_clicked();
     void on_thresholdEnable_toggled();
     void on_amplitude_Changed();
     void on_pulseDuration_Changed();

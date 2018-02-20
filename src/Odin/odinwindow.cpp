@@ -13,7 +13,7 @@ OdinWindow::OdinWindow(){
 
     createLayout();
     createStatusBar();
-    connectOdin();
+//    connectOdin();
 }
 
 void OdinWindow::createLayout(){
@@ -76,13 +76,22 @@ void OdinWindow::createLayout(){
 
     stimParameters->setLayout(stimParaMainLayout);
 
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
     sendButton = new QPushButton(tr("Start Odin!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
+    recordButton = new QPushButton;
+    recordButton->setShortcut(QKeySequence(tr("Ctrl+T")));
+    connect(recordButton, SIGNAL(clicked(bool)), this, SLOT(on_record_clicked()));
+    recordButton->setMaximumWidth(20);
+    recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
+    recordButton->setIconSize(QSize(15,15));
+    buttonLayout->addWidget(sendButton);
+    buttonLayout->addWidget(recordButton);
 
     QWidget *mainWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(stimParameters);
-    mainLayout->addWidget(sendButton);
+    mainLayout->addLayout(buttonLayout);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
@@ -145,6 +154,16 @@ void OdinWindow::sendCommand(){
     else{
         commandOdin->sendStop();
         sendButton->setText("Start Odin!");
+    }
+}
+
+void OdinWindow::on_record_clicked(){
+    record = !record;
+    if(record){
+        recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStop.png"));
+    }
+    else{
+        recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
     }
 }
 
