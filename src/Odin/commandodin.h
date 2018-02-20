@@ -28,6 +28,7 @@ public:
     void setAmplitude(int channel, double value);
     void setPulseDuration(int channel, int duration);
     void setFrequency(int value);
+    void setChannelEnabled(int channel, bool flag);
     double getAmplitude(int channel);
     unsigned char getAmplitudeByte(int index);
     char getPulseDurationByte(int channel);
@@ -39,7 +40,7 @@ public:
     void sendAmplitude(int channel);
     void sendPulseDuration(int channel);
     void sendFrequency();
-    void constructCommand();
+    void initialiseCommand();
     QByteArray getlastSentCommand();
 private:
     SerialOdin *serialOdin;

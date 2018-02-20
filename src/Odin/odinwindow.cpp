@@ -77,6 +77,7 @@ void OdinWindow::createLayout(){
     stimParameters->setLayout(stimParaMainLayout);
 
     sendButton = new QPushButton(tr("Start Odin!"));
+    connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
 
     QWidget *mainWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -137,7 +138,14 @@ bool OdinWindow::connectOdin(){
 
 void OdinWindow::sendCommand(){
     start = !start;
-    commandOdin->constructCommand();
+    if(start){
+        commandOdin->initialiseCommand();
+        sendButton->setText("Stop Odin!");
+    }
+    else{
+        commandOdin->sendStop();
+        sendButton->setText("Start Odin!");
+    }
 }
 
 void OdinWindow::on_thresholdEnable_toggled(){
@@ -147,9 +155,12 @@ void OdinWindow::on_thresholdEnable_toggled(){
 void OdinWindow::on_amplitude_Changed(){
     for(int i = 0; i < 4; i++){
         if(amplitudeSpinBox[i]->text().toDouble() !=  commandOdin->getAmplitude(i)){
+            commandOdin->setChannelEnabled(i, (amplitudeSpinBox[i]->text().toDouble() == 0.0));
             commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
             qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
-            commandOdin->sendAmplitude(i);
+            if(start){
+                commandOdin->sendAmplitude(i);
+            }
         }
     }
 }
@@ -159,7 +170,9 @@ void OdinWindow::on_pulseDuration_Changed(){
         if(pulseDurationSpinBox[i]->text().toInt() !=  commandOdin->getPulseDuration(i)){
             commandOdin->setPulseDuration(i, pulseDurationSpinBox[i]->text().toInt());
             qDebug() << "Set channel " << i << "pulse duration to : " << pulseDurationSpinBox[i]->text().toInt();
-            commandOdin->sendPulseDuration(i);
+            if(start){
+                commandOdin->sendPulseDuration(i);
+            }
         }
     }
 }
@@ -168,6 +181,9 @@ void OdinWindow::on_frequency_Changed(){
     if(frequencySpinBox->text().toInt() != commandOdin->getFrequency()){
         commandOdin->setFrequency(frequencySpinBox->text().toInt());
         qDebug() << "Set frequency to : " << frequencySpinBox->text().toInt();
+        if(start){
+            commandOdin->sendFrequency();
+        }
     }
 }
 

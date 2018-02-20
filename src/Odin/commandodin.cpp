@@ -7,11 +7,20 @@ CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_) {
     socketOdin = socketOdin_;
 }
 
-void CommandOdin::constructCommand(){
+void CommandOdin::initialiseCommand(){
+    sendStart();
+    QThread::msleep(50);
+    sendFrequency();
+    for(int i = 0; i < 4; i++){
+        sendPulseDuration(i);
+    }
+    for(int i = 0; i < 4; i++){
+        sendAmplitude(i);
+    }
+    qDebug() << "Finished initialisation!";
 }
 
 void CommandOdin::sendCommand(){
-    constructCommand();
     if(serialOdin->isOdinSerialConnected()){
 //        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
@@ -24,13 +33,13 @@ void CommandOdin::sendCommand(){
 
 void CommandOdin::sendStart(){
     outgoingCommand.clear();
-    outgoingCommand.append((char) 0xF8);
+    outgoingCommand.append((const char) 0xF8);
     if(serialOdin->isOdinSerialConnected()){
 //        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
     }
 //    else if(socketOdin->isConnected()){
-//        qDebug() << "Sending via socket";
+        qDebug() << "Sending start via socket";
         socketOdin->writeCommand(outgoingCommand);
 //    }
 }
@@ -45,7 +54,6 @@ void CommandOdin::sendStop(){
 //    else if(socketOdin->isConnected()){
         qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
-        constructCommand();
 //    }
 }
 
@@ -70,9 +78,6 @@ void CommandOdin::sendAmplitude(int channel){
         }
     }
     temp.append((const char) getAmplitudeByte(channel));
-    for(int i = 0; i < 14; i++){
-        temp.append((const char) 0x00);
-    }
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(temp);
     }
@@ -101,9 +106,6 @@ void CommandOdin::sendPulseDuration(int channel){
         }
     }
     temp.append((const char) getPulseDurationByte(channel));
-    for(int i = 0; i < 14; i++){
-        temp.append((const char) 0x00);
-    }
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(temp);
     }
@@ -118,9 +120,6 @@ void CommandOdin::sendFrequency(){
     QByteArray temp;
     temp.append((const char) 0x10);
     temp.append((const char) getFrequencyByte());
-    for(int i = 0; i < 14; i++){
-        temp.append((const char) 0x00);
-    }
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(temp);
     }
@@ -144,28 +143,34 @@ double CommandOdin::getAmplitude(int channel){
 }
 
 unsigned char CommandOdin::getAmplitudeByte(int index){
-//        unsigned char temp = PulseMag[index]*PulseMag[index]*0.0012 + PulseMag[index]*25.556 - 6.601;         // For 9.3mA
-// =================================================== HACK JOB =============================================================//
-        QString formula =  QDir::currentPath() + QDir::separator() + "formula.txt";
-        QFile formulaFile(formula);
-        if(formulaFile.exists()){
-            if(!formulaFile.open(QIODevice::ReadOnly | QIODevice::Text))
-                return 0.0;
-            QTextStream in(&formulaFile);
-            QString temp;
-            temp = in.readLine();
-            a = temp.toFloat();
-//            qDebug() << "a: " << temp;
-            temp = in.readLine();
-            b = temp.toFloat();
-//            qDebug() << "b: " << temp;
-            temp = in.readLine();
-            c = temp.toFloat();
-//            qDebug() << "c: " << temp;
-        }
-// =================================================== HACK JOB =============================================================//
-    unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;       // For 20.0mA
-    return temp;
+    if(amplitude[index] == 0.0){
+        return 0;
+    }
+    else{
+    //        unsigned char temp = PulseMag[index]*PulseMag[index]*0.0012 + PulseMag[index]*25.556 - 6.601;         // For 9.3mA
+    // =================================================== HACK JOB =============================================================//
+            QString formula =  QDir::currentPath() + QDir::separator() + "formula.txt";
+            QFile formulaFile(formula);
+            if(formulaFile.exists()){
+                if(!formulaFile.open(QIODevice::ReadOnly | QIODevice::Text))
+                    return 0.0;
+                QTextStream in(&formulaFile);
+                QString temp;
+                temp = in.readLine();
+                a = temp.toFloat();
+    //            qDebug() << "a: " << temp;
+                temp = in.readLine();
+                b = temp.toFloat();
+    //            qDebug() << "b: " << temp;
+                temp = in.readLine();
+                c = temp.toFloat();
+    //            qDebug() << "c: " << temp;
+            }
+    // =================================================== HACK JOB =============================================================//
+        unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b;       // For 20.0mA
+        qDebug() << "What is temp here " << temp;
+        return temp;
+    }
 }
 
 void CommandOdin::setPulseDuration(int channel, int duration){
@@ -191,6 +196,17 @@ char CommandOdin::getFrequencyByte(){
 
 int CommandOdin::getFrequency(){
     return frequency;
+}
+
+void CommandOdin::setChannelEnabled(int channel, bool flag){
+    channelEnabled[channel] = flag;
+    numChannels = 0;
+    for(int i = 0; i < 4; i++){
+        if(channelEnabled[i]){
+            numChannels++;
+        }
+    }
+    qDebug() << "Number of Channels enabled: " << numChannels;
 }
 
 }
