@@ -13,7 +13,7 @@ OdinWindow::OdinWindow(){
 
     createLayout();
     createStatusBar();
-//    connectOdin();
+    connectOdin();
 }
 
 void OdinWindow::createLayout(){
