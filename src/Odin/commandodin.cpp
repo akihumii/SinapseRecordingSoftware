@@ -11,9 +11,11 @@ void CommandOdin::initialiseCommand(){
     sendStart();
     QThread::msleep(800);
     sendFrequency();
+    QThread::msleep(100);
     for(int i = 0; i < 4; i++){
         sendPulseDuration(i);
     }
+    QThread::msleep(100);
     for(int i = 0; i < 4; i++){
         sendAmplitude(i);
     }
@@ -118,7 +120,7 @@ void CommandOdin::sendPulseDuration(int channel){
 
 void CommandOdin::sendFrequency(){
     QByteArray temp;
-    temp.append((const char) 0x10);
+    temp.append((const char) FREQUENCY);
     temp.append((const char) getFrequencyByte());
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(temp);
