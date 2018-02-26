@@ -3,14 +3,14 @@
 namespace Odin {
 
 SocketOdin::SocketOdin(){
-    udpSocket = new QUdpSocket(this);
+//    udpSocket = new QUdpSocket(this);
 
-    udpSocket->bind(QHostAddress::Broadcast, 45454);
+//    udpSocket->bind(QHostAddress::Broadcast, 45454);
 
-    qDebug() << "Binded UDP Socket";
+//    qDebug() << "Binded UDP Socket";
 
     connect(&commandTimer, SIGNAL(timeout()), this, SLOT(sendCommand()));
-    connect(udpSocket, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
+//    connect(udpSocket, SIGNAL(disconnected()), this, SLOT(on_socketDisconnected()));
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(readCommand()));
 
     player = new QMediaPlayer;
@@ -25,7 +25,8 @@ void SocketOdin::writeCommand(QByteArray command){
         player->play();
     }
     outgoingCommand = command;
-    udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
+//    udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
+    socketAbstract->write(command);
     qDebug() << "Sent command of a size" << command.size() << "via udp socket: " << (quint8) command.at(0) << (quint8) command.at(1);
 }
 
