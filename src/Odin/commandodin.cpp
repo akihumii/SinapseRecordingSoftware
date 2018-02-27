@@ -9,15 +9,18 @@ CommandOdin::CommandOdin(SerialOdin *serialOdin_, SocketOdin *socketOdin_) {
 
 void CommandOdin::initialiseCommand(){
     sendStart();
-    QThread::msleep(800);
-    sendFrequency();
-    QThread::msleep(100);
+    QTimer::singleShot((800), [=] {
+        sendFrequency();
+    });
     for(int i = 0; i < 4; i++){
-        sendPulseDuration(i);
+        QTimer::singleShot((1000+i*200), [=] {
+                sendPulseDuration(i);
+        });
     }
-    QThread::msleep(100);
     for(int i = 0; i < 4; i++){
-        sendAmplitude(i);
+        QTimer::singleShot((1800+i*200), [=] {
+            sendAmplitude(i);
+        });
     }
     qDebug() << "Finished initialisation!";
 }

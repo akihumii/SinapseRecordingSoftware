@@ -48,6 +48,7 @@ void OdinWindow::createLayout(){
         amplitudeSpinBox[i]->setMaximum(20.0);
         amplitudeSpinBox[i]->setSingleStep(0.1);
         amplitudeSpinBox[i]->setValue(0.0);
+        amplitudeSpinBox[i]->setDisabled(true);
         stimParaLayout[2]->addWidget(amplitudeSpinBox[i]);
         connect(amplitudeSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_amplitude_Changed()));
     }
@@ -145,9 +146,24 @@ void OdinWindow::sendCommand(){
     if(start){
         commandOdin->initialiseCommand();
         sendButton->setText("Stop Odin!");
+        QTimer::singleShot((2100), [=] {
+            for(int i = 0; i < 4; i++){
+                amplitudeSpinBox[i]->setEnabled(true);
+            }
+        });
     }
     else{
-        commandOdin->sendStop();
+        for(int i = 0; i < 4; i++){
+            amplitudeSpinBox[i]->setValue(0.0);
+            commandOdin->setAmplitude(i, 0.0);
+            amplitudeSpinBox[i]->setDisabled(true);
+            QTimer::singleShot((i*200), [=] {
+                commandOdin->sendAmplitude(i);
+            });
+        }
+        QTimer::singleShot((1000), [=] {
+            commandOdin->sendStop();
+        });
         sendButton->setText("Start Odin!");
     }
 }
