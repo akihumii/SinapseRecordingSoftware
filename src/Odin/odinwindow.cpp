@@ -8,6 +8,10 @@ OdinWindow::OdinWindow(){
     serialOdin = new SerialOdin(this);
     socketOdin = new SocketOdin;
     commandOdin = new CommandOdin(serialOdin, socketOdin);
+    loopingThread = new LoopingThread();
+    QThread *thread = new QThread;
+    loopingThread->moveToThread(thread);
+    connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(sendCommand()));
     connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
 
@@ -77,6 +81,23 @@ void OdinWindow::createLayout(){
 
     stimParameters->setLayout(stimParaMainLayout);
 
+    delayParameters = new QGroupBox(tr("Delay Parameters"));
+    delayEnabledCheckBox = new QCheckBox;
+    delayEnabledCheckBox->setDisabled(true);
+    connect(delayEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_delayEnabled_toggled()));
+    QLabel *delayLabel = new QLabel(tr("Turn off after (milli-seconds) : "));
+    delaySpinBox = new QSpinBox;
+    delaySpinBox->setValue(0);
+    delaySpinBox->setMinimumWidth(220);
+    delaySpinBox->setMaximum(60000);
+
+    QHBoxLayout *delayLayout = new QHBoxLayout;
+    delayLayout->addWidget(delayEnabledCheckBox);
+    delayLayout->addWidget(delayLabel);
+    delayLayout->addWidget(delaySpinBox);
+
+    delayParameters->setLayout(delayLayout);
+
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     sendButton = new QPushButton(tr("Start Odin!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
@@ -92,6 +113,7 @@ void OdinWindow::createLayout(){
     QWidget *mainWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(stimParameters);
+    mainLayout->addWidget(delayParameters);
     mainLayout->addLayout(buttonLayout);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
@@ -146,6 +168,7 @@ void OdinWindow::sendCommand(){
     if(start){
         commandOdin->initialiseCommand();
         sendButton->setText("Stop Odin!");
+        delayEnabledCheckBox->setEnabled(true);
         QTimer::singleShot((2100), [=] {
             for(int i = 0; i < 4; i++){
                 amplitudeSpinBox[i]->setEnabled(true);
@@ -165,7 +188,17 @@ void OdinWindow::sendCommand(){
             commandOdin->sendStop();
         });
         sendButton->setText("Start Odin!");
+        delayEnabledCheckBox->setChecked(false);
+        delayEnabledCheckBox->setDisabled(true);
     }
+}
+
+void OdinWindow::on_delayEnabled_toggled(){
+    if(delayEnabledCheckBox->isChecked()){
+        loopingThread->delay = delaySpinBox->value();
+        loopingThread->start();
+    }
+
 }
 
 void OdinWindow::on_record_clicked(){

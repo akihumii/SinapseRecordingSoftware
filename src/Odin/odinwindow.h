@@ -30,6 +30,7 @@ private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
     CommandOdin *commandOdin;
+    LoopingThread *loopingThread;
 
     QStatusBar *statusBarMainWindow;
 
@@ -44,6 +45,10 @@ private:
     QDoubleSpinBox *amplitudeSpinBox[4];
     QSpinBox*pulseDurationSpinBox[4];
     QSpinBox *frequencySpinBox;
+
+    QGroupBox *delayParameters;
+    QCheckBox *delayEnabledCheckBox;
+    QSpinBox *delaySpinBox;
 
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
@@ -68,6 +73,7 @@ private slots:
     void on_pulseDuration_Changed();
     void on_frequency_Changed();
     void on_odinDisconnected();
+    void on_delayEnabled_toggled();
 
 signals:
     void commandSent();
