@@ -55,6 +55,7 @@ void MainWindow::createLayout(){
         channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        channelGraph[i]->setInteractions(QCP::iRangeDrag);
     }
 
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");

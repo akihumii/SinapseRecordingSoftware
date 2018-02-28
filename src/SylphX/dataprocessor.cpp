@@ -15,14 +15,14 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j-2].append(fullWord_rawData*(0.000000195));
+            ChannelData[j-2].append(fullWord_rawData*(0.000000195*64));
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
             if(this->isRecordEnabled()){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195));
+            ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195*64));
         }
 //        for(int j = NUM_CHANNELS; j < 10; j++){
 //            if(RecordEnabled){
