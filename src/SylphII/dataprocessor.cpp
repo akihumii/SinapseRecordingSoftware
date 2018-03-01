@@ -7,35 +7,38 @@ DataProcessor::DataProcessor(float samplingRate_){
 
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
 //    qDebug() << rawData.size();
-    for(int i = 0; i < rawData.size(); i = i + 5){
+    for(int i = 0; i < rawData.size(); i = i + 7){
         fullWord_rawData = ((quint8) rawData.at(i) << 8 | (quint8) rawData.at(i+1))-32768;
-        appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
+//        appendAudioBuffer(0, rawData.at(i+2), rawData.at(i+1));
         if(RecordEnabled){
             RecordData(fullWord_rawData);
         }
         ChannelData[0].append(fullWord_rawData*(0.000000195));
 
         fullWord_rawData = ((quint8) rawData.at(i+2) << 8 | (quint8) rawData.at(i+3))-32768;
-        appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
+//        appendAudioBuffer(1, rawData.at(i+4), rawData.at(i+3));
         if(RecordEnabled){
             RecordData(fullWord_rawData);
         }
+        for(int j = 0; j < 8; j++){
+            if(RecordEnabled){
+                RecordData(fullWord_rawData);
+            }
+        }
         ChannelData[1].append(fullWord_rawData*(0.000000195));
         if(RecordEnabled){
-//            if(ADC_Data.size()>0){
-//                RecordData(ADC_Data.at(0));
-//            }
-//            else{
-//                RecordData(0);
-//            }
             RecordData((quint8) rawData.at(i+4));
-            RecordData(END_OF_LINE);
         }
 //        if(ADC_Data.size()>0){
 //            ChannelData[2].append(ADC_Data.at(0)/ 256.0 * 2.5);
+        ChannelData[2].append((quint8) rawData.at(i+4));
 //            ADC_Data.remove(0, 1);
 //        }
-        ChannelData[3].append((quint8) rawData.at(i+4));
+        ChannelData[3].append((quint8) rawData.at(i+5) << 8 | (quint8) rawData.at(i+6));
+        if(RecordEnabled){
+            RecordData((quint8) rawData.at(i+5) << 8 | (quint8) rawData.at(i+6));
+            RecordData(END_OF_LINE);
+        }
         total_data_count++;
         X_axis.append(total_data_count*period);
     }
@@ -43,11 +46,11 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int currentIndex){
-    if(((quint8) data.at(currentIndex + 5) == (quint8) data.at(currentIndex) + 1
-        && (quint8) data.at(currentIndex + 10) == (quint8) data.at(currentIndex + 5) + 1
-        && (quint8) data.at(currentIndex + 15) == (quint8) data.at(currentIndex + 10) + 1
-        && (quint8) data.at(currentIndex + 20) == (quint8) data.at(currentIndex + 15) + 1
-        && (quint8) data.at(currentIndex + 25) == (quint8) data.at(currentIndex + 20) + 1)){
+    if(((quint8) data.at(currentIndex + 7) == (quint8) data.at(currentIndex) + 1
+        && (quint8) data.at(currentIndex + 14) == (quint8) data.at(currentIndex + 7) + 1
+        && (quint8) data.at(currentIndex + 21) == (quint8) data.at(currentIndex + 14) + 1
+        && (quint8) data.at(currentIndex + 28) == (quint8) data.at(currentIndex + 21) + 1
+        && (quint8) data.at(currentIndex + 35) == (quint8) data.at(currentIndex + 28) + 1)){
         return true;
     }
     else{

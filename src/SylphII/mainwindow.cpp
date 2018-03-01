@@ -53,10 +53,10 @@ void MainWindow::createLayout(){
     channelGraph[2]->graph()->setPen(QPen(Qt::black));
     channelGraph[3]->graph()->setPen(QPen(Qt::darkGreen));
 
-    channelGraph[2]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
-    channelGraph[2]->yAxis->setTickStep(0.5);
-    channelGraph[3]->yAxis->setRange(0, 250, Qt::AlignLeft);
-    channelGraph[3]->yAxis->setTickStep(50);
+    channelGraph[2]->yAxis->setRange(-5,260, Qt::AlignLeft);
+    channelGraph[2]->yAxis->setTickStep(50);
+    channelGraph[3]->yAxis->setRange(0, 65535, Qt::AlignLeft);
+    channelGraph[3]->yAxis->setTickStep(13000);
     channelGraph[3]->axisRect()->setMargins(QMargins(75,10,0,15));
 
     QWidget *mainWidget = new QWidget;

@@ -34,7 +34,7 @@ private:
     bool connected = false;
     bool implantConnected = false;
     bool ADCConnected = false;
-    int portOrder =2;
+    int portOrder =1;
     qint64 packetSize = 7;
     qint64 maxSize = packetSize*200;
 };
