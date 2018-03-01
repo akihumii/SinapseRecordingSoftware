@@ -195,7 +195,12 @@ void CommandOdin::setFrequency(int value){
 }
 
 char CommandOdin::getFrequencyByte(){
-    char temp = (char) ((((1000000/(quint8)frequency) - amplitude[0] - amplitude[1] - amplitude[2] - amplitude[3]) - (710*numChannels)) / 267);
+    char temp = (char) ((((1000000/(quint8)frequency) -
+                            (2 * (int) channelEnabled[0] * pulseDuration[0] + 22) -
+                            (2 * (int) channelEnabled[1] * pulseDuration[1] + 22) -
+                            (2 * (int) channelEnabled[2] * pulseDuration[2] + 22) -
+                            (2 * (int) channelEnabled[3] * pulseDuration[3] + 22)) -
+                            (700 * numChannels)) / 267);
     return temp;
 }
 

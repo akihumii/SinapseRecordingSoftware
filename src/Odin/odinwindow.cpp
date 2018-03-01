@@ -17,7 +17,7 @@ OdinWindow::OdinWindow(){
 
     createLayout();
     createStatusBar();
-//    connectOdin();
+    connectOdin();
 }
 
 void OdinWindow::createLayout(){
@@ -86,7 +86,7 @@ void OdinWindow::createLayout(){
 //    delayEnabledCheckBox->setDisabled(true);
     connect(delayEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_delayEnabled_toggled()));
 //    connect(delayEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(sendCommand()));
-    QLabel *delayLabel = new QLabel(tr("Turn off after (milli-seconds) : "));
+    QLabel *delayLabel = new QLabel(tr("Turn off after (seconds) : "));
     delaySpinBox = new QSpinBox;
     delaySpinBox->setValue(0);
     delaySpinBox->setMinimumWidth(220);
@@ -170,7 +170,7 @@ void OdinWindow::sendCommand(){
         commandOdin->initialiseCommand();
         sendButton->setText("Stop Odin!");
         if(delayEnabledCheckBox->isChecked() && start){
-            loopingThread->delay = delaySpinBox->value() + 2100;
+            loopingThread->delay = delaySpinBox->value()*1000 + 1800;
             loopingThread->start();
         }
 //        delayEnabledCheckBox->setEnabled(true);
@@ -200,7 +200,7 @@ void OdinWindow::sendCommand(){
 
 void OdinWindow::on_delayEnabled_toggled(){
     if(delayEnabledCheckBox->isChecked() && start){
-        loopingThread->delay = delaySpinBox->value();
+        loopingThread->delay = delaySpinBox->value()*1000;
         loopingThread->start();
     }
 }
@@ -222,12 +222,15 @@ void OdinWindow::on_thresholdEnable_toggled(){
 void OdinWindow::on_amplitude_Changed(){
     for(int i = 0; i < 4; i++){
         if(amplitudeSpinBox[i]->text().toDouble() !=  commandOdin->getAmplitude(i)){
-            commandOdin->setChannelEnabled(i, (amplitudeSpinBox[i]->text().toDouble() == 0.0));
+            commandOdin->setChannelEnabled(i, (amplitudeSpinBox[i]->text().toDouble() != 0.0));
             commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
             qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
             if(start){
                 on_delayEnabled_toggled();
                 commandOdin->sendAmplitude(i);
+                QTimer::singleShot(200, [=] {
+                        commandOdin->sendFrequency();
+                });
             }
         }
     }
@@ -240,6 +243,9 @@ void OdinWindow::on_pulseDuration_Changed(){
             qDebug() << "Set channel " << i << "pulse duration to : " << pulseDurationSpinBox[i]->text().toInt();
             if(start){
                 commandOdin->sendPulseDuration(i);
+                QTimer::singleShot(200, [=] {
+                        commandOdin->sendFrequency();
+                });
             }
         }
     }
