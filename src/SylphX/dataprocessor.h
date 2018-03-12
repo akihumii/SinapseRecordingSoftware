@@ -6,6 +6,7 @@
 #include "../common/signalaudio.h"
 #include "time.h"
 #include "../Odin/socketodin.h"
+#include "../Odin/odinwindow.h"
 
 #define NUM_CHANNELS 10
 #define NUM_BYTES_PER_CHANNEL 2
@@ -35,13 +36,19 @@ public:
     int findlastFrameMarkers(QByteArray rawData);
     void setSmartDataProcessor(bool flag);
     bool isSmart();
-    qint16 fullWord_rawData;
+    quint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
     int firstFrameMarker;
     quint8 currentFrameMarker;
     int currentFrameMarkerIndex;
     int lastFrameMarker;
     QByteArray leftOverData;
+    int getDebounce();
+
+public slots:
+    void setDebounce(int value);
+    void setUpperThreshold(double value);
+    void setLowerThreshold(double value);
 
 private:
     QFile *File;
@@ -58,6 +65,14 @@ private:
     float samplingRate;
     float period;
     int syncPulse = 0;
+
+    double upperThreshold = 2.0;
+    double lowerThreshold = 0.0;
+    int debounce = 200;
+    bool thresholdEnable = true;
+signals:
+    void upperThresholdCrossed();
+    void lowerThresholdCrossed();
 };
 
 }
