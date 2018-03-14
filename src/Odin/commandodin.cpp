@@ -87,7 +87,7 @@ void CommandOdin::sendAmplitude(int channel){
         serialOdin->writeCommand(temp);
     }
     socketOdin->writeCommand(temp);
-    socketOdin->writeCommand(temp);
+//    socketOdin->writeCommand(temp);
     qDebug() << "Sent Amplitude" << temp;
 }
 
@@ -116,7 +116,7 @@ void CommandOdin::sendPulseDuration(int channel){
         serialOdin->writeCommand(temp);
     }
     socketOdin->writeCommand(temp);
-    socketOdin->writeCommand(temp);
+//    socketOdin->writeCommand(temp);
     qDebug() << "Sent Pulse Duration";
     for(int i = 0; i < temp.size(); i++){
         qDebug() << (quint8) temp.at(i);
@@ -131,7 +131,7 @@ void CommandOdin::sendFrequency(){
         serialOdin->writeCommand(temp);
     }
     socketOdin->writeCommand(temp);
-    socketOdin->writeCommand(temp);
+//    socketOdin->writeCommand(temp);
     qDebug() << "Sent Frequency";
     for(int i = 0; i < temp.size(); i++){
         qDebug() << (quint8) temp.at(i);
