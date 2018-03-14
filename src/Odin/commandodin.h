@@ -41,6 +41,7 @@ public:
     void sendPulseDuration(int channel);
     void sendFrequency();
     void initialiseCommand();
+    int getNumChannelEnabled();
     QByteArray getlastSentCommand();
 private:
     SerialOdin *serialOdin;
@@ -52,9 +53,9 @@ private:
     int frequency = 50;
     int numChannels = 0;
 
-    float a = -0.0045;
-    float b = 13.243;
-    float c = 8.5461;
+    float a = 0.0048;
+    float b = 12.803;
+    float c = 6.9185;
 
     QByteArray outgoingCommand;
 };

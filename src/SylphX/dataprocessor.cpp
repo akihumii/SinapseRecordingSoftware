@@ -19,7 +19,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)));
-            if(this->isRecordEnabled()){
+            if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
             ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(2.0/1024.0));

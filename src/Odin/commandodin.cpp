@@ -87,6 +87,7 @@ void CommandOdin::sendAmplitude(int channel){
         serialOdin->writeCommand(temp);
     }
     socketOdin->writeCommand(temp);
+    socketOdin->writeCommand(temp);
     qDebug() << "Sent Amplitude" << temp;
 }
 
@@ -115,6 +116,7 @@ void CommandOdin::sendPulseDuration(int channel){
         serialOdin->writeCommand(temp);
     }
     socketOdin->writeCommand(temp);
+    socketOdin->writeCommand(temp);
     qDebug() << "Sent Pulse Duration";
     for(int i = 0; i < temp.size(); i++){
         qDebug() << (quint8) temp.at(i);
@@ -128,6 +130,7 @@ void CommandOdin::sendFrequency(){
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(temp);
     }
+    socketOdin->writeCommand(temp);
     socketOdin->writeCommand(temp);
     qDebug() << "Sent Frequency";
     for(int i = 0; i < temp.size(); i++){
@@ -172,7 +175,7 @@ unsigned char CommandOdin::getAmplitudeByte(int index){
     //            qDebug() << "c: " << temp;
             }
     // =================================================== HACK JOB =============================================================//
-        unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b;       // For 20.0mA
+        unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;       // For 20.0mA
         qDebug() << "What is temp here " << temp;
         return temp;
     }
@@ -217,6 +220,10 @@ void CommandOdin::setChannelEnabled(int channel, bool flag){
         }
     }
     qDebug() << "Number of Channels enabled: " << numChannels;
+}
+
+int CommandOdin::getNumChannelEnabled(){
+    return numChannels;
 }
 
 }

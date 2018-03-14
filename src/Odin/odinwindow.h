@@ -69,6 +69,7 @@ private:
     bool record = false;
 
     int commandCount = 0;
+    int numChannelsEnabled = 0;
 
     bool connectOdin();
     void createLayout();
