@@ -49,6 +49,7 @@ public slots:
     void setDebounce(int value);
     void setUpperThreshold(double value);
     void setLowerThreshold(double value);
+    void setLastSentBytes(char *bytes);
 
 private:
     QFile *File;
@@ -70,6 +71,8 @@ private:
     double lowerThreshold = 0.0;
     int debounce = 200;
     bool thresholdEnable = true;
+
+    char lastSentByte[2] = {0, 0};
 signals:
     void upperThresholdCrossed();
     void lowerThresholdCrossed();

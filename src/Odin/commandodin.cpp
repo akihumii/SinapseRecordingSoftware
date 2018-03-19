@@ -33,6 +33,7 @@ void CommandOdin::sendCommand(){
 //    else if(socketOdin->isConnected()){
 //        qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
+//        emit commandSent(outgoingCommand.data());
 //    }
 }
 
@@ -46,6 +47,7 @@ void CommandOdin::sendStart(){
 //    else if(socketOdin->isConnected()){
         qDebug() << "Sending start via socket";
         socketOdin->writeCommand(outgoingCommand);
+//        emit commandSent(outgoingCommand.data());
 //    }
 }
 
@@ -59,82 +61,86 @@ void CommandOdin::sendStop(){
 //    else if(socketOdin->isConnected()){
         qDebug() << "Sending via socket";
         socketOdin->writeCommand(outgoingCommand);
+//        emit commandSent(outgoingCommand.data());
 //    }
 }
 
 void CommandOdin::sendAmplitude(int channel){
-    QByteArray temp;
+    outgoingCommand.clear();
     switch (channel){
         case 0:{
-            temp.append((const char) AMPLITUDE_CHN1);
+            outgoingCommand.append((const char) AMPLITUDE_CHN1);
             break;
         }
         case 1:{
-            temp.append((const char) AMPLITUDE_CHN2);
+            outgoingCommand.append((const char) AMPLITUDE_CHN2);
             break;
         }
         case 2:{
-            temp.append((const char) AMPLITUDE_CHN3);
+            outgoingCommand.append((const char) AMPLITUDE_CHN3);
             break;
         }
         case 3:{
-            temp.append((const char) AMPLITUDE_CHN4);
+            outgoingCommand.append((const char) AMPLITUDE_CHN4);
             break;
         }
     }
-    temp.append((const char) getAmplitudeByte(channel));
+    outgoingCommand.append((const char) getAmplitudeByte(channel));
     if(serialOdin->isOdinSerialConnected()){
-        serialOdin->writeCommand(temp);
+        serialOdin->writeCommand(outgoingCommand);
     }
-    socketOdin->writeCommand(temp);
-//    socketOdin->writeCommand(temp);
-    qDebug() << "Sent Amplitude" << temp;
+    socketOdin->writeCommand(outgoingCommand);
+//    emit commandSent(outgoingCommand.data());
+//    socketOdin->writeCommand(outgoingCommand);
+    qDebug() << "Sent Amplitude" << outgoingCommand;
 }
 
 void CommandOdin::sendPulseDuration(int channel){
-    QByteArray temp;
+    outgoingCommand.clear();
     switch (channel){
         case 0:{
-            temp.append((const char) PULSEDURATION_CHN1);
+            outgoingCommand.append((const char) PULSEDURATION_CHN1);
             break;
         }
         case 1:{
-            temp.append((const char) PULSEDURATION_CHN2);
+            outgoingCommand.append((const char) PULSEDURATION_CHN2);
             break;
         }
         case 2:{
-            temp.append((const char) PULSEDURATION_CHN3);
+            outgoingCommand.append((const char) PULSEDURATION_CHN3);
             break;
         }
         case 3:{
-            temp.append((const char) PULSEDURATION_CHN4);
+            outgoingCommand.append((const char) PULSEDURATION_CHN4);
             break;
         }
     }
-    temp.append((const char) getPulseDurationByte(channel));
+    outgoingCommand.append((const char) getPulseDurationByte(channel));
     if(serialOdin->isOdinSerialConnected()){
-        serialOdin->writeCommand(temp);
+        serialOdin->writeCommand(outgoingCommand);
     }
-    socketOdin->writeCommand(temp);
-//    socketOdin->writeCommand(temp);
+    socketOdin->writeCommand(outgoingCommand);
+//    socketOdin->writeCommand(outgoingCommand);
+//    emit commandSent(outgoingCommand.data());
     qDebug() << "Sent Pulse Duration";
-    for(int i = 0; i < temp.size(); i++){
-        qDebug() << (quint8) temp.at(i);
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        qDebug() << (quint8) outgoingCommand.at(i);
     }
 }
 
 void CommandOdin::sendFrequency(){
-    QByteArray temp;
-    temp.append((const char) FREQUENCY);
-    temp.append((const char) getFrequencyByte());
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) FREQUENCY);
+    outgoingCommand.append((const char) getFrequencyByte());
     if(serialOdin->isOdinSerialConnected()){
-        serialOdin->writeCommand(temp);
+        serialOdin->writeCommand(outgoingCommand);
     }
-    socketOdin->writeCommand(temp);
-//    socketOdin->writeCommand(temp);
+    socketOdin->writeCommand(outgoingCommand);
+//    socketOdin->writeCommand(outgoingCommand);
+//    emit commandSent(outgoingCommand.data());
     qDebug() << "Sent Frequency";
-    for(int i = 0; i < temp.size(); i++){
-        qDebug() << (quint8) temp.at(i);
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        qDebug() << (quint8) outgoingCommand.at(i);
     }
 }
 

@@ -57,9 +57,16 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         ChannelData[11].append((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
+            RecordData((quint8) lastSentByte[0]);
+            RecordData((quint8) lastSentByte[1]);
             RecordData(END_OF_LINE);
         }
     }
+}
+
+void DataProcessor::setLastSentBytes(char *bytes){
+    lastSentByte[0] = bytes[0];
+    lastSentByte[1] = bytes[1];
 }
 
 void DataProcessor::setDebounce(int value){

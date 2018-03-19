@@ -91,7 +91,7 @@ private slots:
     void on_lowerThreshold_crossed();
 
 signals:
-    void commandSent();
+    void commandSent(char *bytes);
     void upperThresholdEditted(double value);
     void lowerThresholdEditted(double value);
     void debounceEditted(int value);

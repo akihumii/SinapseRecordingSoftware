@@ -58,6 +58,8 @@ private:
     float c = 6.9185;
 
     QByteArray outgoingCommand;
+signals:
+//    void commandSent(char *command);
 };
 
 }
