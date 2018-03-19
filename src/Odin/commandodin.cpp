@@ -203,7 +203,7 @@ char CommandOdin::getFrequencyByte(){
                             (2 * (int) channelEnabled[1] * pulseDuration[1] + 22) -
                             (2 * (int) channelEnabled[2] * pulseDuration[2] + 22) -
                             (2 * (int) channelEnabled[3] * pulseDuration[3] + 22)) -
-                            (700 * numChannels)) / 267);
+                            (700 * numChannels)) / 161);
     return temp;
 }
 

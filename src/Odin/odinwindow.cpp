@@ -333,7 +333,7 @@ void OdinWindow::on_lowerThreshold_crossed(){
     for(int i = 0; i < 4; i++){
         if(thresholdEnable[i]->isChecked() && start){
             QTimer::singleShot(i*200, [=] {
-                if((amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble()) <= 19.0){
+                if((amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble()) <= 20.0){
                     qDebug() << "Increasing amplitude for channel " << i << "to the value of : " << amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble() << " from " << amplitudeSpinBox[i]->text().toDouble();
                     amplitudeSpinBox[i]->setValue(amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble());
                     on_amplitude_Changed();
