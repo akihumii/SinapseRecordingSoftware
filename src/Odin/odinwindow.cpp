@@ -45,7 +45,7 @@ void OdinWindow::createLayout(){
 
         amplitudeSpinBox[i] = new QDoubleSpinBox;
         amplitudeSpinBox[i]->setMinimum(0.0);
-        amplitudeSpinBox[i]->setMaximum(20.0);
+        amplitudeSpinBox[i]->setMaximum(19.0);
         amplitudeSpinBox[i]->setSingleStep(0.1);
         amplitudeSpinBox[i]->setValue(0.0);
         stimParaLayout[2]->addWidget(amplitudeSpinBox[i]);
@@ -341,7 +341,7 @@ void OdinWindow::on_lowerThreshold_crossed(){
     for(int i = 0; i < 4; i++){
         if(thresholdEnable[i]->isChecked() && start){
             QTimer::singleShot(i*200, [=] {
-                if((amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble()) <= 20.0){
+                if((amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble()) <= 19.0){
                     qDebug() << "Increasing amplitude for channel " << i << "to the value of : " << amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble() << " from " << amplitudeSpinBox[i]->text().toDouble();
                     amplitudeSpinBox[i]->setValue(amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble());
                     on_amplitude_Changed();
