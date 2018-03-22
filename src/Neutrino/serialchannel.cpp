@@ -48,14 +48,14 @@ bool SerialChannel::doConnect(){
                 serialData->setBaudRate(3000000);
 
                 serialCommand->setPortName(portInfo.at(i).portName());
-                serialCommand->setBaudRate(19200);
+                serialCommand->setBaudRate(38400);
             }
             else{
                 serialData->setPortName(portInfo.at(i).portName());
                 serialData->setBaudRate(3000000);
 
                 serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(19200);
+                serialCommand->setBaudRate(38400);
             }
             serialData->setDataBits(QSerialPort::Data8);
             serialData->setParity(QSerialPort::EvenParity);
@@ -146,7 +146,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i).portName());
-            serialCommand->setBaudRate(19200);
+            serialCommand->setBaudRate(38400);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
@@ -164,7 +164,7 @@ void SerialChannel::swapPort(){
             serialData->setReadBufferSize(512);
 
             serialCommand->setPortName(portInfo.at(i+1).portName());
-            serialCommand->setBaudRate(19200);
+            serialCommand->setBaudRate(38400);
             serialCommand->setDataBits(QSerialPort::Data8);
             serialCommand->setParity(QSerialPort::EvenParity);
             serialCommand->setStopBits(QSerialPort::OneStop);
