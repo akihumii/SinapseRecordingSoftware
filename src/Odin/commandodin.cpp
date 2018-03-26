@@ -40,6 +40,7 @@ void CommandOdin::sendCommand(){
 void CommandOdin::sendStart(){
     outgoingCommand.clear();
     outgoingCommand.append((const char) 0xF8);
+    outgoingCommand.append((const char) 0xF8);
     if(serialOdin->isOdinSerialConnected()){
 //        qDebug() << "Sending via serial";
         serialOdin->writeCommand(outgoingCommand);
@@ -53,6 +54,7 @@ void CommandOdin::sendStart(){
 
 void CommandOdin::sendStop(){
     outgoingCommand.clear();
+    outgoingCommand.append((const char) 0x8F);
     outgoingCommand.append((const char) 0x8F);
     if(serialOdin->isOdinSerialConnected()){
 //        qDebug() << "Sending via serial";
