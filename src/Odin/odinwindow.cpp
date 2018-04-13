@@ -209,9 +209,28 @@ bool OdinWindow::connectOdin(){
 void OdinWindow::sendCommand(){
     start = !start;
     if(start){
-        commandOdin->initialiseCommand();
+        commandOdin->sendStart();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
+        QTimer::singleShot((800), [=] {
+            commandOdin->sendFrequency();
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+        for(int i = 0; i < 4; i++){
+            QTimer::singleShot((1000+i*200), [=] {
+                    commandOdin->sendPulseDuration(i);
+                    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                    emit commandSent(lastSentCommand);
+            });
+        }
+        for(int i = 0; i < 4; i++){
+            QTimer::singleShot((1800+i*200), [=] {
+                commandOdin->sendAmplitude(i);
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
+            });
+        }
         sendButton->setText("Stop Odin!");
         if(delayEnabledCheckBox->isChecked() && start){
             loopingThread->delay = delaySpinBox->value()*1000 + 1800;
