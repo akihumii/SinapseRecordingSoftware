@@ -343,7 +343,7 @@ void MainWindow::createStatusBar(){
 void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
-    if(portInfo.size()>1){
+    if(portInfo.size()>0){
         serialChannel->connectSylph();
         connectionStatus.clear();
         if(serialChannel->isImplantConnected()){
@@ -360,25 +360,25 @@ void MainWindow::connectSylph(){
         }
         statusBarLabel->setText(connectionStatus);
     }
-    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-//        socketSylph->doConnect("10.10.10.2", 8888);
-        int i = 1;
-        do{
-            i++;
-            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
-            qDebug() << i;
-        } while(!socketSylph->isConnected() && i < 6);
-        if(socketSylph->isConnected()){
-            connectionStatus.clear();
-            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
-        }
-        else{
-            connectionStatus.append("Failed to connect...");
-            QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
-                                                                 "Check your connections and run the program again..");
-        }
-        statusBarLabel->setText(connectionStatus);
-    }
+//    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+////        socketSylph->doConnect("10.10.10.2", 8888);
+//        int i = 1;
+//        do{
+//            i++;
+//            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
+//            qDebug() << i;
+//        } while(!socketSylph->isConnected() && i < 6);
+//        if(socketSylph->isConnected()){
+//            connectionStatus.clear();
+//            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
+//        }
+//        else{
+//            connectionStatus.append("Failed to connect...");
+//            QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
+//                                                                 "Check your connections and run the program again..");
+//        }
+//        statusBarLabel->setText(connectionStatus);
+//    }
 }
 
 MainWindow::~MainWindow(){

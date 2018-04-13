@@ -70,6 +70,7 @@ private:
 
     int commandCount = 0;
     int numChannelsEnabled = 0;
+    char *lastSentCommand = new char[2];
 
     bool connectOdin();
     void createLayout();
