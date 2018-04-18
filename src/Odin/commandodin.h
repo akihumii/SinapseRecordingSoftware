@@ -59,7 +59,7 @@ private:
 
     QByteArray outgoingCommand;
 signals:
-    void commandSent(char *command);
+//    void commandSent(char *command);
 };
 
 }
