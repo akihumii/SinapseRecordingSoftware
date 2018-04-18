@@ -27,7 +27,7 @@ public:
 
     void parseFrameMarkers(QByteArray rawData);
     void parseFrameMarkersWithChecks(QByteArray rawData);
-    bool checkNextFrameMarker(QByteArray data);
+    bool checkNextFrameMarker(QByteArray data, int mark);
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
     bool isADCRecordEnabled();

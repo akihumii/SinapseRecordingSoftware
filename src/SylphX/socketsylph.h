@@ -14,6 +14,7 @@ public:
     bool wifiEnabled = true;
     void discardData();
     void closeESP();
+    double getRate();
 
 public slots:
     void appendSync();
@@ -21,9 +22,12 @@ public slots:
 private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
+    QElapsedTimer *timer;
 
     qint64 packetSize = 25;
     qint64 maxSize = packetSize*200;
+    quint64 timeElapsed = 0;
+    double rate = 0.0;
 
     bool checked = false;
     int initCount = 0;

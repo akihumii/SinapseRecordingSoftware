@@ -307,17 +307,17 @@ void MainWindow::createMenus(){
 //    audio[0]->setChecked(true);
 
     processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
-//    processorMenu->addAction(isSmart);
-//    isSmart->setCheckable(true);
-//    processorMenu->addAction(isDumb);
-//    isDumb->setCheckable(true);
+    processorMenu->addAction(isSmart);
+    isSmart->setCheckable(true);
+    processorMenu->addAction(isDumb);
+    isDumb->setCheckable(true);
 
-//    smartOrDumbGroup = new QActionGroup(this);
-//    smartOrDumbGroup->addAction(isSmart);
-//    smartOrDumbGroup->addAction(isDumb);
-//    isDumb->setChecked(true);
+    smartOrDumbGroup = new QActionGroup(this);
+    smartOrDumbGroup->addAction(isSmart);
+    smartOrDumbGroup->addAction(isDumb);
+    isDumb->setChecked(true);
 
-//    processorMenu->addSeparator();
+    processorMenu->addSeparator();
     processorMenu->addAction(restartAction);
 
     helpMenu = menuBar()->addMenu(tr("Help"));
@@ -385,6 +385,9 @@ void MainWindow::updateData(){
         restartCount++;
     }
     QVector<double> X_axis = data->retrieveXAxis();
+    connectionStatus.clear();
+    connectionStatus.append("Data Rate: " + QString::number(socketSylph->getRate()) + " bytes/Sec");
+    statusBarLabel->setText(connectionStatus);
     if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<12; i++){
             if(!data->isEmpty(i)){

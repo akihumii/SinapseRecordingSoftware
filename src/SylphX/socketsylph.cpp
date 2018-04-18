@@ -4,6 +4,7 @@ namespace SylphX {
 
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
+    timer = new QElapsedTimer;
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
 }
 
@@ -20,15 +21,27 @@ void SocketSylph::ReadCommand(){
         initCount++;
     }
     else if(socketAbstract->bytesAvailable() >= maxSize && checked){
+        if(dataProcessor->isSmart()){
+            dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
+        }
+        else{
+//        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(93))){
             dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
+        }
     }
     else if(socketAbstract->bytesAvailable() >= packetSize+1 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(packetSize+1))){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(packetSize+1), 0)){
             checked = true;
             qDebug() << "checked is true";
         }
     }
+    rate = (0.01 * (double) socketAbstract->bytesAvailable()*1000.0/ (double) timer->elapsed()) + (0.99 * rate);
+    timer->start();
+}
+
+double SocketSylph::getRate(){
+    return rate;
 }
 
 void SocketSylph::appendSync(){
