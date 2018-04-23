@@ -26,6 +26,7 @@ public:
     QLabel *statusBarLabel;
 public slots:
 
+
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
@@ -50,6 +51,13 @@ private:
     QCheckBox *delayEnabledCheckBox;
     QSpinBox *delaySpinBox;
 
+    QGroupBox *thresholdParameters;
+    QLabel *thresholdLabels[4];
+    QSpinBox *stepSizeSpinBox;
+    QDoubleSpinBox *lowerThresholdSpinBox;
+    QDoubleSpinBox *upperThresholdSpinBox;
+    QSpinBox *debounceSpinBox;
+
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
     QMenu *fileMenu;
@@ -61,6 +69,8 @@ private:
     bool record = false;
 
     int commandCount = 0;
+    int numChannelsEnabled = 0;
+    char *lastSentCommand = new char[2];
 
     bool connectOdin();
     void createLayout();
@@ -74,9 +84,18 @@ private slots:
     void on_frequency_Changed();
     void on_odinDisconnected();
     void on_delayEnabled_toggled();
+    void on_debounce_editted();
+    void on_upperThreshold_editted();
+    void on_lowerThreshold_editted();
+    void on_stepSize_editted();
+    void on_upperThreshold_crossed();
+    void on_lowerThreshold_crossed();
 
 signals:
-    void commandSent();
+    void commandSent(char *bytes);
+    void upperThresholdEditted(double value);
+    void lowerThresholdEditted(double value);
+    void debounceEditted(int value);
 };
 
 }

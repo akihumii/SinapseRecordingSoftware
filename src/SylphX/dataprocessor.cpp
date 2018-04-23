@@ -11,18 +11,36 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
 void DataProcessor::parseFrameMarkers(QByteArray rawData){
     for(int i = 0; i < rawData.size(); i = i + packetSize){
         for(int j = 2; j < NUM_CHANNELS; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j-2].append(fullWord_rawData*(0.000000195));
+            ChannelData[j-2].append(fullWord_rawData*(2.0/1024.0));
         }
         for(int j = 0; j < 2; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
-            if(this->isRecordEnabled()){
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)));
+            if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(0.000000195));
+            ChannelData[j+(NUM_CHANNELS-2)].append(fullWord_rawData*(2.0/1024.0));
+        }
+        if(thresholdEnable){
+            if(fullWord_rawData*(2.0/1024.0) > upperThreshold){
+                thresholdEnable = false;
+                emit upperThresholdCrossed();
+                QTimer::singleShot(debounce, [=] {
+                        thresholdEnable = true;
+                });
+                qDebug() << "Upper Threshold crossed";
+            }
+            if(fullWord_rawData*(2.0/1024.0) < lowerThreshold){
+                thresholdEnable = false;
+                emit lowerThresholdCrossed();
+                QTimer::singleShot(debounce, [=] {
+                        thresholdEnable = true;
+                });
+                qDebug() << "Lower Threshold crossed";
+            }
         }
 //        for(int j = NUM_CHANNELS; j < 10; j++){
 //            if(RecordEnabled){
@@ -39,9 +57,35 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         ChannelData[11].append((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
+            RecordData((quint8) lastSentByte[0]);
+            RecordData((quint8) lastSentByte[1]);
             RecordData(END_OF_LINE);
         }
     }
+}
+
+void DataProcessor::setLastSentBytes(char *bytes){
+    lastSentByte[0] = bytes[0];
+    lastSentByte[1] = bytes[1];
+}
+
+void DataProcessor::setDebounce(int value){
+    qDebug() << "Setting debounce value : " << value;
+    debounce = value;
+}
+
+void DataProcessor::setUpperThreshold(double value){
+    qDebug() << "Setting upper threshold : " << value;
+    upperThreshold = value;
+}
+
+void DataProcessor::setLowerThreshold(double value){
+    qDebug() << "Setting lower threshold : " << value;
+    lowerThreshold = value;
+}
+
+int DataProcessor::getDebounce(){
+    return debounce;
 }
 
 void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){

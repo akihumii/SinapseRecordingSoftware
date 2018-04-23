@@ -15,6 +15,15 @@ MainWindow::MainWindow(){
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+
+    connect(x, SIGNAL(debounceEditted(int)), data, SLOT(setDebounce(int)));
+    connect(x, SIGNAL(upperThresholdEditted(double)), data, SLOT(setUpperThreshold(double)));
+    connect(x, SIGNAL(lowerThresholdEditted(double)), data, SLOT(setLowerThreshold(double)));
+    connect(x, SIGNAL(commandSent(char*)), data, SLOT(setLastSentBytes(char*)));
+
+    connect(data, SIGNAL(upperThresholdCrossed()), x, SLOT(on_upperThreshold_crossed()));
+    connect(data, SIGNAL(lowerThresholdCrossed()), x, SLOT(on_lowerThreshold_crossed()));
+
     dataTimer.start(1);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
@@ -31,12 +40,12 @@ void MainWindow::createLayout(){
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(85,10,0,15));
-        channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setRange(-0.00050, 2.0005, Qt::AlignLeft);
         channelGraph[i]->addGraph();
         channelGraph[i]->yAxis->setAutoTickStep(false);
         channelGraph[i]->xAxis->setAutoTickStep(false);
         channelGraph[i]->xAxis->setTickStep(0.01);
-        channelGraph[i]->yAxis->setTickStep(0.0001);
+        channelGraph[i]->yAxis->setTickStep(0.5);
     }
 
     connect(channelGraph[0], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph1_clicked()));
@@ -334,7 +343,7 @@ void MainWindow::createStatusBar(){
 void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
     connectionStatus.clear();
-    if(portInfo.size()>1){
+    if(portInfo.size()>0){
         serialChannel->connectSylph();
         connectionStatus.clear();
         if(serialChannel->isImplantConnected()){
@@ -351,25 +360,25 @@ void MainWindow::connectSylph(){
         }
         statusBarLabel->setText(connectionStatus);
     }
-    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-//        socketSylph->doConnect("10.10.10.2", 8888);
-        int i = 1;
-        do{
-            i++;
-            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
-            qDebug() << i;
-        } while(!socketSylph->isConnected() && i < 6);
-        if(socketSylph->isConnected()){
-            connectionStatus.clear();
-            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
-        }
-        else{
-            connectionStatus.append("Failed to connect...");
-            QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
-                                                                 "Check your connections and run the program again..");
-        }
-        statusBarLabel->setText(connectionStatus);
-    }
+//    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+////        socketSylph->doConnect("10.10.10.2", 8888);
+//        int i = 1;
+//        do{
+//            i++;
+//            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
+//            qDebug() << i;
+//        } while(!socketSylph->isConnected() && i < 6);
+//        if(socketSylph->isConnected()){
+//            connectionStatus.clear();
+//            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
+//        }
+//        else{
+//            connectionStatus.append("Failed to connect...");
+//            QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
+//                                                                 "Check your connections and run the program again..");
+//        }
+//        statusBarLabel->setText(connectionStatus);
+//    }
 }
 
 MainWindow::~MainWindow(){
@@ -446,35 +455,43 @@ void MainWindow::setTimeFrameTickStep(TimeFrames timeframe, double step){
 }
 
 void MainWindow::on_voltage50u_triggered(){
-    setVoltageTickStep(0.000050, 0.0001, 0.00001);
+//    setVoltageTickStep(0.000050, 0.0001, 0.00001);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage100u_triggered(){
-    setVoltageTickStep(0.0001, 0.0002, 0.00002);
+//    setVoltageTickStep(0.0001, 0.0002, 0.00002);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage200u_triggered(){
-    setVoltageTickStep(0.0002, 0.0004, 0.00004);
+//    setVoltageTickStep(0.0002, 0.0004, 0.00004);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage500u_triggered(){
-    setVoltageTickStep(0.00050, 0.001, 0.0001);
+//    setVoltageTickStep(0.00050, 0.001, 0.0001);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage1000u_triggered(){
-    setVoltageTickStep(0.001, 0.002, 0.0002);
+//    setVoltageTickStep(0.001, 0.002, 0.0002);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage2000u_triggered(){
-    setVoltageTickStep(0.002, 0.004, 0.0004);
+//    setVoltageTickStep(0.002, 0.004, 0.0004);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage5000u_triggered(){
-    setVoltageTickStep(0.005, 0.01, 0.001);
+//    setVoltageTickStep(0.005, 0.01, 0.001);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::on_voltage10000u_triggered(){
-    setVoltageTickStep(0.01, 0.02, 0.002);
+//    setVoltageTickStep(0.01, 0.02, 0.002);
+    setVoltageTickStep(0.00050, 2.0, 0.5);
 }
 
 void MainWindow::setVoltageTickStep(double position, double size, double step){
