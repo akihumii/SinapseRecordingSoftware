@@ -8,6 +8,8 @@ OdinWindow::OdinWindow(){
     serialOdin = new SerialOdin(this);
     socketOdin = new SocketOdin;
     commandOdin = new CommandOdin(serialOdin, socketOdin);
+    tcpServer = new QTcpServer(this);
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
     loopingThread = new LoopingThread();
     QThread *thread = new QThread;
     loopingThread->moveToThread(thread);
@@ -18,6 +20,18 @@ OdinWindow::OdinWindow(){
     createLayout();
     createStatusBar();
     connectOdin();
+
+    qDebug() << tcpServer->serverPort() << tcpServer->serverAddress().toString();
+    while (!tcpServer->isListening() && !tcpServer->listen(QHostAddress::LocalHost, 13567)) {
+            QMessageBox::StandardButton ret = QMessageBox::critical(this,
+                                            tr("Loopback"),
+                                            tr("Unable to start the test: %1.")
+                                            .arg(tcpServer->errorString()),
+                                            QMessageBox::Retry
+                                            | QMessageBox::Cancel);
+            if (ret == QMessageBox::Cancel)
+                return;
+    }
 }
 
 void OdinWindow::createLayout(){
@@ -393,6 +407,21 @@ void OdinWindow::on_odinDisconnected(){
 OdinWindow::~OdinWindow(){
     socketOdin->sendDisconnectSignal();
     socketOdin->doDisconnect();
+}
+
+void OdinWindow::acceptConnection(){
+    qDebug() << "Accepted new connection";
+    tcpServerConnection = tcpServer->nextPendingConnection();
+    connect(tcpServerConnection, SIGNAL(readyRead()), this, SLOT(increaseCurrent()));
+}
+
+void OdinWindow::increaseCurrent(){
+    QByteArray temp;
+    temp = tcpServerConnection->readAll();
+    delayEnabledCheckBox->setChecked(true);
+    amplitudeSpinBox[0]->setValue(temp.toDouble());
+    on_amplitude_Changed();
+    tcpServerConnection->close();
 }
 
 }

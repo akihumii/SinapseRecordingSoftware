@@ -32,6 +32,8 @@ private:
     SocketOdin *socketOdin;
     CommandOdin *commandOdin;
     LoopingThread *loopingThread;
+    QTcpServer *tcpServer;
+    QTcpSocket *tcpServerConnection;
 
     QStatusBar *statusBarMainWindow;
 
@@ -90,6 +92,8 @@ private slots:
     void on_stepSize_editted();
     void on_upperThreshold_crossed();
     void on_lowerThreshold_crossed();
+    void acceptConnection();
+    void increaseCurrent();
 
 signals:
     void commandSent(char *bytes);
