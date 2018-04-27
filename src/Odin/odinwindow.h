@@ -92,6 +92,7 @@ private slots:
     void on_stepSize_editted();
     void on_upperThreshold_crossed();
     void on_lowerThreshold_crossed();
+    void pauseOdin();
     void acceptConnection();
     void increaseCurrent();
 

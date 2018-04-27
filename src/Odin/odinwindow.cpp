@@ -13,7 +13,7 @@ OdinWindow::OdinWindow(){
     loopingThread = new LoopingThread();
     QThread *thread = new QThread;
     loopingThread->moveToThread(thread);
-    connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(sendCommand()));
+    connect(loopingThread, SIGNAL(finishedSending()), this, SLOT(pauseOdin()));
     connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
 
@@ -252,22 +252,26 @@ void OdinWindow::sendCommand(){
         }
     }
     else{
-        for(int i = 0; i < 4; i++){
-            amplitudeSpinBox[i]->setValue(0.0);
-            thresholdEnable[i]->setChecked(false);
-            commandOdin->setAmplitude(i, 0.0);
-            QTimer::singleShot((i*200), [=] {
-                commandOdin->sendAmplitude(i);
-                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
-                emit commandSent(lastSentCommand);
-            });
-        }
+        pauseOdin();
         QTimer::singleShot((1000), [=] {
             commandOdin->sendStop();
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
             sendButton->setText("Start Odin!");
             delayEnabledCheckBox->setChecked(false);
+        });
+    }
+}
+
+void OdinWindow::pauseOdin(){
+    for(int i = 0; i < 4; i++){
+        amplitudeSpinBox[i]->setValue(0.0);
+        thresholdEnable[i]->setChecked(false);
+        commandOdin->setAmplitude(i, 0.0);
+        QTimer::singleShot((i*200), [=] {
+            commandOdin->sendAmplitude(i);
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
         });
     }
 }
@@ -420,6 +424,7 @@ void OdinWindow::increaseCurrent(){
     temp = tcpServerConnection->readAll();
     delayEnabledCheckBox->setChecked(true);
     amplitudeSpinBox[0]->setValue(temp.toDouble());
+    //Needa debug if should be sendCommand(); here or not.
     on_amplitude_Changed();
     tcpServerConnection->close();
 }
