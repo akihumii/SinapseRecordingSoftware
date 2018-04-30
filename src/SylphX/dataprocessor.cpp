@@ -81,8 +81,8 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                 total_data_count = total_data_count+1;
                 X_axis.append(total_data_count*period);
                 if(RecordEnabled){
-                    RecordData((quint8) rawData.at(i+packetSize-4));
-                    RecordData((quint8) rawData.at((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+(packetSize-2))));
+                    RecordData((quint8) rawData.at(i+(packetSize-4)));
+                    RecordData((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+(packetSize-2)));
                     RecordData(END_OF_LINE);
                 }
             }
