@@ -144,8 +144,8 @@ private:
                                 "ENBIOPIN",
                                 "ETIRST"
                                 };
-    QString JTAGNames[112] = {  "DATAMOD",          "OFFDATABUFFS",     "DATAMOD<2>",       "DATAMOD<1>",       "DATAMOD<0>",       "OSCINT<5>",        "OSCINT<4>",    "OSCINT<3>",    // 0-7
-                                "OSCINT<2>",        "OSCINT<1>",        "PDN",              "A1",               "A0",               "SEL_LNA GAIN",     "ISEL_1",       "ISEL_0",       // 8-15
+    QString JTAGNames[112] = {  "DATAMOD",          "OFFDATABUFFS",     "SELRES1",          "SELRES0",          "iENPREBIAS",       "OSCINT<5>",        "OSCINT<4>",    "OSCINT<3>",    // 0-7
+                                "OSCINT<2>",        "OSCINT<1>",        "ONBIOIMP",         "A1",               "A0",               "SEL_LNA GAIN",     "ISEL_1",       "ISEL_0",       // 8-15
                                 "SEL_IQ",           "Ch10<5>",          "Ch10<4>",          "Ch10<3>",          "Ch10<2>",          "Ch10_OFF",         "Ch9<5>",       "Ch9<4>",       // 16-23
                                 "Ch9<3>",           "Ch9<2>",           "Ch9_OFF",          "Ch8<5>",           "Ch8<4>",           "Ch8<3>",           "Ch8<2>",       "Ch8_OFF",      // 24-31
                                 "Ch7<5>",           "Ch7<4>",           "Ch7<3>",           "Ch7<2>",           "Ch7_OFF",          "Ch6<5>",           "Ch6<4>",       "Ch6<3>",       // 32-39
@@ -156,8 +156,8 @@ private:
                                 "TSTDSEL1",         "TSTDSEL0",         "FREQ1",            "FREQ2",            "S2GAIN0",          "S2GAIN1",          "S1G1",         "S1G0",         // 72-79
                                 "S1Control1",       "S1Control0",       "OFFCMFB",          "INTRES4",          "INTRES3",          "INTRES2",          "INTRES1",      "EnEXTVolt",    // 80-87
                                 "ExEXTRes",         "INVBIASRESET",     "S2RESET",          "S1RESET",          "S1REFRESET",       "CMRRESET",         "PUTESTAMP",    "PDS3",         // 88-95
-                                "PDS2",             "PDS1",             "PDBIAS",           "TUNEADC<5>",       "TUNEADC<4>",       "TUNEADC<3>",       "TUNEADC<2>",   "TUNEADC<1>",   // 96-103
-                                "SpilloverRFU<6>",  "SELRES0",          "SELRES1",          "   ",              "INCOSCfreq",       "DECOSCfreq",       "OFFOSC",       "BIOPASSTHRU"}; // 104-111
+                                "PDS2",             "PDS1",             "PDBIAS",           "TUNEADC<4>",       "TUNEADC<3>",       "TUNEADC<2>",       "TUNEADC<1>",   "ReduceLED_Prebias",   // 96-103
+                                "DIVCL_0",          "PRODEL<0>",        "PRODEL<1>",        "PRODEL<2>",        "INCOSCfreq",       "DECOSCfreq",       "OFFOSC",       "BIOPASSTHRU"}; // 104-111
 };
 
 #endif // COMMANDDIALOG_H
