@@ -82,6 +82,7 @@ private:
     QAction *voltage1000u;
     QAction *voltage2000u;
     QAction *voltage5000u;
+    QAction *inputReferred;
 
     QActionGroup *voltageGroup;
 
@@ -144,6 +145,7 @@ private slots:
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();
+    void on_inputRefer_triggered();
 //    void on_wired_triggered();
 //    void on_wifi_triggered();
 

@@ -32,6 +32,9 @@ public:
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
     double signalReconstruction(char input);
     double signalReconstruction(char inputMSB, char inputLSB);
+    void setInputReferred(bool flag);
+    bool getInputReferred();
+    void setGain(bool S1G0, bool S2GAIN1, bool S2GAIN0);
 
 private:
     QTextStream *out;
@@ -47,6 +50,7 @@ private:
     QVector<quint8> ADC_Data;
 
     bool is8BitMode;
+    bool isInputReferred;
 
     int first_10bitFrameMarker(QByteArray data);
     int last_10bitFrameMarker(QByteArray data);
@@ -57,6 +61,7 @@ private:
     int prevleftOverByteCount = 0;
 
     double SamplingRate;
+    double gain;
 };
 
 #endif // DATAPROCESSOR_KA_H

@@ -1007,6 +1007,9 @@ void CommandDialog::on_JTAG_toggled(){
             }
         }
     }
+    if(JTAG[79]->isChecked() || JTAG[77]->isChecked() || JTAG[76]->isChecked()){
+        dataProcessor->setGain(JTAG[79]->isChecked(), JTAG[77]->isChecked(), JTAG[76]->isChecked());
+    }
 }
 
 void CommandDialog::on_JTAGextension_clicked(){

@@ -117,6 +117,10 @@ void MainWindow::createActions(){
     connect(voltage1000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage1000u_triggered()));
     connect(voltage2000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage2000u_triggered()));
     connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
+
+    inputReferred = new QAction(tr("Input referred"));
+    inputReferred->setCheckable(true);
+    connect(inputReferred, SIGNAL(toggled(bool)), this, SLOT(on_inputRefer_triggered()));
 }
 
 void MainWindow::create10x1Layout(){
@@ -308,6 +312,8 @@ void MainWindow::createMenus(){
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
+    voltageMenu->addSeparator();
+    voltageMenu->addAction(inputReferred);
 //------------------------- TIMEFRAME MENU --------------------------//
 
 //------------------------ CONNECTIVITY MENU ------------------------//
@@ -434,7 +440,7 @@ void MainWindow::on_timeFrame5000_triggered(){
 
 void MainWindow::on_voltage50u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
         }
         else{
@@ -447,7 +453,7 @@ void MainWindow::on_voltage50u_triggered(){
 
 void MainWindow::on_voltage100u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
         }
         else{
@@ -460,7 +466,7 @@ void MainWindow::on_voltage100u_triggered(){
 
 void MainWindow::on_voltage200u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
         }
         else{
@@ -473,7 +479,7 @@ void MainWindow::on_voltage200u_triggered(){
 
 void MainWindow::on_voltage500u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
         }
         else{
@@ -486,7 +492,7 @@ void MainWindow::on_voltage500u_triggered(){
 
 void MainWindow::on_voltage1000u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
         }
         else{
@@ -499,7 +505,7 @@ void MainWindow::on_voltage1000u_triggered(){
 
 void MainWindow::on_voltage2000u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
         }
         else{
@@ -512,7 +518,7 @@ void MainWindow::on_voltage2000u_triggered(){
 
 void MainWindow::on_voltage5000u_triggered(){
     for(int i = 0; i < 10; i++){
-        if(!data->isFilterEnabled()){
+        if(!data->isFilterEnabled() && !data->getInputReferred()){
             channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
         }
         else{
@@ -521,6 +527,10 @@ void MainWindow::on_voltage5000u_triggered(){
         channelGraph[i]->yAxis->setTickStep(0.25);
         channelGraph[i]->replot();
     }
+}
+
+void MainWindow::on_inputRefer_triggered(){
+    data->setInputReferred(inputReferred->isChecked());
 }
 
 void MainWindow::on_record_triggered(){

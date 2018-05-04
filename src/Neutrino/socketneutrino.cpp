@@ -138,6 +138,9 @@ bool SocketNeutrino::writeCommand(QByteArray Command){
                 NeutrinoData->clearallChannelData();
                 qDebug() << "8 Bit Mode";
                 NeutrinoChannel->setNumChannels(getNumChannels(Command));
+                for(int i = 0; i < 100; i++){
+                    socketAbstract->read(maxSize);
+                }
             }
             else if(Command.at(6) == (char) WL_10){
                 Mode_8Bit = false;
@@ -146,6 +149,9 @@ bool SocketNeutrino::writeCommand(QByteArray Command){
                 NeutrinoData->clearallChannelData();
                 qDebug() << "10 Bit Mode";
                 NeutrinoChannel->setNumChannels(getNumChannels(Command));
+                for(int i = 0; i < 100; i++){
+                    socketAbstract->read(maxSize);
+                }
             }
             else {
                 NeutrinoData->setPlotEnabled(false);
