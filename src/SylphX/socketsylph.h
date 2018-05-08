@@ -25,7 +25,7 @@ private:
     QElapsedTimer *timer;
 
     qint64 packetSize = 25;
-    qint64 maxSize = packetSize*200;
+    qint64 maxSize = packetSize*100;
     quint64 timeElapsed = 0;
     double rate = 0.0;
 

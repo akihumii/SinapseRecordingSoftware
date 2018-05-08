@@ -15,12 +15,13 @@ MainWindow::MainWindow(){
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
+    dataTimer.start(17);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
     connectSylph();
+    on_timeFrame1000_triggered();
     qDebug() << "Starting SYLPH..";
 }
 
@@ -255,7 +256,7 @@ void MainWindow::createMenus(){
     timeFrameGroup->addAction(timeFrame20ms);
     timeFrameGroup->addAction(timeFrame50ms);
     timeFrameGroup->addAction(timeFrame100ms);
-    timeFrame100ms->setChecked(true);
+    timeFrame1000ms->setChecked(true);
     timeFrameGroup->addAction(timeFrame200ms);
     timeFrameGroup->addAction(timeFrame500ms);
     timeFrameGroup->addAction(timeFrame1000ms);
@@ -384,23 +385,26 @@ void MainWindow::updateData(){
         on_restart_triggered();
         restartCount++;
     }
-    QVector<double> X_axis = data->retrieveXAxis();
+//    QVector<double> X_axis = data->retrieveXAxis();
+//    for(int i = 0; i < data->getNumDataPoints(); i++){
+//        qDebug() << "X_axis.at" << i << " is " << X_axis.at(i);
+//    }
     connectionStatus.clear();
     connectionStatus.append("Data Rate: " + QString::number(socketSylph->getRate()) + " bytes/Sec");
     statusBarLabel->setText(connectionStatus);
-    if(X_axis.size() >= data->getNumDataPoints()){
+//    if(X_axis.size() >= data->getNumDataPoints()){
         for(int i=0; i<12; i++){
-            if(!data->isEmpty(i)){
-                channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*period, Qt::AlignLeft);
+//            if(!data->isEmpty(i)){
+//                qDebug() << "Supposed to have data" << data->retrieveXAxis().size() << " | " << data->retrieveData(i).size();
+                channelGraph[i]->graph()->setData(data->retrieveXAxis(), data->retrieveData(i));
                 if(!pause){
                     channelGraph[i]->replot();
                 }
             }
-            data->clearChannelData(i);
-        }
-        data->removeXAxis();
-    }
+//            data->clearChannelData(i);
+//        }
+//        data->removeXAxis();
+//    }
 }
 
 void MainWindow::on_timeFrame10_triggered(){
@@ -441,8 +445,9 @@ void MainWindow::on_timeFrame5000_triggered(){
 
 void MainWindow::setTimeFrameTickStep(TimeFrames timeframe, double step){
     data->setNumDataPoints(timeframe, samplingRate);
-    data->clearallChannelData();
+//    data->clearallChannelData();
     for(int i=0;i<12;i++){
+        channelGraph[i]->xAxis->setRange(0, data->getNumDataPoints()*period, Qt::AlignLeft);
         channelGraph[i]->xAxis->setTickStep(step);
         channelGraph[i]->replot();
     }
@@ -525,7 +530,7 @@ void MainWindow::on_chooseDirectory_triggered(){
 
 void MainWindow::on_resetX_triggered(){
     data->setNumDataPoints(TimeFrames100ms, samplingRate);
-    data->clearallChannelData();
+//    data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
 
@@ -581,7 +586,7 @@ void MainWindow::on_restart_triggered(){
     if(serialChannel->isImplantConnected()){
         serialChannel->closeImplantPort();
     }
-    data->clearallChannelData();
+//    data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
         socketSylph->discardData();

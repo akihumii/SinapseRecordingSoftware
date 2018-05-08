@@ -58,6 +58,7 @@ private:
     float samplingRate;
     float period;
     int syncPulse = 0;
+    int index = 0;
 };
 
 }
