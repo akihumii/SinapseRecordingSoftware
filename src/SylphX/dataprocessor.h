@@ -25,8 +25,8 @@ public:
     Data *data;
     SignalAudio *signalAudio;
 
-    void parseFrameMarkers(QByteArray rawData);
-    void parseFrameMarkersWithChecks(QByteArray rawData);
+    int parseFrameMarkers(QByteArray rawData);
+    int parseFrameMarkersWithChecks(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int mark);
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
@@ -34,6 +34,8 @@ public:
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
     void setSmartDataProcessor(bool flag);
+    void setScale(int value);
+    int getScale();
     bool isSmart();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
@@ -52,13 +54,14 @@ private:
     QString directory = QDir::homePath() + "/Desktop/";
     bool ADCEnabled = false;
     bool ADCRecordEnabled = false;
-    bool smartDataProcessor = false;
+    bool smartDataProcessor = true;
 
     qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC + NUM_BYTES_FRAME;
     float samplingRate;
     float period;
     int syncPulse = 0;
     int index = 0;
+    int multiplier = 1;
 };
 
 }

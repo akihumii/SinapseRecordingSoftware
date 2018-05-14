@@ -8,7 +8,7 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
     process = process_;
 }
 
-void DataProcessor::parseFrameMarkers(QByteArray rawData){
+int DataProcessor::parseFrameMarkers(QByteArray rawData){
     for(int i = 0; i < rawData.size(); i = i + packetSize){
         if(index > getNumDataPoints()){
             index = 0;
@@ -18,14 +18,14 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195));
+            ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195));
+            ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
         }
 
         ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-5));
@@ -37,9 +37,10 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
         index++;
     }
+    return rawData.size();
 }
 
-void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
+int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 //    qDebug() << rawData.size();
     if(leftOverData.size() > 0){
         for(int i=leftOverData.size()-1;i>=0;i--){
@@ -63,7 +64,7 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
-                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195));
+                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
                 }
                 for(int j = 0; j < 2; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
@@ -71,7 +72,7 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
-                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195));
+                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
                 }
                 ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-4));
                 ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+packetSize-2));
@@ -87,6 +88,7 @@ void DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
+    return rawData.size();
 //    playAudio(getAudioChannel());
 }
 
@@ -141,6 +143,14 @@ void DataProcessor::setSmartDataProcessor(bool flag){
 
 bool DataProcessor::isSmart(){
     return smartDataProcessor;
+}
+
+void DataProcessor::setScale(int value){
+    multiplier = value;
+}
+
+int DataProcessor::getScale(){
+    return multiplier;
 }
 
 }

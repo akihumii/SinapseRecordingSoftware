@@ -4,29 +4,30 @@ namespace SylphX {
 
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
-    timer = new QElapsedTimer;
+    timer = new QTimer;
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateRate()));
+    timer->start(1000);
 }
 
 void SocketSylph::discardData(){
     for(int i = 0; i < 10; i++){
-        socketAbstract->read(48000);
+        socketAbstract->read(maxSize*10);
         qDebug() << "Discarding";
     }
     checked = false;
 }
 void SocketSylph::ReadCommand(){
-    if(initCount < 100){
+    if(initCount < 20){
         discardData();
         initCount++;
     }
     else if(socketAbstract->bytesAvailable() >= maxSize && checked){
         if(dataProcessor->isSmart()){
-            dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
+            bytesRead += dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
         }
         else{
-//        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(93))){
-            dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
+            bytesRead += dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
         }
     }
     else if(socketAbstract->bytesAvailable() >= packetSize+1 && !checked){
@@ -36,11 +37,18 @@ void SocketSylph::ReadCommand(){
             qDebug() << "checked is true";
         }
     }
-    rate = (0.01 * (double) socketAbstract->bytesAvailable()*1000.0/ (double) timer->elapsed()) + (0.99 * rate);
-    timer->start();
 }
 
-double SocketSylph::getRate(){
+void SocketSylph::updateRate(){
+    rate = bytesRead*8/1000;
+    if(rate == 0 && checked){
+        initCount = 0;
+        checked = false;
+    }
+    bytesRead = 0;
+}
+
+int SocketSylph::getRate(){
     return rate;
 }
 
@@ -50,7 +58,7 @@ void SocketSylph::appendSync(){
 
 void SocketSylph::closeESP(){
     qDebug() << "Closing ESP";
-    QByteArray closingMSG = "DISCONNECT!!!!!!!";
+    QByteArray closingMSG = "DISCONNECT!!!!!!";
     socketAbstract->write(closingMSG);
     socketAbstract->waitForBytesWritten(1000);
 }

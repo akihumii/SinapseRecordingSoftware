@@ -92,7 +92,7 @@ private:
 
     QList<QSerialPortInfo> portInfo;
 
-    QString connectionStatus;
+    QString statusBarText[4];
 
     QCustomPlot *channelGraph[12];
     SocketSylph *socketSylph;
