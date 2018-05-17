@@ -37,11 +37,11 @@ private slots:
     void on_SELNONE_clicked();
     void on_JTAGextension_clicked();
     void on_JTAGreset_clicked();
-    void on_JTAG_toggled();
+    void on_JTAG_toggled(int index);
     void on_Mode_Changed(int Mode);
     void on_ChipID_Changed(int IDnum);
     void on_SELCHN_toggled();
-    void on_BioImp_toggled();
+    void on_BioImp_toggled(int index);
     void on_DCL_toggled();
     void on_baud_toggled();
     void on_BER_textEdited();
@@ -49,7 +49,7 @@ private slots:
     void on_amplifierSelectAll_clicked();
     void on_amplifierSelectNone_clicked();
     void on_shortRefToGND_clicked();
-    void on_amplifierSelect_toggled();
+    void on_amplifierSelect_toggled(int index);
     void on_bioImpDelay_changed();
     void on_startBioImpedanceMeasurement();
     void on_exitBioImpedanceMeasurement();
@@ -69,6 +69,8 @@ private:
     void createJTAGLayout();
     void loadlastCommand();
     void loadDefault();
+    void sendCommand(QByteArray command);
+    void setJTAGChecked(bool checked, int bitNum);
     void updateHeader();
     void bioReset();
     void setInlineQuad(int input);
@@ -104,6 +106,8 @@ private:
     QCheckBox *SELCHN[10];
     QCheckBox *BioImpData[8];
     QCheckBox *amplifierSelect[10];
+    QSignalMapper *bioImpMapper;
+    QSignalMapper *amplifierSelectMapper;
 
     QTabWidget *JTAGTabWidget;
     QWidget *DATAMOD;
@@ -114,6 +118,7 @@ private:
     QWidget *TUNEADC;
     QWidget *SPILLOVER;
     QCheckBox *JTAG[112];
+    QSignalMapper *jtagMapper;
 
     QPushButton *SELALL;
     QPushButton *SELNONE;
@@ -137,6 +142,18 @@ private:
     QLineEdit *BER_byte[8];
 
     QAction *exitAction;
+    QString ModeComboBoxNames[12] = {   "Digital Command Loopback",
+                                        "Data BER Assessment",
+                                        "Selected Channel Out (8-bit)",
+                                        "Selected Channel Out (10-bit)",
+                                        "Oscillator Clock Tuning",
+                                        "Analog Measurement (8-bit)",
+                                        "Analog Measurement (10-bit)",
+                                        "Bioimpedance Measurement (8-bit)",
+                                        "Bioimpedance Measurement (10-bit)",
+                                        "Power Level Measurement",
+                                        "Full Bioimpedance Measurement (8-bit)",
+                                        "Auto Ranged Bioimpedance Measurement (8-bit)"};
     QString BioImpNames[8] = {  "BIOCHSEL<1>",
                                 "BIOCHSEL<2>",
                                 "BIOCHSEL<3>",

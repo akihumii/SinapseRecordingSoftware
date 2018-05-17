@@ -181,25 +181,25 @@ void SerialChannel::setBaudRate(int baud){
 
 bool SerialChannel::writeCommand(QByteArray Command){
     if(connected){
-        if(Command.size()>5){
-            if(Command.at(6) == (char) WL_8){
-                NeutrinoData->setBitMode(true);
-                NeutrinoData->setPlotEnabled(true);
-                NeutrinoData->clearallChannelData();
-                qDebug() << "8 Bit Mode";
-                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-            }
-            else if(Command.at(6) == (char) WL_10){
-                NeutrinoData->setBitMode(false);
-                NeutrinoData->setPlotEnabled(true);
-                NeutrinoData->clearallChannelData();
-                qDebug() << "10 Bit Mode";
-                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-            }
-            else {
-                NeutrinoData->setPlotEnabled(false);
-            }
-        }
+//        if(Command.size()>5){
+//            if(Command.at(6) == (char) WL_8){
+//                NeutrinoData->setBitMode(true);
+//                NeutrinoData->setPlotEnabled(true);
+//                NeutrinoData->clearallChannelData();
+//                qDebug() << "8 Bit Mode";
+//                NeutrinoChannel->setNumChannels(getNumChannels(Command));
+//            }
+//            else if(Command.at(6) == (char) WL_10){
+//                NeutrinoData->setBitMode(false);
+//                NeutrinoData->setPlotEnabled(true);
+//                NeutrinoData->clearallChannelData();
+//                qDebug() << "10 Bit Mode";
+//                NeutrinoChannel->setNumChannels(getNumChannels(Command));
+//            }
+//            else {
+//                NeutrinoData->setPlotEnabled(false);
+//            }
+//        }
         serialCommand->write(Command);         //write the command itself
         return true;
     }
