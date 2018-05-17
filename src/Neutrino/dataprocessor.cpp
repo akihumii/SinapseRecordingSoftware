@@ -5,7 +5,7 @@ DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
-//    qDebug() << data_store.size();
+    qDebug() << data_store.size() << " | " << leftOverData.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint16_t combine_10bit;
@@ -15,10 +15,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
             data_store.prepend(leftOverData.at(i));
         }
         leftOverData.clear();
-    }
-    if(leftOverData.size() > 10*data_store.size())
-    {
-        leftOverData.clear();
+        leftOverData.resize(0);
     }
     firstFrameMarker = first_10bitFrameMarker(data_store);
     lastFrameMarker = last_10bitFrameMarker(data_store);
@@ -40,6 +37,11 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     }
     for(int i = lastFrameMarker; i < data_store.size(); i++){
         leftOverData.append(data_store.at(i));
+    }
+    if(leftOverData.size() > 204800)
+    {
+        leftOverData.clear();
+        leftOverData.resize(0);
     }
     return Plot_Y_AllDataPoint;
 }
@@ -80,7 +82,7 @@ int DataProcessor::last_10bitFrameMarker(QByteArray data){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
-//    qDebug() << data_store.size();
+    qDebug() << data_store.size() << " | " << leftOverData.size();
     QVector<quint16> Plot_Y_AllDataPoint;
     Plot_Y_AllDataPoint.clear();
     uint8_t current_8bit;
@@ -90,10 +92,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
             data_store.prepend(leftOverData.at(i));
         }
         leftOverData.clear();
-    }
-    if(leftOverData.size() > 10*data_store.size())
-    {
-        leftOverData.clear();
+        leftOverData.resize(0);
     }
     firstFrameMarker = first_8bitFrameMarker(data_store);
     lastFrameMarker = last_8bitFrameMarker(data_store);
@@ -109,6 +108,11 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
     }
     for(int i = lastFrameMarker; i < data_store.size(); i++){
         leftOverData.append(data_store.at(i));
+    }
+    if(leftOverData.size() > 204800)
+    {
+        leftOverData.clear();
+        leftOverData.resize(0);
     }
     return Plot_Y_AllDataPoint;
 }
@@ -142,10 +146,20 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
                     if(bitMode == WORDLENGTH_8){
-                        ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/256);
+                        if(isInputReferred){
+                            ChannelData[ChannelIndex].append(((Plot_Y_AllDataPoint.at(i+k)*1.2/256) - 0.5) / gain);
+                        }
+                        else{
+                            ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/256);
+                        }
                     }
                     else if(bitMode == WORDLENGTH_10){
-                        ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/1024);
+                        if(isInputReferred){
+                            ChannelData[ChannelIndex].append(((Plot_Y_AllDataPoint.at(i+k)*1.2/1024) - 0.5) / gain);
+                        }
+                        else{
+                            ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/1024);
+                        }
                     }
                     if(isRecordEnabled()){
                         RecordData(Plot_Y_AllDataPoint.at(i+k));
@@ -183,4 +197,41 @@ void DataProcessor::setSamplingRate(double rate){
 
 double DataProcessor::getSamplingRate(){
     return samplingRate;
+}
+
+void DataProcessor::setInputReferred(bool flag){
+    isInputReferred = flag;
+}
+
+bool DataProcessor::getInputReferred(){
+    return isInputReferred;
+}
+
+void DataProcessor::setGain(bool S1G0, bool S2GAIN1, bool S2GAIN0){
+    double D1 = 1.0, D2 = 0, R = 1047.13;
+    char temp = (char) S2GAIN1 << 1 | (char) S2GAIN0;
+    if(S1G0){
+        D1 = 4.0;
+    }
+
+    switch(temp){
+        case 0:
+            D2 = 1.0;
+            break;
+        case 1:
+            D2 = 1.95;
+            break;
+        case 2:
+            D2 = 2.85;
+            break;
+        case 3:
+            D2 = 1.0/5.4325;
+            break;
+        default:
+            D2 = 1.0;
+            break;
+    }
+
+    gain = R / (D1*D2);
+    qDebug() << "D1 is set as: " << D1 << " | D2 is set as: " << D2 << " | Resulting gain: " << gain;
 }

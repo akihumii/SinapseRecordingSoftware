@@ -22,7 +22,7 @@ private:
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 40960;
+    qint64 maxSize = 102400;
     int numChannels;
     QByteArray lastSentCommand;
     bool record = false;

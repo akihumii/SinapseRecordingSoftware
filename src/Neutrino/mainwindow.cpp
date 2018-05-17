@@ -83,6 +83,10 @@ void MainWindow::createActions(){
         voltageMapper->setMapping(voltageAction[i], i);
         connect(voltageAction[i], SIGNAL(triggered(bool)), voltageMapper, SLOT(map()));
     }
+
+    inputReferred = new QAction(tr("Input referred"));
+    inputReferred->setCheckable(true);
+    connect(inputReferred, SIGNAL(toggled(bool)), this, SLOT(on_inputRefer_triggered()));
 }
 
 void MainWindow::create10x1Layout(){
@@ -209,6 +213,8 @@ void MainWindow::createMenus(){
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
+    voltageMenu->addSeparator();
+    voltageMenu->addAction(inputReferred);
 }
 
 void MainWindow::createStatusBar(){
@@ -302,36 +308,40 @@ void MainWindow::on_voltage_changed(int voltageIndex){
     for(int i = 0; i < 10; i++){
         switch(voltageIndex){
         case 0:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.0105, 0.021, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.0105, 0.021, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.0025);
             break;
         case 1:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.021, 0.042, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.021, 0.042, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.005);
             break;
         case 2:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.051, 0.102, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.051, 0.102, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.01);
             break;
         case 3:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.101, 0.202, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.101, 0.202, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.02);
             break;
         case 4:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.21, 0.42, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.21, 0.42, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.05);
             break;
         case 5:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.51, 1.02, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.51, 1.02, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.1);
             break;
         case 6:
-            data->isFilterEnabled()? channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
             channelGraph[i]->yAxis->setTickStep(0.25);
             break;
         }
         channelGraph[i]->replot();
     }
+}
+
+void MainWindow::on_inputRefer_triggered(){
+    data->setInputReferred(inputReferred->isChecked());
 }
 
 void MainWindow::on_record_triggered(){

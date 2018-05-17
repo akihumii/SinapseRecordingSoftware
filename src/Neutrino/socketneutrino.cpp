@@ -128,27 +128,6 @@ char SocketNeutrino::getCurrentByte(){
 bool SocketNeutrino::writeCommand(QByteArray Command){
     lastSentCommand = Command;
     if(socketAbstract->state() == QAbstractSocket::ConnectedState){
-//        if(Command.size()>5){
-//            if(Command.at(6) == (char) WL_8){
-//                Mode_8Bit = true;
-//                NeutrinoData->setBitMode(true);
-//                NeutrinoData->setPlotEnabled(true);
-//                NeutrinoData->clearallChannelData();
-//                qDebug() << "8 Bit Mode";
-//                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-//            }
-//            else if(Command.at(6) == (char) WL_10){
-//                Mode_8Bit = false;
-//                NeutrinoData->setBitMode(false);
-//                NeutrinoData->setPlotEnabled(true);
-//                NeutrinoData->clearallChannelData();
-//                qDebug() << "10 Bit Mode";
-//                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-//            }
-//            else {
-//                NeutrinoData->setPlotEnabled(false);
-//            }
-//        }
         socketAbstract->write(Command);         //write the command itself
 //        qDebug() << Command;
         return socketAbstract->waitForBytesWritten();

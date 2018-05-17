@@ -74,7 +74,7 @@ private:
     QAction *swapAction;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
-
+    
     QSignalMapper *voltageMapper;
     QAction *voltageAction[7];
     QString voltageActionNames[7] = { "+/- 10mV",
@@ -128,6 +128,7 @@ private slots:
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();
+    void on_inputRefer_triggered();
 
 };
 

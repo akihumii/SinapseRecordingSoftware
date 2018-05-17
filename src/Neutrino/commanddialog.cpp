@@ -899,6 +899,9 @@ void CommandDialog::on_JTAG_toggled(int index){
             bioImpGain = JTAG[11]->isChecked()? 20.0 * 6.0 : 20.0 * 2.0;
         }
     }
+    if(JTAG[79]->isChecked() || JTAG[77]->isChecked() || JTAG[76]->isChecked()){
+        dataProcessor->setGain(JTAG[79]->isChecked(), JTAG[77]->isChecked(), JTAG[76]->isChecked());
+    }
 }
 
 void CommandDialog::on_JTAGextension_clicked(){
