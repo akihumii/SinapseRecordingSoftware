@@ -15,8 +15,7 @@ void SocketNeutrino::ReadCommand(){
         switch (NeutrinoCommand->getOPMode()){
             case 2:{
                 if(NeutrinoData->isPlotEnabled()){
-                    if(Mode_8Bit == true){
-//                        qDebug() << "Got 8 bit data";
+                    if(NeutrinoData->getBitMode() == WORDLENGTH_8){
                         NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(socketAbstract->read(maxSize)));
                     }
                     break;
@@ -24,8 +23,7 @@ void SocketNeutrino::ReadCommand(){
             }
             case 3:{
                 if(NeutrinoData->isPlotEnabled()){
-                    if(Mode_8Bit == false){
-//                        qDebug() << "Got 10 bit data";
+                    if(NeutrinoData->getBitMode() == WORDLENGTH_10){
                         NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers10bits(socketAbstract->read(maxSize)));
                     }
                     break;
@@ -130,33 +128,6 @@ char SocketNeutrino::getCurrentByte(){
 bool SocketNeutrino::writeCommand(QByteArray Command){
     lastSentCommand = Command;
     if(socketAbstract->state() == QAbstractSocket::ConnectedState){
-        if(Command.size()>5){
-            if(Command.at(6) == (char) WL_8){
-                Mode_8Bit = true;
-                NeutrinoData->setBitMode(true);
-                NeutrinoData->setPlotEnabled(true);
-                NeutrinoData->clearallChannelData();
-                qDebug() << "8 Bit Mode";
-                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-                for(int i = 0; i < 100; i++){
-                    socketAbstract->read(maxSize);
-                }
-            }
-            else if(Command.at(6) == (char) WL_10){
-                Mode_8Bit = false;
-                NeutrinoData->setBitMode(false);
-                NeutrinoData->setPlotEnabled(true);
-                NeutrinoData->clearallChannelData();
-                qDebug() << "10 Bit Mode";
-                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-                for(int i = 0; i < 100; i++){
-                    socketAbstract->read(maxSize);
-                }
-            }
-            else {
-                NeutrinoData->setPlotEnabled(false);
-            }
-        }
         socketAbstract->write(Command);         //write the command itself
 //        qDebug() << Command;
         return socketAbstract->waitForBytesWritten();

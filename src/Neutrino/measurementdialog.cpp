@@ -79,7 +79,6 @@ void MeasurementDialog::createLayout(){
     mainLayout->addWidget(recordButton);
     mainLayout->addWidget(resetStatistic);
     setLayout(mainLayout);
-//    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
 }
 
 void MeasurementDialog::on_record_clicked(){

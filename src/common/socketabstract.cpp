@@ -2,20 +2,9 @@
 
 SocketAbstract::SocketAbstract(){
     socketAbstract = new QTcpSocket(this);
-
-    connect(socketAbstract, SIGNAL(connected()), this, SLOT(connectedAbstractSocket()));
-    connect(socketAbstract, SIGNAL(disconnected()), this, SLOT(disconnectedAbstractSocket()));
 }
 
-void SocketAbstract::connectedAbstractSocket(){
-    qDebug() << "Abstract Socket Connected!";
-}
-
-void SocketAbstract::disconnectedAbstractSocket(){
-    qDebug() << "Abstract Socket Disconnected";
-}
-
-void SocketAbstract::doConnect(QString ipAddress, int port){
+bool SocketAbstract::doConnect(QString ipAddress, int port){
     int connectionTries = 0;
     while(socketAbstract->state() != QAbstractSocket::ConnectedState){
         qDebug() << "Connecting...";
@@ -26,8 +15,9 @@ void SocketAbstract::doConnect(QString ipAddress, int port){
         }
         connectionTries++;
         if(connectionTries>2)
-            return;
+            return false;
     }
+    return true;
 }
 
 void SocketAbstract::doDisconnect(){
@@ -35,7 +25,6 @@ void SocketAbstract::doDisconnect(){
         socketAbstract->flush();
         socketAbstract->disconnectFromHost();
         socketAbstract->close();
-        qDebug()<<"Disconnect clicked";
     }
 }
 

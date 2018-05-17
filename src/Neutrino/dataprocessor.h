@@ -19,12 +19,18 @@ typedef enum FrameMarkers{
 //Order of FrameMarker should be 5AF0 for 8 bit
 } FrameMarkers;
 
-class DataProcessor : public SignalAudio, public Data
+typedef enum BITMODE{
+    WORDLENGTH_8 = 0B00110100,
+    WORDLENGTH_10 = 0B10110100
+} BITMODE;
+
+class DataProcessor : public Data
 {
 public:
     DataProcessor(Channel *NeutrinoChannel_);
 
-    void setBitMode(bool BitMode);
+    void setBitMode(BITMODE BitMode);
+    BITMODE getBitMode();
 
     QVector<quint16> ParseFrameMarkers10bits(QByteArray data_store);
     QVector<quint16> ParseFrameMarkers8bits(QByteArray data_store);
@@ -32,6 +38,8 @@ public:
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
     double signalReconstruction(char input);
     double signalReconstruction(char inputMSB, char inputLSB);
+    void setSamplingRate(double rate);
+    double getSamplingRate();
     void setInputReferred(bool flag);
     bool getInputReferred();
     void setGain(bool S1G0, bool S2GAIN1, bool S2GAIN0);
@@ -49,7 +57,7 @@ private:
     QByteArray leftOverData;
     QVector<quint8> ADC_Data;
 
-    bool is8BitMode;
+    BITMODE bitMode;
     bool isInputReferred;
 
     int first_10bitFrameMarker(QByteArray data);
@@ -60,7 +68,7 @@ private:
 
     int prevleftOverByteCount = 0;
 
-    double SamplingRate;
+    double samplingRate;
     double gain;
 };
 

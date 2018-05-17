@@ -145,7 +145,7 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
             int k = 0;
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
-                    if(is8BitMode){
+                    if(bitMode == WORDLENGTH_8){
                         if(isInputReferred){
                             ChannelData[ChannelIndex].append(((Plot_Y_AllDataPoint.at(i+k)*1.2/256) - 0.5) / gain);
                         }
@@ -153,7 +153,7 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                             ChannelData[ChannelIndex].append(Plot_Y_AllDataPoint.at(i+k)*1.2/256);
                         }
                     }
-                    else if(!is8BitMode){
+                    else if(bitMode == WORDLENGTH_10){
                         if(isInputReferred){
                             ChannelData[ChannelIndex].append(((Plot_Y_AllDataPoint.at(i+k)*1.2/1024) - 0.5) / gain);
                         }
@@ -183,8 +183,20 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
     Plot_Y_AllDataPoint.clear();
 }
 
-void DataProcessor::setBitMode(bool BitMode){
-    is8BitMode = BitMode;
+void DataProcessor::setBitMode(BITMODE BitMode){
+    bitMode = BitMode;
+}
+
+BITMODE DataProcessor::getBitMode(){
+    return bitMode;
+}
+
+void DataProcessor::setSamplingRate(double rate){
+    samplingRate = rate;
+}
+
+double DataProcessor::getSamplingRate(){
+    return samplingRate;
 }
 
 void DataProcessor::setInputReferred(bool flag){
