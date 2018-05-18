@@ -15,7 +15,7 @@ MainWindow::MainWindow(){
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(20);     //tick timer every XXX msec
+    dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
