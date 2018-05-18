@@ -355,6 +355,7 @@ void MainWindow::connectSylph(){
         statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+        statusBarText[0].clear();
         int i = 1;
         do{
             i++;
