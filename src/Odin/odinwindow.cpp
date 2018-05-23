@@ -138,7 +138,7 @@ void OdinWindow::createLayout(){
     thresholdSpinBoxLayout->addWidget(lowerThresholdSpinBox);
 
     debounceSpinBox = new QSpinBox;
-    debounceSpinBox->setMinimum(200);
+    debounceSpinBox->setMinimum(0);
     debounceSpinBox->setMaximum(2000);
     debounceSpinBox->setSingleStep(100);
     debounceSpinBox->setValue(200);
