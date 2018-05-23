@@ -16,7 +16,8 @@ typedef enum ADDRESS{
     PULSEDURATION_CHN2 = 0x31,
     PULSEDURATION_CHN3 = 0x32,
     PULSEDURATION_CHN4 = 0x33,
-    FREQUENCY = 0x20
+    FREQUENCY = 0x20,
+    CHANNEL_ENABLE = 0x41
 } ADDRESS;
 
 class CommandOdin : public QObject
@@ -40,6 +41,8 @@ public:
     void sendAmplitude(int channel);
     void sendPulseDuration(int channel);
     void sendFrequency();
+    void sendChannelEnable();
+    char getChannelEnabled();
     void initialiseCommand();
     int getNumChannelEnabled();
     QByteArray getlastSentCommand();

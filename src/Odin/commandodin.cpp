@@ -146,6 +146,20 @@ void CommandOdin::sendFrequency(){
     }
 }
 
+void CommandOdin::sendChannelEnable(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) CHANNEL_ENABLE);
+    outgoingCommand.append((const char) getChannelEnabled());
+    if(serialOdin->isOdinSerialConnected()){
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    socketOdin->writeCommand(outgoingCommand);
+    qDebug() << "Sent Channel Enabled";
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        qDebug() << (quint8) outgoingCommand.at(i);
+    }
+}
+
 QByteArray CommandOdin::getlastSentCommand(){
     return outgoingCommand;
 }
@@ -228,6 +242,13 @@ void CommandOdin::setChannelEnabled(int channel, bool flag){
         }
     }
     qDebug() << "Number of Channels enabled: " << numChannels;
+}
+
+char CommandOdin::getChannelEnabled(){
+    char temp;
+//    temp &= channelEnabled[3]? 1 << 3 :
+    temp = (char) channelEnabled[3] << 3 | (char) channelEnabled[2] << 2 | (char) channelEnabled[1] << 1 | (char) channelEnabled[0];
+    return temp;
 }
 
 int CommandOdin::getNumChannelEnabled(){
