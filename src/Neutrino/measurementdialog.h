@@ -34,6 +34,7 @@ private:
                                "<b><FONT SIZE = 6> 0 </b>"
                              };
     QPushButton *resetStatistic;
+    QPushButton *recordButton;
 
     double min = 1.2;
     double max = 0;
@@ -47,8 +48,11 @@ private:
     double findMin(QVector<double> data);
     double findMax(QVector<double> data);
 
+    bool record = false;
+
 private slots:
     void on_reset_clicked();
+    void on_record_clicked();
 };
 
 #endif // MEASUREMENTDIALOG_H

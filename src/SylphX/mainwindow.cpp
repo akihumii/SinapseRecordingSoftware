@@ -15,12 +15,13 @@ MainWindow::MainWindow(){
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
+    dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
     connectSylph();
+    on_timeFrame1000_triggered();
     qDebug() << "Starting SYLPH..";
 }
 
@@ -28,16 +29,18 @@ void MainWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     for(int i=0;i<12;i++){
         channelGraph[i] = new QCustomPlot;
-        channelGraph[i]->xAxis->setVisible(true);
+        channelGraph[i]->xAxis->setVisible(false);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(85,10,0,15));
-        channelGraph[i]->yAxis->setRange(-0.00050, 0.00100, Qt::AlignLeft);
+        channelGraph[i]->axisRect()->setMargins(QMargins(65,10,0,15));
+        channelGraph[i]->yAxis->setRange(-500, 500);
         channelGraph[i]->addGraph();
         channelGraph[i]->yAxis->setAutoTickStep(false);
         channelGraph[i]->xAxis->setAutoTickStep(false);
         channelGraph[i]->xAxis->setTickStep(0.01);
-        channelGraph[i]->yAxis->setTickStep(0.0001);
+        channelGraph[i]->yAxis->setTickStep(100);
     }
+
+    data->setScale(1000000);
 
     connect(channelGraph[0], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph1_clicked()));
     connect(channelGraph[1], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph2_clicked()));
@@ -52,18 +55,20 @@ void MainWindow::createLayout(){
     connect(channelGraph[10], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph11_clicked()));
 
     for(int i = 0; i < 10; i ++){
-        channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (V)");
-        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
+        channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (uV)");
+        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 8));
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
+        channelGraph[i]->setInteractions(QCP::iRangeDrag);
+        channelGraph[i]->axisRect()->setRangeDragAxes(0, channelGraph[i]->yAxis);
     }
 
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
     channelGraph[10]->yAxis->setLabelPadding(35);
-    channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 10));
+    channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[10]->setFixedHeight(100);
     channelGraph[11]->yAxis->setLabel("Frame Marker");
     channelGraph[11]->yAxis->setLabelPadding(35);
-    channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 10));
+    channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[11]->setFixedHeight(100);
 
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
@@ -73,7 +78,7 @@ void MainWindow::createLayout(){
     channelGraph[10]->yAxis->setTickStep(50);
     channelGraph[11]->yAxis->setRange(0, 65535, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(13000);
-    channelGraph[11]->axisRect()->setMargins(QMargins(75,10,0,15));
+    channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
     for(int i = 0; i < 5; i++){
@@ -100,7 +105,6 @@ void MainWindow::createLayout(){
     QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
-    on_timeFrame100_triggered();
 }
 
 void MainWindow::createActions(){
@@ -254,7 +258,7 @@ void MainWindow::createMenus(){
     timeFrameGroup->addAction(timeFrame20ms);
     timeFrameGroup->addAction(timeFrame50ms);
     timeFrameGroup->addAction(timeFrame100ms);
-    timeFrame100ms->setChecked(true);
+    timeFrame1000ms->setChecked(true);
     timeFrameGroup->addAction(timeFrame200ms);
     timeFrameGroup->addAction(timeFrame500ms);
     timeFrameGroup->addAction(timeFrame1000ms);
@@ -296,14 +300,14 @@ void MainWindow::createMenus(){
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
 
-    audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
-    audioGroup = new QActionGroup(this);
-    for(int i = 0; i < 11; i++){
-        audioOutputMenu->addAction(audio[i]);
-        audio[i]->setCheckable(true);
-        audioGroup->addAction(audio[i]);
-    }
-    audio[0]->setChecked(true);
+//    audioOutputMenu = menuBar()->addMenu(tr("Audio Output"));
+//    audioGroup = new QActionGroup(this);
+//    for(int i = 0; i < 11; i++){
+//        audioOutputMenu->addAction(audio[i]);
+//        audio[i]->setCheckable(true);
+//        audioGroup->addAction(audio[i]);
+//    }
+//    audio[0]->setChecked(true);
 
     processorMenu = menuBar()->addMenu(tr("Data Processor Options"));
     processorMenu->addAction(isSmart);
@@ -314,7 +318,7 @@ void MainWindow::createMenus(){
     smartOrDumbGroup = new QActionGroup(this);
     smartOrDumbGroup->addAction(isSmart);
     smartOrDumbGroup->addAction(isDumb);
-    isDumb->setChecked(true);
+    isSmart->setChecked(true);
 
     processorMenu->addSeparator();
     processorMenu->addAction(restartAction);
@@ -332,42 +336,40 @@ void MainWindow::createStatusBar(){
 
 void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
-    connectionStatus.clear();
+    statusBarText[0].clear();
     if(portInfo.size()>1){
         serialChannel->connectSylph();
-        connectionStatus.clear();
+        statusBarText[0].clear();
         if(serialChannel->isImplantConnected()){
-            connectionStatus.append("Connected to Implant Port |");
+            statusBarText[0].append("Connected to Implant Port |");
         }
         else{
-            connectionStatus.append("Connection to Implant Port failed |");
+            statusBarText[0].append("Connection to Implant Port failed |");
         }
         if(serialChannel->isADCConnected()){
-            connectionStatus.append(" Connected to ADC Port");
+            statusBarText[0].append(" Connected to ADC Port");
         }
         else{
-            connectionStatus.append(" Connection to ADC Port failed");
+            statusBarText[0].append(" Connection to ADC Port failed");
         }
-        statusBarLabel->setText(connectionStatus);
+        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-//        socketSylph->doConnect("10.10.10.2", 8888);
-        int i = 0;
+        statusBarText[0].clear();
+        int i = 1;
         do{
             i++;
             socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
-            qDebug() << i;
-        } while(!socketSylph->isConnected() && i < 6);
+        } while(!socketSylph->isConnected() && i < 4);
         if(socketSylph->isConnected()){
-            connectionStatus.clear();
-            connectionStatus.append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
+            statusBarText[0].append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
         }
         else{
-            connectionStatus.append("Failed to connect...");
+            statusBarText[0].append("Failed to connect...");
             QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
                                                                  "Check your connections and run the program again..");
         }
-        statusBarLabel->setText(connectionStatus);
+        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
     }
 }
 
@@ -376,6 +378,7 @@ MainWindow::~MainWindow(){
         socketSylph->closeESP();
         socketSylph->doDisconnect();
     }
+    delete x;
 }
 
 void MainWindow::updateData(){
@@ -383,19 +386,14 @@ void MainWindow::updateData(){
         on_restart_triggered();
         restartCount++;
     }
-    QVector<double> X_axis = data->retrieveXAxis();
-    if(X_axis.size() >= data->getNumDataPoints()){
-        for(int i=0; i<12; i++){
-            if(!data->isEmpty(i)){
-                channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
-                channelGraph[i]->xAxis->setRange(X_axis.at(0), data->getNumDataPoints()*period, Qt::AlignLeft);
-                if(!pause){
-                    channelGraph[i]->replot();
-                }
-                data->clearChannelData(i);
+    statusBarText[1].clear();
+    statusBarText[1].append("Data Rate: " + QString::number(socketSylph->getRate()) + " kbps");
+    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+    for(int i=0; i<12; i++){
+            channelGraph[i]->graph()->setData(data->retrieveXAxis(), data->isFilterEnabled()? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
+            if(!pause){
+                channelGraph[i]->replot();
             }
-        }
-        data->removeXAxis();
     }
 }
 
@@ -437,49 +435,60 @@ void MainWindow::on_timeFrame5000_triggered(){
 
 void MainWindow::setTimeFrameTickStep(TimeFrames timeframe, double step){
     data->setNumDataPoints(timeframe, samplingRate);
-    data->clearallChannelData();
+//    data->clearallChannelData();
     for(int i=0;i<12;i++){
+        channelGraph[i]->xAxis->setRange(0, data->getNumDataPoints()*period, Qt::AlignLeft);
         channelGraph[i]->xAxis->setTickStep(step);
         channelGraph[i]->replot();
     }
 }
 
 void MainWindow::on_voltage50u_triggered(){
-    setVoltageTickStep(0.000050, 0.0001, 0.00001);
+    data->setScale(1000000);
+    setVoltageTickStep(50, 100, 10);
 }
 
 void MainWindow::on_voltage100u_triggered(){
-    setVoltageTickStep(0.0001, 0.0002, 0.00002);
+    data->setScale(1000000);
+    setVoltageTickStep(100, 200, 20);
 }
 
 void MainWindow::on_voltage200u_triggered(){
-    setVoltageTickStep(0.0002, 0.0004, 0.00004);
+    data->setScale(1000000);
+    setVoltageTickStep(200, 400, 40);
 }
 
 void MainWindow::on_voltage500u_triggered(){
-    setVoltageTickStep(0.00050, 0.001, 0.0001);
+    data->setScale(1000000);
+    setVoltageTickStep(500, 1000, 100);
 }
 
 void MainWindow::on_voltage1000u_triggered(){
-    setVoltageTickStep(0.001, 0.002, 0.0002);
+    data->setScale(1000);
+    setVoltageTickStep(1, 2, 0.2);
 }
 
 void MainWindow::on_voltage2000u_triggered(){
-    setVoltageTickStep(0.002, 0.004, 0.0004);
+    data->setScale(1000);
+    setVoltageTickStep(2, 4, 0.4);
 }
 
 void MainWindow::on_voltage5000u_triggered(){
-    setVoltageTickStep(0.005, 0.01, 0.001);
+    data->setScale(1000);
+    setVoltageTickStep(5, 10, 1);
 }
 
 void MainWindow::on_voltage10000u_triggered(){
-    setVoltageTickStep(0.01, 0.02, 0.002);
+    data->setScale(1000);
+    setVoltageTickStep(10, 20, 2);
 }
+
 
 void MainWindow::setVoltageTickStep(double position, double size, double step){
     for(int i=0;i<10;i++){
         channelGraph[i]->yAxis->setRange(-position, size, Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(step);
+        channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + (data->getScale()==1000? " (mV)": " (uV)"));
         channelGraph[i]->replot();
     }
 }
@@ -488,13 +497,17 @@ void MainWindow::on_record_triggered(){
     if(!data->isRecordEnabled()){
         data->setRecordEnabled(true);
 //        data->setADCRecordEnabled(true);
-        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
+        statusBarText[2].clear();
+        statusBarText[2].append("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
+        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
         recordAction->setText("Stop &Recording");
     }
     else if(data->isRecordEnabled()){
         data->setRecordEnabled(false);
 //        data->setADCRecordEnabled(false);
-        statusBarLabel->setText("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
+        statusBarText[2].clear();
+        statusBarText[2].append("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
+        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
         recordAction->setText("Start &Recording");
     }
 }
@@ -510,18 +523,22 @@ void MainWindow::on_playPause_triggered(){
 }
 
 void MainWindow::on_chooseDirectory_triggered(){
-    statusBarLabel->setText("Set your preferred save file directory");
+    statusBarText[2].clear();
+    statusBarText[2].append("Set your preferred save file directory");
+    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
     data->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                  QDir::homePath() + "/Desktop/",
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks));
 
-    statusBarLabel->setText("Save directory set to: " + data->getDirectory());
+    statusBarText[2].clear();
+    statusBarText[2].append("Save directory set to: " + data->getDirectory());
+    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
 }
 
 void MainWindow::on_resetX_triggered(){
     data->setNumDataPoints(TimeFrames100ms, samplingRate);
-    data->clearallChannelData();
+//    data->clearallChannelData();
     timeFrame100ms->setChecked(true);
 }
 
@@ -543,9 +560,9 @@ void MainWindow::on_resetY_triggered(){
 }
 
 void MainWindow::on_dataAnalyzer_triggered(){
-    QProcess *process = new QProcess(this);
-    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
-    process->start(file);
+//    QProcess *process = new QProcess(this);
+//    QString file = QDir::currentPath() + QDir::separator() + "SylphAnalyzerX.exe";
+//    process->start(file);
 }
 
 void MainWindow::on_pythonLaunch_triggered(){
@@ -557,38 +574,29 @@ void MainWindow::on_pythonLaunch_triggered(){
 //        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
 //                                           | FOREGROUND_INTENSITY;
 //    });
-    QString file;
-    file = "python " + QFileDialog::getOpenFileName(this,
-        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
-//    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
-    pythonProcess->start(file);
-    qDebug() << file;
-    QByteArray temp = pythonProcess->readAll();
-    qDebug() << temp;
-    if(!pythonProcess->waitForStarted())
-           qDebug() << "Failed to start";
-    qDebug() << "Starting data streamer";
+//    QString file;
+//    file = "python " + QFileDialog::getOpenFileName(this,
+//        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
+////    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
+//    pythonProcess->start(file);
+//    qDebug() << file;
+//    QByteArray temp = pythonProcess->readAll();
+//    qDebug() << temp;
+//    if(!pythonProcess->waitForStarted())
+//           qDebug() << "Failed to start";
+//    qDebug() << "Starting data streamer";
 }
 
 void MainWindow::on_restart_triggered(){
-    if(data->isADCRecordEnabled()){
-        data->setADCRecordEnabled(false);
-        data->setADCRecordEnabled(true);
-    }
-    if(data->isRecordEnabled()){
-        data->setRecordEnabled(false);
-        data->setRecordEnabled(true);
-    }
     if(serialChannel->isADCConnected()){
         serialChannel->closeADCPort();
     }
     if(serialChannel->isImplantConnected()){
         serialChannel->closeImplantPort();
     }
-    data->clearallChannelData();
+//    data->clearallChannelData();
     connectSylph();
     if(socketSylph->isConnected()){
-//        serialChannel->flushADC();
         socketSylph->discardData();
     }
 }

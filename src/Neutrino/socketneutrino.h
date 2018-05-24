@@ -13,6 +13,8 @@ public:
     bool writeCommand(QByteArray Command);
     bool wifiEnabled = true;
     QByteArray getlastCommand();
+    char getCurrentByte();
+    void setRecordEnabled(bool flag);
 
 private:
     QTcpSocket *socketNeutrino;
@@ -20,13 +22,20 @@ private:
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 40960;
+    qint64 maxSize = 102400;
     int numChannels;
     QByteArray lastSentCommand;
+    bool record = false;
 
     bool Mode_8Bit = false;
-
+    char currentByte;
     int getNumChannels(QByteArray lastCommand);
+
+    QFile *File;
+    QTextStream *out;
+
+    QString fileName;
+    QString directory = QDir::homePath() + "/Desktop/";
 
 private slots:
     void ReadCommand();
