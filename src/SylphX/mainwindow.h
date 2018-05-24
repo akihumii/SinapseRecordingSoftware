@@ -39,7 +39,7 @@ private:
     QTimer dataTimer;
 
     int restartCount = 0;
-    float samplingRate = 1005.0;
+    float samplingRate = 1000.0;
     float period = 1/samplingRate;
     bool pause = false;
 
@@ -92,7 +92,7 @@ private:
 
     QList<QSerialPortInfo> portInfo;
 
-    QString connectionStatus;
+    QString statusBarText[4];
 
     QCustomPlot *channelGraph[12];
     SocketSylph *socketSylph;

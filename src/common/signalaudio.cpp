@@ -10,8 +10,8 @@ SignalAudio::SignalAudio(){
     format.setSampleType(QAudioFormat::SignedInt);
     format.setSampleSize(sampleSize);
 
-    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
-    {
+//    foreach (const QAudioDeviceInfo &info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+//    {
 //        qDebug() << "Device name: " << info.deviceName();
 //        qDebug() << "Supported Sample Rates: " << info.supportedSampleRates();
 //        qDebug() << "Supported Byte Orders: " << info.supportedByteOrders();
@@ -20,7 +20,7 @@ SignalAudio::SignalAudio(){
 //        qDebug() << "Supported Sample Types: " << info.supportedSampleTypes();
 //        qDebug() << "Preferred Format: " << info.preferredFormat();
 
-    }
+//    }
 
 //    qDebug() << "Format set: " << format;
 
