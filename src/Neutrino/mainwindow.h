@@ -11,8 +11,6 @@
 #include "channel.h"
 #include "../common/data.h"
 #include "../common/filter.h"
-#include "signalchannel.h"
-#include "serialportdialog.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
 
@@ -37,15 +35,17 @@ private:
     QElapsedTimer timer;
     QTimer dataTimer;
 
-    QAction *timeFrame10ms;
-    QAction *timeFrame20ms;
-    QAction *timeFrame50ms;
-    QAction *timeFrame100ms;
-    QAction *timeFrame200ms;
-    QAction *timeFrame500ms;
-    QAction *timeFrame1000ms;
-    QAction *timeFrame2000ms;
-    QAction *timeFrame5000ms;
+    QSignalMapper *timeFrameMapper;
+    QAction *timeFrameAction[9];
+    QString timeFrameActionNames[9] = { "10 milliseconds",
+                                        "20 milliseconds",
+                                        "50 milliseconds",
+                                        "100 milliseconds",
+                                        "200 milliseconds",
+                                        "500 milliseconds",
+                                        "1 second",
+                                        "2 seconds",
+                                        "5 seconds" };
     QActionGroup *timeFrameGroup;
 
     QStatusBar *statusBarMainWindow;
@@ -74,15 +74,16 @@ private:
     QAction *swapAction;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
-
-    QAction *voltage50u;
-    QAction *voltage100u;
-    QAction *voltage200u;
-    QAction *voltage500u;
-    QAction *voltage1000u;
-    QAction *voltage2000u;
-    QAction *voltage5000u;
-
+    
+    QSignalMapper *voltageMapper;
+    QAction *voltageAction[7];
+    QString voltageActionNames[7] = { "+/- 10mV",
+                                      "+/- 20mV",
+                                      "+/- 50mV",
+                                      "+/- 100mV",
+                                      "+/- 200mV",
+                                      "+/- 500mV",
+                                      "+/- 700mV" };
     QActionGroup *voltageGroup;
 
     SocketNeutrino *socketNeutrino;
@@ -96,56 +97,38 @@ private:
     void create10x1Layout();
     void create5x2Layout();
 
-    QMenu *connectivityMenu;
-
     QCustomPlot *channelGraph[10];
 
     QAction *tenby1Action;
     QAction *fiveby2Action;
-
-//    QAction *connectAction;
-//    QAction *disconnectAction;
     QAction *commandAction;
-
-    QActionGroup *connectivityGroup;
-
-//    QAction *wiredMode;
-//    QAction *wifiMode;
+    QPen colors[10] = { QPen(Qt::black),
+                        QPen(Qt::darkRed),
+                        QPen(Qt::darkGreen),
+                        QPen(Qt::darkCyan),
+                        QPen(Qt::blue),
+                        QPen(Qt::darkBlue),
+                        QPen(Qt::darkMagenta),
+                        QPen(Qt::darkYellow),
+                        QPen(Qt::darkGray),
+                        QPen(Qt::red) };
 
 private slots:
     void updateData();
-    void on_timeFrame10_triggered();
-    void on_timeFrame20_triggered();
-    void on_timeFrame50_triggered();
-    void on_timeFrame100_triggered();
-    void on_timeFrame200_triggered();
-    void on_timeFrame500_triggered();
-    void on_timeFrame1000_triggered();
-    void on_timeFrame2000_triggered();
-    void on_timeFrame5000_triggered();
+    void on_timeFrame_changed(int timeFrameIndex);
+    void on_resetX_triggered();
+    void on_voltage_changed(int voltageIndex);
     void on_resetY_triggered();
-    void on_voltage50u_triggered();
-    void on_voltage100u_triggered();
-    void on_voltage200u_triggered();
-    void on_voltage500u_triggered();
-    void on_voltage1000u_triggered();
-    void on_voltage2000u_triggered();
-    void on_voltage5000u_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
-    void on_resetX_triggered();
     void on_swap_triggered();
     void on_filterConfig_trigger();
-
-//    void on_ConnectMenu_triggered();
-//    void on_DisconnectMenu_triggered();
     void on_dataAnalyzer_triggered();
     void on_CommandMenu_triggered();
     void on_tenby1_triggered();
     void on_fiveby2_triggered();
-//    void on_wired_triggered();
-//    void on_wifi_triggered();
+    void on_inputRefer_triggered();
 
 };
 

@@ -25,12 +25,6 @@ typedef enum OperationMode{
     PWR_LVL_MEASURE = 0B00010101
 } OperationMode;
 
-typedef enum WordLength{
-    WL_8 = 0B00110100,
-    WL_10 = 0B10110100
-} WordLength;
-
-
 class Command
 {
 public:
@@ -52,6 +46,7 @@ public:
     void updateBER(int Index, QString newBER);
     bool havelastCommand();
     void setlastCommand(bool flag);
+    int getNumChannels();
 
 private:
     Channel *NeutrinoChannel;
@@ -64,6 +59,8 @@ private:
     bool ok;
     int BERbytesHex[8];
     bool lastCommandexist = false;
+    int numChannels;
+    QByteArray lastSentCommand;
 };
 
 #endif // COMMAND_H

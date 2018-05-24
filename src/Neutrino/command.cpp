@@ -64,6 +64,16 @@ QByteArray Command::constructCommand()
             outgoingCommand.append((const char) PWR_LVL_MEASURE);
             break;
         }
+        case 10:{                //Bioimpedance Measurement (8-bit)
+            outgoingCommand.append((const char) BIOIMP_MEASURE_8BIT);
+            outgoingCommand.append((const char) bioimp);
+            break;
+        }
+        case 11:{                //Bioimpedance Measurement (8-bit)
+            outgoingCommand.append((const char) BIOIMP_MEASURE_8BIT);
+            outgoingCommand.append((const char) bioimp);
+            break;
+        }
         default:
         break;
     }
@@ -71,6 +81,7 @@ QByteArray Command::constructCommand()
         outgoingCommand.append((const char) JTAGarray[i]);
     }
     outgoingCommand.append((const char) MARKER_5A);
+    lastSentCommand = outgoingCommand;
     return outgoingCommand;
 }
 
@@ -145,6 +156,17 @@ bool Command::havelastCommand(){
 
 void Command::setlastCommand(bool flag){
     lastCommandexist = flag;
+}
+
+int Command::getNumChannels(){
+    numChannels = 0;
+    for(int i=7;i<17;i++){
+        if (lastSentCommand.at(i) == (const char) CHANNEL_ON){
+            numChannels++;
+        }
+    }
+    qDebug() << "Number of channels: " << numChannels;
+    return numChannels;
 }
 
 
