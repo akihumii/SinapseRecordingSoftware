@@ -17,7 +17,9 @@ typedef enum ADDRESS{
     PULSEDURATION_CHN3 = 0x32,
     PULSEDURATION_CHN4 = 0x33,
     FREQUENCY = 0x20,
-    CHANNEL_ENABLE = 0x41
+    CHANNEL_ENABLE = 0x41,
+    STEP_INCREASE = 0x51,
+    STEP_DECREASE = 0x52
 } ADDRESS;
 
 class CommandOdin : public QObject
@@ -46,6 +48,10 @@ public:
     void initialiseCommand();
     int getNumChannelEnabled();
     QByteArray getlastSentCommand();
+    void setStepSize(double step);
+    char getStepSize();
+    void sendStepSizeIncrease();
+    void sendStepSizeDecrease();
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
@@ -59,6 +65,8 @@ private:
     float a = 0.0048;
     float b = 12.803;
     float c = 6.9185;
+
+    char stepSize = 6;
 
     QByteArray outgoingCommand;
 signals:

@@ -195,6 +195,7 @@ unsigned char CommandOdin::getAmplitudeByte(int index){
                 temp = in.readLine();
                 c = temp.toFloat();
     //            qDebug() << "c: " << temp;
+                formulaFile.close();
             }
     // =================================================== HACK JOB =============================================================//
         unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;       // For 20.0mA
@@ -246,13 +247,64 @@ void CommandOdin::setChannelEnabled(int channel, bool flag){
 
 char CommandOdin::getChannelEnabled(){
     char temp;
-//    temp &= channelEnabled[3]? 1 << 3 :
     temp = (char) channelEnabled[3] << 3 | (char) channelEnabled[2] << 2 | (char) channelEnabled[1] << 1 | (char) channelEnabled[0];
     return temp;
 }
 
 int CommandOdin::getNumChannelEnabled(){
     return numChannels;
+}
+
+void CommandOdin::sendStepSizeIncrease(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) STEP_INCREASE);
+    outgoingCommand.append((const char) getStepSize());
+    if(serialOdin->isOdinSerialConnected()){
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    socketOdin->writeCommand(outgoingCommand);
+    qDebug() << "Sent Step Size Increase";
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        qDebug() << (quint8) outgoingCommand.at(i);
+    }
+}
+
+void CommandOdin::sendStepSizeDecrease(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) STEP_DECREASE);
+    outgoingCommand.append((const char) getStepSize());
+    if(serialOdin->isOdinSerialConnected()){
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    socketOdin->writeCommand(outgoingCommand);
+    qDebug() << "Sent Step Size Decrease";
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        qDebug() << (quint8) outgoingCommand.at(i);
+    }
+}
+
+void CommandOdin::setStepSize(double step){
+    QString formula =  QDir::currentPath() + QDir::separator() + "formula.txt";
+    QFile formulaFile(formula);
+    if(formulaFile.exists()){
+        if(!formulaFile.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+        QTextStream in(&formulaFile);
+        QString temp;
+        temp = in.readLine();
+        a = temp.toFloat();
+        temp = in.readLine();
+        b = temp.toFloat();
+        temp = in.readLine();
+        c = temp.toFloat();
+        formulaFile.close();
+    }
+    stepSize = step*step*a + step*b - c;       // For 20.0mA
+    qDebug() << "Step size: " << (quint8) stepSize;
+}
+
+char CommandOdin::getStepSize(){
+    return stepSize;
 }
 
 }

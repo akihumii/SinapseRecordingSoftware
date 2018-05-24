@@ -38,7 +38,7 @@ private:
     bool ADCConnected = false;
     int portOrder = 1;
     qint64 packetSize = 25;
-    qint64 maxSize = packetSize*200;
+    qint64 maxSize = packetSize*20;
 };
 
 }
