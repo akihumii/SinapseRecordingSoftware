@@ -75,6 +75,7 @@ private:
 
     int commandCount = 0;
     int numChannelsEnabled = 0;
+    char *lastSentCommand = new char[2];
     int count = 0;
 
     bool connectOdin();

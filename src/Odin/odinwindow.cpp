@@ -219,8 +219,28 @@ bool OdinWindow::connectOdin(){
 void OdinWindow::sendCommand(){
     start = !start;
     if(start){
-        commandOdin->initialiseCommand();
-        emit commandSent(commandOdin->getlastSentCommand().data());
+        commandOdin->sendStart();
+        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+        emit commandSent(lastSentCommand);
+        QTimer::singleShot((800), [=] {
+            commandOdin->sendFrequency();
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+        for(int i = 0; i < 4; i++){
+            QTimer::singleShot((1000+i*200), [=] {
+                    commandOdin->sendPulseDuration(i);
+                    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                    emit commandSent(lastSentCommand);
+            });
+        }
+        for(int i = 0; i < 4; i++){
+            QTimer::singleShot((1800+i*200), [=] {
+                commandOdin->sendAmplitude(i);
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
+            });
+        }
         sendButton->setText("Stop Odin!");
         if(delayEnabledCheckBox->isChecked() && start){
             loopingThread->delay = delaySpinBox->value()*1000 + 1800;
@@ -234,12 +254,14 @@ void OdinWindow::sendCommand(){
             commandOdin->setAmplitude(i, 0.0);
             QTimer::singleShot((i*200), [=] {
                 commandOdin->sendAmplitude(i);
-                emit commandSent(commandOdin->getlastSentCommand().data());
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
             });
         }
         QTimer::singleShot((1000), [=] {
             commandOdin->sendStop();
-            emit commandSent(commandOdin->getlastSentCommand().data());
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
             sendButton->setText("Start Odin!");
             delayEnabledCheckBox->setChecked(false);
         });
@@ -293,7 +315,8 @@ void OdinWindow::on_amplitude_Changed(){
             if(start){
                 on_delayEnabled_toggled();
                 commandOdin->sendAmplitude(i);
-                emit commandSent(commandOdin->getlastSentCommand().data());
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
             }
         }
     }
@@ -306,10 +329,12 @@ void OdinWindow::on_pulseDuration_Changed(){
             qDebug() << "Set channel " << i << "pulse duration to : " << pulseDurationSpinBox[i]->text().toInt();
             if(start){
                 commandOdin->sendPulseDuration(i);
-                emit commandSent(commandOdin->getlastSentCommand().data());
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
                 QTimer::singleShot(200, [=] {
                         commandOdin->sendFrequency();
-                        emit commandSent(commandOdin->getlastSentCommand().data());
+                        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                        emit commandSent(lastSentCommand);
                 });
             }
         }
@@ -322,7 +347,8 @@ void OdinWindow::on_frequency_Changed(){
         qDebug() << "Set frequency to : " << frequencySpinBox->text().toInt();
         if(start){
             commandOdin->sendFrequency();
-            emit commandSent(commandOdin->getlastSentCommand().data());
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
         }
     }
 }
@@ -364,7 +390,8 @@ void OdinWindow::on_upperThreshold_crossed(){
     if(numChannelsEnabled != commandOdin->getNumChannelEnabled()){
         QTimer::singleShot(200, [=] {
                 commandOdin->sendFrequency();
-                emit commandSent(commandOdin->getlastSentCommand().data());
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
         });
         numChannelsEnabled = commandOdin->getNumChannelEnabled();
     }
@@ -390,7 +417,8 @@ void OdinWindow::on_lowerThreshold_crossed(){
     if(numChannelsEnabled != commandOdin->getNumChannelEnabled()){
         QTimer::singleShot(200, [=] {
                 commandOdin->sendFrequency();
-                emit commandSent(commandOdin->getlastSentCommand().data());
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
         });
         numChannelsEnabled = commandOdin->getNumChannelEnabled();
     }
