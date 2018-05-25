@@ -40,9 +40,14 @@ private:
     QPushButton *sendButton;
     QPushButton *recordButton;
 
+    QPushButton *selectAll;
+    QPushButton *selectNone;
+
     QGroupBox *stimParameters;
     QHBoxLayout *stimParaLayout[5];
     QCheckBox *thresholdEnable[4];
+    QCheckBox* channelAllEnable;
+    QCheckBox *channelEnable[4];
     QLabel *chnLabels[4];
     QLabel *paraLabels[5];
     QDoubleSpinBox *amplitudeSpinBox[4];
@@ -73,6 +78,7 @@ private:
     int commandCount = 0;
     int numChannelsEnabled = 0;
     char *lastSentCommand = new char[2];
+    int count = 0;
 
     bool connectOdin();
     void createLayout();
@@ -95,6 +101,8 @@ private slots:
     void pauseOdin();
     void acceptConnection();
     void increaseCurrent();
+    void on_selectAll_clicked();
+    void on_selectNone_clicked();
 
 signals:
     void commandSent(char *bytes);
