@@ -40,16 +40,18 @@ private:
     QPushButton *sendButton;
     QPushButton *recordButton;
 
-    QPushButton *selectAll;
-    QPushButton *selectNone;
+    QPushButton *channelSelectAll;
+    QPushButton *channelSelectNone;
+    QPushButton *thresholdSelectAll;
+    QPushButton *thresholdSelectNone;
 
     QGroupBox *stimParameters;
-    QHBoxLayout *stimParaLayout[5];
+    QHBoxLayout *stimParaLayout[6];
     QCheckBox *thresholdEnable[4];
     QCheckBox* channelAllEnable;
     QCheckBox *channelEnable[4];
     QLabel *chnLabels[4];
-    QLabel *paraLabels[5];
+    QLabel *paraLabels[6];
     QDoubleSpinBox *amplitudeSpinBox[4];
     QSpinBox*pulseDurationSpinBox[4];
     QSpinBox *frequencySpinBox;
@@ -87,6 +89,7 @@ private slots:
     void sendCommand();
     void on_record_clicked();
     void on_thresholdEnable_toggled();
+    void on_channelEnable_toggled();
     void on_amplitude_Changed();
     void on_pulseDuration_Changed();
     void on_frequency_Changed();
@@ -101,8 +104,10 @@ private slots:
     void pauseOdin();
     void acceptConnection();
     void increaseCurrent();
-    void on_selectAll_clicked();
-    void on_selectNone_clicked();
+    void on_channelSelectAll_clicked();
+    void on_channelSelectNone_clicked();
+    void on_thresholdSelectAll_clicked();
+    void on_thresholdSelectNone_clicked();
 
 signals:
     void commandSent(char *bytes);

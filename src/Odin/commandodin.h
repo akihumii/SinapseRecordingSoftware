@@ -19,7 +19,8 @@ typedef enum ADDRESS{
     FREQUENCY = 0x20,
     CHANNEL_ENABLE = 0x41,
     STEP_INCREASE = 0x51,
-    STEP_DECREASE = 0x52
+    STEP_DECREASE = 0x52,
+    THRESHOLD_ENABLE = 0x61
 } ADDRESS;
 
 class CommandOdin : public QObject
@@ -52,15 +53,19 @@ public:
     char getStepSize();
     void sendStepSizeIncrease();
     void sendStepSizeDecrease();
+    void sendThresholdEnable();
+    void setThresholdEnable(char value);
+    char getThresholdEnable();
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
 
     double amplitude[4] = {0.0, 0.0, 0.0, 0.0};
-    bool channelEnabled[4] = {false, false, false, false};
+    bool channelEnabled[4] = {true, true, true, true};
     int pulseDuration[4] = {200, 200, 200, 200};
     int frequency = 50;
     int numChannels = 0;
+    char thresholdEnable = 15;
 
     float a = 0.0048;
     float b = 12.803;

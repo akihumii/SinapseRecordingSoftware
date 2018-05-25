@@ -22,6 +22,12 @@ void CommandOdin::initialiseCommand(){
             sendAmplitude(i);
         });
     }
+    QTimer::singleShot((2800), [=] {
+        sendThresholdEnable();
+    });
+    QTimer::singleShot((3000), [=] {
+        sendChannelEnable();
+    });
     qDebug() << "Finished initialisation!";
 }
 
@@ -281,6 +287,28 @@ void CommandOdin::sendStepSizeDecrease(){
     for(int i = 0; i < outgoingCommand.size(); i++){
         qDebug() << (quint8) outgoingCommand.at(i);
     }
+}
+
+void CommandOdin::sendThresholdEnable(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) THRESHOLD_ENABLE);
+    outgoingCommand.append((const char) getThresholdEnable());
+    if(serialOdin->isOdinSerialConnected()){
+        serialOdin->writeCommand(outgoingCommand);
+    }
+    socketOdin->writeCommand(outgoingCommand);
+    qDebug() << "Sent Threshold Enabled";
+    for(int i = 0; i < outgoingCommand.size(); i++){
+        qDebug() << (quint8) outgoingCommand.at(i);
+    }
+}
+
+void CommandOdin::setThresholdEnable(char value){
+    thresholdEnable = value;
+}
+
+char CommandOdin::getThresholdEnable(){
+    return thresholdEnable;
 }
 
 void CommandOdin::setStepSize(double step){
