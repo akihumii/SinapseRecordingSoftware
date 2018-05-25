@@ -69,7 +69,7 @@ private:
 
     double upperThreshold = 2.0;
     double lowerThreshold = 0.0;
-    int debounce = 200;
+    int debounce = 40;
     bool thresholdEnable = true;
 
     char lastSentByte[2] = {0, 0};
