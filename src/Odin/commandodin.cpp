@@ -139,7 +139,7 @@ void CommandOdin::sendPulseDuration(int channel){
 void CommandOdin::sendFrequency(){
     outgoingCommand.clear();
     outgoingCommand.append((const char) FREQUENCY);
-    outgoingCommand.append((const char) getFrequencyByte());
+    outgoingCommand.append((const char) getFrequency());
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(outgoingCommand);
     }
