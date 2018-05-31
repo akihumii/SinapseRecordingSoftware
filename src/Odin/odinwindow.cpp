@@ -462,6 +462,8 @@ void OdinWindow::on_upperThreshold_crossed(){
 //    if(amplitudeSpinBox[0]->text().toDouble() > 0){
     if(count > 0 && start){
         commandOdin->sendStepSizeDecrease();
+        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+        emit commandSent(lastSentCommand);
         count--;
     }
 //    }
@@ -495,6 +497,8 @@ void OdinWindow::on_lowerThreshold_crossed(){
 //    if(amplitudeSpinBox[0]->text().toDouble() < 19.0){
     if(count < 100 && start){
         commandOdin->sendStepSizeIncrease();
+        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+        emit commandSent(lastSentCommand);
         count++;
     }
     if(numChannelsEnabled != commandOdin->getNumChannelEnabled()){
