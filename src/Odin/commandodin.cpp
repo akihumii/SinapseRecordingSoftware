@@ -93,7 +93,12 @@ void CommandOdin::sendAmplitude(int channel){
             break;
         }
     }
-    outgoingCommand.append((const char) getAmplitudeByte(channel));
+    if((quint8) getAmplitudeByte(channel) > 240){
+        outgoingCommand.append((const char) 240);
+    }
+    else{
+        outgoingCommand.append((const char) getAmplitudeByte(channel));
+    }
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(outgoingCommand);
     }
@@ -273,7 +278,7 @@ void CommandOdin::sendStepSizeIncrease(){
     for(int i = 0; i < outgoingCommand.size(); i++){
 //        qDebug() << (quint8) outgoingCommand.at(i);
     }
-    currentAmplitude = ((currentAmplitude+getStepSize()) > (unsigned char) 255)? (unsigned char) 255 : currentAmplitude+getStepSize();
+    currentAmplitude = ((currentAmplitude+getStepSize()) > (unsigned char) 240)? (unsigned char) 240 : currentAmplitude+getStepSize();
 //    currentAmplitude += getStepSize();
 }
 
@@ -332,7 +337,7 @@ void CommandOdin::setStepSize(double step){
 //        formulaFile.close();
 //    }
 //    stepSize = step*step*a + step*b - c;       // For 20.0mA
-    stepSize = step * 13;
+    stepSize = step * 12;
     qDebug() << "Step size: " << (quint8) stepSize;
 }
 
