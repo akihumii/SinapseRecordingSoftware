@@ -31,7 +31,7 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
                 QTimer::singleShot(debounce, [=] {
                         thresholdEnable = true;
                 });
-                qDebug() << "Upper Threshold crossed";
+//                qDebug() << "Upper Threshold crossed";
             }
             if(fullWord_rawData*(2.0/1024.0) < lowerThreshold){
                 thresholdEnable = false;
@@ -39,15 +39,9 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
                 QTimer::singleShot(debounce, [=] {
                         thresholdEnable = true;
                 });
-                qDebug() << "Lower Threshold crossed";
+//                qDebug() << "Lower Threshold crossed";
             }
         }
-//        for(int j = NUM_CHANNELS; j < 10; j++){
-//            if(RecordEnabled){
-//                RecordData(0);
-//            }
-//            ChannelData[j].append(0*(0.000000195));
-//        }
         ChannelData[10].append((quint8) rawData.at(i+packetSize-5));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+packetSize-5));
@@ -59,6 +53,10 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
             RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
             RecordData((quint8) lastSentByte[0]);
             RecordData((quint8) lastSentByte[1]);
+            RecordData((double) lastSentAmplitudes[0]);
+            RecordData((double) lastSentAmplitudes[1]);
+            RecordData((double) lastSentAmplitudes[2]);
+            RecordData((double) lastSentAmplitudes[3]);
             RecordData(END_OF_LINE);
         }
     }
@@ -67,6 +65,13 @@ void DataProcessor::parseFrameMarkers(QByteArray rawData){
 void DataProcessor::setLastSentBytes(char *bytes){
     lastSentByte[0] = bytes[0];
     lastSentByte[1] = bytes[1];
+}
+
+void DataProcessor::setLastSentAmplitudes(double *amplitudes){
+    lastSentAmplitudes[0] = amplitudes[0];
+    lastSentAmplitudes[1] = amplitudes[1];
+    lastSentAmplitudes[2] = amplitudes[2];
+    lastSentAmplitudes[3] = amplitudes[3];
 }
 
 void DataProcessor::setDebounce(int value){

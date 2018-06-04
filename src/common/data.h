@@ -53,6 +53,7 @@ protected:
     quint64 total_data_count = 0;
     bool RecordEnabled = false;
     void RecordData(int data);
+    void RecordData(double data);
     void recordHeader();
     QString directory = QDir::homePath() + "/Desktop/";
 

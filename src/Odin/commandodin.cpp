@@ -269,10 +269,12 @@ void CommandOdin::sendStepSizeIncrease(){
         serialOdin->writeCommand(outgoingCommand);
     }
     socketOdin->writeCommand(outgoingCommand);
-    qDebug() << "Sent Step Size Increase";
+    qDebug() << "Sent Step Size Increase" << (quint8) currentAmplitude;
     for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
+//        qDebug() << (quint8) outgoingCommand.at(i);
     }
+    currentAmplitude = ((currentAmplitude+getStepSize()) > (unsigned char) 255)? (unsigned char) 255 : currentAmplitude+getStepSize();
+//    currentAmplitude += getStepSize();
 }
 
 void CommandOdin::sendStepSizeDecrease(){
@@ -283,10 +285,12 @@ void CommandOdin::sendStepSizeDecrease(){
         serialOdin->writeCommand(outgoingCommand);
     }
     socketOdin->writeCommand(outgoingCommand);
-    qDebug() << "Sent Step Size Decrease";
+    qDebug() << "Sent Step Size Decrease" << (quint8) currentAmplitude;
     for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
+//        qDebug() << (quint8) outgoingCommand.at(i);
     }
+    currentAmplitude = ((currentAmplitude - getStepSize()) <(unsigned char) 0)? (unsigned char) 0 : currentAmplitude-getStepSize();
+//    currentAmplitude -= getStepSize();
 }
 
 void CommandOdin::sendThresholdEnable(){
@@ -312,27 +316,36 @@ char CommandOdin::getThresholdEnable(){
 }
 
 void CommandOdin::setStepSize(double step){
-    QString formula =  QDir::currentPath() + QDir::separator() + "formula.txt";
-    QFile formulaFile(formula);
-    if(formulaFile.exists()){
-        if(!formulaFile.open(QIODevice::ReadOnly | QIODevice::Text))
-            return;
-        QTextStream in(&formulaFile);
-        QString temp;
-        temp = in.readLine();
-        a = temp.toFloat();
-        temp = in.readLine();
-        b = temp.toFloat();
-        temp = in.readLine();
-        c = temp.toFloat();
-        formulaFile.close();
-    }
-    stepSize = step*step*a + step*b - c;       // For 20.0mA
+//    QString formula =  QDir::currentPath() + QDir::separator() + "formula.txt";
+//    QFile formulaFile(formula);
+//    if(formulaFile.exists()){
+//        if(!formulaFile.open(QIODevice::ReadOnly | QIODevice::Text))
+//            return;
+//        QTextStream in(&formulaFile);
+//        QString temp;
+//        temp = in.readLine();
+//        a = temp.toFloat();
+//        temp = in.readLine();
+//        b = temp.toFloat();
+//        temp = in.readLine();
+//        c = temp.toFloat();
+//        formulaFile.close();
+//    }
+//    stepSize = step*step*a + step*b - c;       // For 20.0mA
+    stepSize = step * 13;
     qDebug() << "Step size: " << (quint8) stepSize;
 }
 
 char CommandOdin::getStepSize(){
     return stepSize;
+}
+
+unsigned char CommandOdin::getCurrentAmplitude(){
+    return currentAmplitude;
+}
+
+void CommandOdin::setCurrentAmplitude(unsigned char value){
+    currentAmplitude = value;
 }
 
 }

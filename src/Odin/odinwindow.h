@@ -76,10 +76,13 @@ private:
 
     bool start = false;
     bool record = false;
+    bool thresholdIncreaseEnable = false;
+    bool thresholdDecreaseEnable = false;
 
     int commandCount = 0;
     int numChannelsEnabled = 0;
     char *lastSentCommand = new char[2];
+    double*lastSentAmplitude = new double[4];
     int count = 0;
 
     bool connectOdin();
@@ -114,6 +117,7 @@ signals:
     void upperThresholdEditted(double value);
     void lowerThresholdEditted(double value);
     void debounceEditted(int value);
+    void amplitudeChanged(double *amplitudes);
 };
 
 }

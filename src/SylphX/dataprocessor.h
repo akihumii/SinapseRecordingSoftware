@@ -50,6 +50,7 @@ public slots:
     void setUpperThreshold(double value);
     void setLowerThreshold(double value);
     void setLastSentBytes(char *bytes);
+    void setLastSentAmplitudes(double *amplitudes);
 
 private:
     QFile *File;
@@ -73,6 +74,7 @@ private:
     bool thresholdEnable = true;
 
     char lastSentByte[2] = {0, 0};
+    double lastSentAmplitudes[4] = {0.0, 0.0, 0.0, 0.0};
 signals:
     void upperThresholdCrossed();
     void lowerThresholdCrossed();

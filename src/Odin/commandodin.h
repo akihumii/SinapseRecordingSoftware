@@ -56,6 +56,8 @@ public:
     void sendThresholdEnable();
     void setThresholdEnable(char value);
     char getThresholdEnable();
+    unsigned char getCurrentAmplitude();
+    void setCurrentAmplitude(unsigned char value);
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
@@ -71,7 +73,8 @@ private:
     float b = 12.803;
     float c = 6.9185;
 
-    char stepSize = 6;
+    char stepSize = 13;
+    unsigned char currentAmplitude = 0;
 
     QByteArray outgoingCommand;
 signals:
