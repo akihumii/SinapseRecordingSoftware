@@ -73,7 +73,7 @@ private:
     float b = 12.803;
     float c = 6.9185;
 
-    char stepSize = 13;
+    char stepSize = 12;
     unsigned char currentAmplitude = 0;
 
     QByteArray outgoingCommand;
