@@ -278,7 +278,7 @@ void OdinWindow::sendCommand(){
         sendButton->setText("Stop Odin!");
         QTimer::singleShot((1245), [=] {
             if(delayEnabledCheckBox->isChecked() && start){
-                loopingThread->delay = delaySpinBox->value()*1000 + 1800;
+                loopingThread->delay = delaySpinBox->value()*1000;
                 loopingThread->start();
             }
         });
