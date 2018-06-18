@@ -102,6 +102,7 @@ private:
     QAction *tenby1Action;
     QAction *fiveby2Action;
     QAction *commandAction;
+    QAction *inputReferred;
     QPen colors[10] = { QPen(Qt::black),
                         QPen(Qt::darkRed),
                         QPen(Qt::darkGreen),
