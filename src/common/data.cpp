@@ -148,6 +148,7 @@ void Data::setNumDataPoints(int timeFrames, double sampleFreq){
     X_axis.resize(numDataPoints+1);
     for(int i = 0; i < numDataPoints+1; i++){
         X_axis.replace(i, i*(1.0/sampleFreq));
+//        qDebug() << X_axis.at(i);
     }
 }
 

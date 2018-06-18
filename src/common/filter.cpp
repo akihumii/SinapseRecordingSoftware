@@ -154,3 +154,15 @@ double Filter::currentHighpassFreq(){
 double Filter::currentNotchFreq(){
     return notchFreq;
 }
+
+void Filter::setSamplingFreq(double freq){
+    samplingFreq = freq;
+}
+
+double Filter::getSamplingFreq(){
+    return samplingFreq;
+}
+
+double Filter::getPeriod(){
+    return 1.0/samplingFreq;
+}

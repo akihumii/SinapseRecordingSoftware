@@ -13,6 +13,9 @@ public:
     double highpassFreq = 100;
     double lowpassFreq = 0;
     double notchFreq = 0;
+    void setSamplingFreq(double freq);
+    double getSamplingFreq();
+    double getPeriod();
     void setNotchFilter(double cutoffFreq, double bandwidth, double sampleFreq);
     void setNotchFilterEnabled(bool enableFlag);
     bool isNotchFilterEnabled();
@@ -33,6 +36,7 @@ private:
     double a0_lp, a1_lp, a2_lp, b1_lp, b2_lp;        // coefficients for 2nd order high pass butterworth filter
     double a0_n, a1_n, a2_n, b1_n, b2_n;             // coefficients for notch filter
     double TWO_PI = 6.28318530718;
+    double samplingFreq;
     QVector<double> filteredData[12];
     QVector<double> filteredData_hp[12];
     QVector<double> filteredData_n[12];

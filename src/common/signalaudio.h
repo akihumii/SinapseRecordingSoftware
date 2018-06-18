@@ -23,7 +23,7 @@ protected:
 private:
     void clearAudioBuffer();
     int audioChannelSelected = 0;
-    int sampleRate = 44100;
+    int sampleRate = 8000;
     int sampleSize = 16;
 };
 
