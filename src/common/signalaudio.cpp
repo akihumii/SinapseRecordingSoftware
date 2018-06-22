@@ -34,6 +34,10 @@ SignalAudio::SignalAudio(){
     audio->setBufferSize(8000);
     audioDevice = audio->start();
     audio->setVolume(0.1);
+
+    filter = new Filter;
+    filter->setLowpassFilter(1000.0, 8000.0);
+    filter->setLowpassFilterEnabled(true);
 }
 
 SignalAudio::~SignalAudio(){

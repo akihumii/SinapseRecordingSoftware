@@ -123,6 +123,10 @@ void MainWindow::createActions(){
     odinAction = new QAction(tr("Odin Control Panel"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
 
+    disableStream = new QAction(tr("&Disable stream"));
+    disableStream->setShortcut(tr("Ctrl+D"));
+    connect(disableStream, SIGNAL(triggered(bool)), this, SLOT(on_disableStream_triggered()));
+
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
     connect(filterAction, SIGNAL(triggered(bool)), this, SLOT(on_filterConfig_trigger()));
@@ -189,6 +193,8 @@ void MainWindow::createActions(){
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(odinAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(disableStream);
     fileMenu->addSeparator();
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
@@ -268,7 +274,7 @@ void MainWindow::connectSylph(){
         serialChannel->connectSylph();
         serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
         serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
-        updateStatusBar(2, temp);
+        updateStatusBar(0, temp);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
         int i = 1;
@@ -302,10 +308,21 @@ void MainWindow::updateData(){
     }
     updateStatusBar(1, "Data Rate: " + QString::number(socketSylph->getRate()) + " kbps");
     for(int i=0; i<12; i++){
-            channelGraph[i]->graph()->setData(data->retrieveXAxis(), data->isFilterEnabled()? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
+            channelGraph[i]->graph()->setData(data->retrieveXAxis(), (data->isFilterEnabled() && i < 10)? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
+            if(i < 10){
+                if(socketSylph->getStreamConnected(i)){
+                    socketSylph->streamData(i, data->retrieveData(i));
+                }
+            }
             if(!pause){
                 channelGraph[i]->replot();
             }
+    }
+}
+
+void MainWindow::on_disableStream_triggered(){
+    for(int i = 0; i < 10; i++){
+        socketSylph->disableStream(i);
     }
 }
 

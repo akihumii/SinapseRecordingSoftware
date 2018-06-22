@@ -65,6 +65,7 @@ private:
     QAction *filterAction;
     QAction *dataAnalyzerAction;
     QAction *pythonLaunchAction;
+    QAction *disableStream;
     QActionGroup *timeFrameGroup;
     QSignalMapper *timeFrameMapper;
     QAction *timeFrameAction[9];
@@ -159,6 +160,7 @@ private slots:
     void on_resetY_triggered();
     void on_dataAnalyzer_triggered();
     void on_pythonLaunch_triggered();
+    void on_disableStream_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
     void on_playPause_triggered();
