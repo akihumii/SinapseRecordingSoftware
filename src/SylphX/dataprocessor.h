@@ -76,13 +76,13 @@ private:
 
     char lastSentByte[2] = {0, 0};
     double lastSentAmplitudes[4] = {0.0, 0.0, 0.0, 0.0};
+    int index = 0;
+    int multiplier = 1;
 signals:
     void upperThresholdCrossed();
     void lowerThresholdCrossed();
-    int index = 0;
-    int multiplier = 1;
 };
 
 }
 
-#endif // DATAPROCESSOR_KA_H
+#endif // DATAPROCESSOR_H

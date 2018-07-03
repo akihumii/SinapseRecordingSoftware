@@ -14,7 +14,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             index = 0;
         }
         for(int j = 2; j < NUM_CHANNELS; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)));
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
