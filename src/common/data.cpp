@@ -149,5 +149,15 @@ void Data::setNumDataPoints(int timeFrames, double sampleFreq){
     default:
         numDataPoints = 0.1/(1/sampleFreq);
     }
+    for(int i = 0; i < 12; i++){
+        ChannelData[i].reserve(numDataPoints+1);
+        ChannelData[i].resize(numDataPoints+1);
+    }
+    X_axis.reserve(numDataPoints+1);
+    X_axis.resize(numDataPoints+1);
+    for(int i = 0; i < numDataPoints+1; i++){
+        X_axis.replace(i, i*(1.0/sampleFreq));
+//        qDebug() << X_axis.at(i);
+    }
 }
 

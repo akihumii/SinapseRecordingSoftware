@@ -12,7 +12,7 @@ TARGET = Neutrino
 TEMPLATE = app
 
 # The application version
-VERSION = 1.1.1
+VERSION = 1.1.4
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -36,7 +36,10 @@ HEADERS += \
     signalchannel.h \
     qtincludes.h \
     socketneutrino.h \
-    measurementdialog.h
+    measurementdialog.h \
+    bioimpedance.h \
+    bioimpedancedialog.h \
+    delaythread.h
 
 SOURCES += \
     channel.cpp \
@@ -49,6 +52,8 @@ SOURCES += \
     serialportdialog.cpp \
     signalchannel.cpp \
     socketneutrino.cpp \
-    measurementdialog.cpp
+    measurementdialog.cpp \
+    bioimpedance.cpp \
+    bioimpedancedialog.cpp
 
 FORMS +=

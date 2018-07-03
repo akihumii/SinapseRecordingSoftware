@@ -7,15 +7,15 @@
 #define END_OF_LINE 2779058
 
 enum TimeFrames{
-    TimeFrames10ms = 10,
-    TimeFrames20ms = 20,
-    TimeFrames50ms = 50,
-    TimeFrames100ms = 100,
-    TimeFrames200ms = 200,
-    TimeFrames500ms = 500,
-    TimeFrames1000ms = 1000,
-    TimeFrames2000ms = 2000,
-    TimeFrames5000ms = 5000
+    TimeFrames10ms,
+    TimeFrames20ms,
+    TimeFrames50ms,
+    TimeFrames100ms,
+    TimeFrames200ms,
+    TimeFrames500ms,
+    TimeFrames1000ms,
+    TimeFrames2000ms,
+    TimeFrames5000ms
 };
 
 class Data : public Filter
@@ -42,7 +42,6 @@ public:
     void setNumDataPoints(int timeFrames, double sampleFreq);
     void setHeader(QString header);
     int getNumDataPoints();
-    double getSamplingRate();
 protected:
     QVector<double> X_axis;
     QVector<double> ChannelData[12];
@@ -60,9 +59,7 @@ protected:
 private:
     QFile *File;
     QTextStream *out;
-
     QString fileName;
-
 
     bool PlotEnabled = true;
     int prevleftOverByteCount = 0;

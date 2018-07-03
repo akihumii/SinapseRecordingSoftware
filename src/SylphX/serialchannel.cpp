@@ -19,7 +19,7 @@ void SerialChannel::ReadImplantData(){
     }
     else if(implantPort->bytesAvailable() >= packetSize+1 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(implantPort->read(packetSize+1))){
+        if(dataProcessor->checkNextFrameMarker(implantPort->read(packetSize+1), 0)){
             checked = true;
             qDebug() << "checked is true";
         }
