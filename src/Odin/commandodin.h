@@ -8,15 +8,19 @@
 namespace Odin {
 
 typedef enum ADDRESS{
-    AMPLITUDE_CHN1 = 0x10,
-    AMPLITUDE_CHN2 = 0x11,
-    AMPLITUDE_CHN3 = 0x12,
-    AMPLITUDE_CHN4 = 0x13,
-    PULSEDURATION_CHN1 = 0x30,
-    PULSEDURATION_CHN2 = 0x31,
-    PULSEDURATION_CHN3 = 0x32,
-    PULSEDURATION_CHN4 = 0x33,
-    FREQUENCY = 0x20
+    AMPLITUDE_CHN1 = 0xF1,
+    AMPLITUDE_CHN2 = 0xF2,
+    AMPLITUDE_CHN3 = 0xF3,
+    AMPLITUDE_CHN4 = 0xF4,
+    FREQUENCY = 0xF5,
+    PULSEDURATION_CHN1 = 0xF6,
+    PULSEDURATION_CHN2 = 0xF7,
+    PULSEDURATION_CHN3 = 0xF9,
+    PULSEDURATION_CHN4 = 0xFA,
+    CHANNEL_ENABLE = 0xFB,
+    STEP_INCREASE = 0xFC,
+    STEP_DECREASE = 0xFD,
+    THRESHOLD_ENABLE = 0xFE
 } ADDRESS;
 
 class CommandOdin : public QObject
@@ -40,23 +44,41 @@ public:
     void sendAmplitude(int channel);
     void sendPulseDuration(int channel);
     void sendFrequency();
+    void sendChannelEnable();
+    char getChannelEnabled();
     void initialiseCommand();
+    int getNumChannelEnabled();
     QByteArray getlastSentCommand();
+    void setStepSize(double step);
+    char getStepSize();
+    void sendStepSizeIncrease();
+    void sendStepSizeDecrease();
+    void sendThresholdEnable();
+    void setThresholdEnable(char value);
+    char getThresholdEnable();
+    unsigned char getCurrentAmplitude();
+    void setCurrentAmplitude(unsigned char value);
 private:
     SerialOdin *serialOdin;
     SocketOdin *socketOdin;
 
     double amplitude[4] = {0.0, 0.0, 0.0, 0.0};
-    bool channelEnabled[4] = {false, false, false, false};
+    bool channelEnabled[4] = {true, true, true, true};
     int pulseDuration[4] = {200, 200, 200, 200};
     int frequency = 50;
     int numChannels = 0;
+    char thresholdEnable = 15;
 
-    float a = -0.0045;
-    float b = 13.243;
-    float c = 8.5461;
+    float a = 0.0048;
+    float b = 12.803;
+    float c = 6.9185;
+
+    char stepSize = 12;
+    unsigned char currentAmplitude = 0;
 
     QByteArray outgoingCommand;
+signals:
+//    void commandSent(char *command);
 };
 
 }

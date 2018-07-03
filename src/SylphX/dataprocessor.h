@@ -6,6 +6,7 @@
 #include "../common/signalaudio.h"
 #include "time.h"
 #include "../Odin/socketodin.h"
+#include "../Odin/odinwindow.h"
 
 #define NUM_CHANNELS 10
 #define NUM_BYTES_PER_CHANNEL 2
@@ -37,13 +38,21 @@ public:
     void setScale(int value);
     int getScale();
     bool isSmart();
-    qint16 fullWord_rawData;
+    quint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
     int firstFrameMarker;
     quint8 currentFrameMarker;
     int currentFrameMarkerIndex;
     int lastFrameMarker;
     QByteArray leftOverData;
+    int getDebounce();
+
+public slots:
+    void setDebounce(int value);
+    void setUpperThreshold(double value);
+    void setLowerThreshold(double value);
+    void setLastSentBytes(char *bytes);
+    void setLastSentAmplitudes(double *amplitudes);
 
 private:
     QFile *File;
@@ -60,6 +69,16 @@ private:
     float samplingRate;
     float period;
     int syncPulse = 0;
+    double upperThreshold = 2.0;
+    double lowerThreshold = 0.0;
+    int debounce = 40;
+    bool thresholdEnable = true;
+
+    char lastSentByte[2] = {0, 0};
+    double lastSentAmplitudes[4] = {0.0, 0.0, 0.0, 0.0};
+signals:
+    void upperThresholdCrossed();
+    void lowerThresholdCrossed();
     int index = 0;
     int multiplier = 1;
 };

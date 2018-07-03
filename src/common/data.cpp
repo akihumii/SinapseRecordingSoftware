@@ -83,6 +83,15 @@ void Data::RecordData(int data){
     }
 }
 
+void Data::RecordData(double data){
+    if(data == END_OF_LINE){
+        *out << "\n";
+    }
+    else{
+        *out << data << " ,";
+    }
+}
+
 void Data::setFileName(QString filename){
     fileName = filename;
 }

@@ -14,10 +14,26 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             index = 0;
         }
         for(int j = 2; j < NUM_CHANNELS; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)));
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
+//         if(thresholdEnable){
+//             if(fullWord_rawData*(2.0/1024.0) > upperThreshold){
+//                 thresholdEnable = false;
+//                 emit upperThresholdCrossed();
+//                 QTimer::singleShot(debounce, [=] {
+//                         thresholdEnable = true;
+//                 });
+//             }
+//             if(fullWord_rawData*(2.0/1024.0) < lowerThreshold){
+//                 thresholdEnable = false;
+//                 emit lowerThresholdCrossed();
+//                 QTimer::singleShot(debounce, [=] {
+//                         thresholdEnable = true;
+//                 });
+//             }
+//         }
             ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
             appendAudioBuffer(j-2, rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
         }
@@ -30,17 +46,17 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             appendAudioBuffer(j+(NUM_CHANNELS-2), rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
         }
 
-        for(int j = 0; j < 10; j++){
-            for(int i = 0; i < 8; i++){
-                appendAudioBuffer(j, 0, 0);
-            }
-        }
-
         ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-5));
         ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+packetSize-5));
             RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
+            RecordData((quint8) lastSentByte[0]);
+            RecordData((quint8) lastSentByte[1]);
+            RecordData((double) lastSentAmplitudes[0]);
+            RecordData((double) lastSentAmplitudes[1]);
+            RecordData((double) lastSentAmplitudes[2]);
+            RecordData((double) lastSentAmplitudes[3]);
             RecordData(END_OF_LINE);
         }
         index++;
@@ -49,8 +65,38 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
     return rawData.size();
 }
 
+void DataProcessor::setLastSentBytes(char *bytes){
+    lastSentByte[0] = bytes[0];
+    lastSentByte[1] = bytes[1];
+}
+
+void DataProcessor::setLastSentAmplitudes(double *amplitudes){
+    lastSentAmplitudes[0] = amplitudes[0];
+    lastSentAmplitudes[1] = amplitudes[1];
+    lastSentAmplitudes[2] = amplitudes[2];
+    lastSentAmplitudes[3] = amplitudes[3];
+}
+
+void DataProcessor::setDebounce(int value){
+    qDebug() << "Setting debounce value : " << value;
+    debounce = value;
+}
+
+void DataProcessor::setUpperThreshold(double value){
+    qDebug() << "Setting upper threshold : " << value;
+    upperThreshold = value;
+}
+
+void DataProcessor::setLowerThreshold(double value){
+    qDebug() << "Setting lower threshold : " << value;
+    lowerThreshold = value;
+}
+
+int DataProcessor::getDebounce(){
+    return debounce;
+}
+
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
-//    qDebug() << rawData.size();
     if(leftOverData.size() > 0){
         for(int i=leftOverData.size()-1;i>=0;i--){
             rawData.prepend(leftOverData.at(i));

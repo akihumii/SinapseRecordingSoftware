@@ -15,6 +15,16 @@ MainWindow::MainWindow(){
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+
+    connect(x, SIGNAL(debounceEditted(int)), data, SLOT(setDebounce(int)));
+    connect(x, SIGNAL(upperThresholdEditted(double)), data, SLOT(setUpperThreshold(double)));
+    connect(x, SIGNAL(lowerThresholdEditted(double)), data, SLOT(setLowerThreshold(double)));
+    connect(x, SIGNAL(commandSent(char*)), data, SLOT(setLastSentBytes(char*)));
+    connect(x, SIGNAL(amplitudeChanged(double*)), data, SLOT(setLastSentAmplitudes(double*)));
+
+    connect(data, SIGNAL(upperThresholdCrossed()), x, SLOT(on_upperThreshold_crossed()));
+    connect(data, SIGNAL(lowerThresholdCrossed()), x, SLOT(on_lowerThreshold_crossed()));
+
     dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
