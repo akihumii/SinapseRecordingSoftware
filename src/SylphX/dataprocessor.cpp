@@ -97,6 +97,7 @@ int DataProcessor::getDebounce(){
 }
 
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
+//    qDebug() << rawData.size();
     if(leftOverData.size() > 0){
         for(int i=leftOverData.size()-1;i>=0;i--){
             rawData.prepend(leftOverData.at(i));
@@ -115,7 +116,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                 }
                 for(int j = 2; j < 10; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-                    appendAudioBuffer(j-2, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
+//                    appendAudioBuffer(j-2, rawData.at(i+(2*j)+2), rawData.at(i+(2*j)+1));
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
@@ -123,19 +124,12 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                 }
                 for(int j = 0; j < 2; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-                    appendAudioBuffer(j+8, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
+//                    appendAudioBuffer(j+8, rawData.at(i+(2*j)+2), rawData.at(i+(2*j)+1));
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
                     ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
                 }
-
-                for(int j = 0; j < 10; j++){
-                    for(int i = 0; i < 8; i++){
-                        appendAudioBuffer(j, 0, 0);
-                    }
-                }
-
                 ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-4));
                 ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+packetSize-2));
                 if(RecordEnabled){
@@ -150,8 +144,8 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
             leftOverData.append(rawData.at(i));
         }
     }
-//    playAudio(getAudioChannel());
     return rawData.size();
+//    playAudio(getAudioChannel());
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int mark){

@@ -14,16 +14,16 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-    if(implantPort->bytesAvailable() >= maxSize && checked){
-        dataProcessor->parseFrameMarkers(implantPort->read(maxSize));
-    }
-    else if(implantPort->bytesAvailable() >= packetSize+1 && !checked){
-        qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(implantPort->read(packetSize+1), 0)){
-            checked = true;
-            qDebug() << "checked is true";
-        }
-    }
+//    if(implantPort->bytesAvailable() >= maxSize && checked){
+//        dataProcessor->parseFrameMarkers(implantPort->read(maxSize));
+//    }
+//    else if(implantPort->bytesAvailable() >= packetSize+1 && !checked){
+//        qDebug() << "checking";
+//        if(dataProcessor->checkNextFrameMarker(implantPort->read(packetSize+1), 0)){
+//            checked = true;
+//            qDebug() << "checked is true";
+//        }
+//    }
 }
 
 void SerialChannel::closeImplantPort(){
@@ -38,7 +38,7 @@ void SerialChannel::closeADCPort(){
 
 void SerialChannel::ReadADCData(){
 //    qDebug() << "reading adc data";
-    dataProcessor->sortADCData(ADCPort->read(25200));
+//    dataProcessor->sortADCData(ADCPort->read(25200));
 }
 
 bool SerialChannel::enableImplantPort(QString portName){
@@ -128,28 +128,28 @@ void SerialChannel::connectSylph(){
 //        }
 //        qDebug() << "ADC Port connnected!";
 //    }
-    portInfo = QSerialPortInfo::availablePorts();
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
-        qDebug() << "Name : " << info.portName();
-        qDebug() << "Description : " << info.description();
-        qDebug() << "Manufacturer: " << info.manufacturer();
-    }
-    for(int i = 0; i < portInfo.size(); i++){
-        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
-            implantPort->setPortName(portInfo.at(i).portName());
-            qDebug() << "Connected to port " << portInfo.at(i).portName();
-//            connectedPortName = portInfo.at(i).portName();
-            implantPort->setBaudRate(500000);
-            implantPort->setDataBits(QSerialPort::Data8);
-            implantPort->setParity(QSerialPort::NoParity);
-            implantPort->setStopBits(QSerialPort::OneStop);
-            implantPort->setFlowControl(QSerialPort::NoFlowControl);
-        }
-    }
-    if(implantPort->open(QIODevice::ReadWrite)){
-        implantConnected = true;
-        qDebug() << "Connected to Sylph serial";
-    }
+//    portInfo = QSerialPortInfo::availablePorts();
+//    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+//        qDebug() << "Name : " << info.portName();
+//        qDebug() << "Description : " << info.description();
+//        qDebug() << "Manufacturer: " << info.manufacturer();
+//    }
+//    for(int i = 0; i < portInfo.size(); i++){
+//        if(portInfo.at(i).manufacturer().contains("Silicon", Qt::CaseInsensitive)){
+//            implantPort->setPortName(portInfo.at(i).portName());
+//            qDebug() << "Connected to port " << portInfo.at(i).portName();
+////            connectedPortName = portInfo.at(i).portName();
+//            implantPort->setBaudRate(500000);
+//            implantPort->setDataBits(QSerialPort::Data8);
+//            implantPort->setParity(QSerialPort::NoParity);
+//            implantPort->setStopBits(QSerialPort::OneStop);
+//            implantPort->setFlowControl(QSerialPort::NoFlowControl);
+//        }
+//    }
+//    if(implantPort->open(QIODevice::ReadWrite)){
+//        implantConnected = true;
+//        qDebug() << "Connected to Sylph serial";
+//    }
 }
 
 bool SerialChannel::isImplantConnected(){

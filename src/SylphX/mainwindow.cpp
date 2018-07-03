@@ -13,7 +13,7 @@ MainWindow::MainWindow(){
     data = new DataProcessor(samplingRate, pythonProcess);
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
-    connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
+//    connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
 
     connect(x, SIGNAL(debounceEditted(int)), data, SLOT(setDebounce(int)));
@@ -278,14 +278,14 @@ void MainWindow::createStatusBar(){
 }
 
 void MainWindow::connectSylph(){
-    portInfo = QSerialPortInfo::availablePorts();
-    QString temp;
-    if(portInfo.size()>1){
-        serialChannel->connectSylph();
-        serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
-        serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
-        updateStatusBar(0, temp);
-    }
+//    portInfo = QSerialPortInfo::availablePorts();
+//    QString temp;
+//    if(portInfo.size()>1){
+//        serialChannel->connectSylph();
+//        serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
+//        serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
+//        updateStatusBar(0, temp);
+//    }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
         int i = 1;
         do{
@@ -318,12 +318,13 @@ void MainWindow::updateData(){
     }
     updateStatusBar(1, "Data Rate: " + QString::number(socketSylph->getRate()) + " kbps");
     for(int i=0; i<12; i++){
-            channelGraph[i]->graph()->setData(data->retrieveXAxis(), (data->isFilterEnabled() && i < 10)? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
-            if(i < 10){
-                if(socketSylph->getStreamConnected(i)){
-                    socketSylph->streamData(i, data->retrieveData(i));
-                }
-            }
+//            channelGraph[i]->graph()->setData(data->retrieveXAxis(), (data->isFilterEnabled() && i < 10)? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
+        channelGraph[i]->graph()->setData(data->retrieveXAxis(), data->isFilterEnabled()? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
+//            if(i < 10){
+//                if(socketSylph->getStreamConnected(i)){
+//                    socketSylph->streamData(i, data->retrieveData(i));
+//                }
+//            }
             if(!pause){
                 channelGraph[i]->replot();
             }
