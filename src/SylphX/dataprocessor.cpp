@@ -14,7 +14,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             index = 0;
         }
         for(int j = 2; j < NUM_CHANNELS; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)));
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -155,7 +155,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int mark){
-    if((quint8) data.at(mark) == 165 && (quint8) data.at(mark+1+(NUM_CHANNELS*2)) == 0 && data.at(mark+4+(NUM_CHANNELS*2)) == 90)
+    if((quint8) data.at(mark) == 165 /*&& (quint8) data.at(mark+1+(NUM_CHANNELS*2)) == 0*/ && data.at(mark+4+(NUM_CHANNELS*2)) == 90)
         return true;
     else
         return false;
