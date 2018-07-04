@@ -12,7 +12,7 @@ TARGET = SylphX
 TEMPLATE = app
 
 # The application version
-VERSION = 1.3.3
+VERSION = 1.4.0
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"

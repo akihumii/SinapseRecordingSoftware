@@ -38,7 +38,7 @@ public:
     void setScale(int value);
     int getScale();
     bool isSmart();
-    quint16 fullWord_rawData;
+    qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
     int firstFrameMarker;
     quint8 currentFrameMarker;
@@ -76,11 +76,11 @@ private:
 
     char lastSentByte[2] = {0, 0};
     double lastSentAmplitudes[4] = {0.0, 0.0, 0.0, 0.0};
+    int index = 0;
+    int multiplier = 1;
 signals:
     void upperThresholdCrossed();
     void lowerThresholdCrossed();
-    int index = 0;
-    int multiplier = 1;
 };
 
 }

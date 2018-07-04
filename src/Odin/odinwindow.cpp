@@ -311,8 +311,8 @@ void OdinWindow::pauseOdin(){
 }
 
 void OdinWindow::on_delayEnabled_toggled(){
-    if(delayEnabledCheckBox->isChecked() && start){
-        loopingThread->delay = delaySpinBox->value()*1000;
+    if(delayEnabledCheckBox->isChecked() && !start){
+        loopingThread->delay = delaySpinBox->value()*1000 + 1300;
         loopingThread->start();
     }
 }
