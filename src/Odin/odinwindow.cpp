@@ -250,33 +250,33 @@ void OdinWindow::sendCommand(){
         commandOdin->sendStart();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
-        QTimer::singleShot((900), [=] {
+        QTimer::singleShot((800), [=] {
             commandOdin->sendFrequency();
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
         });
         for(int i = 0; i < 4; i++){
-            QTimer::singleShot((950+i*50), [=] {
+            QTimer::singleShot((840+i*40), [=] {
                     commandOdin->sendPulseDuration(i);
                     strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
                     emit commandSent(lastSentCommand);
             });
         }
         for(int i = 0; i < 4; i++){
-            QTimer::singleShot((1150+i*50), [=] {
+            QTimer::singleShot((1000+i*40), [=] {
                 commandOdin->sendAmplitude(i);
                 strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
                 emit commandSent(lastSentCommand);
             });
         }
-        QTimer::singleShot((1300), [=] {
+        QTimer::singleShot((1160), [=] {
             commandOdin->sendThresholdEnable();
         });
-        QTimer::singleShot((1400), [=] {
+        QTimer::singleShot((1200), [=] {
             commandOdin->sendChannelEnable();
         });
         sendButton->setText("Stop Odin!");
-        QTimer::singleShot((1450), [=] {
+        QTimer::singleShot((1245), [=] {
             if(delayEnabledCheckBox->isChecked() && start){
                 loopingThread->delay = delaySpinBox->value()*1000;
                 loopingThread->start();
@@ -311,7 +311,7 @@ void OdinWindow::pauseOdin(){
 }
 
 void OdinWindow::on_delayEnabled_toggled(){
-    if(delayEnabledCheckBox->isChecked() && !start){
+    if(delayEnabledCheckBox->isChecked() && start){
         loopingThread->delay = delaySpinBox->value()*1000 + 1300;
         loopingThread->start();
     }
