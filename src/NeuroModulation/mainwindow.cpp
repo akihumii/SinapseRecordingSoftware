@@ -5,8 +5,21 @@ MainWindow::MainWindow(){
     setWindowTitle(tr("NeuroModulation Software V") + version);
     command = new Command;
     serialShuHao = new SerialShuHao;
+    tcpServer = new QTcpServer(this);
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
     createLayout();
-    serialShuHao->connectShuHao();
+//    serialShuHao->connectShuHao();
+    qDebug() << tcpServer->serverPort() << tcpServer->serverAddress().toString();
+    while (!tcpServer->isListening() && !tcpServer->listen(QHostAddress::LocalHost, 13567)) {
+            QMessageBox::StandardButton ret = QMessageBox::critical(this,
+                                            tr("Loopback"),
+                                            tr("Unable to start the test: %1.")
+                                            .arg(tcpServer->errorString()),
+                                            QMessageBox::Retry
+                                            | QMessageBox::Cancel);
+            if (ret == QMessageBox::Cancel)
+                return;
+    }
 }
 
 MainWindow::~MainWindow(){
@@ -310,4 +323,16 @@ void MainWindow::sendStart(){
     serialShuHao->sendStart();
     sendCommandButton->setEnabled(false);
     startStopButton->setText("Send Stop");
+}
+
+void MainWindow::acceptConnection(){
+    qDebug() << "Accepted new connection";
+    tcpServerConnection = tcpServer->nextPendingConnection();
+    connect(tcpServerConnection, SIGNAL(readyRead()), this, SLOT(echo()));
+}
+
+void MainWindow::echo(){
+    QByteArray temp;
+    temp = tcpServerConnection->readAll();
+    tcpServerConnection->close();
 }

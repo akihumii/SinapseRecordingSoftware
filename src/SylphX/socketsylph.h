@@ -11,10 +11,9 @@ class SocketSylph : public SocketAbstract {
     Q_OBJECT
 public:
     SocketSylph(DataProcessor *dataProcessor_);
-    bool wifiEnabled = true;
-    void discardData();
     void closeESP();
     int getRate();
+    void setChecked(bool flag);
 
 public slots:
     void appendSync();
@@ -30,7 +29,6 @@ private:
     double rate = 0.0;
 
     bool checked = false;
-    int initCount = 0;
 
 private slots:
     void ReadCommand();

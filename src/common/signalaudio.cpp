@@ -25,15 +25,19 @@ SignalAudio::SignalAudio(){
 //    qDebug() << "Format set: " << format;
 
     if (!info.isFormatSupported(format)) {
-//        qDebug() << "Raw audio format not supported by backend, cannot play audio.";
+        qDebug() << "Raw audio format not supported by backend, cannot play audio.";
         return;
     }
 
     audio = new QAudioOutput(format, this);
 
-    audio->setBufferSize(1000);
+    audio->setBufferSize(8000);
     audioDevice = audio->start();
     audio->setVolume(0.1);
+
+    filter = new Filter;
+    filter->setLowpassFilter(1000.0, 8000.0);
+    filter->setLowpassFilterEnabled(true);
 }
 
 SignalAudio::~SignalAudio(){
@@ -46,7 +50,7 @@ void SignalAudio::appendAudioBuffer(int ChannelIndex, char LSB, char MSB){
 }
 
 bool SignalAudio::playAudio(int ChannelIndex){
-    if(audioBuffer[ChannelIndex].size() >= 50 && audioBuffer[ChannelIndex].size()%2 == 0){
+    if(audioBuffer[ChannelIndex].size() >= 100 && audioBuffer[ChannelIndex].size()%2 == 0){
         if(audioDevice->write(audioBuffer[ChannelIndex])>0){
             clearAudioBuffer();
             return true;

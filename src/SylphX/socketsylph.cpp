@@ -8,21 +8,11 @@ SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateRate()));
     timer->start(1000);
+
 }
 
-void SocketSylph::discardData(){
-    for(int i = 0; i < 10; i++){
-        socketAbstract->read(maxSize*10);
-        qDebug() << "Discarding";
-    }
-    checked = false;
-}
 void SocketSylph::ReadCommand(){
-    if(initCount < 20){
-        discardData();
-        initCount++;
-    }
-    else if(socketAbstract->bytesAvailable() >= maxSize && checked){
+    if(socketAbstract->bytesAvailable() >= maxSize && checked){
         if(dataProcessor->isSmart()){
             bytesRead += dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
         }
@@ -42,7 +32,6 @@ void SocketSylph::ReadCommand(){
 void SocketSylph::updateRate(){
     rate = bytesRead*8/1000;
     if(rate == 0 && checked){
-        initCount = 0;
         checked = false;
     }
     bytesRead = 0;
@@ -50,6 +39,10 @@ void SocketSylph::updateRate(){
 
 int SocketSylph::getRate(){
     return rate;
+}
+
+void SocketSylph::setChecked(bool flag){
+    checked = flag;
 }
 
 void SocketSylph::appendSync(){

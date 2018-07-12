@@ -6,6 +6,8 @@
 #include "../common/signalaudio.h"
 #include "time.h"
 #include "../Odin/socketodin.h"
+#include "../Odin/odinwindow.h"
+#include "datastream.h"
 
 #define NUM_CHANNELS 10
 #define NUM_BYTES_PER_CHANNEL 2
@@ -21,8 +23,9 @@ class DataProcessor : public SignalAudio, public Data
 {
     Q_OBJECT
 public:
-    DataProcessor(float samplingRate_, QProcess *process_);
+    DataProcessor(float samplingRate_, QProcess *process_, DataStream *dataStream_);
     Data *data;
+    DataStream *dataStream;
     SignalAudio *signalAudio;
 
     int parseFrameMarkers(QByteArray rawData);
@@ -44,6 +47,14 @@ public:
     int currentFrameMarkerIndex;
     int lastFrameMarker;
     QByteArray leftOverData;
+    int getDebounce();
+
+public slots:
+    void setDebounce(int value);
+    void setUpperThreshold(double value);
+    void setLowerThreshold(double value);
+    void setLastSentBytes(char *bytes);
+    void setLastSentAmplitudes(double *amplitudes);
 
 private:
     QFile *File;
@@ -60,8 +71,18 @@ private:
     float samplingRate;
     float period;
     int syncPulse = 0;
+    double upperThreshold = 2.0;
+    double lowerThreshold = 0.0;
+    int debounce = 40;
+    bool thresholdEnable = true;
+
+    char lastSentByte[2] = {0, 0};
+    double lastSentAmplitudes[4] = {0.0, 0.0, 0.0, 0.0};
     int index = 0;
     int multiplier = 1;
+signals:
+    void upperThresholdCrossed();
+    void lowerThresholdCrossed();
 };
 
 }
