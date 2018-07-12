@@ -82,7 +82,7 @@ private:
     int commandCount = 0;
     int numChannelsEnabled = 0;
     char *lastSentCommand = new char[2];
-    double*lastSentAmplitude = new double[4];
+    double *lastSentAmplitude = new double[4];
     int count = 0;
 
     bool connectOdin();

@@ -190,7 +190,13 @@ unsigned char CommandOdin::getAmplitudeByte(int index){
                 formulaFile.close();
             }
     // =================================================== HACK JOB =============================================================//
-        unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;       // For 20.0mA
+        unsigned char temp;
+        if(amplitude[index] >= 150.0){
+            temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;       // For 20.0mA
+        }
+        else{
+            temp = 150.0*150.0*a + 150.0*b - c;       // For 20.0mA
+        }
         qDebug() << "What is temp here " << temp;
         return temp;
     }

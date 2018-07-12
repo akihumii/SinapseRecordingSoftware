@@ -64,8 +64,8 @@ void OdinWindow::createLayout(){
 
         amplitudeSpinBox[i] = new QDoubleSpinBox;
         amplitudeSpinBox[i]->setMinimum(0.0);
-        amplitudeSpinBox[i]->setMaximum(19.0);
-        amplitudeSpinBox[i]->setSingleStep(0.1);
+        amplitudeSpinBox[i]->setMaximum(600.0);
+        amplitudeSpinBox[i]->setSingleStep(50.0);
         amplitudeSpinBox[i]->setValue(0.0);
         stimParaLayout[3]->addWidget(amplitudeSpinBox[i]);
         connect(amplitudeSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_amplitude_Changed()));
