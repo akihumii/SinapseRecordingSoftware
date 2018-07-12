@@ -10,7 +10,8 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
-    data = new DataProcessor(samplingRate, pythonProcess);
+    dataStream = new DataStream(this);
+    data = new DataProcessor(samplingRate, pythonProcess, dataStream);
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
@@ -320,8 +321,8 @@ void MainWindow::updateData(){
     for(int i=0; i<12; i++){
             channelGraph[i]->graph()->setData(data->retrieveXAxis(), (data->isFilterEnabled() && i < 10)? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
             if(i < 10){
-                if(socketSylph->getStreamConnected(i)){
-                    socketSylph->streamData(i, data->retrieveData(i));
+                if(dataStream->getStreamConnected(i)){
+                    dataStream->streamData(i);
                 }
             }
             if(!pause){
@@ -332,7 +333,7 @@ void MainWindow::updateData(){
 
 void MainWindow::on_disableStream_triggered(){
     for(int i = 0; i < 10; i++){
-        socketSylph->disableStream(i);
+        dataStream->disableStream(i);
     }
 }
 
@@ -440,9 +441,7 @@ void MainWindow::on_restart_triggered(){
         serialChannel->closeImplantPort();
     }
     connectSylph();
-    if(socketSylph->isConnected()){
-        socketSylph->discardData();
-    }
+    socketSylph->setChecked(false);
 }
 
 // Display "About" message box.

@@ -7,6 +7,7 @@
 #include "time.h"
 #include "../Odin/socketodin.h"
 #include "../Odin/odinwindow.h"
+#include "datastream.h"
 
 #define NUM_CHANNELS 10
 #define NUM_BYTES_PER_CHANNEL 2
@@ -22,8 +23,9 @@ class DataProcessor : public SignalAudio, public Data
 {
     Q_OBJECT
 public:
-    DataProcessor(float samplingRate_, QProcess *process_);
+    DataProcessor(float samplingRate_, QProcess *process_, DataStream *dataStream_);
     Data *data;
+    DataStream *dataStream;
     SignalAudio *signalAudio;
 
     int parseFrameMarkers(QByteArray rawData);

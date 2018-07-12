@@ -2,10 +2,11 @@
 
 namespace SylphX {
 
-DataProcessor::DataProcessor(float samplingRate_, QProcess *process_){
+DataProcessor::DataProcessor(float samplingRate_, QProcess *process_, DataStream *dataStream_){
     samplingRate = samplingRate_;
     period = 1/samplingRate_;
     process = process_;
+    dataStream = dataStream_;
 }
 
 int DataProcessor::parseFrameMarkers(QByteArray rawData){
@@ -120,6 +121,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                         RecordData(fullWord_rawData);
                     }
                     ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+                    dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
                 }
                 for(int j = 0; j < 2; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
@@ -128,6 +130,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                         RecordData(fullWord_rawData);
                     }
                     ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+                    dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
                 }
 
                 for(int j = 0; j < 10; j++){
@@ -141,6 +144,12 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                 if(RecordEnabled){
                     RecordData((quint8) rawData.at(i+(packetSize-4)));
                     RecordData((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+(packetSize-2)));
+                    RecordData((quint8) lastSentByte[0]);
+                    RecordData((quint8) lastSentByte[1]);
+                    RecordData((double) lastSentAmplitudes[0]);
+                    RecordData((double) lastSentAmplitudes[1]);
+                    RecordData((double) lastSentAmplitudes[2]);
+                    RecordData((double) lastSentAmplitudes[3]);
                     RecordData(END_OF_LINE);
                 }
                 index++;

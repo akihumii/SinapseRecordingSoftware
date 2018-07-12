@@ -36,7 +36,8 @@ HEADERS += \
     ../Odin/socketodin.h \
     ../Odin/loopingthread.h \
     ../Odin/pulseplot.h \
-    ../Odin/odinwindow.h
+    ../Odin/odinwindow.h \
+    datastream.h
 
 
 SOURCES += \
@@ -50,4 +51,5 @@ SOURCES += \
     ../Odin/commandodin.cpp \
     ../Odin/socketodin.cpp \
     ../Odin/pulseplot.cpp \
-    ../Odin/odinwindow.cpp
+    ../Odin/odinwindow.cpp \
+    datastream.cpp

@@ -12,6 +12,7 @@
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
 #include "../Odin/odinwindow.h"
+#include "datastream.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -32,6 +33,7 @@ public:
 
     SerialChannel *serialChannel;
     DataProcessor *data;
+    DataStream *dataStream;
 
     Odin::OdinWindow *x;
 
