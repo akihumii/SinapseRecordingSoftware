@@ -191,8 +191,14 @@ unsigned char CommandOdin::getAmplitudeByte(int index){
             }
     // =================================================== HACK JOB =============================================================//
         unsigned char temp;
-        if(amplitude[index] >= 150.0){
-            temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;
+        if(amplitude[index] >= 100.0){
+//            if(amplitude[index] - 100.0 >= 14.0){
+//                temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;
+//            }
+//            else{
+//                temp = 1;
+//            }
+            temp = (amplitude[index] - 100.0 >= 14.0)? amplitude[index]*amplitude[index]*a + amplitude[index]*b - c : 1;
         }
         else{
             temp = 0;
