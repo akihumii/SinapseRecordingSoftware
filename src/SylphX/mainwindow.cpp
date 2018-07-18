@@ -313,11 +313,16 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::updateData(){
-    if(restartCount < 15 && serialChannel->isConnected()){
-        on_restart_triggered();
-        restartCount++;
+//    if(restartCount < 15 && serialChannel->isConnected()){
+//        on_restart_triggered();
+//        restartCount++;
+//    }
+    if(socketSylph->isConnected()){
+        updateStatusBar(1, "Data Rate: " + QString::number(socketSylph->getRate()) + " kbps");
     }
-    updateStatusBar(1, "Data Rate: " + QString::number(socketSylph->getRate()) + " kbps");
+    else if (serialChannel->isImplantConnected()){
+        updateStatusBar(1, "Data Rate: " + QString::number(serialChannel->getRate()) + " kbps");
+    }
     for(int i=0; i<12; i++){
             channelGraph[i]->graph()->setData(data->retrieveXAxis(), (data->isFilterEnabled() && i < 10)? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
             if(i < 10){
@@ -442,6 +447,7 @@ void MainWindow::on_restart_triggered(){
     }
     connectSylph();
     socketSylph->setChecked(false);
+    serialChannel->setChecked(false);
 }
 
 // Display "About" message box.
