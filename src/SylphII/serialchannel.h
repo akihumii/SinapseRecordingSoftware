@@ -20,13 +20,17 @@ public:
     void connectSylph();
     bool isImplantConnected();
     bool isADCConnected();
+    int getRate();
+    void setChecked(bool flag);
 public slots:
     void ReadImplantData();
     void ReadADCData();
+    void updateRate();
 private:
     QSerialPort *implantPort;
     QSerialPort *ADCPort;
     DataProcessor *dataProcessor;
+    QTimer *timer;
 
     bool checked = false;
 
@@ -34,7 +38,12 @@ private:
     bool connected = false;
     bool implantConnected = false;
     bool ADCConnected = false;
-    int portOrder =2;
+    int portOrder = 2;
+    qint64 packetSize = 7;
+    qint64 maxSize = packetSize*1000;
+    int bytesRead = 0;
+    int temp;
+    double rate = 0.0;
 };
 
 #endif // SerialChannel_H

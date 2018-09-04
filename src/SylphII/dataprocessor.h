@@ -6,6 +6,12 @@
 #include "../common/signalaudio.h"
 #include "time.h"
 
+#define NUM_CHANNELS 2
+#define NUM_BYTES_PER_CHANNEL 2
+#define NUM_BYTES_COUNTER 2
+#define NUM_BYTES_SYNC 0
+#define NUM_BYTES_FRAME 1
+
 #define END_OF_LINE 2779058
 
 class DataProcessor : public SignalAudio, public Data
@@ -15,13 +21,20 @@ public:
     Data *data;
     SignalAudio *signalAudio;
 
-    void parseFrameMarkers(QByteArray rawData);
-    bool checkNextFrameMarker(QByteArray data, int currentIndex);
+    int parseFrameMarkers(QByteArray rawData);
+    int parseFrameMarkersWithChecks(QByteArray rawData);
+    bool checkNextFrameMarker(QByteArray data, int mark);
     void sortADCData(QByteArray adcData);
     void setADCRecordEnabled(bool enableFlag);
+    int findfirstFrameMarkers(QByteArray rawData);
+    int findlastFrameMarkers(QByteArray rawData);
     bool isADCRecordEnabled();
     qint16 fullWord_rawData;
     QVector<quint8> ADC_Data;
+    void setScale(int value);
+    int getScale();
+    void setSmartDataProcessor(bool flag);
+    bool isSmart();
 
 private:
     QFile *File;
@@ -30,9 +43,18 @@ private:
     QString fileName;
     bool ADCEnabled = false;
     bool ADCRecordEnabled = false;
+    bool smartDataProcessor = true;
 
+    qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC + NUM_BYTES_FRAME;
+    int firstFrameMarker;
+    quint8 currentFrameMarker;
+    int currentFrameMarkerIndex;
+    int lastFrameMarker;
+    QByteArray leftOverData;
     float samplingRate;
     float period;
+    int index = 0;
+    int multiplier = 1;
 };
 
 #endif // DATAPROCESSOR_KA_H

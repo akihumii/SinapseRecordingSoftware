@@ -12,17 +12,19 @@ SerialChannel::SerialChannel(QObject *parent, DataProcessor *dataProcessor_) : Q
 }
 
 void SerialChannel::ReadImplantData(){
-    if(implantPort->bytesAvailable() >= 2100 && checked){
-        dataProcessor->parseFrameMarkers(implantPort->read(2100));
+    if(implantPort->bytesAvailable() >= maxSize && checked){
+        bytesRead += dataProcessor->parseFrameMarkers(implantPort->read(maxSize));
     }
-    else if(implantPort->bytesAvailable() >= 26 && !checked){
+    else if(implantPort->bytesAvailable() >= packetSize+1 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(implantPort->read(26), 0)){
+        if(dataProcessor->checkNextFrameMarker(implantPort->read(packetSize+1), 0)){
             checked = true;
             qDebug() << "checked is true";
         }
+        else{
+            ReadImplantData();
+        }
     }
-    dataProcessor->sortADCData(ADCPort->read(500));
 }
 
 void SerialChannel::closeImplantPort(){
@@ -33,6 +35,23 @@ void SerialChannel::closeImplantPort(){
 void SerialChannel::closeADCPort(){
     ADCPort->flush();
     ADCPort->close();
+}
+
+void SerialChannel::updateRate(){
+    rate = bytesRead*8/1000;
+    if(rate == 0 && checked){
+//        implantPort->flush();
+        checked = false;
+    }
+    bytesRead = 0;
+}
+
+int SerialChannel::getRate(){
+    return rate;
+}
+
+void SerialChannel::setChecked(bool flag){
+    checked = flag;
 }
 
 void SerialChannel::ReadADCData(){
