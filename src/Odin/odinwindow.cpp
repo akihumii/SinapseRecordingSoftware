@@ -39,7 +39,7 @@ void OdinWindow::createLayout(){
     paraLabels[0] = new QLabel(tr(" "));
     paraLabels[1] = new QLabel(tr("Channel Enabled: "));
     paraLabels[2] = new QLabel(tr("Threshold Enable: "));
-    paraLabels[3] = new QLabel(tr("Amplitude(mA): "));
+    paraLabels[3] = new QLabel(tr("Amplitude(uA): "));
     paraLabels[4] = new QLabel(tr("Pulse Duration(us): "));
     paraLabels[5] = new QLabel(tr("Frequency(Hz): "));
 
