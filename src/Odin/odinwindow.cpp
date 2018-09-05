@@ -214,6 +214,7 @@ bool OdinWindow::connectOdin(){
     connectionStatus.clear();
     if(portInfo.size()>0){
         connectionStatus.clear();
+        serialOdin->connectOdin();
         if(serialOdin->isOdinSerialConnected()){
             connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
             sendButton->setEnabled(true);

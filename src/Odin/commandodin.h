@@ -69,9 +69,9 @@ private:
     int numChannels = 0;
     char thresholdEnable = 15;
 
-    float a = 0.0048;
-    float b = 12.803;
-    float c = 6.9185;
+    float a = 0.0006;
+    float b = 0.5248;
+    float c = 57.929;
 
     char stepSize = 12;
     unsigned char currentAmplitude = 0;
