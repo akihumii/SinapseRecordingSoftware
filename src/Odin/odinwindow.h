@@ -15,6 +15,8 @@
 
 namespace Odin {
 
+#define STARTDELAY 1000
+
 class OdinWindow : public QMainWindow
 {
     Q_OBJECT

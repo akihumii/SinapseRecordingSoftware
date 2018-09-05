@@ -19,11 +19,10 @@ public:
     }
 
     void run() Q_DECL_OVERRIDE {
-        QThread::msleep(2000);
+        QThread::msleep(delay);
         for(int i = 0; i < num; i++){
             if(this->send){
                 emit commandSent();
-//                QThread::msleep(delay);
             }
             else{
                 break;
