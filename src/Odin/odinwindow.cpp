@@ -71,8 +71,8 @@ void OdinWindow::createLayout(){
         connect(amplitudeSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_amplitude_Changed()));
 
         pulseDurationSpinBox[i] = new QSpinBox;
-        pulseDurationSpinBox[i]->setMinimum(20);
-        pulseDurationSpinBox[i]->setMaximum(1260);
+        pulseDurationSpinBox[i]->setMinimum(100);
+        pulseDurationSpinBox[i]->setMaximum(1000);
         pulseDurationSpinBox[i]->setValue(200);
         stimParaLayout[4]->addWidget(pulseDurationSpinBox[i]);
         connect(pulseDurationSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_pulseDuration_Changed()));
@@ -81,7 +81,7 @@ void OdinWindow::createLayout(){
     frequencySpinBox = new QSpinBox;
     frequencySpinBox->setMinimumWidth(300);
     frequencySpinBox->setMinimum(10);
-    frequencySpinBox->setMaximum(250);
+    frequencySpinBox->setMaximum(100);
     frequencySpinBox->setValue(50);
     connect(frequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_frequency_Changed()));
     stimParaLayout[5]->addWidget(frequencySpinBox);
