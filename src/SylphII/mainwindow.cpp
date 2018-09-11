@@ -8,7 +8,7 @@ MainWindow::MainWindow(){
     serialChannel = new SerialChannel(this, data);
     socketSylph = new SocketSylph(data);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(100);     //tick timer every XXX msec
+    dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
