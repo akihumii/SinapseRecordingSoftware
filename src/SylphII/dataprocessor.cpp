@@ -20,7 +20,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
 
 //        ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-5));
-        ChannelData[2].replace(index, (quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+packetSize-1));
+        ChannelData[2].replace(index, (quint8) rawData.at(i+(packetSize-1)) << 8 | (quint8) rawData.at(i+packetSize-0));
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+(packetSize-1)));
             RecordData(END_OF_LINE);
