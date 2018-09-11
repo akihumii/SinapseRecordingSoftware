@@ -11,7 +11,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             index = 0;
         }
         for(int j = 0; j < NUM_CHANNELS; j++){
-            fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
+            fullWord_rawData = ((quint8) rawData.at(i+((2*j)+1)) << 8 | (quint8) rawData.at(i+((2*j)+2)))-32768;
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
@@ -20,17 +20,9 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
         }
 
 //        ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-5));
-        ChannelData[2].replace(index, (quint8) rawData.at(i+(packetSize)) << 8 | (quint8) rawData.at(i+packetSize-1));
-        qDebug() << (quint8) rawData.at(i+(packetSize)-3);
+        ChannelData[2].replace(index, (quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+packetSize-1));
         if(RecordEnabled){
-//            RecordData((quint8) rawData.at(i+packetSize-5));
-            RecordData((quint8) rawData.at(i+(packetSize-1)) << 8 | (quint8) rawData.at(i+(packetSize)));
-//            RecordData((quint8) lastSentByte[0]);
-//            RecordData((quint8) lastSentByte[1]);
-//            RecordData((double) lastSentAmplitudes[0]);
-//            RecordData((double) lastSentAmplitudes[1]);
-//            RecordData((double) lastSentAmplitudes[2]);
-//            RecordData((double) lastSentAmplitudes[3]);
+            RecordData((quint8) rawData.at(i+(packetSize-2)) << 8 | (quint8) rawData.at(i+(packetSize-1)));
             RecordData(END_OF_LINE);
         }
         index++;
@@ -103,7 +95,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 //}
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int mark){
-    if((quint8) data.at(mark) + 1 == (quint8) data.at(mark+7))
+    if((quint8) data.at(mark) + 1 == (quint8) data.at(mark+packetSize))
         return true;
     else
         return false;
@@ -112,8 +104,8 @@ bool DataProcessor::checkNextFrameMarker(QByteArray data, int mark){
 int DataProcessor::findfirstFrameMarkers(QByteArray rawData){
 //    qDebug() << "Finding first frame marker";
     for(int i = 0; i < rawData.size()-(packetSize*2); i++){
-        if((quint8)rawData.at(i+(packetSize*2)) == (quint8)rawData.at(i+packetSize)
-                && (quint8)rawData.at(i+packetSize) == (quint8)rawData.at(i)){
+        if((quint8)rawData.at(i+(packetSize*2)) == (quint8)rawData.at(i+packetSize) + 1
+                && (quint8)rawData.at(i+packetSize) == (quint8)rawData.at(i) + 1){
             return i;
         }
     }
@@ -124,7 +116,8 @@ int DataProcessor::findlastFrameMarkers(QByteArray rawData){
 //    qDebug() << "Finding last frame marker";
     if(rawData.size()>(packetSize*2-2)){
         for(int i = rawData.size()-1; i > (packetSize*2-1); i--){
-            if((quint8)rawData.at(i-packetSize) == (quint8)rawData.at(i) && (quint8)rawData.at(i-(packetSize*2)) == (quint8)rawData.at(i-packetSize)){
+            if((quint8)rawData.at(i-packetSize) + 1 == (quint8)rawData.at(i)
+                    && (quint8)rawData.at(i-(packetSize*2)) == (quint8)rawData.at(i-packetSize) + 1){
                 return i;
             }
         }

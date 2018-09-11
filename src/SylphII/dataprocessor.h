@@ -43,7 +43,7 @@ private:
     QString fileName;
     bool ADCEnabled = false;
     bool ADCRecordEnabled = false;
-    bool smartDataProcessor = true;
+    bool smartDataProcessor = false;
 
     qint64 packetSize = NUM_CHANNELS*NUM_BYTES_PER_CHANNEL + NUM_BYTES_COUNTER + NUM_BYTES_SYNC + NUM_BYTES_FRAME;
     int firstFrameMarker;
