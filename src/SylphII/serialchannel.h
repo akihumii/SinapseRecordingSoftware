@@ -40,7 +40,7 @@ private:
     bool ADCConnected = false;
     int portOrder = 2;
     qint64 packetSize = 6;
-    qint64 maxSize = packetSize*909;
+    qint64 maxSize = packetSize*1000;
     int bytesRead = 0;
     int temp;
     double rate = 0.0;
