@@ -104,8 +104,8 @@ private slots:
     void on_upperThreshold_editted();
     void on_lowerThreshold_editted();
     void on_stepSize_editted();
-    void on_upperThreshold_crossed();
-    void on_lowerThreshold_crossed();
+    void on_channelAThreshold_crossed();
+    void on_channelBThreshold_crossed();
     void pauseOdin();
     void acceptConnection();
     void increaseCurrent();

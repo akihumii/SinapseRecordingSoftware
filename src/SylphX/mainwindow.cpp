@@ -23,8 +23,8 @@ MainWindow::MainWindow(){
     connect(x, SIGNAL(commandSent(char*)), data, SLOT(setLastSentBytes(char*)));
     connect(x, SIGNAL(amplitudeChanged(double*)), data, SLOT(setLastSentAmplitudes(double*)));
 
-    connect(data, SIGNAL(upperThresholdCrossed()), x, SLOT(on_upperThreshold_crossed()));
-    connect(data, SIGNAL(lowerThresholdCrossed()), x, SLOT(on_lowerThreshold_crossed()));
+    connect(data, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
+    connect(data, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
 
     dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();

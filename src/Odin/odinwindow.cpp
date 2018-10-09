@@ -64,8 +64,8 @@ void OdinWindow::createLayout(){
 
         amplitudeSpinBox[i] = new QDoubleSpinBox;
         amplitudeSpinBox[i]->setMinimum(0.0);
-        amplitudeSpinBox[i]->setMaximum(400.0);
-        amplitudeSpinBox[i]->setSingleStep(100.0);
+        amplitudeSpinBox[i]->setMaximum(19.0);
+        amplitudeSpinBox[i]->setSingleStep(1.0);
         amplitudeSpinBox[i]->setValue(0.0);
         stimParaLayout[3]->addWidget(amplitudeSpinBox[i]);
         connect(amplitudeSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_amplitude_Changed()));
@@ -151,9 +151,9 @@ void OdinWindow::createLayout(){
 
     upperThresholdSpinBox = new QDoubleSpinBox;
     upperThresholdSpinBox->setMinimum(0.0);
-    upperThresholdSpinBox->setMaximum(2.0);
-    upperThresholdSpinBox->setSingleStep(0.1);
-    upperThresholdSpinBox->setValue(2.0);
+    upperThresholdSpinBox->setMaximum(10.0);
+    upperThresholdSpinBox->setSingleStep(1.0);
+    upperThresholdSpinBox->setValue(10.0);
     connect(upperThresholdSpinBox, SIGNAL(editingFinished()), this, SLOT(on_upperThreshold_editted()));
     thresholdSpinBoxLayout->addWidget(upperThresholdSpinBox);
 
@@ -167,9 +167,9 @@ void OdinWindow::createLayout(){
 
     debounceSpinBox = new QSpinBox;
     debounceSpinBox->setMinimum(20);
-    debounceSpinBox->setMaximum(2000);
+    debounceSpinBox->setMaximum(5000);
     debounceSpinBox->setSingleStep(100);
-    debounceSpinBox->setValue(20);
+    debounceSpinBox->setValue(1000);
     connect(debounceSpinBox, SIGNAL(editingFinished()), this, SLOT(on_debounce_editted()));
     thresholdSpinBoxLayout->addWidget(debounceSpinBox);
 
@@ -194,7 +194,7 @@ void OdinWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(stimParameters);
     mainLayout->addWidget(delayParameters);
-//    mainLayout->addWidget(thresholdParameters);
+    mainLayout->addWidget(thresholdParameters);
     mainLayout->addLayout(buttonLayout);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
@@ -444,59 +444,83 @@ void OdinWindow::on_stepSize_editted(){
     commandOdin->setStepSize(stepSizeSpinBox->text().toDouble());
 }
 
-void OdinWindow::on_upperThreshold_crossed(){
-    if(thresholdDecreaseEnable && start){
-        commandOdin->sendStepSizeDecrease();
-        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
-        emit commandSent(lastSentCommand);
-    }
-    for(int i = 0; i < 4; i++){
-        if(thresholdEnable[i]->isChecked() && start){
-                if((amplitudeSpinBox[i]->text().toDouble() - stepSizeSpinBox->text().toDouble()) >= 0.0){
-                    amplitudeSpinBox[i]->setValue(amplitudeSpinBox[i]->text().toDouble() - stepSizeSpinBox->text().toDouble());
-                    commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
-                    thresholdIncreaseEnable = true;
-                    thresholdDecreaseEnable = true;
-                }
-                else{
-                    amplitudeSpinBox[i]->setValue(0.0);
-                    commandOdin->setAmplitude(i, 0.0);
-                    commandOdin->setCurrentAmplitude((unsigned char) 0);
-                    thresholdDecreaseEnable = false;
-                    thresholdIncreaseEnable = true;
-                }
-                lastSentAmplitude[i] = amplitudeSpinBox[i]->text().toDouble();
-        }
-    }
-    emit(amplitudeChanged(lastSentAmplitude));
+void OdinWindow::on_channelAThreshold_crossed(){
+//    if(thresholdDecreaseEnable && start){
+//        commandOdin->sendStepSizeDecrease();
+//        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+//        emit commandSent(lastSentCommand);
+//    }
+//    for(int i = 0; i < 4; i++){
+//        if(thresholdEnable[i]->isChecked() && start){
+//                if((amplitudeSpinBox[i]->text().toDouble() - stepSizeSpinBox->text().toDouble()) >= 0.0){
+//                    amplitudeSpinBox[i]->setValue(amplitudeSpinBox[i]->text().toDouble() - stepSizeSpinBox->text().toDouble());
+//                    commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
+//                    thresholdIncreaseEnable = true;
+//                    thresholdDecreaseEnable = true;
+//                }
+//                else{
+//                    amplitudeSpinBox[i]->setValue(0.0);
+//                    commandOdin->setAmplitude(i, 0.0);
+//                    commandOdin->setCurrentAmplitude((unsigned char) 0);
+//                    thresholdDecreaseEnable = false;
+//                    thresholdIncreaseEnable = true;
+//                }
+//                lastSentAmplitude[i] = amplitudeSpinBox[i]->text().toDouble();
+//        }
+//    }
+//    emit(amplitudeChanged(lastSentAmplitude));
+    commandOdin->setChannelEnabled(0, true);
+    commandOdin->setChannelEnabled(1, true);
+    channelEnable[0]->setChecked(true);
+    channelEnable[1]->setChecked(true);
+    commandOdin->sendChannelEnable();
+    QTimer::singleShot(1000, [=] {
+        commandOdin->setChannelEnabled(0, false);
+        commandOdin->setChannelEnabled(1, false);
+        channelEnable[0]->setChecked(false);
+        channelEnable[1]->setChecked(false);
+        commandOdin->sendChannelEnable();
+    });
 }
 
-void OdinWindow::on_lowerThreshold_crossed(){
-    if(thresholdIncreaseEnable && start){
-        commandOdin->sendStepSizeIncrease();
-        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
-        emit commandSent(lastSentCommand);
-    }
-    for(int i = 0; i < 4; i++){
-        if(thresholdEnable[i]->isChecked() && start){
-                if((amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble()) <= 19.0){
-                    amplitudeSpinBox[i]->setValue(amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble());
-                    commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
-                    thresholdIncreaseEnable = true;
-                    thresholdDecreaseEnable = true;
-                }
-                else{
-                    amplitudeSpinBox[i]->setValue(19.0);
-                    commandOdin->setAmplitude(i, 19.0);
-                    commandOdin->setCurrentAmplitude((unsigned char) 240);
-                    thresholdIncreaseEnable = false;
-                    thresholdDecreaseEnable = true;
-                }
-                lastSentAmplitude[i] = amplitudeSpinBox[i]->text().toDouble();
-        }
-        lastSentAmplitude[i] = amplitudeSpinBox[i]->text().toDouble();
-    }
-    emit(amplitudeChanged(lastSentAmplitude));
+void OdinWindow::on_channelBThreshold_crossed(){
+//    if(thresholdIncreaseEnable && start){
+//        commandOdin->sendStepSizeIncrease();
+//        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+//        emit commandSent(lastSentCommand);
+//    }
+//    for(int i = 0; i < 4; i++){
+//        if(thresholdEnable[i]->isChecked() && start){
+//                if((amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble()) <= 19.0){
+//                    amplitudeSpinBox[i]->setValue(amplitudeSpinBox[i]->text().toDouble() + stepSizeSpinBox->text().toDouble());
+//                    commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
+//                    thresholdIncreaseEnable = true;
+//                    thresholdDecreaseEnable = true;
+//                }
+//                else{
+//                    amplitudeSpinBox[i]->setValue(19.0);
+//                    commandOdin->setAmplitude(i, 19.0);
+//                    commandOdin->setCurrentAmplitude((unsigned char) 240);
+//                    thresholdIncreaseEnable = false;
+//                    thresholdDecreaseEnable = true;
+//                }
+//                lastSentAmplitude[i] = amplitudeSpinBox[i]->text().toDouble();
+//        }
+//        lastSentAmplitude[i] = amplitudeSpinBox[i]->text().toDouble();
+//    }
+//    emit(amplitudeChanged(lastSentAmplitude));
+    commandOdin->setChannelEnabled(2, true);
+    commandOdin->setChannelEnabled(3, true);
+    commandOdin->sendChannelEnable();
+    channelEnable[2]->setChecked(true);
+    channelEnable[3]->setChecked(true);
+    QTimer::singleShot(1000, [=] {
+        commandOdin->setChannelEnabled(2, false);
+        commandOdin->setChannelEnabled(3, false);
+        channelEnable[2]->setChecked(false);
+        channelEnable[3]->setChecked(false);
+        commandOdin->sendChannelEnable();
+    });
 }
 
 void OdinWindow::on_odinDisconnected(){

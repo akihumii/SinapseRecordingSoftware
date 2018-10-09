@@ -71,9 +71,9 @@ private:
     float samplingRate;
     float period;
     int syncPulse = 0;
-    double upperThreshold = 2.0;
+    double upperThreshold = 10.0;
     double lowerThreshold = 0.0;
-    int debounce = 40;
+    int debounce = 1000;
     bool thresholdEnable = true;
 
     char lastSentByte[2] = {0, 0};
@@ -81,8 +81,8 @@ private:
     int index = 0;
     int multiplier = 1;
 signals:
-    void upperThresholdCrossed();
-    void lowerThresholdCrossed();
+    void channelACrossed();
+    void channelBCrossed();
 };
 
 }

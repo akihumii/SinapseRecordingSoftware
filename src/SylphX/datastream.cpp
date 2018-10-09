@@ -58,4 +58,8 @@ void DataStream::clearChannelData(int ChannelIndex){
     ChannelData[ChannelIndex].resize(0);
 }
 
+int DataStream::getChannelSize(int channel){
+    return ChannelData[channel].size();
+}
+
 }

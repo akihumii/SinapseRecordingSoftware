@@ -14,6 +14,8 @@ public:
     void streamData(int channel);
     void disableStream(int channel);
     void appendData(int channel, double data);
+    int getChannelSize(int channel);
+    void clearChannelData(int ChannelIndex);
 
 private:
     QTcpServer *serverMatlab[10];
@@ -41,8 +43,6 @@ private:
     QSignalMapper *connectionMapper;
     QVector<double> ChannelData[10];
     QDataStream *out[10];
-
-    void clearChannelData(int ChannelIndex);
 private slots:
     void on_newConnection(int connected);
 };

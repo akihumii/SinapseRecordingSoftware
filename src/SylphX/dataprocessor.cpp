@@ -19,24 +19,25 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-//         if(thresholdEnable){
-//             if(fullWord_rawData*(2.0/1024.0) > upperThreshold){
-//                 thresholdEnable = false;
-//                 emit upperThresholdCrossed();
-//                 QTimer::singleShot(debounce, [=] {
-//                         thresholdEnable = true;
-//                 });
-//             }
-//             if(fullWord_rawData*(2.0/1024.0) < lowerThreshold){
-//                 thresholdEnable = false;
-//                 emit lowerThresholdCrossed();
-//                 QTimer::singleShot(debounce, [=] {
-//                         thresholdEnable = true;
-//                 });
-//             }
-//         }
+            if(thresholdEnable){
+                if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
+                    thresholdEnable = false;
+                    emit channelACrossed();
+                    QTimer::singleShot(debounce, [=] {
+                            thresholdEnable = true;
+                    });
+                }
+                if(fullWord_rawData*(0.000195) > upperThreshold && j == 6+2){
+                    thresholdEnable = false;
+                    emit channelBCrossed();
+                    QTimer::singleShot(debounce, [=] {
+                            thresholdEnable = true;
+                    });
+                }
+            }
             ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-            appendAudioBuffer(j-2, rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
+//            dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+//            appendAudioBuffer(j-2, rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
         }
         for(int j = 0; j < 2; j++){
             fullWord_rawData = ((quint8) rawData.at(i+((2*j))) << 8 | (quint8) rawData.at(i+((2*j)+1)))-32768;
@@ -44,8 +45,15 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
                 RecordData(fullWord_rawData);
             }
             ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-            appendAudioBuffer(j+(NUM_CHANNELS-2), rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
+//            dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
+//            appendAudioBuffer(j+(NUM_CHANNELS-2), rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
         }
+
+//        for(int j = 0; j < 10; j++){
+//            if(dataStream->getChannelSize(i) > 20480){
+//                dataStream->clearChannelData(i);
+//            }
+//        }
 
         ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-5));
         ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3));
@@ -99,6 +107,9 @@ int DataProcessor::getDebounce(){
 
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     if(leftOverData.size() > 0){
+//        rawData.prepend(leftOverData);
+//        leftOverData.clear();
+//        leftOverData.resize(0);
         for(int i=leftOverData.size()-1;i>=0;i--){
             rawData.prepend(leftOverData.at(i));
         }
@@ -106,38 +117,52 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     }
     firstFrameMarker = findfirstFrameMarkers(rawData);
     lastFrameMarker = findlastFrameMarkers(rawData);
-//    qDebug() << lastFrameMarker;
-//    qDebug() << firstFrameMarker;
     if(lastFrameMarker > 0){
         for(int i = 0; i < lastFrameMarker - (packetSize-1); i = i + 1){
             if (i%packetSize == firstFrameMarker && checkNextFrameMarker(rawData, i)){
                 if(index > getNumDataPoints()){
                     index = 0;
                 }
-                for(int j = 2; j < 10; j++){
+                for(int j = 2; j < NUM_CHANNELS; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-                    appendAudioBuffer(j-2, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
+//                    appendAudioBuffer(j-2, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
                     ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+//                    dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+                    if(thresholdEnable){
+                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
+                            thresholdEnable = false;
+                            emit channelACrossed();
+                            QTimer::singleShot(debounce, [=] {
+                                    thresholdEnable = true;
+                            });
+                        }
+                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 6+2){
+                            thresholdEnable = false;
+                            emit channelBCrossed();
+                            QTimer::singleShot(debounce, [=] {
+                                    thresholdEnable = true;
+                            });
+                        }
+                    }
                 }
                 for(int j = 0; j < 2; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-                    appendAudioBuffer(j+8, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
+//                    appendAudioBuffer(j+8, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
                     ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
+//                    dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
                 }
 
-                for(int j = 0; j < 10; j++){
-                    for(int i = 0; i < 8; i++){
-                        appendAudioBuffer(j, 0, 0);
-                    }
-                }
+//                for(int j = 0; j < 10; j++){
+//                    if(dataStream->getChannelSize(i) > 20480){
+//                        dataStream->clearChannelData(i);
+//                    }
+//                }
 
                 ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-4));
                 ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+packetSize-2));
@@ -164,7 +189,9 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
 }
 
 bool DataProcessor::checkNextFrameMarker(QByteArray data, int mark){
-    if((quint8) data.at(mark) == 165 /*&& (quint8) data.at(mark+1+(NUM_CHANNELS*2)) == 0*/ && data.at(mark+4+(NUM_CHANNELS*2)) == 90)
+    if((quint8) data.at(mark) == 165 &&
+            ((quint8) data.at(mark+1+(NUM_CHANNELS*2)) == 0 || (quint8) data.at(mark+1+(NUM_CHANNELS*2)) == 255) &&
+            data.at(mark+4+(NUM_CHANNELS*2)) == 90)
         return true;
     else
         return false;

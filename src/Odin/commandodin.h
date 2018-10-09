@@ -63,15 +63,15 @@ private:
     SocketOdin *socketOdin;
 
     double amplitude[4] = {0.0, 0.0, 0.0, 0.0};
-    bool channelEnabled[4] = {true, true, true, true};
+    bool channelEnabled[4] = {false, false, false, false};
     int pulseDuration[4] = {200, 200, 200, 200};
     int frequency = 50;
     int numChannels = 0;
     char thresholdEnable = 15;
 
-    float a = 0.0006;
-    float b = 0.5248;
-    float c = 57.929;
+    float a = 0.0121;
+    float b = 12.853;
+    float c = 6.6892;
 
     char stepSize = 12;
     unsigned char currentAmplitude = 0;
