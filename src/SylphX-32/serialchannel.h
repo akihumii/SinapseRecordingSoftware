@@ -2,16 +2,15 @@
 #define SERIALCHANNEL_H
 
 #include "../common/qtincludes.h"
-#include "dataprocessor.h"
 
 namespace SylphX {
 
-#define BAUDRATE 3000000
+#define BAUDRATE 2000000
 
 class SerialChannel : public QObject{
     Q_OBJECT
 public:
-    SerialChannel(QObject *parent, DataProcessor *dataProcessor_);
+    SerialChannel(QObject *parent);
     void closeImplantPort();
     void closeADCPort();
     bool enableImplantPort(QString portName);
@@ -33,7 +32,6 @@ public slots:
 private:
     QSerialPort *implantPort;
     QSerialPort *ADCPort;
-    DataProcessor *dataProcessor;
     QTimer *timer;
 
     bool checked = false;
@@ -44,7 +42,7 @@ private:
     bool ADCConnected = false;
     int portOrder = 1;
     qint64 packetSize = 25;
-    qint64 maxSize = packetSize*325;
+    qint64 maxSize = packetSize*100;
     int bytesRead = 0;
     int temp;
     double rate = 0.0;

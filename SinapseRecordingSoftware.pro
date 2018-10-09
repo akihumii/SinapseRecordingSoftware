@@ -16,7 +16,8 @@ SUBDIRS +=   \
 #    src/Neutrino \
 #    src/SylphII \
     src/SylphX \
-    src/Odin
+    src/Odin \
+#    src/SylphX-32
 #    src/Jane \
 #    src/AMWFlash \
 #    src/NeuroModulation

@@ -10,6 +10,9 @@ DataProcessor::DataProcessor(float samplingRate_, QProcess *process_, DataStream
 }
 
 int DataProcessor::parseFrameMarkers(QByteArray rawData){
+    if(rawData.size()%25 != 0){
+        qDebug() << rawData.size();
+    }
     for(int i = 0; i < rawData.size(); i = i + packetSize){
         if(index > getNumDataPoints()){
             index = 0;
@@ -98,7 +101,7 @@ int DataProcessor::getDebounce(){
 }
 
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
-    qDebug() << rawData.size();
+//    qDebug() << rawData.size();
     if(leftOverData.size() > 0){
 //        for(int i=leftOverData.size()-1;i>=0;i--){
             rawData.prepend(leftOverData);

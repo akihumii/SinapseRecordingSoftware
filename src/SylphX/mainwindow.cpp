@@ -288,10 +288,10 @@ void MainWindow::connectSylph(){
         updateStatusBar(0, temp);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        int i = 1;
+        int i = 212;
         do{
             i++;
-            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
+            socketSylph->doConnect("192.168.137."+QString::number(i), 8888);
         } while(!socketSylph->isConnected() && i < 4);
         if(socketSylph->isConnected()){
             updateStatusBar(0, "Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
