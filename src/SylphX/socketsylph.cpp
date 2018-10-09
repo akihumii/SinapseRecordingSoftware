@@ -26,6 +26,9 @@ void SocketSylph::ReadCommand(){
             checked = true;
             qDebug() << "checked is true";
         }
+        else{
+            ReadCommand();
+        }
     }
 }
 

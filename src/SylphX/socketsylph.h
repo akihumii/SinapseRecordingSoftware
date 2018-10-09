@@ -24,7 +24,7 @@ private:
     QTimer *timer;
 
     qint64 packetSize = 25;
-    qint64 maxSize = packetSize*50;
+    qint64 maxSize = packetSize*65;
     int bytesRead = 0;
     double rate = 0.0;
 
