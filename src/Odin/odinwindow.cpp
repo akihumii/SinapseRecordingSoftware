@@ -161,7 +161,7 @@ void OdinWindow::createLayout(){
     lowerThresholdSpinBox->setMinimum(0.0);
     lowerThresholdSpinBox->setMaximum(10.0);
     lowerThresholdSpinBox->setSingleStep(1.0);
-    lowerThresholdSpinBox->setValue(0.0);
+    lowerThresholdSpinBox->setValue(10.0);
     connect(lowerThresholdSpinBox, SIGNAL(editingFinished()), this, SLOT(on_lowerThreshold_editted()));
     thresholdSpinBoxLayout->addWidget(lowerThresholdSpinBox);
 
