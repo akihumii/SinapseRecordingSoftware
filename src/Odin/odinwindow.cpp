@@ -130,8 +130,8 @@ void OdinWindow::createLayout(){
 
     thresholdParameters = new QGroupBox(tr("Threshold Parameters"));
     thresholdLabels[0] = new QLabel(tr("Step Size (mA):"));
-    thresholdLabels[1] = new QLabel(tr("Upper Threshold (V):"));
-    thresholdLabels[2] = new QLabel(tr("Lower Threshold (V):"));
+    thresholdLabels[1] = new QLabel(tr("Channel A Threshold (mV):"));
+    thresholdLabels[2] = new QLabel(tr("Channel B Threshold (mV):"));
     thresholdLabels[3] = new QLabel(tr("Debounce delay (ms):"));
 
     QVBoxLayout *thresholdLabelLayout = new QVBoxLayout;
@@ -159,8 +159,8 @@ void OdinWindow::createLayout(){
 
     lowerThresholdSpinBox = new QDoubleSpinBox;
     lowerThresholdSpinBox->setMinimum(0.0);
-    lowerThresholdSpinBox->setMaximum(2.0);
-    lowerThresholdSpinBox->setSingleStep(0.1);
+    lowerThresholdSpinBox->setMaximum(10.0);
+    lowerThresholdSpinBox->setSingleStep(1.0);
     lowerThresholdSpinBox->setValue(0.0);
     connect(lowerThresholdSpinBox, SIGNAL(editingFinished()), this, SLOT(on_lowerThreshold_editted()));
     thresholdSpinBoxLayout->addWidget(lowerThresholdSpinBox);
