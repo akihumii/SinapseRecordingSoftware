@@ -27,7 +27,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
                             thresholdEnable = true;
                     });
                 }
-                if(fullWord_rawData*(0.000195) > upperThreshold && j == 6+2){
+                if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
                     thresholdEnable = false;
                     emit channelBCrossed();
                     QTimer::singleShot(debounce, [=] {
@@ -148,7 +148,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                                     thresholdEnable = true;
                             });
                         }
-                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 6+2){
+                        if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
                             thresholdEnable = false;
                             emit channelBCrossed();
                             QTimer::singleShot(debounce, [=] {

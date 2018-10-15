@@ -72,7 +72,7 @@ private:
     float period;
     int syncPulse = 0;
     double upperThreshold = 10.0;
-    double lowerThreshold = 0.0;
+    double lowerThreshold = 10.0;
     int debounce = 1000;
     bool thresholdEnable = true;
 
