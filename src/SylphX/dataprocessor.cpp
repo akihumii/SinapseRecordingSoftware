@@ -35,7 +35,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
                     });
                 }
             }
-            if(j == 5 || j == 6){
+            if(j == 7 || j == 8){
                 ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
             }
             else{
@@ -139,7 +139,13 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
-                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+//                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+                    if(j == 7 || j == 8){
+                        ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+                    }
+                    else{
+                        ChannelData[j-2].replace(index, 0);
+                    }
                     if(thresholdEnable){
                         if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
                             thresholdEnable = false;
@@ -156,9 +162,9 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                             });
                         }
                     }
-                    if(dataStream->getStreamConnected(j-2)){
-                        dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
-                    }
+//                    if(dataStream->getStreamConnected(j-2)){
+//                        dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+//                    }
                 }
                 for(int j = 0; j < 2; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
@@ -166,10 +172,11 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
-                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
-                        dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
-                    }
+//                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+//                    if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
+//                        dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
+//                    }
+                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
                 }
 
 //                for(int j = 0; j < 10; j++){
