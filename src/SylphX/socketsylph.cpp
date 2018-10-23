@@ -20,13 +20,14 @@ void SocketSylph::ReadCommand(){
             bytesRead += dataProcessor->parseFrameMarkers(socketAbstract->read(maxSize));
         }
     }
-    else if(socketAbstract->bytesAvailable() >= packetSize+1 && !checked){
+    else if(socketAbstract->bytesAvailable() >= (25*packetSize)+1 && !checked){
         qDebug() << "checking";
-        if(dataProcessor->checkNextFrameMarker(socketAbstract->read(packetSize+1), 0)){
+        if(dataProcessor->checkNextFrameMarker(socketAbstract->read((25*packetSize)+1), 0)){
             checked = true;
             qDebug() << "checked is true";
         }
         else{
+//            socketAbstract->flush();
             ReadCommand();
         }
     }
@@ -35,7 +36,7 @@ void SocketSylph::ReadCommand(){
 void SocketSylph::updateRate(){
     rate = bytesRead*8/1000;
     if(rate == 0 && checked){
-        checked = false;
+        checked = true;
     }
     bytesRead = 0;
 }
@@ -45,7 +46,7 @@ int SocketSylph::getRate(){
 }
 
 void SocketSylph::setChecked(bool flag){
-    checked = flag;
+    checked = true;
 }
 
 void SocketSylph::appendSync(){

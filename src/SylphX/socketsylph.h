@@ -24,11 +24,11 @@ private:
     QTimer *timer;
 
     qint64 packetSize = 25;
-    qint64 maxSize = packetSize*370;
+    qint64 maxSize = packetSize*320;
     int bytesRead = 0;
     double rate = 0.0;
 
-    bool checked = false;
+    bool checked = true;
 
 private slots:
     void ReadCommand();
