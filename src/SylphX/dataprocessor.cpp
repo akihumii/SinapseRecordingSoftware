@@ -163,7 +163,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                         }
                     }
 //                    if(dataStream->getStreamConnected(j-2)){
-//                        dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+                        dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
 //                    }
                 }
                 for(int j = 0; j < 2; j++){

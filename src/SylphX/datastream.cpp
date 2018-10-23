@@ -39,7 +39,8 @@ void DataStream::disableStream(int channel){
 void DataStream::streamData(int channel){
     if(socketMatlab[channel]->isOpen()){
         for(int i = 0; i < ChannelData[channel].size(); i++){
-            *out[channel] << QString::number(ChannelData[channel].at(i)) << "\r\n";
+//            *out[channel] << QString::number(ChannelData[channel].at(i));
+            *out[channel] << ChannelData[channel].at(i);
         }
     }
     else{
