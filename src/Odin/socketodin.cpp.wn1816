@@ -20,10 +20,10 @@ SocketOdin::SocketOdin(){
     serverMatlabPredict = new QTcpServer(this);
     connect(serverMatlabPredict, SIGNAL(newConnection()), this, SLOT(on_predictionPort_connect()));
     if(serverMatlabPredict->listen(QHostAddress::LocalHost, port)){
-        qDebug() << "Server for prediction is started";
+        qDebug() << "Server " << i+1 << "is started";
     }
     else{
-        qDebug() << "Server for prediction could not started";
+        qDebug() << "Server " << i+1 << "could not be started";
     }
 }
 SocketOdin::~SocketOdin(){
@@ -33,37 +33,15 @@ void SocketOdin::on_predictionPort_connect(){
     socketMatlabPredict = new QTcpSocket(this);
     socketMatlabPredict = serverMatlabPredict->nextPendingConnection();
     connect(socketMatlabPredict, SIGNAL(disconnected()), socketMatlabPredict, SLOT(deleteLater()));
-    connect(socketMatlabPredict, SIGNAL(readyRead()), this, SLOT(readPrediction()));
+    connect(socketMatlabPredict, SIGNAL(readyRead()), this, SLOT(readPredictioN()));
 }
 
 void SocketOdin::readPrediction(){
     if(socketMatlabPredict->bytesAvailable() > 0){
         //writeCommand(socketMatlabPredict->readAll());
         QByteArray temp = socketMatlabPredict->readAll();
-        if((quint8) temp.at(0) == 0xFB && temp.size() == 2){
-            for(int i = 0; i < temp.size(); i++){
-                if((quint8) temp.at(1) == 12){
-                    qDebug() << (quint8) temp.at(i);
-                }
-            }
-            switch((quint8) temp.at(1)){
-                case 3:
-                case 7:
-                case 11:
-                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001110));
-                    break;
-                case 12:
-                case 13:
-                case 14:
-                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001011));
-                    break;
-                case 15:
-                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001010));
-                    break;
-                default:
-                    break;
-            }
-            writeCommand(temp);
+        for(int i = 0; i < temp.size(); i++){
+            qDebug() << (quint8) temp.at(i);
         }
     }
 }

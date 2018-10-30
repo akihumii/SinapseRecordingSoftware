@@ -35,7 +35,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
                     });
                 }
             }
-            if(j == 7 || j == 8){
+            if(j == 5 || j == 6 || j == 7 || j == 8){
                 ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
             }
             else{
@@ -140,7 +140,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                         RecordData(fullWord_rawData);
                     }
 //                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    if(j == 7 || j == 8){
+                    if(j == 5 || j == 6 || j == 7 || j == 8){
                         ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
                     }
                     else{

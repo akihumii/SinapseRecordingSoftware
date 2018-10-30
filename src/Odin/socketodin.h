@@ -23,6 +23,8 @@ private slots:
     void sendCommand();
     void on_socketDisconnected();
     void readCommand();
+    void readPrediction();
+    void on_predictionPort_connect();
 private:
     QTcpSocket *socketOdin;
     QTcpSocket *socketSylph;
@@ -34,6 +36,9 @@ private:
     int commandCount = 0;
     bool timeToRead = false;
     int readDelay = 3000;
+    QTcpServer *serverMatlabPredict;
+    QTcpSocket *socketMatlabPredict;
+    quint16 port = 1300;
 };
 
 }
