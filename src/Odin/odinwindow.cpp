@@ -19,7 +19,7 @@ OdinWindow::OdinWindow(){
 
     createLayout();
     createStatusBar();
-//    connectOdin();
+    connectOdin();
 
     qDebug() << tcpServer->serverPort() << tcpServer->serverAddress().toString();
     while (!tcpServer->isListening() && !tcpServer->listen(QHostAddress::LocalHost, 13567)) {
