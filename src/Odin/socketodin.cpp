@@ -38,33 +38,33 @@ void SocketOdin::on_predictionPort_connect(){
 
 void SocketOdin::readPrediction(){
     if(socketMatlabPredict->bytesAvailable() > 0){
-        //writeCommand(socketMatlabPredict->readAll());
-        QByteArray temp = socketMatlabPredict->readAll();
-        if((quint8) temp.at(0) == 0xFB && temp.size() == 2){
-            for(int i = 0; i < temp.size(); i++){
-                if((quint8) temp.at(1) == 12){
-                    qDebug() << (quint8) temp.at(i);
-                }
-            }
-            switch((quint8) temp.at(1)){
-                case 3:
-                case 7:
-                case 11:
-                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001110));
-                    break;
-                case 12:
-                case 13:
-                case 14:
-                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001011));
-                    break;
-                case 15:
-                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001010));
-                    break;
-                default:
-                    break;
-            }
-            writeCommand(temp);
-        }
+        writeCommand(socketMatlabPredict->readAll());
+//        QByteArray temp = socketMatlabPredict->readAll();
+//        if((quint8) temp.at(0) == 0xFB && temp.size() == 2){
+//            for(int i = 0; i < temp.size(); i++){
+//                if((quint8) temp.at(1) == 12){
+//                    qDebug() << (quint8) temp.at(i);
+//                }
+//            }
+//            switch((quint8) temp.at(1)){
+//                case 3:
+//                case 7:
+//                case 11:
+//                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001110));
+//                    break;
+//                case 12:
+//                case 13:
+//                case 14:
+//                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001011));
+//                    break;
+//                case 15:
+//                    temp.replace(temp.at(1), (char) (temp.at(1) & 0B00001010));
+//                    break;
+//                default:
+//                    break;
+//            }
+//            writeCommand(temp);
+//        }
     }
 }
 

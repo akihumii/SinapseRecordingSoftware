@@ -81,7 +81,7 @@ void OdinWindow::createLayout(){
     frequencySpinBox = new QSpinBox;
     frequencySpinBox->setMinimumWidth(300);
     frequencySpinBox->setMinimum(10);
-    frequencySpinBox->setMaximum(100);
+    frequencySpinBox->setMaximum(200);
     frequencySpinBox->setValue(50);
     connect(frequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_frequency_Changed()));
     stimParaLayout[5]->addWidget(frequencySpinBox);
