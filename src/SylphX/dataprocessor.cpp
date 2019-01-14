@@ -19,31 +19,31 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            if(thresholdEnable){
-                if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
-                    thresholdEnable = false;
-                    emit channelACrossed();
-                    QTimer::singleShot(debounce, [=] {
-                            thresholdEnable = true;
-                    });
-                }
-                if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
-                    thresholdEnable = false;
-                    emit channelBCrossed();
-                    QTimer::singleShot(debounce, [=] {
-                            thresholdEnable = true;
-                    });
-                }
-            }
-            if(j == 5 || j == 6 || j == 7 || j == 8){
-                ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-            }
-            else{
-                ChannelData[j-2].replace(index, 0);
-            }
-//            if(dataStream->getStreamConnected(j-2)){
-//                dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+//            if(thresholdEnable){
+//                if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
+//                    thresholdEnable = false;
+//                    emit channelACrossed();
+//                    QTimer::singleShot(debounce, [=] {
+//                            thresholdEnable = true;
+//                    });
+//                }
+//                if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
+//                    thresholdEnable = false;
+//                    emit channelBCrossed();
+//                    QTimer::singleShot(debounce, [=] {
+//                            thresholdEnable = true;
+//                    });
+//                }
 //            }
+//            if(j == 5 || j == 6 || j == 7 || j == 8){
+                ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+//            }
+//            else{
+//                ChannelData[j-2].replace(index, 0);
+//            }
+            if(dataStream->getStreamConnected(j-2)){
+                dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+            }
 //            appendAudioBuffer(j-2, rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
         }
         for(int j = 0; j < 2; j++){
@@ -51,11 +51,11 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-//            ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-            ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
-//            if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
-//                dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
-//            }
+            ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+//            ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
+            if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
+                dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
+            }
 //            appendAudioBuffer(j+(NUM_CHANNELS-2), rawData.at(i+((2*j))), rawData.at(i+((2*j)+1)));
         }
 
@@ -117,9 +117,6 @@ int DataProcessor::getDebounce(){
 
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     if(leftOverData.size() > 0){
-//        rawData.prepend(leftOverData);
-//        leftOverData.clear();
-//        leftOverData.resize(0);
         for(int i=leftOverData.size()-1;i>=0;i--){
             rawData.prepend(leftOverData.at(i));
         }
@@ -140,31 +137,31 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                         RecordData(fullWord_rawData);
                     }
 //                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    if(j == 5 || j == 6 || j == 7 || j == 8){
+//                    if(j == 5 || j == 6 || j == 7 || j == 8){
                         ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    }
-                    else{
-                        ChannelData[j-2].replace(index, 0);
-                    }
-                    if(thresholdEnable){
-                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
-                            thresholdEnable = false;
-                            emit channelACrossed();
-                            QTimer::singleShot(debounce, [=] {
-                                    thresholdEnable = true;
-                            });
-                        }
-                        if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
-                            thresholdEnable = false;
-                            emit channelBCrossed();
-                            QTimer::singleShot(debounce, [=] {
-                                    thresholdEnable = true;
-                            });
-                        }
-                    }
-//                    if(dataStream->getStreamConnected(j-2)){
-                        dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
 //                    }
+//                    else{
+//                        ChannelData[j-2].replace(index, 0);
+//                    }
+//                    if(thresholdEnable){
+//                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
+//                            thresholdEnable = false;
+//                            emit channelACrossed();
+//                            QTimer::singleShot(debounce, [=] {
+//                                    thresholdEnable = true;
+//                            });
+//                        }
+//                        if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
+//                            thresholdEnable = false;
+//                            emit channelBCrossed();
+//                            QTimer::singleShot(debounce, [=] {
+//                                    thresholdEnable = true;
+//                            });
+//                        }
+//                    }
+                    if(dataStream->getStreamConnected(j-2)){
+                        dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
+                    }
                 }
                 for(int j = 0; j < 2; j++){
                     fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
@@ -172,11 +169,11 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
-//                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-//                    if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
-//                        dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
-//                    }
-                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
+                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+                    if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
+                        dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
+                    }
+//                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
                 }
 
 //                for(int j = 0; j < 10; j++){
