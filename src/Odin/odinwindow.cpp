@@ -71,7 +71,7 @@ void OdinWindow::createLayout(){
         connect(amplitudeSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_amplitude_Changed()));
 
         pulseDurationSpinBox[i] = new QSpinBox;
-        pulseDurationSpinBox[i]->setMinimum(100);
+        pulseDurationSpinBox[i]->setMinimum(20);
         pulseDurationSpinBox[i]->setMaximum(1000);
         pulseDurationSpinBox[i]->setValue(200);
         stimParaLayout[4]->addWidget(pulseDurationSpinBox[i]);
