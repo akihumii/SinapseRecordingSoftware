@@ -181,14 +181,14 @@ void OdinWindow::createLayout(){
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     sendButton = new QPushButton(tr("Start Odin!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
-    recordButton = new QPushButton(tr("H"));
-    recordButton->setShortcut(QKeySequence(tr("Ctrl+T")));
-    connect(recordButton, SIGNAL(clicked(bool)), this, SLOT(on_record_clicked()));
-    recordButton->setMaximumWidth(20);
-//    recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
-//    recordButton->setIconSize(QSize(15,15));
+    modeButton = new QPushButton(tr("H"));
+    modeButton->setShortcut(QKeySequence(tr("Ctrl+T")));
+    connect(modeButton, SIGNAL(clicked(bool)), this, SLOT(on_currentMode_clicked()));
+    modeButton->setMaximumWidth(20);
+//    modeButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
+//    modeButton->setIconSize(QSize(15,15));
     buttonLayout->addWidget(sendButton);
-    buttonLayout->addWidget(recordButton);
+    buttonLayout->addWidget(modeButton);
 
     QWidget *mainWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -318,7 +318,7 @@ void OdinWindow::on_delayEnabled_toggled(){
     }
 }
 
-void OdinWindow::on_record_clicked(){
+void OdinWindow::on_currentMode_clicked(){
     highcurrent = !highcurrent;
     if(highcurrent){
         for(int i = 0; i < 4; i++){
@@ -327,7 +327,7 @@ void OdinWindow::on_record_clicked(){
             amplitudeSpinBox[i]->setSingleStep(1.0);
             amplitudeSpinBox[i]->setValue(0.0);
         }
-        recordButton->setText("H");
+        modeButton->setText("H");
     }
     else{
         for(int i = 0; i < 4; i++){
@@ -336,7 +336,7 @@ void OdinWindow::on_record_clicked(){
             amplitudeSpinBox[i]->setSingleStep(100.0);
             amplitudeSpinBox[i]->setValue(0.0);
         }
-        recordButton->setText("L");
+        modeButton->setText("L");
     }
 }
 

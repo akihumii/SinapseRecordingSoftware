@@ -40,7 +40,7 @@ private:
     QStatusBar *statusBarMainWindow;
 
     QPushButton *sendButton;
-    QPushButton *recordButton;
+    QPushButton *modeButton;
 
     QPushButton *channelSelectAll;
     QPushButton *channelSelectNone;
