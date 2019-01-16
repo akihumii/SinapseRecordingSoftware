@@ -18,18 +18,14 @@ public:
     QByteArray getOutgoingCommand();
 signals:
     void odinDisconnected();
-    void commandReceived(bool);
 private slots:
-    void sendCommand();
     void on_socketDisconnected();
-    void readCommand();
     void readPrediction();
     void on_predictionPort_connect();
 private:
     QTcpSocket *socketOdin;
     QTcpSocket *socketSylph;
     QUdpSocket *udpSocket;
-    QTimer commandTimer;
     QByteArray outgoingCommand;
     QByteArray incomingCommand;
     QMediaPlayer *player;

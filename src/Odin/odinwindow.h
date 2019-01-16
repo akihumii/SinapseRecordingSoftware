@@ -77,7 +77,7 @@ private:
     Led *receivedLED;
 
     bool start = false;
-    bool record = false;
+    bool highcurrent = true;
     bool thresholdIncreaseEnable = false;
     bool thresholdDecreaseEnable = false;
 

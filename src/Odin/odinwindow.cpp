@@ -181,12 +181,12 @@ void OdinWindow::createLayout(){
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     sendButton = new QPushButton(tr("Start Odin!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
-    recordButton = new QPushButton;
+    recordButton = new QPushButton(tr("H"));
     recordButton->setShortcut(QKeySequence(tr("Ctrl+T")));
     connect(recordButton, SIGNAL(clicked(bool)), this, SLOT(on_record_clicked()));
     recordButton->setMaximumWidth(20);
-    recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
-    recordButton->setIconSize(QSize(15,15));
+//    recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
+//    recordButton->setIconSize(QSize(15,15));
     buttonLayout->addWidget(sendButton);
     buttonLayout->addWidget(recordButton);
 
@@ -233,7 +233,7 @@ bool OdinWindow::connectOdin(){
             return true;
         }
         else{
-            connectionStatus.append("Connection to Odin failed! Restart this program after connecting Odin.");
+            connectionStatus.append("Connection to Odin failed! Command now being sent through UDP socket!");
             QMessageBox::information(this, "Failed to connect!", "No Odin device detected.. \n"
                                                                  "Check your connections and run the program again..");
             statusBarLabel->setText(connectionStatus);
@@ -319,12 +319,24 @@ void OdinWindow::on_delayEnabled_toggled(){
 }
 
 void OdinWindow::on_record_clicked(){
-    record = !record;
-    if(record){
-        recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStop.png"));
+    highcurrent = !highcurrent;
+    if(highcurrent){
+        for(int i = 0; i < 4; i++){
+            amplitudeSpinBox[i]->setMinimum(0.0);
+            amplitudeSpinBox[i]->setMaximum(19.0);
+            amplitudeSpinBox[i]->setSingleStep(1.0);
+            amplitudeSpinBox[i]->setValue(0.0);
+        }
+        recordButton->setText("H");
     }
     else{
-        recordButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
+        for(int i = 0; i < 4; i++){
+            amplitudeSpinBox[i]->setMinimum(0.0);
+            amplitudeSpinBox[i]->setMaximum(400.0);
+            amplitudeSpinBox[i]->setSingleStep(100.0);
+            amplitudeSpinBox[i]->setValue(0.0);
+        }
+        recordButton->setText("L");
     }
 }
 
