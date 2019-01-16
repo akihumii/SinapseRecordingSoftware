@@ -92,7 +92,7 @@ private:
     void createStatusBar();
 private slots:
     void sendCommand();
-    void on_record_clicked();
+    void on_currentMode_clicked();
     void on_thresholdEnable_toggled();
     void on_channelEnable_toggled();
     void on_amplitude_Changed();
