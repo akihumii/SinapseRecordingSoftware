@@ -119,9 +119,9 @@ void CommandOdin::sendPulseDuration(int channel){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Pulse Duration";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
 }
 
 void CommandOdin::sendFrequency(){
@@ -133,9 +133,9 @@ void CommandOdin::sendFrequency(){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Frequency";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
 }
 
 void CommandOdin::sendChannelEnable(){
@@ -147,9 +147,9 @@ void CommandOdin::sendChannelEnable(){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Channel Enabled";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
 }
 
 QByteArray CommandOdin::getlastSentCommand(){
@@ -292,9 +292,9 @@ void CommandOdin::sendThresholdEnable(){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Threshold Enabled";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
 }
 
 void CommandOdin::setThresholdEnable(char value){

@@ -2,10 +2,7 @@
 
 namespace SylphX {
 
-DataProcessor::DataProcessor(float samplingRate_, QProcess *process_, DataStream *dataStream_){
-    samplingRate = samplingRate_;
-    period = 1/samplingRate_;
-    process = process_;
+DataProcessor::DataProcessor(DataStream *dataStream_){
     dataStream = dataStream_;
 }
 
@@ -19,28 +16,23 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-            if(thresholdEnable){
-                if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
-                    thresholdEnable = false;
-                    emit channelACrossed();
-                    QTimer::singleShot(debounce, [=] {
-                            thresholdEnable = true;
-                    });
-                }
-                if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
-                    thresholdEnable = false;
-                    emit channelBCrossed();
-                    QTimer::singleShot(debounce, [=] {
-                            thresholdEnable = true;
-                    });
-                }
-            }
-            if(j == 5 || j == 6 || j == 7 || j == 8){
-                ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-            }
-            else{
-                ChannelData[j-2].replace(index, 0);
-            }
+//            if(thresholdEnable){
+//                if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
+//                    thresholdEnable = false;
+//                    emit channelACrossed();
+//                    QTimer::singleShot(debounce, [=] {
+//                            thresholdEnable = true;
+//                    });
+//                }
+//                if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
+//                    thresholdEnable = false;
+//                    emit channelBCrossed();
+//                    QTimer::singleShot(debounce, [=] {
+//                            thresholdEnable = true;
+//                    });
+//                }
+//            }
+            ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
 //            if(dataStream->getStreamConnected(j-2)){
 //                dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
 //            }
@@ -51,8 +43,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
             if(RecordEnabled){
                 RecordData(fullWord_rawData);
             }
-//            ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-            ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
+            ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
 //            if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
 //                dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
 //            }
@@ -70,12 +61,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+packetSize-5));
             RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
-            RecordData((quint8) lastSentByte[0]);
-            RecordData((quint8) lastSentByte[1]);
-            RecordData((double) lastSentAmplitudes[0]);
-            RecordData((double) lastSentAmplitudes[1]);
-            RecordData((double) lastSentAmplitudes[2]);
-            RecordData((double) lastSentAmplitudes[3]);
+            recordCommand();
             RecordData(END_OF_LINE);
         }
         index++;
@@ -84,36 +70,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
     return rawData.size();
 }
 
-void DataProcessor::setLastSentBytes(char *bytes){
-    lastSentByte[0] = bytes[0];
-    lastSentByte[1] = bytes[1];
-}
 
-void DataProcessor::setLastSentAmplitudes(double *amplitudes){
-    lastSentAmplitudes[0] = amplitudes[0];
-    lastSentAmplitudes[1] = amplitudes[1];
-    lastSentAmplitudes[2] = amplitudes[2];
-    lastSentAmplitudes[3] = amplitudes[3];
-}
-
-void DataProcessor::setDebounce(int value){
-    qDebug() << "Setting debounce value : " << value;
-    debounce = value;
-}
-
-void DataProcessor::setUpperThreshold(double value){
-    qDebug() << "Setting upper threshold : " << value;
-    upperThreshold = value;
-}
-
-void DataProcessor::setLowerThreshold(double value){
-    qDebug() << "Setting lower threshold : " << value;
-    lowerThreshold = value;
-}
-
-int DataProcessor::getDebounce(){
-    return debounce;
-}
 
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     if(leftOverData.size() > 0){
@@ -140,28 +97,23 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                         RecordData(fullWord_rawData);
                     }
 //                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    if(j == 5 || j == 6 || j == 7 || j == 8){
-                        ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
-                    }
-                    else{
-                        ChannelData[j-2].replace(index, 0);
-                    }
-                    if(thresholdEnable){
-                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
-                            thresholdEnable = false;
-                            emit channelACrossed();
-                            QTimer::singleShot(debounce, [=] {
-                                    thresholdEnable = true;
-                            });
-                        }
-                        if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
-                            thresholdEnable = false;
-                            emit channelBCrossed();
-                            QTimer::singleShot(debounce, [=] {
-                                    thresholdEnable = true;
-                            });
-                        }
-                    }
+                    ChannelData[j-2].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+//                    if(thresholdEnable){
+//                        if(fullWord_rawData*(0.000195) > upperThreshold && j == 5+2){
+//                            thresholdEnable = false;
+//                            emit channelACrossed();
+//                            QTimer::singleShot(debounce, [=] {
+//                                    thresholdEnable = true;
+//                            });
+//                        }
+//                        if(fullWord_rawData*(0.000195) > lowerThreshold && j == 6+2){
+//                            thresholdEnable = false;
+//                            emit channelBCrossed();
+//                            QTimer::singleShot(debounce, [=] {
+//                                    thresholdEnable = true;
+//                            });
+//                        }
+//                    }
 //                    if(dataStream->getStreamConnected(j-2)){
                         dataStream->appendData(j-2, fullWord_rawData*(0.000000195));
 //                    }
@@ -172,11 +124,11 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     if(RecordEnabled){
                         RecordData(fullWord_rawData);
                     }
-//                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
+                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
 //                    if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
 //                        dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
 //                    }
-                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
+//                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
                 }
 
 //                for(int j = 0; j < 10; j++){
@@ -190,12 +142,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                 if(RecordEnabled){
                     RecordData((quint8) rawData.at(i+(packetSize-4)));
                     RecordData((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+(packetSize-2)));
-                    RecordData((quint8) lastSentByte[0]);
-                    RecordData((quint8) lastSentByte[1]);
-                    RecordData((double) lastSentAmplitudes[0]);
-                    RecordData((double) lastSentAmplitudes[1]);
-                    RecordData((double) lastSentAmplitudes[2]);
-                    RecordData((double) lastSentAmplitudes[3]);
+                    recordCommand();
                     RecordData(END_OF_LINE);
                 }
                 index++;
@@ -239,37 +186,6 @@ int DataProcessor::findlastFrameMarkers(QByteArray rawData){
         }
     }
     return 0;
-}
-
-void DataProcessor::sortADCData(QByteArray adcData){
-    for(int i = 0; i < adcData.size(); i++){
-        audioBuffer[10].append(adcData.at(i));
-        ADC_Data.append(adcData.at(i));
-    }
-}
-
-void DataProcessor::setADCRecordEnabled(bool enableFlag){
-    ADCRecordEnabled = enableFlag;
-}
-
-bool DataProcessor::isADCRecordEnabled(){
-    return ADCRecordEnabled;
-}
-
-void DataProcessor::setSmartDataProcessor(bool flag){
-    smartDataProcessor = flag;
-}
-
-bool DataProcessor::isSmart(){
-    return smartDataProcessor;
-}
-
-void DataProcessor::setScale(int value){
-    multiplier = value;
-}
-
-int DataProcessor::getScale(){
-    return multiplier;
 }
 
 }

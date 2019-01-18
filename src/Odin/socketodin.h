@@ -12,7 +12,6 @@ public:
     SocketOdin();
     ~SocketOdin();
     void writeCommand(QByteArray command);
-    void sendDisconnectSignal();
     void setReadDelay(int delay);
     QByteArray getIncomingCommand();
     QByteArray getOutgoingCommand();

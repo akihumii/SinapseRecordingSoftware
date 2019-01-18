@@ -92,6 +92,15 @@ void Data::RecordData(double data){
     }
 }
 
+void Data::recordCommand(){
+    RecordData((quint8) lastSentByte[0]);
+    RecordData((quint8) lastSentByte[1]);
+    RecordData((double) lastSentAmplitudes[0]);
+    RecordData((double) lastSentAmplitudes[1]);
+    RecordData((double) lastSentAmplitudes[2]);
+    RecordData((double) lastSentAmplitudes[3]);
+}
+
 void Data::setFileName(QString filename){
     fileName = filename;
 }
@@ -161,3 +170,49 @@ void Data::setNumDataPoints(int timeFrames, double sampleFreq){
     }
 }
 
+void Data::setLastSentBytes(char *bytes){
+    lastSentByte[0] = bytes[0];
+    lastSentByte[1] = bytes[1];
+}
+
+void Data::setLastSentAmplitudes(double *amplitudes){
+    lastSentAmplitudes[0] = amplitudes[0];
+    lastSentAmplitudes[1] = amplitudes[1];
+    lastSentAmplitudes[2] = amplitudes[2];
+    lastSentAmplitudes[3] = amplitudes[3];
+}
+
+void Data::setDebounce(int value){
+    qDebug() << "Setting debounce value : " << value;
+    debounce = value;
+}
+
+void Data::setUpperThreshold(double value){
+    qDebug() << "Setting upper threshold : " << value;
+    upperThreshold = value;
+}
+
+void Data::setLowerThreshold(double value){
+    qDebug() << "Setting lower threshold : " << value;
+    lowerThreshold = value;
+}
+
+int Data::getDebounce(){
+    return debounce;
+}
+
+void Data::setSmartDataProcessor(bool flag){
+    smartDataProcessor = flag;
+}
+
+bool Data::isSmart(){
+    return smartDataProcessor;
+}
+
+void Data::setScale(int value){
+    multiplier = value;
+}
+
+int Data::getScale(){
+    return multiplier;
+}

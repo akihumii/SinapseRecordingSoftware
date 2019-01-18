@@ -2,6 +2,9 @@
 
 SocketAbstract::SocketAbstract(){
     socketAbstract = new QTcpSocket(this);
+    timer = new QTimer;
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateRate()));
+    timer->start(1000);
 }
 
 bool SocketAbstract::doConnect(QString ipAddress, int port){
@@ -34,4 +37,27 @@ bool SocketAbstract::isConnected(){
 
 QString SocketAbstract::getError(){
     return socketAbstract->errorString();
+}
+
+int SocketAbstract::getRate(){
+    return rate;
+}
+
+void SocketAbstract::setChecked(bool flag){
+    checked = flag;
+}
+
+void SocketAbstract::updateRate(){
+    rate = bytesRead*8/1000;
+    if(rate == 0 && checked){
+        checked = false;
+    }
+    bytesRead = 0;
+}
+
+void SocketAbstract::sendDisconnectSignal(){
+    qDebug() << "Closing ESP";
+    QByteArray closingMSG = "DISCONNECT!!!!!!";
+    socketAbstract->write(closingMSG);
+    socketAbstract->waitForBytesWritten(1000);
 }

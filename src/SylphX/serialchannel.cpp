@@ -62,7 +62,7 @@ void SerialChannel::setChecked(bool flag){
 
 void SerialChannel::ReadADCData(){
 //    qDebug() << "reading adc data";
-    dataProcessor->sortADCData(ADCPort->read(25200));
+//    dataProcessor->sortADCData(ADCPort->read(25200));
 }
 
 bool SerialChannel::enableImplantPort(QString portName){

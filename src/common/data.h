@@ -18,12 +18,12 @@ enum TimeFrames{
     TimeFrames5000ms
 };
 
-class Data : public Filter
+class Data : public QObject, public Filter
 {
+    Q_OBJECT
 public:
     Data();
     ~Data();
-    Filter* filter;
     QVector<double> retrieveData(int ChannelIndex);
     QVector<double> retrieveXAxis();
     QVector<quint16> sortData(QByteArray data_store);
@@ -42,6 +42,18 @@ public:
     void setNumDataPoints(int timeFrames, double sampleFreq);
     void setHeader(QString header);
     int getNumDataPoints();
+    int getDebounce();
+    void setSmartDataProcessor(bool flag);
+    void setScale(int value);
+    int getScale();
+    bool isSmart();
+public slots:
+    void setDebounce(int value);
+    void setUpperThreshold(double value);
+    void setLowerThreshold(double value);
+    void setLastSentBytes(char *bytes);
+    void setLastSentAmplitudes(double *amplitudes);
+
 protected:
     QVector<double> X_axis;
     QVector<double> ChannelData[12];
@@ -53,8 +65,20 @@ protected:
     bool RecordEnabled = false;
     void RecordData(int data);
     void RecordData(double data);
+    void recordCommand();
     void recordHeader();
     QString directory = QDir::homePath() + "/Desktop/";
+
+    char lastSentByte[2] = {0, 0};
+    double lastSentAmplitudes[4] = {0.0, 0.0, 0.0, 0.0};
+    double upperThreshold = 10.0;
+    double lowerThreshold = 10.0;
+    int debounce = 1000;
+    int multiplier = 1;
+    qint16 fullWord_rawData;
+    int firstFrameMarker;
+    int lastFrameMarker;
+    QByteArray leftOverData;
 
 private:
     QFile *File;
@@ -65,8 +89,8 @@ private:
     int prevleftOverByteCount = 0;
 
     int numDataPoints = 2082;
-
     double SamplingRate;
+    bool smartDataProcessor = true;
 };
 
 #endif // DATA_H

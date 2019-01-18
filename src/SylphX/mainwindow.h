@@ -32,7 +32,7 @@ public:
     QLabel *statusBarLabel;
 
     SerialChannel *serialChannel;
-    DataProcessor *data;
+    DataProcessor *dataProcessor;
     DataStream *dataStream;
 
     Odin::OdinWindow *x;
@@ -66,7 +66,6 @@ private:
     QAction *resetDefaultY;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
-    QAction *pythonLaunchAction;
     QAction *disableStream;
     QActionGroup *timeFrameGroup;
     QSignalMapper *timeFrameMapper;
@@ -161,7 +160,6 @@ private slots:
     void on_voltage_changed(int voltageIndex);
     void on_resetY_triggered();
     void on_dataAnalyzer_triggered();
-    void on_pythonLaunch_triggered();
     void on_disableStream_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
