@@ -1,7 +1,5 @@
 #include "datastream.h"
 
-namespace SylphX {
-
 DataStream::DataStream(QObject *parent) : QObject(parent = Q_NULLPTR){
     connectionMapper = new QSignalMapper(this);
     connect(connectionMapper, SIGNAL(mapped(int)), this, SLOT(on_newConnection(int)));
@@ -61,6 +59,4 @@ void DataStream::clearChannelData(int ChannelIndex){
 
 int DataStream::getChannelSize(int channel){
     return ChannelData[channel].size();
-}
-
 }

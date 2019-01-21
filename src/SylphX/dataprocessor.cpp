@@ -1,7 +1,5 @@
 #include "dataprocessor.h"
 
-namespace SylphX {
-
 DataProcessor::DataProcessor(DataStream *dataStream_){
     dataStream = dataStream_;
 }
@@ -186,6 +184,4 @@ int DataProcessor::findlastFrameMarkers(QByteArray rawData){
         }
     }
     return 0;
-}
-
 }

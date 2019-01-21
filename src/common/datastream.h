@@ -1,9 +1,7 @@
 #ifndef DATASTREAM_H
 #define DATASTREAM_H
 
-#include "../common/qtincludes.h"
-
-namespace SylphX {
+#include "qtincludes.h"
 
 class DataStream : public QObject
 {
@@ -46,7 +44,5 @@ private:
 private slots:
     void on_newConnection(int connected);
 };
-
-}
 
 #endif // DATASTREAM_H

@@ -7,15 +7,13 @@
 #include "time.h"
 #include "../Odin/socketodin.h"
 #include "../Odin/odinwindow.h"
-#include "datastream.h"
+#include "../common/datastream.h"
 
 #define NUM_CHANNELS 10
 #define NUM_BYTES_PER_CHANNEL 2
 #define NUM_BYTES_COUNTER 2
 #define NUM_BYTES_SYNC 1
 #define NUM_BYTES_FRAME 2
-
-namespace SylphX {
 
 #define END_OF_LINE 2779058
 
@@ -45,7 +43,5 @@ private:
 //    void channelACrossed();
 //    void channelBCrossed();
 };
-
-}
 
 #endif // DATAPROCESSOR_KA_H

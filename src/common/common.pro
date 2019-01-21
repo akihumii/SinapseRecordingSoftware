@@ -28,7 +28,8 @@ HEADERS += \
     signalaudio.h \
     socketabstract.h \
     connectiondialog.h \
-    led.h
+    led.h \
+    datastream.h
 
 SOURCES += \
     data.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     qcustomplot.cpp \
     signalaudio.cpp \
     socketabstract.cpp \
-    connectiondialog.cpp
+    connectiondialog.cpp \
+    datastream.cpp
 
 FORMS +=

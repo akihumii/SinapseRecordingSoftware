@@ -12,7 +12,7 @@
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
 #include "../Odin/odinwindow.h"
-#include "datastream.h"
+#include "../common/datastream.h"
 
 class QComboBox;
 class QCustomPlot;
