@@ -28,6 +28,10 @@ public:
     int parseFrameMarkers(QByteArray rawData);
     int parseFrameMarkersWithChecks(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int mark);
+    int getResyncCounter();
+
+signals:
+    void dataLost();
 
 public slots:
 
@@ -39,6 +43,7 @@ private:
     bool thresholdEnable = true;
 
     int index = 0;
+    int resync_count = 0;
 //signals:
 //    void channelACrossed();
 //    void channelBCrossed();

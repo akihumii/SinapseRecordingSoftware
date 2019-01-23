@@ -306,6 +306,7 @@ MainWindow::~MainWindow(){
 void MainWindow::updateData(){
 //    if(socketSylph->isConnected()){
     updateStatusBar(1, "Data Rate: " + QString::number(socketSylph->isConnected()? socketSylph->getRate() : serialChannel->getRate()) + " kbps");
+    updateStatusBar(3, "Resync Count: " + QString::number(dataProcessor->getResyncCounter()));
 //    }
 //    else if (serialChannel->isImplantConnected()){
 //        updateStatusBar(1, "Data Rate: " + QString::number(serialChannel->getRate()) + " kbps");

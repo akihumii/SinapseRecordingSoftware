@@ -5,6 +5,7 @@ namespace SylphX {
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
     connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(dataProcessor, SIGNAL(dataLost()), this, SLOT(resyncData()));
 }
 
 void SocketSylph::readData(){
@@ -26,6 +27,10 @@ void SocketSylph::readData(){
             readData();
         }
     }
+}
+
+void SocketSylph::resyncData(){
+    checked = false;
 }
 
 }
