@@ -13,26 +13,26 @@ TEMPLATE = subdirs
 
 SUBDIRS +=   \
     src/common \
-#    src/Neutrino \
-#    src/SylphII \
+    src/Neutrino \
+    src/SylphII \
     src/SylphX \
-    src/Odin
-#    src/Jane \
+    src/Odin \
+    src/Jane \
 #    src/AMWFlash \
 #    src/NeuroModulation
 
 common.subdir = src/common
-#Neutrino.subdir = src/Neutrino
-#SylphII.subdir = src/SylphII
+Neutrino.subdir = src/Neutrino
+SylphII.subdir = src/SylphII
 SylphX.subdir = src/SylphX
 Odin.subdir = src/Odin
-#Jane.subdir = src/Jane
+Jane.subdir = src/Jane
 
-#Neutrino.depends = common
-#SylphII.depends = common
+Neutrino.depends = common
+SylphII.depends = common
 SylphX.depends = common
 Odin.depends = common
-#Jane.depends = common
+Jane.depends = common
 
 FORMS +=
 
