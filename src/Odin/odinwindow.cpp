@@ -343,6 +343,8 @@ void OdinWindow::on_channelEnable_toggled(){
         qDebug() << "Setting Channel Enable for channel " << i+1 << channelEnable[i]->isChecked();
     }
     commandOdin->sendChannelEnable();
+    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+    emit commandSent(lastSentCommand);
 }
 
 void OdinWindow::on_channelSelectAll_clicked(){
@@ -351,6 +353,8 @@ void OdinWindow::on_channelSelectAll_clicked(){
         commandOdin->setChannelEnabled(i, true);
     }
     commandOdin->sendChannelEnable();
+    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+    emit commandSent(lastSentCommand);
 }
 
 void OdinWindow::on_channelSelectNone_clicked(){
@@ -359,6 +363,8 @@ void OdinWindow::on_channelSelectNone_clicked(){
         commandOdin->setChannelEnabled(i, false);
     }
     commandOdin->sendChannelEnable();
+    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+    emit commandSent(lastSentCommand);
 }
 
 void OdinWindow::on_thresholdSelectAll_clicked(){
