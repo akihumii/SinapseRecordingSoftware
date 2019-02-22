@@ -55,7 +55,13 @@ private:
     QMenu *timeFrameMenu;
     QMenu *audioOutputMenu;
     QMenu *processorMenu;
+    QMenu *plotSelectMenu;
     QMenu *helpMenu;
+
+    QVBoxLayout *mainLayout;
+    QVBoxLayout *topLayout;
+    QVBoxLayout *bottomLayout;
+    QWidget *mainWidget;
 
     QAction *exitAction;
     QAction *recordAction;
@@ -88,6 +94,7 @@ private:
                                     0.1,
                                     0.2,
                                     0.5};
+    int currentTimeFrame = DEFAULT_XAXIS;
 
     QSignalMapper *voltageMapper;
     QAction *voltageAction[8];
@@ -99,6 +106,7 @@ private:
                                       "+/- 2mV",
                                       "+/- 5mV",
                                       "+/- 10mV"};
+    int currentVoltageScale = DEFAULT_YAXIS;
     double voltageMin[8] =   { -50,
                                -100,
                                -200,
@@ -123,6 +131,29 @@ private:
                               0.4,
                               1,
                               2,};
+    QSignalMapper *plotSelectMapper;
+    QAction *plotSelectAction[10];
+    QString plotSelect[10] = {"Channel 1",
+                              "Channel 2",
+                              "Channel 3",
+                              "Channel 4",
+                              "Channel 5",
+                              "Channel 6",
+                              "Channel 7",
+                              "Channel 8",
+                              "Channel 9",
+                              "Channel 10"};
+
+    bool plotEnable[10] = {false,
+                           false,
+                           false,
+                           true,
+                           true,
+                           true,
+                           true,
+                           false,
+                           false,
+                           false};
 
     QActionGroup *voltageGroup;
 
@@ -148,6 +179,8 @@ private:
     void createActions();
     void createMenus();
     void createLayout();
+    void destroyPlots();
+    void reconstructPlots();
     void connectSylph();
     void setDefaultGraph();
     void activateChannelGraph(int index);
@@ -158,6 +191,7 @@ private slots:
     void on_resetX_triggered();
     void on_timeFrame_changed(int timeFrameIndex);
     void on_voltage_changed(int voltageIndex);
+    void on_plotSelect_changed(int channel);
     void on_resetY_triggered();
     void on_dataAnalyzer_triggered();
     void on_disableStream_triggered();

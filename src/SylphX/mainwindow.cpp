@@ -35,7 +35,6 @@ MainWindow::MainWindow(){
 }
 
 void MainWindow::createLayout(){
-    QVBoxLayout *mainLayout = new QVBoxLayout;
     for(int i=0;i<12;i++){
         channelGraph[i] = new QCustomPlot;
         channelGraph[i]->xAxis->setVisible(false);
@@ -63,11 +62,11 @@ void MainWindow::createLayout(){
     }
 
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
-    channelGraph[10]->yAxis->setLabelPadding(35);
+//    channelGraph[10]->yAxis->setLabelPadding(35);
     channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[10]->setFixedHeight(100);
-    channelGraph[11]->yAxis->setLabel("Frame Marker");
-    channelGraph[11]->yAxis->setLabelPadding(35);
+    channelGraph[11]->yAxis->setLabel("Frame Marker('000)");
+//    channelGraph[11]->yAxis->setLabelPadding(35);
     channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[11]->setFixedHeight(100);
 
@@ -76,40 +75,34 @@ void MainWindow::createLayout(){
 
     channelGraph[10]->yAxis->setRange(-5, 260, Qt::AlignLeft);
     channelGraph[10]->yAxis->setTickStep(50);
-    channelGraph[11]->yAxis->setRange(0, 65535, Qt::AlignLeft);
-    channelGraph[11]->yAxis->setTickStep(13000);
-    channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
+    channelGraph[11]->yAxis->setRange(0, 66, Qt::AlignLeft);
+    channelGraph[11]->yAxis->setTickStep(13);
+//    channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
 
-    QVBoxLayout *leftLayout = new QVBoxLayout;
-    for(int i = 0; i < 5; i++){
-        leftLayout->addWidget(channelGraph[i]);
-    }
+//    QVBoxLayout *leftLayout = new QVBoxLayout;
+//    for(int i = 0; i < 5; i++){
+//        leftLayout->addWidget(channelGraph[i]);
+//    }
 
-    QVBoxLayout *rightLayout = new QVBoxLayout;
-    for(int i = 5; i < 10; i++){
-        rightLayout->addWidget(channelGraph[i]);
-    }
-
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addLayout(leftLayout);
-    topLayout->addLayout(rightLayout);
-
-    QVBoxLayout *bottomLayout = new QVBoxLayout;
-    for(int i = 10; i < 12; i++){
-        bottomLayout->addWidget(channelGraph[i]);
-    }
-
-    mainLayout->addLayout(topLayout);
-    mainLayout->addLayout(bottomLayout);
-
-    QWidget *mainWidget = new QWidget;
-    mainWidget->setLayout(mainLayout);
-    setCentralWidget(mainWidget);
+//    QVBoxLayout *rightLayout = new QVBoxLayout;
+//    for(int i = 5; i < 10; i++){
+//        rightLayout->addWidget(channelGraph[i]);
+//    }
+    mainWidget = new QWidget;
+    mainLayout = new QVBoxLayout;
+    topLayout = new QVBoxLayout;
+    bottomLayout = new QVBoxLayout;
+    reconstructPlots();
 }
 
 void MainWindow::createActions(){
+    plotSelectMapper = new QSignalMapper(this);
+    connect(plotSelectMapper, SIGNAL(mapped(int)), this, SLOT(on_plotSelect_changed(int)));
     for(int i = 0; i < 10; i++){
         audio[i] = new QAction("Channel " + QString::number(i+1, 10)+ " Audio Output");
+        plotSelectAction[i] = new QAction(plotSelect[i]);
+        plotSelectMapper->setMapping(plotSelectAction[i], i);
+        connect(plotSelectAction[i], SIGNAL(triggered(bool)), plotSelectMapper, SLOT(map()));
     }
 //    audio[10] = new QAction(tr("Sync Pulse Audio Output"));
 
@@ -210,6 +203,13 @@ void MainWindow::createMenus(){
     fileMenu->addAction(chooseDirectoryAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
+
+    plotSelectMenu = menuBar()->addMenu(tr("&Channel Plots"));
+    for(int i = 0; i < 10; i++){
+        plotSelectMenu->addAction(plotSelectAction[i]);
+        plotSelectAction[i]->setCheckable(true);
+        plotSelectAction[i]->setChecked(plotEnable[i]);
+    }
 
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
@@ -329,6 +329,7 @@ void MainWindow::on_disableStream_triggered(){
 }
 
 void MainWindow::on_timeFrame_changed(int timeFrameIndex){
+    currentTimeFrame = timeFrameIndex;
     dataProcessor->setNumDataPoints((TimeFrames) timeFrameIndex, samplingRate);
     for(int i=0;i<12;i++){
         channelGraph[i]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
@@ -343,6 +344,7 @@ void MainWindow::on_resetX_triggered(){
 }
 
 void MainWindow::on_voltage_changed(int voltageIndex){
+    currentVoltageScale = voltageIndex;
     voltageIndex < 4? dataProcessor->setScale(1000000) : dataProcessor->setScale(1000);
     for(int i = 0; i < 10; i++){
         channelGraph[i]->yAxis->setRange(voltageMin[voltageIndex], voltageRange[voltageIndex], Qt::AlignLeft);
@@ -370,6 +372,31 @@ void MainWindow::on_record_triggered(){
         updateStatusBar(2, "<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + dataProcessor->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
+}
+
+void MainWindow::on_plotSelect_changed(int channel){
+    plotEnable[channel] = !plotEnable[channel];
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
+}
+
+void MainWindow::reconstructPlots(){
+    for(int i = 0; i < 10; i++){
+        if(plotEnable[i]){
+            topLayout->addWidget(channelGraph[i]);
+        }
+    }
+
+    for(int i = 10; i < 12; i++){
+        bottomLayout->addWidget(channelGraph[i]);
+    }
+
+    mainLayout->addLayout(topLayout);
+    mainLayout->addLayout(bottomLayout);
+
+    mainWidget->setLayout(mainLayout);
+    setCentralWidget(mainWidget);
 }
 
 void MainWindow::on_playPause_triggered(){

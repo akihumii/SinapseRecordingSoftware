@@ -55,7 +55,7 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
 //        }
 
         ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-5));
-        ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3));
+        ChannelData[11].replace(index, ((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+packetSize-3))/1000.0);
         if(RecordEnabled){
             RecordData((quint8) rawData.at(i+packetSize-5));
             RecordData((quint8) rawData.at(i+(packetSize-4)) << 8 | (quint8) rawData.at(i+(packetSize-3)));
@@ -138,7 +138,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     //                }
 
                     ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-4));
-                    ChannelData[11].replace(index, (quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+packetSize-2));
+                    ChannelData[11].replace(index, ((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+packetSize-2))/1000.0);
                     if(RecordEnabled){
                         RecordData((quint8) rawData.at(i+(packetSize-4)));
                         RecordData((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+(packetSize-2)));
