@@ -17,13 +17,13 @@
 
 #define END_OF_LINE 2779058
 
-class DataProcessor : public Data
+class DataProcessor :  public Data, public SignalAudio
 {
     Q_OBJECT
 public:
     DataProcessor(DataStream *dataStream_);
     DataStream *dataStream;
-//    SignalAudio *signalAudio;
+    SignalAudio *signalAudio;
 
     int parseFrameMarkers(QByteArray rawData);
     int parseFrameMarkersWithChecks(QByteArray rawData);

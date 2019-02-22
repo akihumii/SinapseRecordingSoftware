@@ -92,7 +92,9 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     }
                     for(int j = 2; j < NUM_CHANNELS; j++){
                         fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-    //                    appendAudioBuffer(j-2, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
+                        for(int k=0; k < 7; k++){
+//                            appendAudioBuffer(j-2, rawData.at(i+1+((2*j)+1)), rawData.at(i+1+((2*j))));
+                        }
                         if(RecordEnabled){
                             RecordData(fullWord_rawData);
                         }
@@ -120,13 +122,15 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     }
                     for(int j = 0; j < 2; j++){
                         fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-    //                    appendAudioBuffer(j+8, rawData.at(i+1+((2*j))), rawData.at(i+1+((2*j)+1)));
+                        for(int k=0; k < 7; k++){
+//                            appendAudioBuffer(j+8, rawData.at(i+1+((2*j)+1)), rawData.at(i+1+((2*j))));
+                        }
                         if(RecordEnabled){
                             RecordData(fullWord_rawData);
                         }
                         ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*multiplier);
     //                    if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
-    //                        dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
+                            dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
     //                    }
     //                    ChannelData[j+(NUM_CHANNELS-2)].replace(index, 0);
                     }
@@ -162,6 +166,7 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
         }
     }
 //    playAudio(getAudioChannel());
+//    playAudio(5);
     return rawData.size();
 }
 

@@ -143,6 +143,9 @@ private:
                               "Channel 8",
                               "Channel 9",
                               "Channel 10"};
+    QAction *plotSelectAll;
+    QAction *plotSelectNone;
+    QAction *plotSelectDefault;
 
     bool plotEnable[10] = {false,
                            false,
@@ -192,6 +195,9 @@ private slots:
     void on_timeFrame_changed(int timeFrameIndex);
     void on_voltage_changed(int voltageIndex);
     void on_plotSelect_changed(int channel);
+    void on_plotSelectAll_triggered();
+    void on_plotSelectNone_triggered();
+    void on_plotSelectDefault_triggered();
     void on_resetY_triggered();
     void on_dataAnalyzer_triggered();
     void on_disableStream_triggered();

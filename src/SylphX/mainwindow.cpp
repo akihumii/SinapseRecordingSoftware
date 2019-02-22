@@ -62,11 +62,9 @@ void MainWindow::createLayout(){
     }
 
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
-//    channelGraph[10]->yAxis->setLabelPadding(35);
     channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[10]->setFixedHeight(100);
     channelGraph[11]->yAxis->setLabel("Frame Marker('000)");
-//    channelGraph[11]->yAxis->setLabelPadding(35);
     channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[11]->setFixedHeight(100);
 
@@ -77,17 +75,7 @@ void MainWindow::createLayout(){
     channelGraph[10]->yAxis->setTickStep(50);
     channelGraph[11]->yAxis->setRange(0, 66, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(13);
-//    channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
 
-//    QVBoxLayout *leftLayout = new QVBoxLayout;
-//    for(int i = 0; i < 5; i++){
-//        leftLayout->addWidget(channelGraph[i]);
-//    }
-
-//    QVBoxLayout *rightLayout = new QVBoxLayout;
-//    for(int i = 5; i < 10; i++){
-//        rightLayout->addWidget(channelGraph[i]);
-//    }
     mainWidget = new QWidget;
     mainLayout = new QVBoxLayout;
     topLayout = new QVBoxLayout;
@@ -104,19 +92,13 @@ void MainWindow::createActions(){
         plotSelectMapper->setMapping(plotSelectAction[i], i);
         connect(plotSelectAction[i], SIGNAL(triggered(bool)), plotSelectMapper, SLOT(map()));
     }
-//    audio[10] = new QAction(tr("Sync Pulse Audio Output"));
 
-//    connect(audio[0], SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
-//    connect(audio[1], SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
-//    connect(audio[2], SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
-//    connect(audio[3], SIGNAL(triggered(bool)), this, SLOT(on_graph4_clicked()));
-//    connect(audio[4], SIGNAL(triggered(bool)), this, SLOT(on_graph5_clicked()));
-//    connect(audio[5], SIGNAL(triggered(bool)), this, SLOT(on_graph6_clicked()));
-//    connect(audio[6], SIGNAL(triggered(bool)), this, SLOT(on_graph7_clicked()));
-//    connect(audio[7], SIGNAL(triggered(bool)), this, SLOT(on_graph8_clicked()));
-//    connect(audio[8], SIGNAL(triggered(bool)), this, SLOT(on_graph9_clicked()));
-//    connect(audio[9], SIGNAL(triggered(bool)), this, SLOT(on_graph10_clicked()));
-//    connect(audio[10], SIGNAL(triggered(bool)), this, SLOT(on_graph11_clicked()));
+    plotSelectAll = new QAction("Select All");
+    plotSelectNone = new QAction("Select None");
+    plotSelectDefault = new QAction("Select Default");
+    connect(plotSelectAll, SIGNAL(triggered(bool)), this, SLOT(on_plotSelectAll_triggered()));
+    connect(plotSelectNone, SIGNAL(triggered(bool)), this, SLOT(on_plotSelectNone_triggered()));
+    connect(plotSelectDefault, SIGNAL(triggered(bool)), this, SLOT(on_plotSelectDefault_triggered()));
 
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
@@ -210,6 +192,12 @@ void MainWindow::createMenus(){
         plotSelectAction[i]->setCheckable(true);
         plotSelectAction[i]->setChecked(plotEnable[i]);
     }
+
+    plotSelectMenu->addSeparator();
+    plotSelectMenu->addAction(plotSelectAll);
+    plotSelectMenu->addAction(plotSelectNone);
+    plotSelectMenu->addSeparator();
+    plotSelectMenu->addAction(plotSelectDefault);
 
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
@@ -316,6 +304,9 @@ void MainWindow::updateData(){
             if(i < 10 && dataStream->getStreamConnected(i)){
                 dataStream->streamData(i);
             }
+            else if(i < 10 && dataStream->getChannelSize(i) > 40960){
+                dataStream->clearChannelData(i);
+            }
             if(!pause){
                 channelGraph[i]->replot();
             }
@@ -362,13 +353,11 @@ void MainWindow::on_resetY_triggered(){
 void MainWindow::on_record_triggered(){
     if(!dataProcessor->isRecordEnabled()){
         dataProcessor->setRecordEnabled(true);
-//        dataProcessor->setADCRecordEnabled(true);
         updateStatusBar(2, "<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
     else if(dataProcessor->isRecordEnabled()){
         dataProcessor->setRecordEnabled(false);
-//        dataProcessor->setADCRecordEnabled(false);
         updateStatusBar(2, "<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + dataProcessor->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
@@ -376,6 +365,40 @@ void MainWindow::on_record_triggered(){
 
 void MainWindow::on_plotSelect_changed(int channel){
     plotEnable[channel] = !plotEnable[channel];
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
+}
+
+void MainWindow::on_plotSelectAll_triggered(){
+    for(int i = 0; i < 10; i++){
+        plotEnable[i] = true;
+        plotSelectAction[i]->setChecked(true);
+    }
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
+}
+
+void MainWindow::on_plotSelectNone_triggered(){
+    for(int i = 0; i < 10; i++){
+        plotEnable[i] = false;
+        plotSelectAction[i]->setChecked(false);
+    }
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
+}
+
+void MainWindow::on_plotSelectDefault_triggered(){
+    for(int i = 0; i < 10; i++){
+        plotEnable[i] = false;
+        plotSelectAction[i]->setChecked(false);
+    }
+    for(int i = 3; i < 7; i++){
+        plotEnable[i] = true;
+        plotSelectAction[i]->setChecked(true);
+    }
     createLayout();
     on_timeFrame_changed(currentTimeFrame);
     on_voltage_changed(currentVoltageScale);
@@ -430,13 +453,6 @@ void MainWindow::on_dataAnalyzer_triggered(){
 }
 
 void MainWindow::on_restart_triggered(){
-//    if(serialChannel->isADCConnected()){
-//        serialChannel->closeADCPort();
-//    }
-//    if(serialChannel->isImplantConnected()){
-//        serialChannel->closeImplantPort();
-//    }
-//    connectSylph();
     socketSylph->setChecked(false);
     serialChannel->setChecked(false);
 }
@@ -455,16 +471,16 @@ void MainWindow::on_graph_clicked(int index){
 }
 
 void MainWindow::setDefaultGraph(){
-    for(int i = 0; i < 11; i++){
+    for(int i = 0; i < 10; i++){
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
-//        audio[i]->setChecked(false);
+        audio[i]->setChecked(false);
     }
 }
 
 void MainWindow::activateChannelGraph(int index){
     channelGraph[index]->graph()->setPen(QPen(Qt::red));
-//    dataProcessor->setAudioChannel(index);
-//    audio[index]->setChecked(true);
+    dataProcessor->setAudioChannel(index);
+    audio[index]->setChecked(true);
 }
 
 void MainWindow::on_smartDataProcessor_triggered(){
