@@ -15,12 +15,16 @@ QVector<double> Data::retrieveXAxis(){
     return X_axis;
 }
 
+QVector<double> Data::retrieveDyno_XAxis(){
+    return Dyno_X_axis;
+}
+
 void Data::clearChannelData(int ChannelIndex){
     ChannelData[ChannelIndex].remove(0,(ChannelData[ChannelIndex].size()));
 }
 
 void Data::clearallChannelData(){
-    for(int i=0; i<12; i++){
+    for(int i=0; i<NUM_CHANNEL; i++){
         ChannelData[i].remove(0,ChannelData[i].size());
     }
 }
@@ -148,24 +152,36 @@ void Data::setNumDataPoints(int timeFrames, double sampleFreq){
         break;
     case TimeFrames1000ms:
         numDataPoints = 1/(1/sampleFreq);
+        dynoNumPoints = 1*60;
         break;
     case TimeFrames2000ms:
         numDataPoints = 2/(1/sampleFreq);
+        dynoNumPoints = 2*60;
         break;
     case TimeFrames5000ms:
         numDataPoints = 5/(1/sampleFreq);
+        dynoNumPoints = 5*60;
         break;
     default:
         numDataPoints = 0.1/(1/sampleFreq);
     }
-    for(int i = 0; i < 12; i++){
+    for(int i = 0; i < NUM_CHANNEL-1; i++){
         ChannelData[i].reserve(numDataPoints+1);
         ChannelData[i].resize(numDataPoints+1);
     }
+    ChannelData[12].reserve(dynoNumPoints+1);
+    ChannelData[12].resize(dynoNumPoints+1);
     X_axis.reserve(numDataPoints+1);
     X_axis.resize(numDataPoints+1);
     for(int i = 0; i < numDataPoints+1; i++){
         X_axis.replace(i, i*(1.0/sampleFreq));
+//        qDebug() << X_axis.at(i);
+    }
+
+    Dyno_X_axis.reserve(dynoNumPoints+1);
+    Dyno_X_axis.resize(dynoNumPoints+1);
+    for(int i = 0; i < dynoNumPoints+1; i++){
+        Dyno_X_axis.replace(i, i*(1.0/60.0));
 //        qDebug() << X_axis.at(i);
     }
 }

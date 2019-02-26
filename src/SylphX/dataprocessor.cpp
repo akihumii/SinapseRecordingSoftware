@@ -92,9 +92,9 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     }
                     for(int j = 2; j < NUM_CHANNELS; j++){
                         fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-                        for(int k=0; k < 7; k++){
+//                        for(int k=0; k < 7; k++){
 //                            appendAudioBuffer(j-2, rawData.at(i+1+((2*j)+1)), rawData.at(i+1+((2*j))));
-                        }
+//                        }
                         if(RecordEnabled){
                             RecordData(fullWord_rawData);
                         }
@@ -122,9 +122,9 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
                     }
                     for(int j = 0; j < 2; j++){
                         fullWord_rawData = ((quint8) rawData.at(i+1+((2*j))) << 8 | (quint8) rawData.at(i+1+((2*j)+1)))-32768;
-                        for(int k=0; k < 7; k++){
+//                        for(int k=0; k < 7; k++){
 //                            appendAudioBuffer(j+8, rawData.at(i+1+((2*j)+1)), rawData.at(i+1+((2*j))));
-                        }
+//                        }
                         if(RecordEnabled){
                             RecordData(fullWord_rawData);
                         }
@@ -142,7 +142,21 @@ int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     //                }
 
                     ChannelData[10].replace(index, (quint8) rawData.at(i+packetSize-4));
+//                    if((quint8) rawData.at(i+packetSize-4) > 0){
+                        dyno_index =  ((index * retrieveDyno_XAxis().size()-1) / getNumDataPoints());
+                        ChannelData[12].replace(dyno_index, dyno_data);
+//                        qDebug() << dyno_index;
+//                        if(dyno_store.size() > 0){
+//                            for(int c = 0; c < dyno_store.size(); c++){
+//                                ChannelData[12].replace(dyno_index+c, dyno_store.at(c));
+//                            }
+//                            dyno_store.clear();
+//                        }
+//                        dyno_start? ChannelData[12].replace(dyno_index+1, 20) : ChannelData[12].replace(dyno_index-1, 20);
+//                        dyno_start = !dyno_start;
+//                    }
                     ChannelData[11].replace(index, ((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+packetSize-2))/1000.0);
+                    ChannelData[12].replace(dyno_index, dyno_data);
                     if(RecordEnabled){
                         RecordData((quint8) rawData.at(i+(packetSize-4)));
                         RecordData((quint8) rawData.at(i+(packetSize-3)) << 8 | (quint8) rawData.at(i+(packetSize-2)));
@@ -204,4 +218,21 @@ int DataProcessor::findlastFrameMarkers(QByteArray rawData){
 
 int DataProcessor::getResyncCounter(){
     return resync_count;
+}
+
+void DataProcessor::appendDynoData(double data){
+//    if(dyno_start){
+//        ChannelData[12].replace(dyno_index, data);
+//        if(dyno_index > retrieveDyno_XAxis().size()-1){
+//            dyno_index = 0;
+//        }
+//        else{
+//            dyno_index++;
+//        }
+//    }
+//    else{
+//        dyno_store.append(data);
+//    }
+    dyno_data = data;
+//    qDebug() << data;
 }

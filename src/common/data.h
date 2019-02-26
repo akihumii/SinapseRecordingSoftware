@@ -5,6 +5,7 @@
 #include "filter.h"
 
 #define END_OF_LINE 2779058
+#define NUM_CHANNEL 14
 
 enum TimeFrames{
     TimeFrames10ms,
@@ -26,6 +27,7 @@ public:
     ~Data();
     QVector<double> retrieveData(int ChannelIndex);
     QVector<double> retrieveXAxis();
+    QVector<double> retrieveDyno_XAxis();
     QVector<quint16> sortData(QByteArray data_store);
     void removeXAxis();
     bool isEmpty(int ChannelIndex);
@@ -56,7 +58,8 @@ public slots:
 
 protected:
     QVector<double> X_axis;
-    QVector<double> ChannelData[12];
+    QVector<double> Dyno_X_axis;
+    QVector<double> ChannelData[NUM_CHANNEL];
 
     quint8 headerSetting[14];
     QString headerSettingString;
@@ -89,6 +92,7 @@ private:
     int prevleftOverByteCount = 0;
 
     int numDataPoints = 2082;
+    int dynoNumPoints = 300;
     double SamplingRate;
     bool smartDataProcessor = true;
 };

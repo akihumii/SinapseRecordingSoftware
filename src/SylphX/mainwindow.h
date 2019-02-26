@@ -13,6 +13,7 @@
 #include "../common/filterdialog.h"
 #include "../Odin/odinwindow.h"
 #include "../common/datastream.h"
+#include "dynomometer.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -21,6 +22,8 @@ namespace SylphX {
 
 #define DEFAULT_XAXIS 7
 #define DEFAULT_YAXIS 3
+#define EMG_CHANNELS 10
+#define TOTAL_CHANNELS 13
 
 class MainWindow : public QMainWindow
 {
@@ -34,6 +37,7 @@ public:
     SerialChannel *serialChannel;
     DataProcessor *dataProcessor;
     DataStream *dataStream;
+    Dynomometer *dynomometer;
 
     Odin::OdinWindow *x;
 
@@ -47,6 +51,7 @@ private:
     float samplingRate = 1250.0;
     float period = 1/samplingRate;
     bool pause = false;
+    bool dyno = true;
 
     QStatusBar *statusBarMainWindow;
 
@@ -73,6 +78,7 @@ private:
     QAction *filterAction;
     QAction *dataAnalyzerAction;
     QAction *disableStream;
+    QAction *dynoAction;
     QActionGroup *timeFrameGroup;
     QSignalMapper *timeFrameMapper;
     QAction *timeFrameAction[9];
@@ -174,7 +180,7 @@ private:
 
     QString statusBarText[4];
 
-    QCustomPlot *channelGraph[12];
+    QCustomPlot *channelGraph[NUM_CHANNEL];
     SocketSylph *socketSylph;
     QProcess *pythonProcess;
 
@@ -210,6 +216,7 @@ private slots:
     void on_smartDataProcessor_triggered();
     void on_dumbDataProcessor_triggered();
     void on_graph_clicked(int index);
+    void on_dyno_triggered();
 
     void about();
 };

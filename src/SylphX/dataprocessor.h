@@ -34,7 +34,7 @@ signals:
     void dataLost();
 
 public slots:
-
+    void appendDynoData(double data);
 private:
     int findfirstFrameMarkers(QByteArray rawData);
     int findlastFrameMarkers(QByteArray rawData);
@@ -43,7 +43,12 @@ private:
     bool thresholdEnable = true;
 
     int index = 0;
+    int dyno_index = 0;
     int resync_count = 0;
+    int sync_index = 0;
+    double dyno_data = 0.0;
+    QVector<double> dyno_store;
+    bool dyno_start = false;
 //signals:
 //    void channelACrossed();
 //    void channelBCrossed();

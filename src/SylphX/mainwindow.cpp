@@ -9,6 +9,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
+    dynomometer = new Dynomometer();
     dataStream = new DataStream(this);
     dataProcessor = new DataProcessor(dataStream);
     serialChannel = new SerialChannel(this, dataProcessor);
@@ -23,19 +24,22 @@ MainWindow::MainWindow(){
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
 
+    connect(dynomometer, SIGNAL(dynoDataReady(double)), dataProcessor, SLOT(appendDynoData(double)));
+
     dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
     connectSylph();
-    on_timeFrame_changed(DEFAULT_XAXIS);
-    on_voltage_changed(DEFAULT_YAXIS);
+    on_dyno_triggered();
+//    on_timeFrame_changed(DEFAULT_XAXIS);
+//    on_voltage_changed(DEFAULT_YAXIS);
     qDebug() << "Starting SYLPH..";
 }
 
 void MainWindow::createLayout(){
-    for(int i=0;i<12;i++){
+    for(int i=0;i<TOTAL_CHANNELS;i++){
         channelGraph[i] = new QCustomPlot;
         channelGraph[i]->xAxis->setVisible(false);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
@@ -48,10 +52,11 @@ void MainWindow::createLayout(){
         channelGraph[i]->yAxis->setTickStep(100);
     }
 
+
     audioSelectMapper = new QSignalMapper(this);
     connect(audioSelectMapper, SIGNAL(mapped(int)), this, SLOT(on_graph_clicked(int)));
 
-    for(int i = 0; i < 10; i ++){
+    for(int i = 0; i < EMG_CHANNELS; i ++){
         audioSelectMapper->setMapping(channelGraph[i], i);
         connect(channelGraph[i], SIGNAL(mousePress(QMouseEvent*)), audioSelectMapper, SLOT(map()));
         channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (uV)");
@@ -67,6 +72,10 @@ void MainWindow::createLayout(){
     channelGraph[11]->yAxis->setLabel("Frame Marker('000)");
     channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[11]->setFixedHeight(100);
+    channelGraph[12]->yAxis->setLabel("Dynomometer");
+    channelGraph[12]->yAxis->setLabelFont(QFont(font().family(), 8));
+    channelGraph[12]->setFixedHeight(100);
+    channelGraph[12]->xAxis->setTickStep(1);
 
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
@@ -75,6 +84,8 @@ void MainWindow::createLayout(){
     channelGraph[10]->yAxis->setTickStep(50);
     channelGraph[11]->yAxis->setRange(0, 66, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(13);
+    channelGraph[12]->yAxis->setRange(-1, 5, Qt::AlignLeft);
+    channelGraph[12]->yAxis->setTickStep(1);
 
     mainWidget = new QWidget;
     mainLayout = new QVBoxLayout;
@@ -86,7 +97,7 @@ void MainWindow::createLayout(){
 void MainWindow::createActions(){
     plotSelectMapper = new QSignalMapper(this);
     connect(plotSelectMapper, SIGNAL(mapped(int)), this, SLOT(on_plotSelect_changed(int)));
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         audio[i] = new QAction("Channel " + QString::number(i+1, 10)+ " Audio Output");
         plotSelectAction[i] = new QAction(plotSelect[i]);
         plotSelectMapper->setMapping(plotSelectAction[i], i);
@@ -103,12 +114,17 @@ void MainWindow::createActions(){
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
-    odinAction = new QAction(tr("Odin Control Panel"));
+    odinAction = new QAction(tr("&Odin Control Panel"));
+    odinAction->setShortcut(tr("Ctrl+C"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
 
     disableStream = new QAction(tr("&Disable stream"));
     disableStream->setShortcut(tr("Ctrl+D"));
     connect(disableStream, SIGNAL(triggered(bool)), this, SLOT(on_disableStream_triggered()));
+
+    dynoAction = new QAction(tr("Turn Dyna&mometer Off"));
+    dynoAction->setShortcut(tr("Ctrl+M"));
+    connect(dynoAction, SIGNAL(triggered(bool)), this, SLOT(on_dyno_triggered()));
 
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
@@ -175,6 +191,8 @@ void MainWindow::createMenus(){
     fileMenu->addSeparator();
     fileMenu->addAction(disableStream);
     fileMenu->addSeparator();
+    fileMenu->addAction(dynoAction);
+    fileMenu->addSeparator();
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
@@ -187,7 +205,7 @@ void MainWindow::createMenus(){
     fileMenu->addAction(exitAction);
 
     plotSelectMenu = menuBar()->addMenu(tr("&Channel Plots"));
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         plotSelectMenu->addAction(plotSelectAction[i]);
         plotSelectAction[i]->setCheckable(true);
         plotSelectAction[i]->setChecked(plotEnable[i]);
@@ -299,34 +317,47 @@ void MainWindow::updateData(){
 //    else if (serialChannel->isImplantConnected()){
 //        updateStatusBar(1, "Data Rate: " + QString::number(serialChannel->getRate()) + " kbps");
 //    }
-    for(int i=0; i<12; i++){
-            channelGraph[i]->graph()->setData(dataProcessor->retrieveXAxis(), (dataProcessor->isFilterEnabled() && i < 10)? dataProcessor->filterData(dataProcessor->retrieveData(i), i): dataProcessor->retrieveData(i));
-            if(i < 10 && dataStream->getStreamConnected(i)){
+    for(int i=0; i<TOTAL_CHANNELS-1; i++){
+            channelGraph[i]->graph()->setData(dataProcessor->retrieveXAxis(), (dataProcessor->isFilterEnabled() && i < EMG_CHANNELS)? dataProcessor->filterData(dataProcessor->retrieveData(i), i): dataProcessor->retrieveData(i));
+            if(i < EMG_CHANNELS && dataStream->getStreamConnected(i)){
                 dataStream->streamData(i);
             }
-            else if(i < 10 && dataStream->getChannelSize(i) > 40960){
+            else if(i < EMG_CHANNELS && dataStream->getChannelSize(i) > 40960){
                 dataStream->clearChannelData(i);
             }
             if(!pause){
                 channelGraph[i]->replot();
             }
     }
+    channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
+    channelGraph[12]->replot();
 }
 
 void MainWindow::on_disableStream_triggered(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         dataStream->disableStream(i);
     }
+}
+
+void MainWindow::on_dyno_triggered(){
+    dyno? dynoAction->setText("Turn Dyna&mometer On") : dynoAction->setText("Turn Dyna&mometer Off");
+    dyno = !dyno;
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
 }
 
 void MainWindow::on_timeFrame_changed(int timeFrameIndex){
     currentTimeFrame = timeFrameIndex;
     dataProcessor->setNumDataPoints((TimeFrames) timeFrameIndex, samplingRate);
-    for(int i=0;i<12;i++){
+    for(int i=0;i<TOTAL_CHANNELS-1;i++){
         channelGraph[i]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
         channelGraph[i]->xAxis->setTickStep(timeFrameSteps[timeFrameIndex]);
         channelGraph[i]->replot();
     }
+    channelGraph[12]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
+//    channelGraph[12]->xAxis->setTickStep(1);
+    channelGraph[12]->replot();
 }
 
 void MainWindow::on_resetX_triggered(){
@@ -337,7 +368,7 @@ void MainWindow::on_resetX_triggered(){
 void MainWindow::on_voltage_changed(int voltageIndex){
     currentVoltageScale = voltageIndex;
     voltageIndex < 4? dataProcessor->setScale(1000000) : dataProcessor->setScale(1000);
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         channelGraph[i]->yAxis->setRange(voltageMin[voltageIndex], voltageRange[voltageIndex], Qt::AlignLeft);
         channelGraph[i]->yAxis->setTickStep(voltageStep[voltageIndex]);
         channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + (dataProcessor->getScale()==1000? " (mV)": " (uV)"));
@@ -371,7 +402,7 @@ void MainWindow::on_plotSelect_changed(int channel){
 }
 
 void MainWindow::on_plotSelectAll_triggered(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         plotEnable[i] = true;
         plotSelectAction[i]->setChecked(true);
     }
@@ -381,7 +412,7 @@ void MainWindow::on_plotSelectAll_triggered(){
 }
 
 void MainWindow::on_plotSelectNone_triggered(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         plotEnable[i] = false;
         plotSelectAction[i]->setChecked(false);
     }
@@ -391,7 +422,7 @@ void MainWindow::on_plotSelectNone_triggered(){
 }
 
 void MainWindow::on_plotSelectDefault_triggered(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         plotEnable[i] = false;
         plotSelectAction[i]->setChecked(false);
     }
@@ -405,13 +436,15 @@ void MainWindow::on_plotSelectDefault_triggered(){
 }
 
 void MainWindow::reconstructPlots(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         if(plotEnable[i]){
             topLayout->addWidget(channelGraph[i]);
         }
     }
-
-    for(int i = 10; i < 12; i++){
+    if(dyno){
+        bottomLayout->addWidget(channelGraph[12]);
+    }
+    for(int i = EMG_CHANNELS; i < TOTAL_CHANNELS-1; i++){
         bottomLayout->addWidget(channelGraph[i]);
     }
 
@@ -471,7 +504,7 @@ void MainWindow::on_graph_clicked(int index){
 }
 
 void MainWindow::setDefaultGraph(){
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
         audio[i]->setChecked(false);
     }
