@@ -13,7 +13,11 @@
 #include "../common/filter.h"
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
+#include "../Odin/odinwindow.h"
+#include "../common/datastream.h"
 
+#define DEFAULT_XAXIS 4
+#define DEFAULT_YAXIS 6
 
 class QComboBox;
 class QCustomPlot;
@@ -27,11 +31,20 @@ public:
     ~MainWindow();
     QLabel *statusBarLabel;
 
+    Odin::OdinWindow *x;
+    DataStream *dataStream;
+
 
 public slots:
 
 
 private:
+//    QString ipAddress = "192.168.137.102";
+//    QString ipAddress = "169.254.68.98";
+    QString ipAddress = "192.168.137.74";
+//    QString ipAddress = "192.168.4.3";
+    int portNumber = 8888;
+
     QElapsedTimer timer;
     QTimer dataTimer;
 
@@ -84,8 +97,31 @@ private:
                                       "+/- 200mV",
                                       "+/- 500mV",
                                       "+/- 700mV" };
+    double voltageMin[7][2] =   { {-0.0105, 0.4895},
+                                   {-0.021, 0.479},
+                                   {-0.051, 0.449},
+                                   {-0.101, 0.399},
+                                   {-0.21, 0.29},
+                                   {-0.51, -0.01},
+                                   {-0.71, -0.21}};
+    double voltageRange[7] = { 0.021,
+                               0.042,
+                               0.102,
+                               0.202,
+                               0.42,
+                               1.02,
+                               1.42};
+    double voltageStep[7] = { 0.0025,
+                              0.005,
+                              0.01,
+                              0.02,
+                              0.05,
+                              0.1,
+                              0.25};
+
     QActionGroup *voltageGroup;
 
+    Odin::SocketOdin *socketOdin;
     SocketNeutrino *socketNeutrino;
     SerialChannel *serialNeutrino;
     Command *NeutrinoCommand;
@@ -97,7 +133,7 @@ private:
     void create10x1Layout();
     void create5x2Layout();
 
-    QCustomPlot *channelGraph[10];
+    QCustomPlot *channelGraph[12];
 
     QAction *tenby1Action;
     QAction *fiveby2Action;

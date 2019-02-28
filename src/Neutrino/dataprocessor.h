@@ -4,7 +4,7 @@
 #include "../common/qtincludes.h"
 #include "../common/data.h"
 #include "channel.h"
-#include "../common/signalaudio.h"
+#include "../common/datastream.h"
 
 #define END_OF_LINE 2779058
 
@@ -27,7 +27,8 @@ typedef enum BITMODE{
 class DataProcessor : public Data
 {
 public:
-    DataProcessor(Channel *NeutrinoChannel_);
+    DataProcessor(Channel *NeutrinoChannel_, DataStream *dataStream_);
+    DataStream *dataStream;
 
     void setBitMode(BITMODE BitMode);
     BITMODE getBitMode();
@@ -38,8 +39,6 @@ public:
     void MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint);
     double signalReconstruction(char input);
     double signalReconstruction(char inputMSB, char inputLSB);
-    void setSamplingRate(double rate);
-    double getSamplingRate();
     void setInputReferred(bool flag);
     bool getInputReferred();
     void setGain(bool S1G0, bool S2GAIN1, bool S2GAIN0);
@@ -54,11 +53,13 @@ private:
     int currentFrameMarkerIndex;
     qint16 fullWord_rawData;
     int lastFrameMarker;
+    double temp;
     QByteArray leftOverData;
+
     QVector<quint8> ADC_Data;
 
     BITMODE bitMode;
-    bool isInputReferred;
+    bool isInputReferred = false;
 
     int first_10bitFrameMarker(QByteArray data);
     int last_10bitFrameMarker(QByteArray data);

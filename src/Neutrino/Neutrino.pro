@@ -39,7 +39,13 @@ HEADERS += \
     measurementdialog.h \
     bioimpedance.h \
     bioimpedancedialog.h \
-    delaythread.h
+    delaythread.h \
+    ../Odin/serialodin.h \
+    ../Odin/commandodin.h \
+    ../Odin/socketodin.h \
+    ../Odin/loopingthread.h \
+    ../Odin/pulseplot.h \
+    ../Odin/odinwindow.h \
 
 SOURCES += \
     channel.cpp \
@@ -54,6 +60,11 @@ SOURCES += \
     socketneutrino.cpp \
     measurementdialog.cpp \
     bioimpedance.cpp \
-    bioimpedancedialog.cpp
+    bioimpedancedialog.cpp \
+    ../Odin/serialodin.cpp \
+    ../Odin/commandodin.cpp \
+    ../Odin/socketodin.cpp \
+    ../Odin/pulseplot.cpp \
+    ../Odin/odinwindow.cpp \
 
 FORMS +=

@@ -13,7 +13,7 @@ TEMPLATE = subdirs
 
 SUBDIRS +=   \
     src/common \
-#    src/Neutrino \
+    src/Neutrino \
 #    src/SylphII \
     src/SylphX \
     src/Odin
@@ -22,13 +22,13 @@ SUBDIRS +=   \
 #    src/NeuroModulation
 
 common.subdir = src/common
-#Neutrino.subdir = src/Neutrino
+Neutrino.subdir = src/Neutrino
 #SylphII.subdir = src/SylphII
 SylphX.subdir = src/SylphX
 Odin.subdir = src/Odin
 #Jane.subdir = src/Jane
 
-#Neutrino.depends = common
+Neutrino.depends = common
 #SylphII.depends = common
 SylphX.depends = common
 Odin.depends = common

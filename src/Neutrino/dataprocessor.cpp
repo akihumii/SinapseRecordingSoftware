@@ -1,45 +1,81 @@
 #include "dataprocessor.h"
 
-DataProcessor::DataProcessor(Channel *NeutrinoChannel_){
+DataProcessor::DataProcessor(Channel *NeutrinoChannel_, DataStream *dataStream_){
     NeutrinoChannel = NeutrinoChannel_;
+    dataStream = dataStream_;
+    setGain(false, false, false);
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
-    qDebug() << data_store.size() << " | " << leftOverData.size();
+//    qDebug() << data_store.size();
     QVector<quint16> Plot_Y_AllDataPoint;
-    Plot_Y_AllDataPoint.clear();
-    uint16_t combine_10bit;
-    int numChannels = NeutrinoChannel->getNumChannels();
+    bool *channels = NeutrinoChannel->getChannelState_Bool();
     if(leftOverData.size() > 0){
-        for(int i=0;i<leftOverData.size();i++){
-            data_store.prepend(leftOverData.at(i));
-        }
+        data_store.prepend(leftOverData);
         leftOverData.clear();
         leftOverData.resize(0);
     }
     firstFrameMarker = first_10bitFrameMarker(data_store);
     lastFrameMarker = last_10bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker - (numChannels*2); j = j + 1){
+    for(int j = firstFrameMarker ; j < lastFrameMarker - (NeutrinoChannel->getNumChannels()*2); j = j + 1){
         if((uint8_t)data_store.at(j) == FM_A
             && (uint8_t)data_store.at(j+1) == FM_5
             && (uint8_t)data_store.at(j+2) == FM_0
             && (uint8_t)data_store.at(j+3) == FM_F){
-            if((uint8_t)data_store.at(j+(numChannels*2 + 4)) == FM_A
-                && (uint8_t)data_store.at(j+(numChannels*2 + 5)) == FM_5
-                && (uint8_t)data_store.at(j+(numChannels*2 + 6)) == FM_0
-                && (uint8_t)data_store.at(j+(numChannels*2 + 7)) == FM_F){
-                for(int i = 0; i < numChannels; i++){
-                    combine_10bit = ((uint8_t)data_store.at(j+5+i*2) << 5) | (uint8_t)data_store.at(j+4+i*2);
-                    Plot_Y_AllDataPoint.append(combine_10bit);
+            if((uint8_t)data_store.at(j+(NeutrinoChannel->getNumChannels()*2 + 4 + 8)) == FM_A
+                && (uint8_t)data_store.at(j+(NeutrinoChannel->getNumChannels()*2 + 5 + 8)) == FM_5
+                && (uint8_t)data_store.at(j+(NeutrinoChannel->getNumChannels()*2 + 6 + 8)) == FM_0
+                && (uint8_t)data_store.at(j+(NeutrinoChannel->getNumChannels()*2 + 7 + 8)) == FM_F){
+                int k = 0;
+                for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
+                    if(channels[ChannelIndex]){
+                        if(bitMode == WORDLENGTH_10){
+                            if(isInputReferred){
+                                temp = (((((uint8_t)data_store.at(j+5+8+k*2) << 5) | (uint8_t)data_store.at(j+4+8+k*2))*1.2/1024) - 0.5) / gain;
+                                ChannelData[ChannelIndex].append(temp);
+                                dataStream->appendData(ChannelIndex, temp);
+                            }
+                            else{
+                                temp = (((uint8_t)data_store.at(j+5+8+k*2) << 5) | (uint8_t)data_store.at(j+4+8+k*2))*1.2/1024;
+                                ChannelData[ChannelIndex].append(temp);
+                                dataStream->appendData(ChannelIndex, temp);
+                            }
+                        }
+                        if(isRecordEnabled()){
+                            RecordData((quint16)((uint8_t)data_store.at(j+5+k*2) << 5) | (uint8_t)data_store.at(j+4+k*2)); // For development
+//                            RecordData((quint16)((uint8_t)data_store.at(j+5+8+k*2) << 5) | (uint8_t)data_store.at(j+4+8+k*2)); // Actual code
+                        }
+                        k++;
+                    }
+                    else{
+                        if(isRecordEnabled()){
+                            RecordData(0);
+                        }
+                        ChannelData[ChannelIndex].append(-0.1);
+                    }
                 }
+                ChannelData[10].append((quint16) (quint8) data_store.at(j+5+6) << 5 | (quint8) data_store.at(j+4+6));
+                ChannelData[11].append((quint32)   (((((uint32_t)data_store.at(j + 4 + 1) << 5 | (uint32_t)data_store.at(j + 4)) >> 1 & 0b111111111)|
+                                                     (((((uint32_t)data_store.at(j + 4 + 3) << 5 | (uint32_t)data_store.at(j + 4 + 2)) >> 1 & 0b111111111)) << 9) |
+                                                     (((((uint32_t)data_store.at(j + 4 + 5) << 5 | (uint32_t)data_store.at(j + 4 + 4)) >> 1 & 0b111111111)) << 18))
+                                                      & ~(0b11111 << 27)));
+                if(isRecordEnabled()){
+                    RecordData((quint16) (quint8) data_store.at(j+5+6) << 5 | (quint8) data_store.at(j+4+6));
+                    RecordData((quint32)   (((((uint32_t)data_store.at(j + 4 + 1) << 5 | (uint32_t)data_store.at(j + 4)) >> 1 & 0b111111111)|
+                                           (((((uint32_t)data_store.at(j + 4 + 3) << 5 | (uint32_t)data_store.at(j + 4 + 2)) >> 1 & 0b111111111)) << 9) |
+                                           (((((uint32_t)data_store.at(j + 4 + 5) << 5 | (uint32_t)data_store.at(j + 4 + 4)) >> 1 & 0b111111111)) << 18))
+                                            & ~(0b11111 << 27))); // Record of counter
+                    RecordData(END_OF_LINE);
+                }
+                total_data_count = total_data_count+1;
+                X_axis.append(total_data_count*((14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0)));
             }
         }
     }
     for(int i = lastFrameMarker; i < data_store.size(); i++){
         leftOverData.append(data_store.at(i));
     }
-    if(leftOverData.size() > 204800)
-    {
+    if(leftOverData.size() > 204800){
         leftOverData.clear();
         leftOverData.resize(0);
     }
@@ -82,35 +118,68 @@ int DataProcessor::last_10bitFrameMarker(QByteArray data){
 }
 
 QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
-    qDebug() << data_store.size() << " | " << leftOverData.size();
     QVector<quint16> Plot_Y_AllDataPoint;
-    Plot_Y_AllDataPoint.clear();
-    uint8_t current_8bit;
-    int numChannels = NeutrinoChannel->getNumChannels();
+    bool *channels = NeutrinoChannel->getChannelState_Bool();
     if(leftOverData.size() > 0){
-        for(int i=0;i<leftOverData.size();i++){
-            data_store.prepend(leftOverData.at(i));
-        }
+        data_store.prepend(leftOverData);
         leftOverData.clear();
         leftOverData.resize(0);
     }
     firstFrameMarker = first_8bitFrameMarker(data_store);
     lastFrameMarker = last_8bitFrameMarker(data_store);
-    for(int j = firstFrameMarker ; j < lastFrameMarker - numChannels; j=j+1){
+    for(int j = firstFrameMarker ; j < lastFrameMarker - NeutrinoChannel->getNumChannels(); j=j+1){
         if((uint8_t)data_store.at(j) == FM_F0){
-                if((uint8_t)data_store.at(j+(numChannels + 1)) == FM_5A){
-                    for(int i = 0; i < numChannels; i++){
-                        current_8bit = (uint8_t)data_store.at(j+1+i);
-                        Plot_Y_AllDataPoint.append(current_8bit);
+            if((uint8_t)data_store.at(j+(NeutrinoChannel->getNumChannels() + 5)) == FM_5A){
+                int k = 0;
+                for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
+                    if(channels[ChannelIndex]){
+                        if(bitMode == WORDLENGTH_8){
+                            if(isInputReferred){
+                                temp = (((uint8_t)data_store.at(j+k+5)*1.2/256) - 0.5) / gain;
+                                ChannelData[ChannelIndex].append(temp);
+                                dataStream->appendData(ChannelIndex, temp);
+                            }
+                            else{
+                                temp = (uint8_t)data_store.at(j+k+5)*1.2/256;
+                                ChannelData[ChannelIndex].append(temp);
+                                dataStream->appendData(ChannelIndex, temp);
+                            }
+                        }
+                        if(isRecordEnabled()){
+                            RecordData((uint8_t)data_store.at(j+k+1)); // For development
+//                            RecordData((uint8_t)data_store.at(j+k+5)); // Actual
+                        }
+                        k++;
+                    }
+                    else{
+                        if(isRecordEnabled()){
+                            RecordData(0);
+                        }
+                        ChannelData[ChannelIndex].append(-0.1);
                     }
                 }
+                ChannelData[10].append((quint8) data_store.at(j+4));
+                ChannelData[11].append((quint32) (((((quint32)data_store.at(j+3)>>1) & 0b1111111) << 14) |
+                                                  ((((quint32)data_store.at(j+2)>>1) & 0b1111111) << 7) |
+                                                  (((quint32)data_store.at(j+1)>>1) & 0b1111111)) &
+                                                  ~(0b11111111111 << 21));
+                if(isRecordEnabled()){
+                    RecordData((quint8) data_store.at(j+4));
+                    RecordData((quint32) (((((quint32)data_store.at(j+3)>>1) & 0b1111111) << 14) |
+                                            ((((quint32)data_store.at(j+2)>>1) & 0b1111111) << 7) |
+                                            (((quint32)data_store.at(j+1)>>1) & 0b1111111)) &
+                                            ~(0b11111111111 << 21));
+                    RecordData(END_OF_LINE);
+                }
+                total_data_count = total_data_count+1;
+                X_axis.append(total_data_count*((14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0)));
+            }
         }
     }
     for(int i = lastFrameMarker; i < data_store.size(); i++){
         leftOverData.append(data_store.at(i));
     }
-    if(leftOverData.size() > 204800)
-    {
+    if(leftOverData.size() > 20480){
         leftOverData.clear();
         leftOverData.resize(0);
     }
@@ -118,7 +187,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
 }
 
 int DataProcessor::last_8bitFrameMarker(QByteArray data){
-    for(int i= data.size(); i>2; i--){
+    for(int i = data.size(); i > 2; i--){
         if((uint8_t) data.at(i-1) == FM_F0
             && (uint8_t)data.at(i-2) == FM_5A){
             return i-2;
@@ -139,9 +208,8 @@ int DataProcessor::first_8bitFrameMarker(QByteArray data){
 
 void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
     bool *channels = NeutrinoChannel->getChannelState_Bool();
-    int numChannels = NeutrinoChannel->getNumChannels();
     if(!Plot_Y_AllDataPoint.isEmpty()){
-        for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + numChannels){
+        for(int i = 0; i < (Plot_Y_AllDataPoint.size()); i = i + NeutrinoChannel->getNumChannels()){
             int k = 0;
             for(int ChannelIndex=0;ChannelIndex<10;ChannelIndex++){
                 if(channels[ChannelIndex]){
@@ -177,7 +245,7 @@ void DataProcessor::MultiplexChannelData(QVector<quint16> Plot_Y_AllDataPoint){
                 RecordData(END_OF_LINE);
             }
             total_data_count = total_data_count+1;
-            X_axis.append(total_data_count*((14.0*(numChannels+2.0)/3000000.0)));
+            X_axis.append(total_data_count*((14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0)));
         }
     }
     Plot_Y_AllDataPoint.clear();
@@ -191,14 +259,6 @@ BITMODE DataProcessor::getBitMode(){
     return bitMode;
 }
 
-void DataProcessor::setSamplingRate(double rate){
-    samplingRate = rate;
-}
-
-double DataProcessor::getSamplingRate(){
-    return samplingRate;
-}
-
 void DataProcessor::setInputReferred(bool flag){
     isInputReferred = flag;
 }
@@ -209,12 +269,8 @@ bool DataProcessor::getInputReferred(){
 
 void DataProcessor::setGain(bool S1G0, bool S2GAIN1, bool S2GAIN0){
     double D1 = 1.0, D2 = 0, R = 1047.13;
-    char temp = (char) S2GAIN1 << 1 | (char) S2GAIN0;
-    if(S1G0){
-        D1 = 4.0;
-    }
-
-    switch(temp){
+    D1 = S1G0? 4.0 : 1.0;
+    switch((char) S2GAIN1 << 1 | (char) S2GAIN0){
         case 0:
             D2 = 1.0;
             break;

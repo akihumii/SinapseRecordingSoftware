@@ -40,7 +40,6 @@ private slots:
     void on_JTAG_toggled(int index);
     void on_Mode_Changed(int Mode);
     void on_ChipID_Changed(int IDnum);
-    void on_SELCHN_toggled();
     void on_BioImp_toggled(int index);
     void on_DCL_toggled();
     void on_baud_toggled();
@@ -50,7 +49,6 @@ private slots:
     void on_amplifierSelectNone_clicked();
     void on_shortRefToGND_clicked();
     void on_amplifierSelect_toggled(int index);
-    void on_bioImpDelay_changed();
     void on_startBioImpedanceMeasurement();
     void on_exitBioImpedanceMeasurement();
 

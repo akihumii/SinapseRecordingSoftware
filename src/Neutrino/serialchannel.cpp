@@ -1,7 +1,6 @@
 #include "serialchannel.h"
 
-SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent)
-{
+SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataProcessor *NeutrinoData_, Channel *NeutrinoChannel_) : QObject(parent){
     serialData = new QSerialPort(this);
     serialCommand = new QSerialPort(this);
     NeutrinoCommand = NeutrinoCommand_;
@@ -10,65 +9,40 @@ SerialChannel::SerialChannel(QObject *parent, Command *NeutrinoCommand_, DataPro
 
     File = new QFile;
 
-    connect(serialData, SIGNAL(readyRead()), this, SLOT(ReadData()));
+    connect(serialData, SIGNAL(readyRead()), this, SLOT(readData()));
 }
 
-void SerialChannel::ReadData(){
+void SerialChannel::readData(){
     switch (NeutrinoCommand->getOPMode()){
         case 2:{
             if(NeutrinoData->isPlotEnabled()){
-                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
-                break;
-            }
-        }
-        case 5:{
-            if(record){
-                QByteArray temp;
-                temp = serialData->read(2048);
-                for(int i = 0; i < temp.size(); i++){
-                    *out << (uint8_t) temp.at(i) << "\n";
-                }
-                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
-            }
-            else{
-                QByteArray temp;
-                temp = serialData->read(2048);
-                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
+//                NeutrinoData->MultiplexChannelData(NeutrinoData->ParseFrameMarkers8bits(serialData->read(2048)));
             }
             break;
         }
+        case 5:
         case 7:{
+            QByteArray temp;
+            temp = serialData->read(2048);
             if(record){
-                QByteArray temp;
-                temp = serialData->read(2048);
                 for(int i = 0; i < temp.size(); i++){
                     *out << (uint8_t) temp.at(i) << "\n";
                 }
-                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
             }
-            else{
-                QByteArray temp;
-                temp = serialData->read(2048);
-                emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
-            }
+            emit singleByteReady(NeutrinoData->signalReconstruction((char) temp.at(0)));
             break;
         }
-        case 10:{
-            QByteArray temp = serialData->read(2048);
-            quint32 tempChar = temp.at(0) + temp.at(1) + temp.at(2) + temp.at(3);
-            tempChar = tempChar/4;
-            currentByte = (char) tempChar;
-            break;
-        }
+        case 10:
         case 11:{
-            QByteArray temp = serialData->read(2048);
+            QByteArray temp;
+            temp = serialData->read(2048);
             quint32 tempChar = temp.at(0) + temp.at(1) + temp.at(2) + temp.at(3);
             tempChar = tempChar/4;
             currentByte = (char) tempChar;
             break;
         }
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -81,12 +55,7 @@ void SerialChannel::setRecordEnabled(bool flag){
             fileName = directory + QDateTime::currentDateTime().toString("'BioImpedance_'yyyyMMdd_HHmmss'.csv'");
         }
         File->setFileName(fileName);
-        if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
-            qDebug()<< "File opened";
-        }
-        else{
-            qDebug() << "File failed to open";
-        }
+        File->open(QIODevice::WriteOnly|QIODevice::Text)? qDebug()<< "File opened" : qDebug() << "File failed to open";
         out = new QTextStream(File);
     }
     else{
@@ -136,29 +105,6 @@ bool SerialChannel::doConnect(){
                 break;
             }
         }
-        if(portInfo.at(i).manufacturer() == "FTDI" && portInfo.at(i+1).manufacturer() == "FTDI"){
-            if(portInfo.at(i+1).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()
-                > portInfo.at(i).portName().at(portInfo.at(i+1).portName().size()-1).digitValue()){
-                serialData->setPortName(portInfo.at(i).portName());
-                serialData->setBaudRate(3000000);
-                qDebug() << "Data connected to " << portInfo.at(i).portName();
-
-                serialCommand->setPortName(portInfo.at(i+1).portName());
-                serialCommand->setBaudRate(19200);
-                qDebug() << "Command connected to " << portInfo.at(i+1).portName();
-                serialData->setDataBits(QSerialPort::Data8);
-                serialData->setParity(QSerialPort::NoParity);
-                serialData->setStopBits(QSerialPort::OneStop);
-                serialData->setFlowControl(QSerialPort::NoFlowControl);
-                serialData->setReadBufferSize(2048);
-
-                serialCommand->setDataBits(QSerialPort::Data8);
-                serialCommand->setParity(QSerialPort::EvenParity);
-                serialCommand->setStopBits(QSerialPort::OneStop);
-                serialCommand->setFlowControl(QSerialPort::NoFlowControl);
-                break;
-            }
-        }
     }
     if (serialData->open(QIODevice::ReadWrite) && serialCommand->open(QIODevice::ReadWrite)) {
         connected = true;
@@ -181,40 +127,11 @@ void SerialChannel::setBaudRate(int baud){
 
 bool SerialChannel::writeCommand(QByteArray Command){
     if(connected){
-//        if(Command.size()>5){
-//            if(Command.at(6) == (char) WL_8){
-//                NeutrinoData->setBitMode(true);
-//                NeutrinoData->setPlotEnabled(true);
-//                NeutrinoData->clearallChannelData();
-//                qDebug() << "8 Bit Mode";
-//                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-//            }
-//            else if(Command.at(6) == (char) WL_10){
-//                NeutrinoData->setBitMode(false);
-//                NeutrinoData->setPlotEnabled(true);
-//                NeutrinoData->clearallChannelData();
-//                qDebug() << "10 Bit Mode";
-//                NeutrinoChannel->setNumChannels(getNumChannels(Command));
-//            }
-//            else {
-//                NeutrinoData->setPlotEnabled(false);
-//            }
-//        }
         serialCommand->write(Command);         //write the command itself
         return true;
     }
     else
         return false;
-}
-
-int SerialChannel::getNumChannels(QByteArray lastCommand){
-    int numChannels = 0;
-    for(int i=7;i<17;i++){
-        if (lastCommand.at(i) == (const char) CHANNEL_ON){
-            numChannels++;
-        }
-    }
-    return numChannels;
 }
 
 void SerialChannel::swapPort(){

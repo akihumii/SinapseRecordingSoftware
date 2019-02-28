@@ -1,21 +1,28 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(){
+    x = new Odin::OdinWindow();
+    x->setFixedSize(x->sizeHint());
+//    x->show();
     QString version(APP_VERSION);
     timer.start();
     NeutrinoChannel = new Channel;
     NeutrinoCommand = new Command(NeutrinoChannel);
-    data = new DataProcessor(NeutrinoChannel);
+    dataStream = new DataStream(this);
+    data = new DataProcessor(NeutrinoChannel, dataStream);
     serialNeutrino = new SerialChannel(this, NeutrinoCommand, data, NeutrinoChannel);
+    socketOdin = new Odin::SocketOdin;
     socketNeutrino = new SocketNeutrino(NeutrinoCommand, data, NeutrinoChannel);
     setWindowTitle(tr("SINAPSE Neutrino II Recording Software V") + version);
     createStatusBar();
     create5x2Layout();
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
-    dataTimer.start(1);     //tick timer every XXX msec
+    dataTimer.start(1);
     createActions();
     createMenus();
+    on_voltage_changed(DEFAULT_YAXIS);
     connectNeutrino();
+//    on_CommandMenu_triggered();
     qDebug() << "Starting NEUTRINO II..";
 }
 
@@ -97,9 +104,7 @@ void MainWindow::create10x1Layout(){
         channelGraph[i]->xAxis->setVisible(true);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
         channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
         channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
         channelGraph[i]->graph()->setPen(colors[i]);
@@ -113,60 +118,116 @@ void MainWindow::create10x1Layout(){
 }
 
 void MainWindow::create5x2Layout(){
-    QVBoxLayout *leftLayout = new QVBoxLayout;
-    for(int i=0;i<4;i++){
-        channelGraph[i] = new QCustomPlot;
-        leftLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
-        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-    }
-    channelGraph[4] = new QCustomPlot;
-    leftLayout->addWidget(channelGraph[4]);
-    channelGraph[4]->xAxis->setVisible(true);
-    channelGraph[4]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[4]->axisRect()->setMargins(QMargins(75,0,0,15));
-    channelGraph[4]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+//    QVBoxLayout *leftLayout = new QVBoxLayout;
+//    for(int i=0;i<4;i++){
+//        channelGraph[i] = new QCustomPlot;
+//        leftLayout->addWidget(channelGraph[i]);
+//        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
+//    }
+//    channelGraph[4] = new QCustomPlot;
+//    leftLayout->addWidget(channelGraph[4]);
+//    channelGraph[4]->axisRect()->setMargins(QMargins(75,0,0,15));
 
-    QVBoxLayout *rightLayout = new QVBoxLayout;
-    for(int i=5;i<9;i++){
-        channelGraph[i] = new QCustomPlot;
-        rightLayout->addWidget(channelGraph[i]);
-        channelGraph[i]->xAxis->setVisible(true);
-        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
-        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
-        channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-    }
-    channelGraph[9] = new QCustomPlot;
-    rightLayout->addWidget(channelGraph[9]);
-    channelGraph[9]->xAxis->setVisible(true);
-    channelGraph[9]->axisRect()->setAutoMargins(QCP::msNone);
-    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
-    channelGraph[9]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
+//    QVBoxLayout *rightLayout = new QVBoxLayout;
+//    for(int i=5;i<9;i++){
+//        channelGraph[i] = new QCustomPlot;
+//        rightLayout->addWidget(channelGraph[i]);
+//        channelGraph[i]->axisRect()->setMargins(QMargins(75,0,0,0));
+//    }
+//    channelGraph[9] = new QCustomPlot;
+//    rightLayout->addWidget(channelGraph[9]);
+//    channelGraph[9]->axisRect()->setMargins(QMargins(75,0,0,15));
 
-    for(int i=0;i<10;i++){
-        channelGraph[i]->addGraph();
-        channelGraph[i]->xAxis->setTickStep((double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
-        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
-        channelGraph[i]->yAxis->setAutoTickStep(false);
-        channelGraph[i]->yAxis->setTickStep(0.25);
-        channelGraph[i]->setInteractions(QCP::iRangeDrag);
-        channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
-        channelGraph[i]->graph()->setPen(colors[i]);
-    }
+//    for(int i=0;i<12;i++){
+//        channelGraph[i]->addGraph();
+//        channelGraph[i]->yAxis->setLabel("Channel "+QString::number(i+1,10)+" (V)");
+//        channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 10));
+//        channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
+//        channelGraph[i]->xAxis->setVisible(true);
+//        channelGraph[i]->yAxis->setAutoTickStep(false);
+//        channelGraph[i]->setInteractions(QCP::iRangeDrag);
+//        channelGraph[i]->axisRect()->setRangeDrag(Qt::Vertical);
+//        channelGraph[i]->graph()->setPen(colors[i]);
+//    }
 
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    QWidget *mainWidget = new QWidget;
-    mainLayout->addLayout(leftLayout);
-    mainLayout->addLayout(rightLayout);
-    mainWidget->setLayout(mainLayout);
-    setCentralWidget(mainWidget);
+//    QHBoxLayout *mainLayout = new QHBoxLayout;
+//    QWidget *mainWidget = new QWidget;
+//    mainLayout->addLayout(leftLayout);
+//    mainLayout->addLayout(rightLayout);
+//    mainWidget->setLayout(mainLayout);
+//    setCentralWidget(mainWidget);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+        for(int i=0;i<12;i++){
+            channelGraph[i] = new QCustomPlot;
+            channelGraph[i]->xAxis->setVisible(false);
+            channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
+            channelGraph[i]->axisRect()->setMargins(QMargins(65,10,0,15));
+            channelGraph[i]->yAxis->setRange(-500, 500);
+            channelGraph[i]->addGraph();
+            channelGraph[i]->yAxis->setAutoTickStep(false);
+            channelGraph[i]->xAxis->setAutoTickStep(false);
+            channelGraph[i]->xAxis->setTickStep(0.01);
+            channelGraph[i]->yAxis->setTickStep(100);
+        }
+
+
+        for(int i = 0; i < 10; i ++){
+//            audioSelectMapper->setMapping(channelGraph[i], i);
+//            connect(channelGraph[i], SIGNAL(mousePress(QMouseEvent*)), audioSelectMapper, SLOT(map()));
+            channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (uV)");
+            channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 8));
+            channelGraph[i]->graph()->setPen(QPen(Qt::black));
+            channelGraph[i]->setInteractions(QCP::iRangeDrag);
+            channelGraph[i]->axisRect()->setRangeDragAxes(0, channelGraph[i]->yAxis);
+        }
+
+        channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
+        channelGraph[10]->yAxis->setLabelPadding(35);
+        channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 8));
+        channelGraph[10]->setFixedHeight(100);
+        channelGraph[11]->yAxis->setLabel("Frame Marker");
+        channelGraph[11]->yAxis->setLabelPadding(35);
+        channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
+        channelGraph[11]->setFixedHeight(100);
+
+        channelGraph[0]->graph()->setPen(QPen(Qt::red));
+        channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
+
+        channelGraph[10]->yAxis->setRange(-5, 260, Qt::AlignLeft);
+        channelGraph[10]->yAxis->setTickStep(50);
+        channelGraph[11]->yAxis->setRange(0, 300000, Qt::AlignLeft);
+        channelGraph[11]->yAxis->setTickStep(60000);
+        channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
+
+        QVBoxLayout *leftLayout = new QVBoxLayout;
+        for(int i = 0; i < 5; i++){
+            leftLayout->addWidget(channelGraph[i]);
+        }
+
+        QVBoxLayout *rightLayout = new QVBoxLayout;
+        for(int i = 5; i < 10; i++){
+            rightLayout->addWidget(channelGraph[i]);
+        }
+
+        QHBoxLayout *topLayout = new QHBoxLayout;
+        topLayout->addLayout(leftLayout);
+        topLayout->addLayout(rightLayout);
+
+        QVBoxLayout *bottomLayout = new QVBoxLayout;
+        for(int i = 10; i < 12; i++){
+            bottomLayout->addWidget(channelGraph[i]);
+        }
+
+        mainLayout->addLayout(topLayout);
+        mainLayout->addLayout(bottomLayout);
+
+        QWidget *mainWidget = new QWidget;
+        mainWidget->setLayout(mainLayout);
+        setCentralWidget(mainWidget);
 }
 
 void MainWindow::createMenus(){
-//--------------------------- FILE MENU -----------------------------//
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
@@ -180,15 +241,11 @@ void MainWindow::createMenus(){
     fileMenu->addAction(chooseDirectoryAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
-//--------------------------- FILE MENU -----------------------------//
 
-//-------------------------- LAYOUT MENU ----------------------------//
     layoutMenu = menuBar()-> addMenu(tr("&Layout"));
     layoutMenu->addAction(tenby1Action);
     layoutMenu->addAction(fiveby2Action);
-//-------------------------- LAYOUT MENU ----------------------------//
 
-//------------------------- TIMEFRAME MENU --------------------------//
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
     for(int i = 0; i < 9; i++){
@@ -196,12 +253,11 @@ void MainWindow::createMenus(){
         timeFrameAction[i]->setCheckable(true);
         timeFrameGroup->addAction(timeFrameAction[i]);
     }
-    timeFrameAction[4]->setChecked(true);
+    timeFrameAction[DEFAULT_XAXIS]->setChecked(true);
 
     timeFrameMenu->addSeparator();
     timeFrameMenu->addAction(resetDefaultX);
 
-//------------------------- TIMEFRAME MENU --------------------------//
     voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
     voltageGroup = new QActionGroup(this);
     for(int i = 0; i < 7; i++){
@@ -209,7 +265,7 @@ void MainWindow::createMenus(){
         voltageAction[i]->setCheckable(true);
         voltageGroup->addAction(voltageAction[i]);
     }
-    voltageAction[6]->setChecked(true);
+    voltageAction[DEFAULT_YAXIS]->setChecked(true);
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
@@ -221,7 +277,7 @@ void MainWindow::createStatusBar(){
     statusBarLabel = new QLabel;
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
-    statusBarMainWindow->setSizeGripEnabled(false);  // fixed window size
+    statusBarMainWindow->setSizeGripEnabled(false);
 }
 
 void MainWindow::connectNeutrino(){
@@ -232,8 +288,21 @@ void MainWindow::connectNeutrino(){
     }
     if(!serialNeutrino->isConnected()){
         connectionStatus.clear();
-        if(socketNeutrino->doConnect("192.168.42.1", 8888)){
-            connectionStatus.append("Connected to Neutrino WiFi Module at 192.168.42.1/8888");
+//        if(socketNeutrino->doConnect(ipAddress, portNumber)){
+//            connectionStatus.append("Connected to Neutrino WiFi Module at " + ipAddress + "/" + QString::number(portNumber));
+//        }
+//        else{
+//            connectionStatus.append("Connection to Neutrino failed! Restart this program after connecting Neutrino.");
+//            QMessageBox::information(this, "Failed to connect!", "No Neutrino device detected.. \n"
+//                                                                 "Check your connections and run the program again..");
+//        }
+        int i = 1;
+        do{
+            i++;
+            socketNeutrino->doConnect("192.168.4."+QString::number(i), 8888);
+        } while(!socketNeutrino->isConnected() && i < 4);
+        if(socketNeutrino->isConnected()){
+            connectionStatus.append("Connected to Neutrino WiFi Module at " + ipAddress + "/" + QString::number(portNumber));
         }
         else{
             connectionStatus.append("Connection to Neutrino failed! Restart this program after connecting Neutrino.");
@@ -248,19 +317,27 @@ MainWindow::~MainWindow(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->writeCommand(QByteArray::number(255, 10));
         socketNeutrino->doDisconnect();
+//        socketOdin->sendDisconnectSignal();
     }
+    delete x;
     serialNeutrino->closePort();
 }
 
 void MainWindow::updateData(){
     QVector<double> X_axis = data->retrieveXAxis();
     if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
-        for(int i=0; i<10; i++){
+        for(int i=0; i<12; i++){
             if(!data->isEmpty(i)){
                 channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0),
-                                                 (data->getNumDataPoints())*(14.0*(NeutrinoChannel->getNumChannels()+2.0)/3000000.0),
+                                                 (data->getNumDataPoints()*data->getPeriod()),
                                                  Qt::AlignLeft);
+                if(i < 10 && dataStream->getStreamConnected(i)){
+                    dataStream->streamData(i);
+                }
+                else if(i < 10 && dataStream->getChannelSize(i) > 40960){
+                    dataStream->clearChannelData(i);
+                }
                 if(!pause){
                     channelGraph[i]->replot();
                 }
@@ -272,70 +349,17 @@ void MainWindow::updateData(){
 }
 
 void MainWindow::on_timeFrame_changed(int timeFrameIndex){
-    switch(timeFrameIndex){
-    case 0:
-        data->setNumDataPoints(TimeFrames10ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 1:
-        data->setNumDataPoints(TimeFrames20ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 2:
-        data->setNumDataPoints(TimeFrames50ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 3:
-        data->setNumDataPoints(TimeFrames100ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 4:
-        data->setNumDataPoints(TimeFrames200ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 5:
-        data->setNumDataPoints(TimeFrames500ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 6:
-        data->setNumDataPoints(TimeFrames1000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 7:
-        data->setNumDataPoints(TimeFrames2000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    case 8:
-        data->setNumDataPoints(TimeFrames5000ms, (double) (3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
-        break;
-    }
+    data->setNumDataPoints((TimeFrames) timeFrameIndex, data->getSamplingFreq());
     data->clearallChannelData();
 }
 
 void MainWindow::on_voltage_changed(int voltageIndex){
+    double yMin = (data->isFilterEnabled() || data->getInputReferred())? voltageMin[voltageIndex][0] : voltageMin[voltageIndex][1];
+    double yRange = voltageRange[voltageIndex];
+    double step = voltageStep[voltageIndex];
     for(int i = 0; i < 10; i++){
-        switch(voltageIndex){
-        case 0:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.0105, 0.021, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.4895, 0.021, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.0025);
-            break;
-        case 1:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.021, 0.042, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.479, 0.042, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.005);
-            break;
-        case 2:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.051, 0.102, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.449, 0.102, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.01);
-            break;
-        case 3:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.101, 0.202, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.399, 0.202, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.02);
-            break;
-        case 4:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.21, 0.42, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(0.29, 0.42, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.05);
-            break;
-        case 5:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.51, 1.02, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(-0.01, 1.02, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.1);
-            break;
-        case 6:
-            data->isFilterEnabled() && data->getInputReferred()? channelGraph[i]->yAxis->setRange(-0.71, 1.42, Qt::AlignLeft) : channelGraph[i]->yAxis->setRange(-0.21, 1.42, Qt::AlignLeft);
-            channelGraph[i]->yAxis->setTickStep(0.25);
-            break;
-        }
+        channelGraph[i]->yAxis->setRange(yMin, yRange, Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(step);
         channelGraph[i]->replot();
     }
 }
@@ -368,13 +392,12 @@ void MainWindow::on_chooseDirectory_triggered(){
                                                  QDir::homePath() + "/Desktop/",
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks));
-
     statusBarLabel->setText("Save directory set to: " + data->getDirectory());
 }
 
 void MainWindow::on_resetX_triggered(){
-    on_timeFrame_changed(4);
-    timeFrameAction[4]->setChecked(true);
+    on_timeFrame_changed(DEFAULT_XAXIS);
+    timeFrameAction[DEFAULT_XAXIS]->setChecked(true);
 }
 
 void MainWindow::on_swap_triggered(){
@@ -388,8 +411,8 @@ void MainWindow::on_filterConfig_trigger(){
 }
 
 void MainWindow::on_resetY_triggered(){
-    on_voltage_changed(6);
-    voltageAction[6]->setChecked(true);
+    on_voltage_changed(DEFAULT_YAXIS);
+    voltageAction[DEFAULT_YAXIS]->setChecked(true);
 }
 
 void MainWindow::on_dataAnalyzer_triggered(){
@@ -403,13 +426,16 @@ void MainWindow::on_CommandMenu_triggered(){
     statusBarLabel->setText("Command Dialog Opened");
     CommandDialog commandDialog(socketNeutrino, NeutrinoCommand, NeutrinoChannel, serialNeutrino, data);
     commandDialog.exec();
-
 }
 
 void MainWindow::on_tenby1_triggered(){
     create10x1Layout();
+    on_resetX_triggered();
+    on_resetY_triggered();
 }
 
 void MainWindow::on_fiveby2_triggered(){
     create5x2Layout();
+    on_resetX_triggered();
+    on_resetY_triggered();
 }

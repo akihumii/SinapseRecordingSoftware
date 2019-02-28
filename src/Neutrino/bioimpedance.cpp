@@ -8,12 +8,7 @@ BioImpedance::BioImpedance(QByteArray data_, double gain_){
     File = new QFile;
     fileName = directory + QDateTime::currentDateTime().toString("'impedance_'yyyyMMdd_HHmmss'.txt'");
     File->setFileName(fileName);
-    if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
-        qDebug()<< "File opened";
-    }
-    else{
-        qDebug() << "File failed to open";
-    }
+    File->open(QIODevice::WriteOnly|QIODevice::Text)? qDebug()<< "File opened" : qDebug() << "File failed to open";
     out = new QTextStream(File);
     if(data_.size() == 82){
         sortBioImpedanceData(data_);

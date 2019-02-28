@@ -1,13 +1,11 @@
 #include "bioimpedancedialog.h"
 
-BioImpedanceDialog::BioImpedanceDialog(BioImpedance *bioImpedance_)
-{
+BioImpedanceDialog::BioImpedanceDialog(BioImpedance *bioImpedance_){
     bioImpedance = bioImpedance_;
     createLayout();
 }
 
-BioImpedanceDialog::~BioImpedanceDialog()
-{
+BioImpedanceDialog::~BioImpedanceDialog(){
 
 }
 
@@ -42,12 +40,7 @@ void BioImpedanceDialog::on_saveButton_clicked(){
     File = new QFile;
     fileName = directory + QDateTime::currentDateTime().toString("'impedance_'yyyyMMdd_HHmmss'.txt'");
     File->setFileName(fileName);
-    if(File->open(QIODevice::WriteOnly|QIODevice::Text)){
-        qDebug()<< "File opened";
-    }
-    else{
-        qDebug() << "File failed to open";
-    }
+    File->open(QIODevice::WriteOnly|QIODevice::Text)? qDebug()<< "File opened" : qDebug() << "File failed to open";
     out = new QTextStream(File);
     *out << temp;
     if(File->isOpen()){

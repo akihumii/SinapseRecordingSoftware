@@ -67,6 +67,9 @@ protected:
     quint64 total_data_count = 0;
     bool RecordEnabled = false;
     void RecordData(int data);
+    void RecordData(uint32_t data);
+    void RecordData(uint16_t data);
+    void RecordData(uint8_t data);
     void RecordData(double data);
     void recordCommand();
     void recordHeader();
