@@ -186,7 +186,7 @@ void MainWindow::create5x2Layout(){
         channelGraph[10]->yAxis->setLabelPadding(35);
         channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 8));
         channelGraph[10]->setFixedHeight(100);
-        channelGraph[11]->yAxis->setLabel("Frame Marker");
+        channelGraph[11]->yAxis->setLabel("Frame Marker ('000)");
         channelGraph[11]->yAxis->setLabelPadding(35);
         channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
         channelGraph[11]->setFixedHeight(100);
@@ -196,8 +196,8 @@ void MainWindow::create5x2Layout(){
 
         channelGraph[10]->yAxis->setRange(-5, 260, Qt::AlignLeft);
         channelGraph[10]->yAxis->setTickStep(50);
-        channelGraph[11]->yAxis->setRange(0, 300000, Qt::AlignLeft);
-        channelGraph[11]->yAxis->setTickStep(60000);
+        channelGraph[11]->yAxis->setRange(0, 2000, Qt::AlignLeft);
+        channelGraph[11]->yAxis->setTickStep(400);
         channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
 
         QVBoxLayout *leftLayout = new QVBoxLayout;

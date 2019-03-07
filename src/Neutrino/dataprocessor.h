@@ -53,7 +53,9 @@ private:
     int currentFrameMarkerIndex;
     qint16 fullWord_rawData;
     int lastFrameMarker;
+    int max = 0;
     double temp;
+    uint32_t temp_int;
     QByteArray leftOverData;
 
     QVector<quint8> ADC_Data;

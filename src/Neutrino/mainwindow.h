@@ -41,8 +41,8 @@ public slots:
 private:
 //    QString ipAddress = "192.168.137.102";
 //    QString ipAddress = "169.254.68.98";
-    QString ipAddress = "192.168.137.74";
-//    QString ipAddress = "192.168.4.3";
+//    QString ipAddress = "192.168.137.74";
+    QString ipAddress = "192.168.4.3";
     int portNumber = 8888;
 
     QElapsedTimer timer;

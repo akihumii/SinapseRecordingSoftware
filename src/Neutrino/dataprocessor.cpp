@@ -42,8 +42,8 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
                             }
                         }
                         if(isRecordEnabled()){
-                            RecordData((quint16)((uint8_t)data_store.at(j+5+k*2) << 5) | (uint8_t)data_store.at(j+4+k*2)); // For development
-//                            RecordData((quint16)((uint8_t)data_store.at(j+5+8+k*2) << 5) | (uint8_t)data_store.at(j+4+8+k*2)); // Actual code
+//                            RecordData((quint16)((uint8_t)data_store.at(j+5+k*2) << 5) | (uint8_t)data_store.at(j+4+k*2)); // For development
+                            RecordData((quint16)((uint8_t)data_store.at(j+5+8+k*2) << 5) | (uint8_t)data_store.at(j+4+8+k*2)); // Actual code
                         }
                         k++;
                     }
@@ -55,10 +55,15 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
                     }
                 }
                 ChannelData[10].append((quint16) (quint8) data_store.at(j+5+6) << 5 | (quint8) data_store.at(j+4+6));
-                ChannelData[11].append((quint32)   (((((uint32_t)data_store.at(j + 4 + 1) << 5 | (uint32_t)data_store.at(j + 4)) >> 1 & 0b111111111)|
-                                                     (((((uint32_t)data_store.at(j + 4 + 3) << 5 | (uint32_t)data_store.at(j + 4 + 2)) >> 1 & 0b111111111)) << 9) |
-                                                     (((((uint32_t)data_store.at(j + 4 + 5) << 5 | (uint32_t)data_store.at(j + 4 + 4)) >> 1 & 0b111111111)) << 18))
-                                                      & ~(0b11111 << 27)));
+                temp_int = (quint32)   (((((uint32_t)data_store.at(j + 4 + 1) << 5 | (uint32_t)data_store.at(j + 4)) >> 1 & 0b111111111)|
+                                     (((((uint32_t)data_store.at(j + 4 + 3) << 5 | (uint32_t)data_store.at(j + 4 + 2)) >> 1 & 0b111111111)) << 9) |
+                                     (((((uint32_t)data_store.at(j + 4 + 5) << 5 | (uint32_t)data_store.at(j + 4 + 4)) >> 1 & 0b111111111)) << 18))
+                                      & ~(0b11111 << 27));
+//                if(temp_int > max){
+//                    max = temp_int;
+//                    qDebug() << max;
+//                }
+                ChannelData[11].append(temp_int / 1000);
                 if(isRecordEnabled()){
                     RecordData((quint16) (quint8) data_store.at(j+5+6) << 5 | (quint8) data_store.at(j+4+6));
                     RecordData((quint32)   (((((uint32_t)data_store.at(j + 4 + 1) << 5 | (uint32_t)data_store.at(j + 4)) >> 1 & 0b111111111)|
@@ -159,10 +164,16 @@ QVector<quint16> DataProcessor::ParseFrameMarkers8bits(QByteArray data_store){
                     }
                 }
                 ChannelData[10].append((quint8) data_store.at(j+4));
-                ChannelData[11].append((quint32) (((((quint32)data_store.at(j+3)>>1) & 0b1111111) << 14) |
+                temp_int = (quint32) (((((quint32)data_store.at(j+3)>>1) & 0b1111111) << 14) |
                                                   ((((quint32)data_store.at(j+2)>>1) & 0b1111111) << 7) |
                                                   (((quint32)data_store.at(j+1)>>1) & 0b1111111)) &
-                                                  ~(0b11111111111 << 21));
+                                                  ~(0b11111111111 << 21);
+//                if(temp_int > max){
+//                    max = temp_int;
+//                    qDebug() << max;
+//                }
+                ChannelData[11].append(temp_int / 1000);
+
                 if(isRecordEnabled()){
                     RecordData((quint8) data_store.at(j+4));
                     RecordData((quint32) (((((quint32)data_store.at(j+3)>>1) & 0b1111111) << 14) |
