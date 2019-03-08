@@ -39,10 +39,12 @@ private:
                                   false,
                                   false};
     QSignalMapper *connectionMapper;
+    QSignalMapper *socketMapper;
     QVector<double> ChannelData[10];
     QDataStream *out[10];
 private slots:
     void on_newConnection(int connected);
+    void disconnect(int i);
 };
 
 #endif // DATASTREAM_H

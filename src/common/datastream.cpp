@@ -14,16 +14,27 @@ DataStream::DataStream(QObject *parent) : QObject(parent = Q_NULLPTR){
             qDebug() << "Server " << i+1 << "could not be started";
         }
     }
+    socketMapper = new QSignalMapper(this);
+    connect(socketMapper, SIGNAL(mapped(int)), this, SLOT(disconnect(int)));
 }
 
 void DataStream::on_newConnection(int connected){
     qDebug() << "Port " << serverPort[connected] << " is connected!";
     socketMatlab[connected] = new QTcpSocket(this);
     socketMatlab[connected] = serverMatlab[connected]->nextPendingConnection();
-    connect(socketMatlab[connected], SIGNAL(disconnected()), socketMatlab[connected], SLOT(deleteLater()));
+    socketMapper->setMapping(socketMatlab[connected], connected);
+    connect(socketMatlab[connected], SIGNAL(readyRead()), socketMapper, SLOT(map()));
+//    connect(socketMatlab[connected], SIGNAL(disconnected()), socketMatlab[connected], SLOT(deleteLater()));
+//    connect(socketMatlab[connected], SIGNAL(readyRead()), socketMatlab[connected], SLOT(deleteLater()));
     streamConnected[connected] = true;
     clearChannelData(connected);
     out[connected] = new QDataStream(socketMatlab[connected]);
+}
+
+void DataStream::disconnect(int i){
+    streamConnected[i] = false;
+    socketMatlab[i]->disconnectFromHost();
+    socketMatlab[i]->deleteLater();
 }
 
 bool DataStream::getStreamConnected(int channel){
