@@ -22,7 +22,7 @@ private:
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 40800;
+    qint64 maxSize = 4080;
     bool record = false;
 
     bool Mode_8Bit = false;

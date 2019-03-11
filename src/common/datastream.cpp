@@ -24,8 +24,6 @@ void DataStream::on_newConnection(int connected){
     socketMatlab[connected] = serverMatlab[connected]->nextPendingConnection();
     socketMapper->setMapping(socketMatlab[connected], connected);
     connect(socketMatlab[connected], SIGNAL(readyRead()), socketMapper, SLOT(map()));
-//    connect(socketMatlab[connected], SIGNAL(disconnected()), socketMatlab[connected], SLOT(deleteLater()));
-//    connect(socketMatlab[connected], SIGNAL(readyRead()), socketMatlab[connected], SLOT(deleteLater()));
     streamConnected[connected] = true;
     clearChannelData(connected);
     out[connected] = new QDataStream(socketMatlab[connected]);
