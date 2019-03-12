@@ -40,7 +40,7 @@ private:
     QComboBox *notchFilter;
 
     int sylphSampleFreq = 1000;
-    int neutrinoSampleFreq = 17000;
+    int neutrinoSampleFreq = 17850;
     int samplingFreq = neutrinoSampleFreq;
 
 private slots:

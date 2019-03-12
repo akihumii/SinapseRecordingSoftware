@@ -328,7 +328,7 @@ void MainWindow::updateData(){
     if(data->isPlotEnabled() && X_axis.size() >= (data->getNumDataPoints())){
         for(int i=0; i<12; i++){
             if(!data->isEmpty(i)){
-                channelGraph[i]->graph()->setData(X_axis, data->retrieveData(i));
+                channelGraph[i]->graph()->setData(X_axis, (i < 10 && data->isFilterEnabled())? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
                 channelGraph[i]->xAxis->setRange(X_axis.at(0),
                                                  (data->getNumDataPoints()*data->getPeriod()),
                                                  Qt::AlignLeft);

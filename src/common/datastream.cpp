@@ -61,6 +61,10 @@ void DataStream::appendData(int channel, double data){
     ChannelData[channel].append(data);
 }
 
+void DataStream::appendData(int channel, QVector<double> data){
+    ChannelData[channel].append(data);
+}
+
 void DataStream::clearChannelData(int ChannelIndex){
     ChannelData[ChannelIndex].remove(0,(ChannelData[ChannelIndex].size()));
     ChannelData[ChannelIndex].resize(0);

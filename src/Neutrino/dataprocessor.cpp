@@ -80,7 +80,7 @@ QVector<quint16> DataProcessor::ParseFrameMarkers10bits(QByteArray data_store){
     for(int i = lastFrameMarker; i < data_store.size(); i++){
         leftOverData.append(data_store.at(i));
     }
-    if(leftOverData.size() > 204800){
+    if(leftOverData.size() > 20480){
         leftOverData.clear();
         leftOverData.resize(0);
     }

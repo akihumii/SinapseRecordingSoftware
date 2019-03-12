@@ -12,6 +12,7 @@ public:
     void streamData(int channel);
     void disableStream(int channel);
     void appendData(int channel, double data);
+    void appendData(int channel, QVector<double> data);
     int getChannelSize(int channel);
     void clearChannelData(int ChannelIndex);
 
