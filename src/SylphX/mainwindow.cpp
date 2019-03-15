@@ -91,7 +91,24 @@ void MainWindow::createLayout(){
     mainLayout = new QVBoxLayout;
     topLayout = new QVBoxLayout;
     bottomLayout = new QVBoxLayout;
-    reconstructPlots();
+
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        if(plotEnable[i]){
+            topLayout->addWidget(channelGraph[i]);
+        }
+    }
+    if(dyno){
+        bottomLayout->addWidget(channelGraph[12]);
+    }
+    for(int i = EMG_CHANNELS; i < TOTAL_CHANNELS-1; i++){
+        bottomLayout->addWidget(channelGraph[i]);
+    }
+
+    mainLayout->addLayout(topLayout);
+    mainLayout->addLayout(bottomLayout);
+
+    mainWidget->setLayout(mainLayout);
+    setCentralWidget(mainWidget);
 }
 
 void MainWindow::createActions(){
@@ -396,9 +413,7 @@ void MainWindow::on_record_triggered(){
 
 void MainWindow::on_plotSelect_changed(int channel){
     plotEnable[channel] = !plotEnable[channel];
-    createLayout();
-    on_timeFrame_changed(currentTimeFrame);
-    on_voltage_changed(currentVoltageScale);
+    refreshScreen();
 }
 
 void MainWindow::on_plotSelectAll_triggered(){
@@ -406,9 +421,7 @@ void MainWindow::on_plotSelectAll_triggered(){
         plotEnable[i] = true;
         plotSelectAction[i]->setChecked(true);
     }
-    createLayout();
-    on_timeFrame_changed(currentTimeFrame);
-    on_voltage_changed(currentVoltageScale);
+    refreshScreen();
 }
 
 void MainWindow::on_plotSelectNone_triggered(){
@@ -416,9 +429,7 @@ void MainWindow::on_plotSelectNone_triggered(){
         plotEnable[i] = false;
         plotSelectAction[i]->setChecked(false);
     }
-    createLayout();
-    on_timeFrame_changed(currentTimeFrame);
-    on_voltage_changed(currentVoltageScale);
+    refreshScreen();
 }
 
 void MainWindow::on_plotSelectDefault_triggered(){
@@ -430,29 +441,13 @@ void MainWindow::on_plotSelectDefault_triggered(){
         plotEnable[i] = true;
         plotSelectAction[i]->setChecked(true);
     }
+    refreshScreen();
+}
+
+void MainWindow::refreshScreen(){
     createLayout();
     on_timeFrame_changed(currentTimeFrame);
     on_voltage_changed(currentVoltageScale);
-}
-
-void MainWindow::reconstructPlots(){
-    for(int i = 0; i < EMG_CHANNELS; i++){
-        if(plotEnable[i]){
-            topLayout->addWidget(channelGraph[i]);
-        }
-    }
-    if(dyno){
-        bottomLayout->addWidget(channelGraph[12]);
-    }
-    for(int i = EMG_CHANNELS; i < TOTAL_CHANNELS-1; i++){
-        bottomLayout->addWidget(channelGraph[i]);
-    }
-
-    mainLayout->addLayout(topLayout);
-    mainLayout->addLayout(bottomLayout);
-
-    mainWidget->setLayout(mainLayout);
-    setCentralWidget(mainWidget);
 }
 
 void MainWindow::on_playPause_triggered(){

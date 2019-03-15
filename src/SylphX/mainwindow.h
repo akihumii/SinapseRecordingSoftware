@@ -138,8 +138,8 @@ private:
                               1,
                               2,};
     QSignalMapper *plotSelectMapper;
-    QAction *plotSelectAction[10];
-    QString plotSelect[10] = {"Channel 1",
+    QAction *plotSelectAction[EMG_CHANNELS];
+    QString plotSelect[EMG_CHANNELS] = {"Channel 1",
                               "Channel 2",
                               "Channel 3",
                               "Channel 4",
@@ -153,7 +153,7 @@ private:
     QAction *plotSelectNone;
     QAction *plotSelectDefault;
 
-    bool plotEnable[10] = {false,
+    bool plotEnable[EMG_CHANNELS] = {false,
                            false,
                            false,
                            true,
@@ -189,7 +189,7 @@ private:
     void createMenus();
     void createLayout();
     void destroyPlots();
-    void reconstructPlots();
+    void refreshScreen();
     void connectSylph();
     void setDefaultGraph();
     void activateChannelGraph(int index);
