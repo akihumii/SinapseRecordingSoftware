@@ -302,13 +302,19 @@ void MainWindow::connectSylph(){
         updateStatusBar(0, temp);
     }
     if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        int i = 1;
-        do{
-            i++;
-            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
-        } while(!socketSylph->isConnected() && i < 4);
+        int p = 8000;  // Try to connect to on-Rpi decoding code
+        QString ip = "192.168.4.3";
+
+        socketSylph->doConnect(ip, p);
+
+        for(int i = 1; !socketSylph->isConnected() && i < 4; i++){
+            p = 8888;
+            ip = "192.168.4."+QString::number(i);
+            socketSylph->doConnect(ip, p);
+        }
+
         if(socketSylph->isConnected()){
-            updateStatusBar(0, "Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
+            updateStatusBar(0, "Connected to Sylph WiFi Module at " + ip + "/" + QString::number(p));
         }
         else{
             updateStatusBar(0, "Failed to connect...");
