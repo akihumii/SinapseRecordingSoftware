@@ -179,6 +179,9 @@ void OdinWindow::createLayout(){
     thresholdParameters->setLayout(thresholdMainLayout);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
+    sendParameterButton = new QPushButton(tr("SP"));
+    connect(sendParameterButton, SIGNAL(clicked(bool)), this, SLOT(sendParameter()));
+    sendParameterButton->setMaximumWidth(40);
     sendButton = new QPushButton(tr("Start Odin!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
     modeButton = new QPushButton(tr("H"));
@@ -187,6 +190,7 @@ void OdinWindow::createLayout(){
     modeButton->setMaximumWidth(20);
 //    modeButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
 //    modeButton->setIconSize(QSize(15,15));
+    buttonLayout->addWidget(sendParameterButton);
     buttonLayout->addWidget(sendButton);
     buttonLayout->addWidget(modeButton);
 
@@ -241,6 +245,37 @@ bool OdinWindow::connectOdin(){
         }
     }
     return false;
+}
+
+void OdinWindow::sendParameter(){
+    QTimer::singleShot((STARTDELAY+360), [=] {
+        commandOdin->sendFrequency();
+        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+        emit commandSent(lastSentCommand);
+    });
+    for(int i = 0; i < 4; i++){
+        QTimer::singleShot((STARTDELAY+40+i*40), [=] {
+                commandOdin->sendPulseDuration(i);
+                strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                emit commandSent(lastSentCommand);
+        });
+    }
+    for(int i = 0; i < 4; i++){
+        QTimer::singleShot((STARTDELAY+200+i*40), [=] {
+            commandOdin->sendAmplitude(i);
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+    }
+//        QTimer::singleShot((STARTDELAY+360), [=] {
+//            commandOdin->sendThresholdEnable();
+//        });
+//    QTimer::singleShot((STARTDELAY+400), [=] {
+//        commandOdin->sendChannelEnable();
+//    });
+    QTimer::singleShot((STARTDELAY+360), [=] {
+        QMessageBox::information(this, "Done!", "Parameters have been sent...");
+    });
 }
 
 void OdinWindow::sendCommand(){

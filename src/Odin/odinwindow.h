@@ -39,6 +39,7 @@ private:
 
     QStatusBar *statusBarMainWindow;
 
+    QPushButton *sendParameterButton;
     QPushButton *sendButton;
     QPushButton *modeButton;
 
@@ -92,6 +93,7 @@ private:
     void createStatusBar();
 private slots:
     void sendCommand();
+    void sendParameter();
     void on_currentMode_clicked();
     void on_thresholdEnable_toggled();
     void on_channelEnable_toggled();

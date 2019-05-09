@@ -11,10 +11,12 @@ class SocketSylph : public SocketAbstract {
     Q_OBJECT
 public:
     SocketSylph(DataProcessor *dataProcessor_);
+    void writeCommand(QByteArray command);
 
 private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
+//    QMediaPlayer *player;
 
     qint64 packetSize = 25;
     qint64 maxSize = packetSize*65;

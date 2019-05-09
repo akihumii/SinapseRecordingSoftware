@@ -217,6 +217,7 @@ private slots:
     void on_dumbDataProcessor_triggered();
     void on_graph_clicked(int index);
     void on_dyno_triggered();
+    void sendParameter(char *bytes);
 
     void about();
 };

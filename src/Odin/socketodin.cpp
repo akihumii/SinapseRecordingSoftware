@@ -48,8 +48,8 @@ void SocketOdin::writeCommand(QByteArray command){
         qDebug() << "Sent command of a size" << command.size() << "via TCP socket: " << (quint8) command.at(0) << (quint8) command.at(1);
     }
     //else{
-        udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
-        qDebug() << "Sent command of a size" << command.size() << "via UDP socket: " << (quint8) command.at(0) << (quint8) command.at(1);
+//        udpSocket->writeDatagram(command, command.size(), QHostAddress::Broadcast, 45454);
+//        qDebug() << "Sent command of a size" << command.size() << "via UDP socket: " << (quint8) command.at(0) << (quint8) command.at(1);
     //}
 }
 

@@ -21,6 +21,7 @@ MainWindow::MainWindow(){
     connect(x, SIGNAL(debounceEditted(int)), dataProcessor, SLOT(setDebounce(int)));
     connect(x, SIGNAL(upperThresholdEditted(double)), dataProcessor, SLOT(setUpperThreshold(double)));
     connect(x, SIGNAL(lowerThresholdEditted(double)), dataProcessor, SLOT(setLowerThreshold(double)));
+    connect(x, SIGNAL(commandSent(char*)), this, SLOT(sendParameter(char*)));
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
 
@@ -529,6 +530,10 @@ void MainWindow::updateStatusBar(int index, QString message){
     statusBarText[index].clear();
     statusBarText[index].append(message);
     statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+}
+
+void MainWindow::sendParameter(char *command){
+    socketSylph->writeCommand(command);
 }
 
 }
