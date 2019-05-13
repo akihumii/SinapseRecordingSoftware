@@ -156,6 +156,10 @@ QByteArray CommandOdin::getlastSentCommand(){
     return outgoingCommand;
 }
 
+QByteArray CommandOdin::getlastRpiCommand(){
+    return rpiCommand;
+}
+
 void CommandOdin::setAmplitude(int channel, double value){
     amplitude[channel] = value;
 }
@@ -297,6 +301,24 @@ void CommandOdin::sendThresholdEnable(){
 //    }
 }
 
+void CommandOdin::sendThresholdUpper(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) THRESHOLD_UPPER);
+    rpiCommand.append((const char) getThresholdUpper());
+}
+
+void CommandOdin::sendThresholdLower(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) THRESHOLD_LOWER);
+    rpiCommand.append((const char) getThresholdLower());
+}
+
+void CommandOdin::sendDebounceDelay(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) DEBOUNCE_DELAY);
+    rpiCommand.append((const char) getDebounceDelay());
+}
+
 void CommandOdin::setThresholdEnable(char value){
     thresholdEnable = value;
 }
@@ -312,6 +334,33 @@ void CommandOdin::setStepSize(double step){
 
 char CommandOdin::getStepSize(){
     return stepSize;
+}
+
+void CommandOdin::setThresholdUpper(double threshold){
+    thresholdUpper = threshold;
+    qDebug() << "Upper Threshold: " << (quint8) thresholdUpper;
+}
+
+char CommandOdin::getThresholdUpper(){
+    return thresholdUpper;
+}
+
+void CommandOdin::setThresholdLower(double threshold){
+    thresholdLower = threshold;
+    qDebug() << "Lower Threshold: " << (quint8) thresholdLower;
+}
+
+char CommandOdin::getThresholdLower(){
+    return thresholdLower;
+}
+
+void CommandOdin::setDebounceDelay(double delay){
+    debounceDelay = delay;
+    qDebug() << "Lower Threshold: " << (quint8) debounceDelay;
+}
+
+char CommandOdin::getDebounceDelay(){
+    return debounceDelay;
 }
 
 unsigned char CommandOdin::getCurrentAmplitude(){

@@ -20,7 +20,10 @@ typedef enum ADDRESS{
     CHANNEL_ENABLE = 0xFB,
     STEP_INCREASE = 0xFC,
     STEP_DECREASE = 0xFD,
-    THRESHOLD_ENABLE = 0xFE
+    THRESHOLD_ENABLE = 0xFE,
+    THRESHOLD_UPPER = 0xC9,
+    THRESHOLD_LOWER = 0xCA,
+    DEBOUNCE_DELAY = 0XCB
 } ADDRESS;
 
 class CommandOdin : public QObject
@@ -49,11 +52,21 @@ public:
     void initialiseCommand();
     int getNumChannelEnabled();
     QByteArray getlastSentCommand();
+    QByteArray getlastRpiCommand();
     void setStepSize(double step);
+    void setThresholdUpper(double threshold);
+    void setThresholdLower(double threshold);
+    void setDebounceDelay(double delay);
     char getStepSize();
+    char getThresholdUpper();
+    char getThresholdLower();
+    char getDebounceDelay();
     void sendStepSizeIncrease();
     void sendStepSizeDecrease();
     void sendThresholdEnable();
+    void sendThresholdUpper();
+    void sendThresholdLower();
+    void sendDebounceDelay();
     void setThresholdEnable(char value);
     char getThresholdEnable();
     unsigned char getCurrentAmplitude();
@@ -74,9 +87,13 @@ private:
     float c = 6.6892;
 
     char stepSize = 12;
+    char thresholdUpper = 10;
+    char thresholdLower = 10;
+    char debounceDelay = 10;
     unsigned char currentAmplitude = 0;
 
     QByteArray outgoingCommand;
+    QByteArray rpiCommand;
 signals:
 //    void commandSent(char *command);
 };

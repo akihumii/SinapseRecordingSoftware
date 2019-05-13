@@ -85,6 +85,7 @@ private:
     int commandCount = 0;
     int numChannelsEnabled = 0;
     char *lastSentCommand = new char[2];
+    char *rpiCommand = new char[2];
     double *lastSentAmplitude = new double[4];
     int count = 0;
 
