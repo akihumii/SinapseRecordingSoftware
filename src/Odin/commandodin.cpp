@@ -316,7 +316,13 @@ void CommandOdin::sendThresholdLower(){
 void CommandOdin::sendDebounceDelay(){
     rpiCommand.clear();
     rpiCommand.append((const char) DEBOUNCE_DELAY);
-    rpiCommand.append((const char) getDebounceDelay());
+    rpiCommand.append((const char) getDebounceDelayByte());
+}
+
+void CommandOdin::sendStepSize(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) STEP_SIZE);
+    rpiCommand.append((const char) getStepSizeByte());
 }
 
 void CommandOdin::setThresholdEnable(char value){
@@ -328,12 +334,16 @@ char CommandOdin::getThresholdEnable(){
 }
 
 void CommandOdin::setStepSize(double step){
-    stepSize = step * 12;
+    stepSize = step;
     qDebug() << "Step size: " << (quint8) stepSize;
 }
 
 char CommandOdin::getStepSize(){
     return stepSize;
+}
+
+char CommandOdin::getStepSizeByte(){
+    return (char) stepSize * 12;
 }
 
 void CommandOdin::setThresholdUpper(double threshold){
@@ -356,10 +366,14 @@ char CommandOdin::getThresholdLower(){
 
 void CommandOdin::setDebounceDelay(double delay){
     debounceDelay = delay;
-    qDebug() << "Lower Threshold: " << (quint8) debounceDelay;
+    qDebug() << "Debounce Delay: " << (quint8) debounceDelay;
 }
 
-char CommandOdin::getDebounceDelay(){
+char CommandOdin::getDebounceDelayByte(){
+    return (char) floor(debounceDelay/4);
+}
+
+int CommandOdin::getDebounceDelay(){
     return debounceDelay;
 }
 

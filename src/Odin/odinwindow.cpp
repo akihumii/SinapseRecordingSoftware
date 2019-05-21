@@ -167,8 +167,8 @@ void OdinWindow::createLayout(){
 
     debounceSpinBox = new QSpinBox;
     debounceSpinBox->setMinimum(20);
-    debounceSpinBox->setMaximum(5000);
-    debounceSpinBox->setSingleStep(100);
+    debounceSpinBox->setMaximum(1000);
+    debounceSpinBox->setSingleStep(10);
     debounceSpinBox->setValue(1000);
     connect(debounceSpinBox, SIGNAL(editingFinished()), this, SLOT(on_debounce_editted()));
     thresholdSpinBoxLayout->addWidget(debounceSpinBox);
@@ -249,28 +249,28 @@ bool OdinWindow::connectOdin(){
 
 void OdinWindow::sendParameter(){
         for(int i = 0; i < 4; i++){  // send pulse duration
-        QTimer::singleShot((STARTDELAY+50+i*50), [=] {
+        QTimer::singleShot((STARTDELAY+40+i*40), [=] {
                 commandOdin->sendPulseDuration(i);
                 strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
                 emit commandSent(lastSentCommand);
         });
     }
     for(int i = 0; i < 4; i++){  // send amplitude
-        QTimer::singleShot((STARTDELAY+250+i*50), [=] {
+        QTimer::singleShot((STARTDELAY+200+i*40), [=] {
             commandOdin->sendAmplitude(i);
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
         });
     }
-    QTimer::singleShot((STARTDELAY+450), [=] {  // send frequency
+    QTimer::singleShot((STARTDELAY+360), [=] {  // send frequency
         commandOdin->sendFrequency();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
     });
-    QTimer::singleShot((STARTDELAY+500), [=] {  // send step size utilzing sending step size increase
-        commandOdin->sendStepSizeIncrease();
-        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
-        emit commandSent(lastSentCommand);
+    QTimer::singleShot((STARTDELAY+400), [=] {  // send step size utilzing sending step size increase
+        commandOdin->sendStepSize();
+        strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
+        emit commandSent(rpiCommand);
     });
 //        QTimer::singleShot((STARTDELAY+360), [=] {
 //            commandOdin->sendThresholdEnable();
@@ -278,25 +278,25 @@ void OdinWindow::sendParameter(){
 //    QTimer::singleShot((STARTDELAY+400), [=] {
 //        commandOdin->sendChannelEnable();
 //    });
-    QTimer::singleShot((STARTDELAY+550), [=] {
+    QTimer::singleShot((STARTDELAY+440), [=] {
         commandOdin->sendThresholdUpper();
         strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
         emit commandSent(rpiCommand);
     });
 
-    QTimer::singleShot((STARTDELAY+600), [=] {
+    QTimer::singleShot((STARTDELAY+480), [=] {
         commandOdin->sendThresholdLower();
         strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
         emit commandSent(rpiCommand);
     });
 
-    QTimer::singleShot((STARTDELAY+650), [=] {
+    QTimer::singleShot((STARTDELAY+520), [=] {
         commandOdin->sendDebounceDelay();
         strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
         emit commandSent(rpiCommand);
     });
 
-    QTimer::singleShot((STARTDELAY+700), [=] {
+    QTimer::singleShot((STARTDELAY+560), [=] {
         QMessageBox::information(this, "Done!", "Parameters have been sent...");
     });
 }
@@ -414,6 +414,8 @@ void OdinWindow::on_channelEnable_toggled(){
         qDebug() << "Setting Channel Enable for channel " << i+1 << channelEnable[i]->isChecked();
     }
     commandOdin->sendChannelEnable();
+    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+    emit commandSent(lastSentCommand);
 }
 
 void OdinWindow::on_channelSelectAll_clicked(){
@@ -422,6 +424,8 @@ void OdinWindow::on_channelSelectAll_clicked(){
         commandOdin->setChannelEnabled(i, true);
     }
     commandOdin->sendChannelEnable();
+    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+    emit commandSent(lastSentCommand);
 }
 
 void OdinWindow::on_channelSelectNone_clicked(){
@@ -430,6 +434,8 @@ void OdinWindow::on_channelSelectNone_clicked(){
         commandOdin->setChannelEnabled(i, false);
     }
     commandOdin->sendChannelEnable();
+    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+    emit commandSent(lastSentCommand);
 }
 
 void OdinWindow::on_thresholdSelectAll_clicked(){
@@ -499,22 +505,50 @@ void OdinWindow::on_frequency_Changed(){
 }
 
 void OdinWindow::on_debounce_editted(){
-    commandOdin->setDebounceDelay(debounceSpinBox->text().toInt());
-    emit debounceEditted(debounceSpinBox->text().toInt());
+    if(debounceSpinBox->text().toInt() != commandOdin->getDebounceDelay()){
+        commandOdin->setDebounceDelay(debounceSpinBox->text().toInt());
+        emit debounceEditted(debounceSpinBox->text().toInt());
+        if(start){
+            commandOdin->sendDebounceDelay();
+            strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
+            emit commandSent(rpiCommand);
+        }
+    }
 }
 
 void OdinWindow::on_upperThreshold_editted(){
-    commandOdin->setThresholdUpper(upperThresholdSpinBox->text().toDouble());
-    emit upperThresholdEditted(upperThresholdSpinBox->text().toDouble());
+    if(upperThresholdSpinBox->text().toDouble() != commandOdin->getThresholdUpper()){
+        commandOdin->setThresholdUpper(upperThresholdSpinBox->text().toDouble());
+        emit upperThresholdEditted(upperThresholdSpinBox->text().toDouble());
+        if(start){
+            commandOdin->sendThresholdUpper();
+            strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
+            emit commandSent(rpiCommand);
+        }
+    }
 }
 
 void OdinWindow::on_lowerThreshold_editted(){
-    commandOdin->setThresholdLower(lowerThresholdSpinBox->text().toDouble());
-    emit lowerThresholdEditted(lowerThresholdSpinBox->text().toDouble());
+    if(lowerThresholdSpinBox->text().toDouble() != commandOdin->getThresholdLower()){
+        commandOdin->setThresholdLower(lowerThresholdSpinBox->text().toDouble());
+        emit lowerThresholdEditted(lowerThresholdSpinBox->text().toDouble());
+        if(start){
+            commandOdin->sendThresholdLower();
+            strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
+            emit commandSent(rpiCommand);
+        }
+    }
 }
 
 void OdinWindow::on_stepSize_editted(){
-    commandOdin->setStepSize(stepSizeSpinBox->text().toDouble());
+    if(stepSizeSpinBox->text().toDouble() != commandOdin->getStepSize()){
+        commandOdin->setStepSize(stepSizeSpinBox->text().toDouble());
+        if(start){
+            commandOdin->sendStepSize();
+            strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
+            emit commandSent(rpiCommand);
+        }
+    }
 }
 
 void OdinWindow::on_channelAThreshold_crossed(){

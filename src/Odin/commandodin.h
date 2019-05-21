@@ -21,6 +21,7 @@ typedef enum ADDRESS{
     STEP_INCREASE = 0xFC,
     STEP_DECREASE = 0xFD,
     THRESHOLD_ENABLE = 0xFE,
+    STEP_SIZE = 0xC8,
     THRESHOLD_UPPER = 0xC9,
     THRESHOLD_LOWER = 0xCA,
     DEBOUNCE_DELAY = 0XCB
@@ -58,15 +59,18 @@ public:
     void setThresholdLower(double threshold);
     void setDebounceDelay(double delay);
     char getStepSize();
+    char getStepSizeByte();
     char getThresholdUpper();
     char getThresholdLower();
-    char getDebounceDelay();
+    int getDebounceDelay();
+    char getDebounceDelayByte();
     void sendStepSizeIncrease();
     void sendStepSizeDecrease();
     void sendThresholdEnable();
     void sendThresholdUpper();
     void sendThresholdLower();
     void sendDebounceDelay();
+    void sendStepSize();
     void setThresholdEnable(char value);
     char getThresholdEnable();
     unsigned char getCurrentAmplitude();
@@ -86,10 +90,10 @@ private:
     float b = 12.853;
     float c = 6.6892;
 
-    char stepSize = 12;
+    char stepSize = 1;
     char thresholdUpper = 10;
     char thresholdLower = 10;
-    char debounceDelay = 10;
+    int debounceDelay = 1000;
     unsigned char currentAmplitude = 0;
 
     QByteArray outgoingCommand;
