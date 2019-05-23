@@ -90,7 +90,7 @@ void OdinWindow::createLayout(){
     for(int i = 0; i < 4; i++){
         thresholdSpinBox[i] = new QSpinBox;
         thresholdSpinBox[i]->setMinimum(0);
-        thresholdSpinBox[i]->setMaximum(10);
+        thresholdSpinBox[i]->setMaximum(99);
         thresholdSpinBox[i]->setValue(1);
         stimParaLayout[6]->addWidget(thresholdSpinBox[i]);
         connect(thresholdSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_Changed()));

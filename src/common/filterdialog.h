@@ -41,7 +41,7 @@ private:
 
     int sylphSampleFreq = 1000;
     int neutrinoSampleFreq = 17850;
-    int samplingFreq = neutrinoSampleFreq;
+    int samplingFreq = sylphSampleFreq;
 
 private slots:
     void on_highpassEnable_toggled(bool);
