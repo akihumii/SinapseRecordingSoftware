@@ -49,15 +49,17 @@ private:
     QPushButton *thresholdSelectNone;
 
     QGroupBox *stimParameters;
-    QHBoxLayout *stimParaLayout[6];
+    QHBoxLayout *stimParaLayout[7];
     QCheckBox *thresholdEnable[4];
     QCheckBox* channelAllEnable;
     QCheckBox *channelEnable[4];
     QLabel *chnLabels[4];
-    QLabel *paraLabels[6];
+    QLabel *paraLabels[7];
     QDoubleSpinBox *amplitudeSpinBox[4];
-    QSpinBox*pulseDurationSpinBox[4];
+    QSpinBox *pulseDurationSpinBox[4];
     QSpinBox *frequencySpinBox;
+    QSpinBox *thresholdSpinBox[4];
+    QSpinBox *thresholdPowerSpinBox[4];
 
     QGroupBox *delayParameters;
     QCheckBox *delayEnabledCheckBox;
@@ -101,6 +103,8 @@ private slots:
     void on_amplitude_Changed();
     void on_pulseDuration_Changed();
     void on_frequency_Changed();
+    void on_threshold_Changed();
+    void on_threshold_power_Changed();
     void on_odinDisconnected();
     void on_delayEnabled_toggled();
     void on_debounce_editted();
