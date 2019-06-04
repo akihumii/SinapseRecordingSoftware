@@ -133,7 +133,7 @@ void MainWindow::createActions(){
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
     odinAction = new QAction(tr("&Odin Control Panel"));
-    odinAction->setShortcut(tr("Ctrl+C"));
+    odinAction->setShortcut(tr("Ctrl+/"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
 
     disableStream = new QAction(tr("&Disable stream"));

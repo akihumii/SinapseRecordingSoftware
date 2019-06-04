@@ -23,7 +23,15 @@ typedef enum ADDRESS{
     THRESHOLD_ENABLE = 0xFE,
     THRESHOLD_UPPER = 0xC9,
     THRESHOLD_LOWER = 0xCA,
-    DEBOUNCE_DELAY = 0XCB
+    DEBOUNCE_DELAY = 0xCB,
+    THRESHOLD_CHN1 = 0xCC,
+    THRESHOLD_CHN2 = 0xCD,
+    THRESHOLD_CHN3 = 0xCE,
+    THRESHOLD_CHN4 = 0xCF,
+    THRESHOLD_POWER_CHN1 = 0xD0,
+    THRESHOLD_POWER_CHN2 = 0xD1,
+    THRESHOLD_POWER_CHN3 = 0xD2,
+    THRESHOLD_POWER_CHN4 = 0xD3
 } ADDRESS;
 
 class CommandOdin : public QObject
@@ -35,6 +43,8 @@ public:
     void setAmplitude(int channel, double value);
     void setPulseDuration(int channel, int duration);
     void setFrequency(int value);
+    void setThreshold(int channel, int value);
+    void setThresholdPower(int channel, int value);
     void setChannelEnabled(int channel, bool flag);
     double getAmplitude(int channel);
     unsigned char getAmplitudeByte(int index);
@@ -42,11 +52,15 @@ public:
     int getPulseDuration(int channel);
     char getFrequencyByte();
     int getFrequency();
+    int getThreshold(int channel);
+    int getThresholdPower(int channel);
     void sendStart();
     void sendStop();
     void sendAmplitude(int channel);
     void sendPulseDuration(int channel);
     void sendFrequency();
+    void sendThreshold(int channel);
+    void sendThresholdPower(int channel);
     void sendChannelEnable();
     char getChannelEnabled();
     void initialiseCommand();
@@ -79,6 +93,8 @@ private:
     bool channelEnabled[4] = {false, false, false, false};
     int pulseDuration[4] = {200, 200, 200, 200};
     int frequency = 50;
+    int threshold[4] = {1, 1, 1, 1};
+    int thresholdPower[4] = {10, 10, 10, 10};
     int numChannels = 0;
     char thresholdEnable = 15;
 
