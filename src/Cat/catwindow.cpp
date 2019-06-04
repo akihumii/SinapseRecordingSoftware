@@ -14,6 +14,7 @@ void CatWindow::createLayout(){
     mainLayout->addWidget(createMethodsGroup());
     mainLayout->addWidget(createSettingsGroup());
     mainLayout->addWidget(createTrainingGroup());
+    mainLayout->addWidget(createParametersGroup());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
@@ -28,92 +29,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
     methodsGroup->setLayout(methodsParameterLayout);
 
     return methodsGroup;
-}
-
-QGroupBox *CatWindow::createTrainingGroup(){
-    QGroupBox *trainingGroup = new QGroupBox(tr("Training"));
-
-    //number of class
-    QLabel *numClassLabel = new QLabel(tr("No. of class"));
-    numClassLabel->setMaximumWidth(100);
-    numClassSpinBox = new QSpinBox;
-    QHBoxLayout *numClassLayout = new QHBoxLayout;
-    numClassLayout->addWidget(numClassLabel);
-    numClassLayout->addWidget(numClassSpinBox);
-
-    //control buttons
-    trainingStart = new QPushButton(tr("Start"));
-    trainingRedo = new QPushButton(tr("Redo Class"));
-    trainingNext = new QPushButton(tr("Next Class"));
-    trainingCancel = new QPushButton(tr("Cancel"));
-    QHBoxLayout *trainingButtonsLayout = new QHBoxLayout;
-    trainingButtonsLayout->addWidget(trainingStart);
-    trainingButtonsLayout->addWidget(trainingRedo);
-    trainingButtonsLayout->addWidget(trainingNext);
-    trainingButtonsLayout->addWidget(trainingCancel);
-
-    //save buttons
-    trainingSave = new QPushButton(tr("Save File"));
-    trainingSave->setMaximumWidth(100);
-    trainingSaveDir = new QLabel("[display chosen saving location...]");
-    QHBoxLayout *trainingSaveLayout = new QHBoxLayout;
-    trainingSaveLayout->addWidget(trainingSave);
-    trainingSaveLayout->addWidget(trainingSaveDir);
-
-    //Layout
-    QVBoxLayout *trainingLayout = new QVBoxLayout;
-    trainingLayout->addLayout(numClassLayout);
-    trainingLayout->addLayout(trainingButtonsLayout);
-    trainingLayout->addLayout(trainingSaveLayout);
-
-    trainingGroup->setLayout(trainingLayout);
-
-    return trainingGroup;
-}
-
-QGroupBox *CatWindow::createThreasholdingGroup(){
-    QGroupBox *groupThreasholding = new QGroupBox(tr("Thresholding Parameters"));
-
-    QVBoxLayout *thresholdingSubLayout[4];
-    QLabel *channelLabel[4];
-    for(int i = 0; i < 4; i++){
-        thresholdingSubLayout[i] = new QVBoxLayout;
-
-        //Labels
-        channelLabel[i] = new QLabel("Channel " + QString::number(i+1));
-        thresholdingSubLayout[i]->addWidget(channelLabel[i]);
-
-        //Digits
-        QHBoxLayout *thresholdingSpinBoxLayout = new QHBoxLayout;
-        thresholdingSpinBox[i] = new QSpinBox;
-        thresholdingSpinBox[i]->setMinimum(0);
-        thresholdingSpinBox[i]->setMaximum(99);
-        thresholdingSpinBox[i]->setValue(1);
-        thresholdingSpinBoxLayout->addWidget(thresholdingSpinBox[i]);
-
-        //E
-        QLabel *powerLetter = new QLabel("E");
-        thresholdingSpinBoxLayout->addWidget(powerLetter);
-
-        //Powers
-        thresholdingPowerSpinBox[i] = new QSpinBox;
-        thresholdingPowerSpinBox[i]->setMinimum(-20);
-        thresholdingPowerSpinBox[i]->setMaximum(10);
-        thresholdingPowerSpinBox[i]->setValue(10);
-        thresholdingSpinBoxLayout->addWidget(thresholdingPowerSpinBox[i]);
-
-        thresholdingSubLayout[i]->addLayout(thresholdingSpinBoxLayout);
-    }
-
-    //Layout
-    QHBoxLayout *thresholdingLayout = new QHBoxLayout;
-    for(int i = 0; i < 4; i++){
-        thresholdingLayout->addLayout(thresholdingSubLayout[i]);
-    }
-
-    groupThreasholding->setLayout(thresholdingLayout);
-
-    return groupThreasholding;
 }
 
 QGroupBox *CatWindow::createSettingsGroup(){
@@ -165,6 +80,163 @@ QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings->setLayout(settingsLayout);
 
     return groupSettings;
+}
+
+QGroupBox *CatWindow::createTrainingGroup(){
+    QGroupBox *trainingGroup = new QGroupBox(tr("Training"));
+
+    //number of class
+    QLabel *numClassLabel = new QLabel(tr("No. of class"));
+    numClassLabel->setMaximumWidth(100);
+    numClassSpinBox = new QSpinBox;
+    QHBoxLayout *numClassLayout = new QHBoxLayout;
+    numClassLayout->addWidget(numClassLabel);
+    numClassLayout->addWidget(numClassSpinBox);
+
+    //control buttons
+    trainingStart = new QPushButton(tr("Start"));
+    trainingRedo = new QPushButton(tr("Redo Class"));
+    trainingNext = new QPushButton(tr("Next Class"));
+    trainingCancel = new QPushButton(tr("Cancel"));
+    QHBoxLayout *trainingButtonsLayout = new QHBoxLayout;
+    trainingButtonsLayout->addWidget(trainingStart);
+    trainingButtonsLayout->addWidget(trainingRedo);
+    trainingButtonsLayout->addWidget(trainingNext);
+    trainingButtonsLayout->addWidget(trainingCancel);
+
+    //save buttons
+    trainingSave = new QPushButton(tr("Save File"));
+    trainingSave->setMaximumWidth(100);
+    trainingSaveDir = new QLabel("[display chosen saving location...]");
+    QHBoxLayout *trainingSaveLayout = new QHBoxLayout;
+    trainingSaveLayout->addWidget(trainingSave);
+    trainingSaveLayout->addWidget(trainingSaveDir);
+
+    //Layout
+    QVBoxLayout *trainingLayout = new QVBoxLayout;
+    trainingLayout->addLayout(numClassLayout);
+    trainingLayout->addLayout(trainingButtonsLayout);
+    trainingLayout->addLayout(trainingSaveLayout);
+
+    trainingGroup->setLayout(trainingLayout);
+
+    return trainingGroup;
+}
+
+QGroupBox *CatWindow::createParametersGroup(){
+    QGroupBox *parametersGroup = new QGroupBox(tr("Parameters"));
+
+    //window
+    QHBoxLayout *windowSubLayout[3];
+    QLabel* windowDecodingLabel = new QLabel(tr("Decoding window size: "));
+    windowDecodingSpinBox = new QSpinBox;
+    windowDecodingSpinBox->setMaximumWidth(70);
+    windowSubLayout[0] = new QHBoxLayout;
+    windowSubLayout[0]->addWidget(windowDecodingLabel);
+    windowSubLayout[0]->addWidget(windowDecodingSpinBox);
+
+    QLabel *windowOverlapLabel = new QLabel(tr("Overlap window size: "));
+    windowOverlapSpinBox = new QSpinBox;
+    windowOverlapSpinBox->setMaximumWidth(70);
+    windowSubLayout[1] = new QHBoxLayout;
+    windowSubLayout[1]->addWidget(windowOverlapLabel);
+    windowSubLayout[1]->addWidget(windowOverlapSpinBox);
+
+    QLabel *windowSamplingFrequencyLabel = new QLabel(tr("Sampling frequency: "));
+    windowSamplingFrequencySpinBox = new QSpinBox;
+    windowSamplingFrequencySpinBox->setMaximumWidth(70);
+    windowSubLayout[2] = new QHBoxLayout;
+    windowSubLayout[2]->addWidget(windowSamplingFrequencyLabel);
+    windowSubLayout[2]->addWidget(windowSamplingFrequencySpinBox);
+
+    //layout window
+    QVBoxLayout *windowLayout = new QVBoxLayout();
+    for(int i = 0; i < 3; i++){
+        windowLayout->addLayout(windowSubLayout[i]);
+    }
+
+    //filtering
+    QHBoxLayout *filteringSubLayout[3];
+    QLabel* highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
+    highpassSpinBox = new QSpinBox;
+    highpassSpinBox->setMaximumWidth(70);
+    filteringSubLayout[0] = new QHBoxLayout;
+    filteringSubLayout[0]->addWidget(highpassLabel);
+    filteringSubLayout[0]->addWidget(highpassSpinBox);
+
+    QLabel *lowpassLabel = new QLabel(tr("Lowpass cutoff freq.: "));
+    lowpassSpinBox = new QSpinBox;
+    lowpassSpinBox->setMaximumWidth(70);
+    filteringSubLayout[1] = new QHBoxLayout;
+    filteringSubLayout[1]->addWidget(lowpassLabel);
+    filteringSubLayout[1]->addWidget(lowpassSpinBox);
+
+    QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
+    notchSpinBox = new QSpinBox;
+    notchSpinBox->setMaximumWidth(70);
+    filteringSubLayout[2] = new QHBoxLayout;
+    filteringSubLayout[2]->addWidget(notchLabel);
+    filteringSubLayout[2]->addWidget(notchSpinBox);
+
+    //layout filtering
+    QVBoxLayout *filteringLayout = new QVBoxLayout();
+    for(int i = 0; i < 3; i++){
+        filteringLayout->addLayout(filteringSubLayout[i]);
+    }
+
+    //layout
+    QHBoxLayout *parametersLayout = new QHBoxLayout();
+    parametersLayout->addLayout(windowLayout);
+    parametersLayout->addLayout(filteringLayout);
+
+    parametersGroup->setLayout(parametersLayout);
+
+    return parametersGroup;
+}
+
+QGroupBox *CatWindow::createThreasholdingGroup(){
+    QGroupBox *groupThreasholding = new QGroupBox(tr("Thresholding Parameters"));
+
+    QVBoxLayout *thresholdingSubLayout[4];
+    QLabel *channelLabel[4];
+    for(int i = 0; i < 4; i++){
+        thresholdingSubLayout[i] = new QVBoxLayout;
+
+        //Labels
+        channelLabel[i] = new QLabel("Channel " + QString::number(i+1));
+        thresholdingSubLayout[i]->addWidget(channelLabel[i]);
+
+        //Digits
+        QHBoxLayout *thresholdingSpinBoxLayout = new QHBoxLayout;
+        thresholdingSpinBox[i] = new QSpinBox;
+        thresholdingSpinBox[i]->setMinimum(0);
+        thresholdingSpinBox[i]->setMaximum(99);
+        thresholdingSpinBox[i]->setValue(1);
+        thresholdingSpinBoxLayout->addWidget(thresholdingSpinBox[i]);
+
+        //E
+        QLabel *powerLetter = new QLabel("E");
+        thresholdingSpinBoxLayout->addWidget(powerLetter);
+
+        //Powers
+        thresholdingPowerSpinBox[i] = new QSpinBox;
+        thresholdingPowerSpinBox[i]->setMinimum(-20);
+        thresholdingPowerSpinBox[i]->setMaximum(10);
+        thresholdingPowerSpinBox[i]->setValue(10);
+        thresholdingSpinBoxLayout->addWidget(thresholdingPowerSpinBox[i]);
+
+        thresholdingSubLayout[i]->addLayout(thresholdingSpinBoxLayout);
+    }
+
+    //Layout
+    QHBoxLayout *thresholdingLayout = new QHBoxLayout;
+    for(int i = 0; i < 4; i++){
+        thresholdingLayout->addLayout(thresholdingSubLayout[i]);
+    }
+
+    groupThreasholding->setLayout(thresholdingLayout);
+
+    return groupThreasholding;
 }
 
 CatWindow::~CatWindow(){

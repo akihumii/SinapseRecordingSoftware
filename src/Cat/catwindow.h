@@ -17,13 +17,12 @@ public:
 
 private:
     QGroupBox *createMethodsGroup();
-    QGroupBox *createTrainingGroup();
-    QVBoxLayout *createMethodsBoxLayout();
-
-    QLabel *trainingSaveDir;
-
     QGroupBox *createThreasholdingGroup();
     QGroupBox *createSettingsGroup();
+    QGroupBox *createTrainingGroup();
+    QGroupBox *createParametersGroup();
+
+    QLabel *trainingSaveDir;
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
@@ -31,6 +30,12 @@ private:
     QSpinBox *thresholdingSpinBox[4];
     QSpinBox *thresholdingPowerSpinBox[4];
     QSpinBox *numClassSpinBox;
+    QSpinBox *windowDecodingSpinBox;
+    QSpinBox *windowOverlapSpinBox;
+    QSpinBox *windowSamplingFrequencySpinBox;
+    QSpinBox *highpassSpinBox;
+    QSpinBox *lowpassSpinBox;
+    QSpinBox *notchSpinBox;
 
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
