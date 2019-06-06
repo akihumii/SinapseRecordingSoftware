@@ -5,6 +5,9 @@ namespace SylphX {
 MainWindow::MainWindow(){
     x = new Odin::OdinWindow();
     x->setFixedSize(x->sizeHint());
+    y = new Cat::CatWindow();
+    y->setFixedSize(y->sizeHint());
+//    y->show();
 //    x->show();
     QString version(APP_VERSION);
     timer.start();
@@ -136,6 +139,10 @@ void MainWindow::createActions(){
     odinAction->setShortcut(tr("Ctrl+/"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
 
+    catAction = new QAction(tr("Cat Control Panel"));
+    catAction->setShortcut(tr("Ctrl+T"));
+    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
+
     disableStream = new QAction(tr("&Disable stream"));
     disableStream->setShortcut(tr("Ctrl+D"));
     connect(disableStream, SIGNAL(triggered(bool)), this, SLOT(on_disableStream_triggered()));
@@ -206,6 +213,7 @@ void MainWindow::createActions(){
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(odinAction);
+    fileMenu->addAction(catAction);
     fileMenu->addSeparator();
     fileMenu->addAction(disableStream);
     fileMenu->addSeparator();
@@ -474,6 +482,10 @@ void MainWindow::on_chooseDirectory_triggered(){
 
 void MainWindow::on_odin_triggered(){
     x->show();
+}
+
+void MainWindow::on_cat_triggered(){
+    y->show();
 }
 
 void MainWindow::on_filterConfig_trigger(){

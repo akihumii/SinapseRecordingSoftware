@@ -7,7 +7,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     CatWindow w;
-    w.show();
+    w.setFixedSize(w.sizeHint());
+//    w.showMaximized();
+//    w.show();
 
     return a.exec();
 }

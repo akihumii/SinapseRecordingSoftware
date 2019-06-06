@@ -6,6 +6,7 @@ CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
     createLayout();
+    createStatusBar();
 }
 
 void CatWindow::createLayout(){
@@ -59,6 +60,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     methodsClassifyBox[0] = new QRadioButton(tr("&Tresholding"));
     methodsClassifyBox[0]->setChecked(true);
     methodsClassifyBox[1] = new QRadioButton(tr("&Features"));
+
     QHBoxLayout *methodsClassifyLayout = new QHBoxLayout;
     for(int i = 0; i < 2; i++){
         methodsClassifyBox[i]->setMinimumWidth(150);
@@ -237,6 +239,13 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
     groupThreasholding->setLayout(thresholdingLayout);
 
     return groupThreasholding;
+}
+
+void CatWindow::createStatusBar(){
+    statusBarLabel = new QLabel;
+    statusBarMainWindow = statusBar();
+    statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
+    statusBarMainWindow->setSizeGripEnabled(false);  //fixed window size
 }
 
 CatWindow::~CatWindow(){

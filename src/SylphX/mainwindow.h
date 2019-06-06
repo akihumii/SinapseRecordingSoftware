@@ -13,6 +13,7 @@
 #include "../common/filterdialog.h"
 #include "../Odin/odinwindow.h"
 #include "../common/datastream.h"
+#include "../Cat/catwindow.h"
 #include "dynomometer.h"
 
 class QComboBox;
@@ -40,6 +41,7 @@ public:
     Dynomometer *dynomometer;
 
     Odin::OdinWindow *x;
+    Cat::CatWindow *y;
 
 public slots:
 
@@ -170,6 +172,7 @@ private:
     QSignalMapper *audioSelectMapper;
     QAction *aboutAction;
     QAction *odinAction;
+    QAction *catAction;
     QAction *isSmart;
     QAction *isDumb;
 
@@ -213,6 +216,7 @@ private slots:
     void on_filterConfig_trigger();
     void on_restart_triggered();
     void on_odin_triggered();
+    void on_cat_triggered();
     void on_smartDataProcessor_triggered();
     void on_dumbDataProcessor_triggered();
     void on_graph_clicked(int index);

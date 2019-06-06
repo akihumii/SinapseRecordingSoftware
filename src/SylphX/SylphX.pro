@@ -37,6 +37,7 @@ HEADERS += \
     ../Odin/loopingthread.h \
     ../Odin/pulseplot.h \
     ../Odin/odinwindow.h \
+    ../Cat/catwindow.h \
     dynomometer.h
 
 
@@ -52,4 +53,5 @@ SOURCES += \
     ../Odin/socketodin.cpp \
     ../Odin/pulseplot.cpp \
     ../Odin/odinwindow.cpp \
+    ../Cat/catwindow.cpp \
     dynomometer.cpp

@@ -15,7 +15,10 @@ public:
     CatWindow();
     ~CatWindow();
 
+    QLabel *statusBarLabel;
 private:
+    QStatusBar *statusBarMainWindow;
+
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
     QGroupBox *createSettingsGroup();
@@ -44,6 +47,7 @@ private:
     QPushButton *trainingSave;
 
     void createLayout();
+    void createStatusBar();
 
 };
 
