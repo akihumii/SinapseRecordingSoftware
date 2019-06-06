@@ -27,7 +27,7 @@ public:
 
     QLabel *statusBarLabel;
 public slots:
-
+    void sendParameter();
 
 private:
     SerialOdin *serialOdin;
@@ -96,7 +96,6 @@ private:
     void createStatusBar();
 private slots:
     void sendCommand();
-    void sendParameter();
     void on_currentMode_clicked();
     void on_thresholdEnable_toggled();
     void on_channelEnable_toggled();

@@ -15,16 +15,20 @@ TreeDialog::TreeDialog(){
     sylphxGUI->setMinimumSize(1366, 768);
     sylphxGUI->hide();
 
-    catGUI = new Cat::CatWindow();  //Cat
-    catGUI->setFixedSize(catGUI->sizeHint());
-    catGUI->hide();
-
     connect(odinGUI, SIGNAL(commandSent(char*)), sylphxGUI->dataProcessor, SLOT(setLastSentBytes(char*)));
     connect(odinGUI, SIGNAL(amplitudeChanged(double*)), sylphxGUI->dataProcessor, SLOT(setLastSentAmplitudes(double*)));
     connect(odinGUI, SIGNAL(debounceEditted(int)), sylphxGUI->dataProcessor, SLOT(setDebounce(int)));
     connect(odinGUI, SIGNAL(upperThresholdEditted(double)), sylphxGUI->dataProcessor, SLOT(setUpperThreshold(double)));
     connect(odinGUI, SIGNAL(lowerThresholdEditted(double)), sylphxGUI->dataProcessor, SLOT(setLowerThreshold(double)));
     connect(odinGUI, SIGNAL(commandSent(char*)), sylphxGUI, SLOT(sendParameter(char*)));
+    connect(this, SIGNAL(sendParameters()), odinGUI, SLOT(sendParameter()));
+
+    emit sendParameters();  //send initial parameters to Rpi
+
+    catGUI = new Cat::CatWindow();  //Cat
+    catGUI->setFixedSize(catGUI->sizeHint());
+    catGUI->hide();
+
 }
 
 void TreeDialog::createLayout(){

@@ -35,6 +35,7 @@ private slots:
     void on_catGUI_clicked();
 
 signals:
+    void sendParameters();
 };
 
 }
