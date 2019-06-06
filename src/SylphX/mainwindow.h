@@ -15,7 +15,6 @@
 #include "../common/datastream.h"
 #include "../Cat/catwindow.h"
 #include "dynomometer.h"
-#include "treedialog.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -42,7 +41,7 @@ public:
     Dynomometer *dynomometer;
 
     Odin::OdinWindow *x;
-    Cat::CatWindow *y;
+    Cat::CatWindow *catGUI;
 
 public slots:
 

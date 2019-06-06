@@ -3,10 +3,10 @@
 namespace SylphX {
 
 MainWindow::MainWindow(){
-    x = new Odin::OdinWindow();
-    x->setFixedSize(x->sizeHint());
-    y = new Cat::CatWindow();
-    y->setFixedSize(y->sizeHint());
+//    x = new Odin::OdinWindow();
+//    x->setFixedSize(x->sizeHint());
+//    catGUI = new Cat::CatWindow();
+//    catGUI->setFixedSize(catGUI->sizeHint());
 //    y->show();
 //    x->show();
     QString version(APP_VERSION);
@@ -19,12 +19,6 @@ MainWindow::MainWindow(){
     socketSylph = new SocketSylph(dataProcessor);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
 
-    connect(x, SIGNAL(commandSent(char*)), dataProcessor, SLOT(setLastSentBytes(char*)));
-    connect(x, SIGNAL(amplitudeChanged(double*)), dataProcessor, SLOT(setLastSentAmplitudes(double*)));
-    connect(x, SIGNAL(debounceEditted(int)), dataProcessor, SLOT(setDebounce(int)));
-    connect(x, SIGNAL(upperThresholdEditted(double)), dataProcessor, SLOT(setUpperThreshold(double)));
-    connect(x, SIGNAL(lowerThresholdEditted(double)), dataProcessor, SLOT(setLowerThreshold(double)));
-    connect(x, SIGNAL(commandSent(char*)), this, SLOT(sendParameter(char*)));
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
 
@@ -135,13 +129,13 @@ void MainWindow::createActions(){
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
-    odinAction = new QAction(tr("&Odin Control Panel"));
-    odinAction->setShortcut(tr("Ctrl+/"));
-    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
+//    odinAction = new QAction(tr("&Odin Control Panel"));
+//    odinAction->setShortcut(tr("Ctrl+/"));
+//    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
 
-    catAction = new QAction(tr("Cat Control Panel"));
-    catAction->setShortcut(tr("Ctrl+T"));
-    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
+//    catAction = new QAction(tr("Cat Control Panel"));
+//    catAction->setShortcut(tr("Ctrl+T"));
+//    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
 
     disableStream = new QAction(tr("&Disable stream"));
     disableStream->setShortcut(tr("Ctrl+D"));
@@ -212,9 +206,9 @@ void MainWindow::createActions(){
 
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(odinAction);
-    fileMenu->addAction(catAction);
-    fileMenu->addSeparator();
+//    fileMenu->addAction(odinAction);
+//    fileMenu->addAction(catAction);
+//    fileMenu->addSeparator();
     fileMenu->addAction(disableStream);
     fileMenu->addSeparator();
     fileMenu->addAction(dynoAction);
@@ -338,7 +332,7 @@ MainWindow::~MainWindow(){
         socketSylph->sendDisconnectSignal();
         socketSylph->doDisconnect();
     }
-    delete x;
+//    delete x;
 }
 
 void MainWindow::updateData(){
@@ -481,11 +475,11 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_odin_triggered(){
-    x->show();
+//    x->show();
 }
 
 void MainWindow::on_cat_triggered(){
-    y->show();
+//    catGUI->show();
 }
 
 void MainWindow::on_filterConfig_trigger(){
