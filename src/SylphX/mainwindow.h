@@ -15,6 +15,7 @@
 #include "../common/datastream.h"
 #include "../Cat/catwindow.h"
 #include "dynomometer.h"
+#include "treedialog.h"
 
 class QComboBox;
 class QCustomPlot;

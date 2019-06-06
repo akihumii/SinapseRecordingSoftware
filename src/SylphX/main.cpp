@@ -7,7 +7,9 @@ int main(int argc, char *argv[]){
 
     SylphX::MainWindow w;
     w.setMinimumSize(1366,768);
-    w.showMaximized();
+    SylphX::TreeDialog treeDialog;
+    treeDialog.show();
+//    w.showMaximized();
 
     return a.exec();
 }

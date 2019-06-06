@@ -38,7 +38,8 @@ HEADERS += \
     ../Odin/pulseplot.h \
     ../Odin/odinwindow.h \
     ../Cat/catwindow.h \
-    dynomometer.h
+    dynomometer.h \
+    treedialog.h
 
 
 SOURCES += \
@@ -54,4 +55,5 @@ SOURCES += \
     ../Odin/pulseplot.cpp \
     ../Odin/odinwindow.cpp \
     ../Cat/catwindow.cpp \
-    dynomometer.cpp
+    dynomometer.cpp \
+    treedialog.cpp
