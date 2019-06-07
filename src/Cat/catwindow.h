@@ -39,6 +39,7 @@ private:
     QSpinBox *highpassSpinBox;
     QSpinBox *lowpassSpinBox;
     QSpinBox *notchSpinBox;
+    QSpinBox *extendStimSpinBox;
 
     QPushButton *trainingStart;
     QPushButton *trainingRedo;

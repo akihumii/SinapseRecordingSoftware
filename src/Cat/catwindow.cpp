@@ -129,31 +129,40 @@ QGroupBox *CatWindow::createParametersGroup(){
     QGroupBox *parametersGroup = new QGroupBox(tr("Parameters"));
 
     //window
-    QHBoxLayout *windowSubLayout[3];
+    int windowWidth = 70;
+    QHBoxLayout *windowSubLayout[4];
     QLabel* windowDecodingLabel = new QLabel(tr("Decoding window size: "));
     windowDecodingSpinBox = new QSpinBox;
-    windowDecodingSpinBox->setMaximumWidth(70);
+    windowDecodingSpinBox->setMaximumWidth(windowWidth);
     windowSubLayout[0] = new QHBoxLayout;
     windowSubLayout[0]->addWidget(windowDecodingLabel);
     windowSubLayout[0]->addWidget(windowDecodingSpinBox);
 
     QLabel *windowOverlapLabel = new QLabel(tr("Overlap window size: "));
     windowOverlapSpinBox = new QSpinBox;
-    windowOverlapSpinBox->setMaximumWidth(70);
+    windowOverlapSpinBox->setMaximumWidth(windowWidth);
     windowSubLayout[1] = new QHBoxLayout;
     windowSubLayout[1]->addWidget(windowOverlapLabel);
     windowSubLayout[1]->addWidget(windowOverlapSpinBox);
 
     QLabel *windowSamplingFrequencyLabel = new QLabel(tr("Sampling frequency: "));
     windowSamplingFrequencySpinBox = new QSpinBox;
-    windowSamplingFrequencySpinBox->setMaximumWidth(70);
+    windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
     windowSubLayout[2] = new QHBoxLayout;
     windowSubLayout[2]->addWidget(windowSamplingFrequencyLabel);
     windowSubLayout[2]->addWidget(windowSamplingFrequencySpinBox);
 
+    QLabel *extendStimLabel = new QLabel(tr("Extend Stimulation (s): "));
+    extendStimSpinBox = new QSpinBox;
+    extendStimSpinBox->setMaximumWidth(windowWidth);
+    windowSubLayout[3] = new QHBoxLayout;
+    windowSubLayout[3]->addWidget(extendStimLabel);
+    windowSubLayout[3]->addWidget(extendStimSpinBox);
+
+
     //layout window
     QVBoxLayout *windowLayout = new QVBoxLayout();
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 4; i++){
         windowLayout->addLayout(windowSubLayout[i]);
     }
 
@@ -161,21 +170,21 @@ QGroupBox *CatWindow::createParametersGroup(){
     QHBoxLayout *filteringSubLayout[3];
     QLabel* highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
     highpassSpinBox = new QSpinBox;
-    highpassSpinBox->setMaximumWidth(70);
+    highpassSpinBox->setMaximumWidth(windowWidth);
     filteringSubLayout[0] = new QHBoxLayout;
     filteringSubLayout[0]->addWidget(highpassLabel);
     filteringSubLayout[0]->addWidget(highpassSpinBox);
 
     QLabel *lowpassLabel = new QLabel(tr("Lowpass cutoff freq.: "));
     lowpassSpinBox = new QSpinBox;
-    lowpassSpinBox->setMaximumWidth(70);
+    lowpassSpinBox->setMaximumWidth(windowWidth);
     filteringSubLayout[1] = new QHBoxLayout;
     filteringSubLayout[1]->addWidget(lowpassLabel);
     filteringSubLayout[1]->addWidget(lowpassSpinBox);
 
     QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
     notchSpinBox = new QSpinBox;
-    notchSpinBox->setMaximumWidth(70);
+    notchSpinBox->setMaximumWidth(windowWidth);
     filteringSubLayout[2] = new QHBoxLayout;
     filteringSubLayout[2]->addWidget(notchLabel);
     filteringSubLayout[2]->addWidget(notchSpinBox);
