@@ -57,7 +57,14 @@ private:
 
 private slots:
     void on_threshold_changed();
-    void on_threshold_power_Changed();
+    void on_threshold_power_changed();
+    void on_decoding_window_size_changed();
+    void on_overlap_window_size_changed();
+    void on_sampling_freq_changed();
+    void on_extend_stimulation_changed();
+    void on_highpass_cutoff_freq_changed();
+    void on_lowpass_cutoff_freq_changed();
+    void on_notch_cutoff_freq_changed();
 
 signals:
     void commandSent(char *bytes);

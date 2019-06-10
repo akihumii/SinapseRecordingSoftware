@@ -132,33 +132,50 @@ QGroupBox *CatWindow::createParametersGroup(){
     //window
     int windowWidth = 70;
     QHBoxLayout *windowSubLayout[4];
-    QLabel* windowDecodingLabel = new QLabel(tr("Decoding window size: "));
+    QLabel* windowDecodingLabel = new QLabel(tr("Decoding window size (ms): "));
     windowDecodingSpinBox = new QSpinBox;
     windowDecodingSpinBox->setMaximumWidth(windowWidth);
+    windowDecodingSpinBox->setMinimum(0);
+    windowDecodingSpinBox->setMaximum(9999);
+    windowDecodingSpinBox->setValue(200);
     windowSubLayout[0] = new QHBoxLayout;
     windowSubLayout[0]->addWidget(windowDecodingLabel);
     windowSubLayout[0]->addWidget(windowDecodingSpinBox);
+    connect(windowDecodingSpinBox, SIGNAL(editingFinished()), this, SLOT(on_decoding_window_size_changed()));
 
-    QLabel *windowOverlapLabel = new QLabel(tr("Overlap window size: "));
+    QLabel *windowOverlapLabel = new QLabel(tr("Overlap window size (ms): "));
     windowOverlapSpinBox = new QSpinBox;
     windowOverlapSpinBox->setMaximumWidth(windowWidth);
+    windowOverlapSpinBox->setMinimum(0);
+    windowOverlapSpinBox->setMaximum(9999);
+    windowOverlapSpinBox->setValue(80);
     windowSubLayout[1] = new QHBoxLayout;
     windowSubLayout[1]->addWidget(windowOverlapLabel);
     windowSubLayout[1]->addWidget(windowOverlapSpinBox);
+    connect(windowOverlapSpinBox, SIGNAL(editingFinished()), this, SLOT(on_overlap_window_size_changed()));
 
-    QLabel *windowSamplingFrequencyLabel = new QLabel(tr("Sampling frequency: "));
+    QLabel *windowSamplingFrequencyLabel = new QLabel(tr("Sampling frequency (Hz): "));
     windowSamplingFrequencySpinBox = new QSpinBox;
+    windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
+    windowSamplingFrequencySpinBox->setMinimum(0);
+    windowSamplingFrequencySpinBox->setMaximum(30000);
+    windowSamplingFrequencySpinBox->setValue(1250);
     windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
     windowSubLayout[2] = new QHBoxLayout;
     windowSubLayout[2]->addWidget(windowSamplingFrequencyLabel);
     windowSubLayout[2]->addWidget(windowSamplingFrequencySpinBox);
+    connect(windowSamplingFrequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_sampling_freq_changed()));
 
-    QLabel *extendStimLabel = new QLabel(tr("Extend Stimulation (s): "));
+    QLabel *extendStimLabel = new QLabel(tr("Extend Stimulation (ms): "));
     extendStimSpinBox = new QSpinBox;
     extendStimSpinBox->setMaximumWidth(windowWidth);
+    extendStimSpinBox->setMinimum(0);
+    extendStimSpinBox->setMaximum(9999);
+    extendStimSpinBox->setValue(0);
     windowSubLayout[3] = new QHBoxLayout;
     windowSubLayout[3]->addWidget(extendStimLabel);
     windowSubLayout[3]->addWidget(extendStimSpinBox);
+    connect(extendStimSpinBox, SIGNAL(editingFinished()), this, SLOT(on_extend_stimulation_changed()));
 
 
     //layout window
@@ -169,26 +186,39 @@ QGroupBox *CatWindow::createParametersGroup(){
 
     //filtering
     QHBoxLayout *filteringSubLayout[3];
-    QLabel* highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
+    QLabel* highpassLabel = new QLabel(tr("Highpass cutoff freq. (Hz): "));
     highpassSpinBox = new QSpinBox;
+    highpassSpinBox->setMaximumWidth(windowWidth);
+    highpassSpinBox->setMinimum(0);
+    highpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2);
+    highpassSpinBox->setValue(100);
     highpassSpinBox->setMaximumWidth(windowWidth);
     filteringSubLayout[0] = new QHBoxLayout;
     filteringSubLayout[0]->addWidget(highpassLabel);
     filteringSubLayout[0]->addWidget(highpassSpinBox);
+    connect(highpassSpinBox, SIGNAL(editingFinished()), this, SLOT(on_highpass_cutoff_freq_changed()));
 
     QLabel *lowpassLabel = new QLabel(tr("Lowpass cutoff freq.: "));
     lowpassSpinBox = new QSpinBox;
     lowpassSpinBox->setMaximumWidth(windowWidth);
+    lowpassSpinBox->setMinimum(0);
+    lowpassSpinBox->setMaximum(highpassSpinBox->text().toInt()-1);
+    lowpassSpinBox->setValue(0);
     filteringSubLayout[1] = new QHBoxLayout;
     filteringSubLayout[1]->addWidget(lowpassLabel);
     filteringSubLayout[1]->addWidget(lowpassSpinBox);
+    connect(lowpassSpinBox, SIGNAL(editingFinished()), this, SLOT(on_lowpass_cutoff_freq_changed()));
 
     QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
     notchSpinBox = new QSpinBox;
     notchSpinBox->setMaximumWidth(windowWidth);
+    notchSpinBox->setMinimum(0);
+    notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt());
+    notchSpinBox->setValue(50);
     filteringSubLayout[2] = new QHBoxLayout;
     filteringSubLayout[2]->addWidget(notchLabel);
     filteringSubLayout[2]->addWidget(notchSpinBox);
+    connect(notchSpinBox, SIGNAL(editingFinished()), this, SLOT(on_notch_cutoff_freq_changed()));
 
     //layout filtering
     QVBoxLayout *filteringLayout = new QVBoxLayout();
@@ -237,7 +267,7 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
         thresholdingPowerSpinBox[i]->setMaximum(10);
         thresholdingPowerSpinBox[i]->setValue(10);
         thresholdingSpinBoxLayout->addWidget(thresholdingPowerSpinBox[i]);
-        connect(thresholdingPowerSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_power_Changed()));
+        connect(thresholdingPowerSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_power_changed()));
 
         thresholdingSubLayout[i]->addLayout(thresholdingSpinBoxLayout);
     }
@@ -272,7 +302,7 @@ void CatWindow::on_threshold_changed(){
     }
 }
 
-void CatWindow::on_threshold_power_Changed(){
+void CatWindow::on_threshold_power_changed(){
     for(int i = 0; i < 4; i++){
         if(thresholdingPowerSpinBox[i]->text().toInt() != commandCat->getThresholdPower(i)){
             commandCat->setThresholdPower(i, thresholdingPowerSpinBox[i]->text().toInt());
@@ -281,6 +311,81 @@ void CatWindow::on_threshold_power_Changed(){
             strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
             emit commandSent(lastSentCommand);
         }
+    }
+}
+
+void CatWindow::on_decoding_window_size_changed(){
+    if(windowDecodingSpinBox->text().toInt() != commandCat->getDecodingWindowSize()){
+        commandCat->setDecodingWindowSize(windowDecodingSpinBox->text().toInt());
+        qDebug() << "Sent decoding window size to : " << windowDecodingSpinBox->text().toInt();
+        commandCat->sendDecodingWindowSize();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    }
+}
+
+void CatWindow::on_overlap_window_size_changed(){
+    if(windowOverlapSpinBox->text().toInt() != commandCat->getOverlapWindowSize()){
+        commandCat->setOverlapWindowSize(windowOverlapSpinBox->text().toInt());
+        qDebug() << "Sent overlap window size to : " << windowOverlapSpinBox->text().toInt();
+        commandCat->sendOverlapWindowSize();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    }
+}
+
+void CatWindow::on_sampling_freq_changed(){
+    if(windowSamplingFrequencySpinBox->text().toInt() != commandCat->getSamplingFreq()){
+        commandCat->setSamplingFreq(windowSamplingFrequencySpinBox->text().toInt());
+        qDebug() << "Sent decoding window size to : " << windowSamplingFrequencySpinBox->text().toInt();
+        commandCat->sendSamplingFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+
+        highpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2);
+        notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt());
+    }
+}
+
+void CatWindow::on_extend_stimulation_changed(){
+    if(extendStimSpinBox->text().toInt() != commandCat->getExtendStimulation()){
+        commandCat->setExtendStimulation(extendStimSpinBox->text().toInt());
+        qDebug() << "Sent extend stimulation to : " << extendStimSpinBox->text().toInt();
+        commandCat->sendExtendStimulation();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    }
+}
+
+void CatWindow::on_highpass_cutoff_freq_changed(){
+    if(highpassSpinBox->text().toInt() != commandCat->getHighpassCutoffFreq()){
+        commandCat->setHighpassCutoffFreq(highpassSpinBox->text().toInt());
+        qDebug() << "Sent highpass cutoff freq to : " << highpassSpinBox->text().toInt();
+        commandCat->sendHighpassCutoffFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+
+        lowpassSpinBox->setMaximum(highpassSpinBox->text().toInt()-1);
+    }
+}
+
+void CatWindow::on_lowpass_cutoff_freq_changed(){
+    if(lowpassSpinBox->text().toInt() != commandCat->getLowpassCutoffFreq()){
+        commandCat->setLowpassCutoffFreq(lowpassSpinBox->text().toInt());
+        qDebug() << "Sent lowpass cutoff freq to : " << lowpassSpinBox->text().toInt();
+        commandCat->sendLowpassCutoffFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    }
+}
+
+void CatWindow::on_notch_cutoff_freq_changed(){
+    if(notchSpinBox->text().toInt() != commandCat->getNotchCutoffFreq()){
+        commandCat->setNotchCutoffFreq(notchSpinBox->text().toInt());
+        qDebug() << "Sent notch cutoff freq to : " << notchSpinBox->text().toInt();
+        commandCat->sendNotchCutoffFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
     }
 }
 
