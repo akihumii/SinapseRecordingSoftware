@@ -20,6 +20,8 @@ void CatWindow::createLayout(){
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+
+    sendParameters();
 }
 
 QGroupBox *CatWindow::createMethodsGroup(){
@@ -288,6 +290,72 @@ void CatWindow::createStatusBar(){
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  //fixed window size
+}
+
+void CatWindow::sendParameters(){
+    int delay = 0;
+    for(int i = 0; i < 4; i++){
+        QTimer::singleShot((startDelay+delay+i*40), [=] {
+            commandCat->sendThreshold(i);
+            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+    }
+    delay += 160;
+    for(int i = 0; i < 4; i++){
+        QTimer::singleShot((startDelay+delay+i*40), [=] {
+            commandCat->sendThresholdPower(i);
+            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+    }
+    delay += 160;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendDecodingWindowSize();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendOverlapWindowSize();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendSamplingFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendExtendStimulation();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendHighpassCutoffFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendLowpassCutoffFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        commandCat->sendNotchCutoffFreq();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+        });
+    delay += 40;
+    QTimer::singleShot((startDelay+delay), [=] {
+        QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
+        });
+    delay += 40;
 }
 
 void CatWindow::on_threshold_changed(){

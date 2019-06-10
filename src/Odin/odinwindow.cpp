@@ -308,7 +308,7 @@ void OdinWindow::sendParameter(){
         });
     }
     QTimer::singleShot((STARTDELAY+720), [=] {
-        QMessageBox::information(this, "Done!", "Parameters have been sent...");
+        QMessageBox::information(this, "Done!", "Stimulator parameters have been sent...");
     });
     sendParameterButton->setEnabled(false);
     QTimer::singleShot((STARTDELAY+720), [=] {

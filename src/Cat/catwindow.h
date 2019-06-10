@@ -17,6 +17,8 @@ public:
     ~CatWindow();
 
     QLabel *statusBarLabel;
+public slots:
+
 private:
     CommandCat *commandCat;
 
@@ -50,8 +52,12 @@ private:
     QPushButton *trainingCancel;
     QPushButton *trainingSave;
 
+    int startDelay = 2000;
+
     void createLayout();
     void createStatusBar();
+
+    void sendParameters();
 
     char *lastSentCommand = new char[3];
 
