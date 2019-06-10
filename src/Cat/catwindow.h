@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
+#include "commandcat.h"
 #include <QtMath>
 
 namespace Cat {
@@ -17,6 +18,8 @@ public:
 
     QLabel *statusBarLabel;
 private:
+    CommandCat *commandCat;
+
     QStatusBar *statusBarMainWindow;
 
     QGroupBox *createMethodsGroup();
@@ -50,6 +53,14 @@ private:
     void createLayout();
     void createStatusBar();
 
+    char *lastSentCommand = new char[3];
+
+private slots:
+    void on_threshold_changed();
+    void on_threshold_power_Changed();
+
+signals:
+    void commandSent(char *bytes);
 };
 
 }

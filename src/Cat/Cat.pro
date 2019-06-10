@@ -26,9 +26,11 @@ INCLUDEPATH += $$PWD../common
 DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp \
-    catwindow.cpp
+    catwindow.cpp \
+    commandcat.cpp
 
 HEADERS  += \
-    catwindow.h
+    catwindow.h \
+    commandcat.h
 
 FORMS    +=

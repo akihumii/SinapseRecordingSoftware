@@ -29,6 +29,7 @@ TreeDialog::TreeDialog(){
     catGUI->setFixedSize(catGUI->sizeHint());
     catGUI->hide();
 
+    connect(catGUI, SIGNAL(commandSent(char*)), sylphxGUI, SLOT(sendParameter(char*)));
 }
 
 void TreeDialog::createLayout(){

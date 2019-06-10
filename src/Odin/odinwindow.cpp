@@ -42,9 +42,8 @@ void OdinWindow::createLayout(){
     paraLabels[3] = new QLabel(tr("Amplitude(uA): "));
     paraLabels[4] = new QLabel(tr("Pulse Duration(us): "));
     paraLabels[5] = new QLabel(tr("Frequency(Hz): "));
-    paraLabels[6] = new QLabel(tr("Thresholds (xEy): "));
 
-    for(int i = 0; i < 7; i++){
+    for(int i = 0; i < 6; i++){
         stimParaLayout[i] = new QHBoxLayout;
         paraLabels[i]->setMinimumWidth(100);
         stimParaLayout[i]->addWidget(paraLabels[i]);
@@ -87,24 +86,8 @@ void OdinWindow::createLayout(){
     connect(frequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_frequency_Changed()));
     stimParaLayout[5]->addWidget(frequencySpinBox);
 
-    for(int i = 0; i < 4; i++){
-        thresholdSpinBox[i] = new QSpinBox;
-        thresholdSpinBox[i]->setMinimum(0);
-        thresholdSpinBox[i]->setMaximum(99);
-        thresholdSpinBox[i]->setValue(1);
-        stimParaLayout[6]->addWidget(thresholdSpinBox[i]);
-        connect(thresholdSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_Changed()));
-
-        thresholdPowerSpinBox[i] = new QSpinBox;
-        thresholdPowerSpinBox[i]->setMinimum(-20);
-        thresholdPowerSpinBox[i]->setMaximum(10);
-        thresholdPowerSpinBox[i]->setValue(10);
-        stimParaLayout[6]->addWidget(thresholdPowerSpinBox[i]);
-        connect(thresholdPowerSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_power_Changed()));
-    }
-
     QVBoxLayout *stimParaMainLayout = new QVBoxLayout;
-    for(int i = 0; i < 7; i ++){
+    for(int i = 0; i < 6; i ++){
         stimParaMainLayout->addLayout(stimParaLayout[i]);
     }
 
@@ -537,34 +520,6 @@ void OdinWindow::on_frequency_Changed(){
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
 //        }
-    }
-}
-
-void OdinWindow::on_threshold_Changed(){
-    for(int i = 0; i < 4; i++){
-        if(thresholdSpinBox[i]->text().toInt() !=  commandOdin->getThreshold(i)){
-            commandOdin->setThreshold(i, thresholdSpinBox[i]->text().toInt());
-            qDebug() << "Set channel " << i << "threshold to : " << thresholdSpinBox[i]->text().toInt();
-//            if(start){
-                commandOdin->sendThreshold(i);
-                strcpy(lastSentCommand, commandOdin->getlastRpiCommand().data());
-                emit commandSent(lastSentCommand);
-//            }
-        }
-    }
-}
-
-void OdinWindow::on_threshold_power_Changed(){
-    for(int i = 0; i < 4; i++){
-        if(thresholdPowerSpinBox[i]->text().toInt() !=  commandOdin->getThresholdPower(i)){
-            commandOdin->setThresholdPower(i, thresholdPowerSpinBox[i]->text().toInt());
-            qDebug() << "Set channel " << i << "threshold power to : " << thresholdPowerSpinBox[i]->text().toInt();
-//            if(start){
-                commandOdin->sendThresholdPower(i);
-                strcpy(lastSentCommand, commandOdin->getlastRpiCommand().data());
-                emit commandSent(lastSentCommand);
-//            }
-        }
     }
 }
 

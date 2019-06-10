@@ -5,6 +5,7 @@ namespace Cat {
 CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
+    commandCat = new CommandCat;
     createLayout();
     createStatusBar();
 }
@@ -224,6 +225,7 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
         thresholdingSpinBox[i]->setMaximum(99);
         thresholdingSpinBox[i]->setValue(1);
         thresholdingSpinBoxLayout->addWidget(thresholdingSpinBox[i]);
+        connect(thresholdingSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_changed()));
 
         //E
         QLabel *powerLetter = new QLabel("E");
@@ -235,6 +237,7 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
         thresholdingPowerSpinBox[i]->setMaximum(10);
         thresholdingPowerSpinBox[i]->setValue(10);
         thresholdingSpinBoxLayout->addWidget(thresholdingPowerSpinBox[i]);
+        connect(thresholdingPowerSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_power_Changed()));
 
         thresholdingSubLayout[i]->addLayout(thresholdingSpinBoxLayout);
     }
@@ -255,6 +258,30 @@ void CatWindow::createStatusBar(){
     statusBarMainWindow = statusBar();
     statusBarMainWindow->addPermanentWidget(statusBarLabel, 1);
     statusBarMainWindow->setSizeGripEnabled(false);  //fixed window size
+}
+
+void CatWindow::on_threshold_changed(){
+    for(int i = 0; i < 4; i++){
+        if(thresholdingSpinBox[i]->text().toInt() != commandCat->getThreshold(i)){
+            commandCat->setThreshold(i, thresholdingSpinBox[i]->text().toInt());
+            qDebug() << "Sent channel " << i << "threshold power to : " << thresholdingSpinBox[i]->text().toInt();
+            commandCat->sendThreshold(i);
+            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+            emit commandSent(lastSentCommand);
+        }
+    }
+}
+
+void CatWindow::on_threshold_power_Changed(){
+    for(int i = 0; i < 4; i++){
+        if(thresholdingPowerSpinBox[i]->text().toInt() != commandCat->getThresholdPower(i)){
+            commandCat->setThresholdPower(i, thresholdingPowerSpinBox[i]->text().toInt());
+            qDebug() << "Sent channel " << i << "threshold power to : " << thresholdingPowerSpinBox[i]->text().toInt();
+            commandCat->sendThresholdPower(i);
+            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+            emit commandSent(lastSentCommand);
+        }
+    }
 }
 
 CatWindow::~CatWindow(){
