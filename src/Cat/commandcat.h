@@ -61,6 +61,7 @@ public:
     QByteArray getlastRpiCommand();
 
 private:
+    void appendRpiCommand(short data);
     int threshold[4] = {1, 1, 1, 1};
     int thresholdPower[4] = {10, 10, 10, 10};
     int decodingWindowSize = 200;

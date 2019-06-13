@@ -56,50 +56,59 @@ void CommandCat::sendThresholdPower(int channel){
 void CommandCat::sendDecodingWindowSize(){
     rpiCommand.clear();
     rpiCommand.append((const char) DECODING_WINDOW_SIZE);
-    rpiCommand.append((const char) getDecodingWindowSize());
+    appendRpiCommand((short) getDecodingWindowSize());
     qDebug() << "Send decoding window size: " << rpiCommand;
 }
 
 void CommandCat::sendOverlapWindowSize(){
     rpiCommand.clear();
     rpiCommand.append((const char) OVERLAP_WINDOW_SIZE);
-    rpiCommand.append((const char) getOverlapWindowSize());
+    appendRpiCommand((short) getOverlapWindowSize());
     qDebug() << "Send overlap window size: " << rpiCommand;
 }
 
 void CommandCat::sendSamplingFreq(){
     rpiCommand.clear();
     rpiCommand.append((const char) SAMPLING_FREQ);
-    rpiCommand.append((const char) getSamplingFreq());
+    appendRpiCommand((short) getSamplingFreq());
     qDebug() << "Send sampling frequency: " << rpiCommand;
 }
 
 void CommandCat::sendExtendStimulation(){
     rpiCommand.clear();
     rpiCommand.append((const char) EXTEND_STIMULATION);
-    rpiCommand.append((const char) getExtendStimulation());
+    appendRpiCommand((short) getExtendStimulation());
     qDebug() << "Send Extend Stimulation: " << rpiCommand;
 }
 
 void CommandCat::sendHighpassCutoffFreq(){
     rpiCommand.clear();
     rpiCommand.append((const char) HIGHPASS_CUTOFF_FREQ);
-    rpiCommand.append((const char) getHighpassCutoffFreq());
+    appendRpiCommand((short) getHighpassCutoffFreq());
     qDebug() << "Send highpass cutoff frequency: " << rpiCommand;
 }
 
 void CommandCat::sendLowpassCutoffFreq(){
     rpiCommand.clear();
     rpiCommand.append((const char) LOWPASS_CUTOFF_FREQ);
-    rpiCommand.append((const char) getLowpassCutoffFreq());
+    appendRpiCommand((short) getLowpassCutoffFreq());
     qDebug() << "Send lowpass cutoff frequency: " << rpiCommand;
 }
 
 void CommandCat::sendNotchCutoffFreq(){
     rpiCommand.clear();
     rpiCommand.append((const char) NOTCH_CUTOFF_FREQ);
-    rpiCommand.append((const char) getNotchCutoffFreq());
+    appendRpiCommand((short) getNotchCutoffFreq());
     qDebug() << "Send notch cutoff frequency: " << rpiCommand;
+}
+
+void CommandCat::appendRpiCommand(short data){
+    if(data != 0 && data % 256 == 0){  // to solve the issue where the ocmmand will be terminated at 0 while being written into socket
+        data += 1;
+    }
+    for(int i = 0; i != sizeof(data); i++){
+        rpiCommand.append((const char)((data & (0xFF << (i*8))) >> (i*8)));
+    }
 }
 
 void CommandCat::setThreshold(int channel, int value){

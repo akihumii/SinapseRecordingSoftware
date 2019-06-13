@@ -46,18 +46,26 @@ private:
     QSpinBox *notchSpinBox;
     QSpinBox *extendStimSpinBox;
 
+    QCheckBox *highpassCheckBox;
+    QCheckBox *lowpassCheckBox;
+    QCheckBox *notchCheckBox;
+
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
     QPushButton *trainingNext;
     QPushButton *trainingCancel;
     QPushButton *trainingSave;
 
-    int startDelay = 2000;
+    int startDelay = 3000;
 
     void createLayout();
     void createStatusBar();
 
     void sendParameters();
+    void sendHighpassParameters(int value);
+    void sendLowpassParameters(int value);
+    void sendNotchParameters(int value);
+    void sendFilteringParameters();
 
     char *lastSentCommand = new char[3];
 
@@ -69,8 +77,11 @@ private slots:
     void on_sampling_freq_changed();
     void on_extend_stimulation_changed();
     void on_highpass_cutoff_freq_changed();
+    void on_highpass_cutoff_freq_checkbox_changed();
     void on_lowpass_cutoff_freq_changed();
+    void on_lowpass_cutoff_freq_checkbox_changed();
     void on_notch_cutoff_freq_changed();
+    void on_notch_cutoff_freq_checkbox_changed();
 
 signals:
     void commandSent(char *bytes);

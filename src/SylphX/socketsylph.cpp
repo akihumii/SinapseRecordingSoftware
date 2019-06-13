@@ -39,7 +39,7 @@ void SocketSylph::writeCommand(QByteArray command){
 //    }
     if(this->isConnected()){
         socketAbstract->write(command);
-        qDebug() << "Sent command of a size" << command.size() << "via TCP socket: " << (quint8) command.at(0) << (quint8) command.at(1);
+        qDebug() << "Sent command of a size" << command.size() << "via TCP socket: " << (quint8) command.at(0) << (quint8) command.at(1) << (quint8) command.at(2);
     }
 }
 
