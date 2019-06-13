@@ -526,9 +526,16 @@ void CatWindow::sendFilteringParameters(){
     lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
     notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
 
-    QTimer::singleShot(0, [=] {sendHighpassParameters(highpassSpinBox->text().toInt());});
-    QTimer::singleShot(50, [=] {sendLowpassParameters(lowpassSpinBox->text().toInt());});
-    QTimer::singleShot(100, [=] {sendNotchParameters(notchSpinBox->text().toInt());});
+    QTimer::singleShot(0, [=] {
+        highpassCheckBox->isChecked()? sendHighpassParameters(highpassSpinBox->text().toInt()) : sendHighpassParameters(0);
+    });
+    QTimer::singleShot(50, [=] {
+        lowpassCheckBox->isChecked()? sendLowpassParameters(lowpassSpinBox->text().toInt()) : sendLowpassParameters(0);
+    });
+    QTimer::singleShot(100, [=] {
+        notchCheckBox->isChecked()? sendNotchParameters(notchSpinBox->text().toInt()) : sendNotchParameters(0);
+    });
+
 }
 
 CatWindow::~CatWindow(){
