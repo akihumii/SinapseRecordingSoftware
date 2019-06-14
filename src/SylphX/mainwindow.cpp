@@ -129,13 +129,13 @@ void MainWindow::createActions(){
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
-//    odinAction = new QAction(tr("&Odin Control Panel"));
-//    odinAction->setShortcut(tr("Ctrl+/"));
-//    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
+    odinAction = new QAction(tr("&Od&in Control Panel"));
+    odinAction->setShortcut(tr("Ctrl+I"));
+    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
 
-//    catAction = new QAction(tr("Cat Control Panel"));
-//    catAction->setShortcut(tr("Ctrl+T"));
-//    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
+    catAction = new QAction(tr("Ca&t Control Panel"));
+    catAction->setShortcut(tr("Ctrl+T"));
+    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
 
     disableStream = new QAction(tr("&Disable stream"));
     disableStream->setShortcut(tr("Ctrl+D"));
@@ -206,9 +206,9 @@ void MainWindow::createActions(){
 
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
-//    fileMenu->addAction(odinAction);
-//    fileMenu->addAction(catAction);
-//    fileMenu->addSeparator();
+    fileMenu->addAction(odinAction);
+    fileMenu->addAction(catAction);
+    fileMenu->addSeparator();
     fileMenu->addAction(disableStream);
     fileMenu->addSeparator();
     fileMenu->addAction(dynoAction);
@@ -475,11 +475,11 @@ void MainWindow::on_chooseDirectory_triggered(){
 }
 
 void MainWindow::on_odin_triggered(){
-//    x->show();
+    emit showOdinSignal();
 }
 
 void MainWindow::on_cat_triggered(){
-//    catGUI->show();
+    emit showCatSignal();
 }
 
 void MainWindow::on_filterConfig_trigger(){

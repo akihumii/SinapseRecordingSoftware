@@ -18,6 +18,7 @@ OdinWindow::OdinWindow(){
     connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
 
     createLayout();
+    createActions();
     createStatusBar();
     connectOdin();
 
@@ -32,6 +33,20 @@ OdinWindow::OdinWindow(){
             if (ret == QMessageBox::Cancel)
                 return;
     }
+}
+
+void OdinWindow::createActions(){
+    sylphxAction = new QAction(tr("SylphX Control Panel"));
+    sylphxAction->setShortcut(tr("Ctrl+R"));
+    connect(sylphxAction, SIGNAL(triggered(bool)), this, SLOT(on_sylphx_triggered()));
+
+    catAction = new QAction(tr("Ca&t Control Panel"));
+    catAction->setShortcut(tr("Ctrl+T"));
+    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
+
+    fileMenu = menuBar()->addMenu(tr("G&UI"));
+    fileMenu->addAction(sylphxAction);
+    fileMenu->addAction(catAction);
 }
 
 void OdinWindow::createLayout(){
@@ -185,7 +200,7 @@ void OdinWindow::createLayout(){
     sendButton = new QPushButton(tr("Start Odin!"));
     connect(sendButton, SIGNAL(clicked(bool)), this, SLOT(sendCommand()));
     modeButton = new QPushButton(tr("H"));
-    modeButton->setShortcut(QKeySequence(tr("Ctrl+T")));
+    modeButton->setShortcut(QKeySequence(tr("Ctrl+Q")));
     connect(modeButton, SIGNAL(clicked(bool)), this, SLOT(on_currentMode_clicked()));
     modeButton->setMaximumWidth(20);
 //    modeButton->setIcon(QIcon(QDir::currentPath()+"/recordStart.png"));
@@ -654,4 +669,11 @@ void OdinWindow::increaseCurrent(){
     tcpServerConnection->close();
 }
 
+void OdinWindow::on_sylphx_triggered(){
+    emit showSylphXSignal();
+}
+
+void OdinWindow::on_cat_triggered(){
+    emit showCatSignal();
+}
 }

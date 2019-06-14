@@ -73,6 +73,8 @@ private:
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
     QMenu *fileMenu;
+    QAction *sylphxAction;
+    QAction *catAction;
 
     Led *sentLED;
     Led *receivedLED;
@@ -94,6 +96,7 @@ private:
     void createLayout();
     void createStatusBar();
 private slots:
+    void createActions();
     void sendCommand();
     void on_currentMode_clicked();
     void on_thresholdEnable_toggled();
@@ -116,6 +119,8 @@ private slots:
     void on_channelSelectNone_clicked();
     void on_thresholdSelectAll_clicked();
     void on_thresholdSelectNone_clicked();
+    void on_sylphx_triggered();
+    void on_cat_triggered();
 
 signals:
     void commandSent(char *bytes);
@@ -123,6 +128,8 @@ signals:
     void lowerThresholdEditted(double value);
     void debounceEditted(int value);
     void amplitudeChanged(double *amplitudes);
+    void showSylphXSignal();
+    void showCatSignal();
 };
 
 }

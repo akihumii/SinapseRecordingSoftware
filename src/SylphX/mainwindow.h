@@ -224,6 +224,10 @@ private slots:
     void sendParameter(char *bytes);
 
     void about();
+
+signals:
+    void showOdinSignal();
+    void showCatSignal();
 };
 
 }
