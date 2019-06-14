@@ -248,30 +248,36 @@ bool OdinWindow::connectOdin(){
 }
 
 void OdinWindow::sendParameter(){
+    int delay = 40;
+
     for(int i = 0; i < 4; i++){  // send pulse duration
-        QTimer::singleShot((STARTDELAY+40+i*40), [=] {
+        QTimer::singleShot((STARTDELAY+delay+i*delayInterval), [=] {
             commandOdin->sendPulseDuration(i);
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
         });
     }
+    delay += 4*delayInterval;
     for(int i = 0; i < 4; i++){  // send amplitude
-        QTimer::singleShot((STARTDELAY+200+i*40), [=] {
+        QTimer::singleShot((STARTDELAY+delay+i*delayInterval), [=] {
             commandOdin->sendAmplitude(i);
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
         });
     }
-    QTimer::singleShot((STARTDELAY+360), [=] {  // send frequency
+    delay += 4*delayInterval;
+    QTimer::singleShot((STARTDELAY+delay), [=] {  // send frequency
         commandOdin->sendFrequency();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
     });
-    QTimer::singleShot((STARTDELAY+400), [=] {  // send step size utilzing sending step size increase
+    delay += delayInterval;
+    QTimer::singleShot((STARTDELAY+delay), [=] {  // send step size utilzing sending step size increase
         commandOdin->sendStepSizeIncrease();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
     });
+    delay += delayInterval;
 //        QTimer::singleShot((STARTDELAY+360), [=] {
 //            commandOdin->sendThresholdEnable();
 //        });
@@ -293,27 +299,29 @@ void OdinWindow::sendParameter(){
 //        strcpy(rpiCommand, commandOdin->getlastRpiCommand().data());
 //        emit commandSent(rpiCommand);
 //    });
-    for(int i = 0; i < 4; i++){
-        QTimer::singleShot((STARTDELAY+440+i*40), [=] {
-            commandOdin->sendThreshold(i);
-            strcpy(lastSentCommand, commandOdin->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
-        });
-    }
-    for(int i = 0; i < 4; i++){
-        QTimer::singleShot((STARTDELAY+600+i*40), [=] {
-            commandOdin->sendThresholdPower(i);
-            strcpy(lastSentCommand, commandOdin->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
-        });
-    }
-    QTimer::singleShot((STARTDELAY+720), [=] {
+//    for(int i = 0; i < 4; i++){
+//        QTimer::singleShot((STARTDELAY+440+i*40), [=] {
+//            commandOdin->sendThreshold(i);
+//            strcpy(lastSentCommand, commandOdin->getlastRpiCommand().data());
+//            emit commandSent(lastSentCommand);
+//        });
+//    }
+//    for(int i = 0; i < 4; i++){
+//        QTimer::singleShot((STARTDELAY+600+i*40), [=] {
+//            commandOdin->sendThresholdPower(i);
+//            strcpy(lastSentCommand, commandOdin->getlastRpiCommand().data());
+//            emit commandSent(lastSentCommand);
+//        });
+//    }
+    QTimer::singleShot((STARTDELAY+delay), [=] {
         QMessageBox::information(this, "Done!", "Stimulator parameters have been sent...");
     });
+    delay += delayInterval;
     sendParameterButton->setEnabled(false);
-    QTimer::singleShot((STARTDELAY+720), [=] {
+    QTimer::singleShot((STARTDELAY+delay), [=] {
         sendParameterButton->setEnabled(true);
     });
+    delay += delayInterval;
 }
 
 void OdinWindow::sendCommand(){
@@ -435,7 +443,7 @@ void OdinWindow::on_channelEnable_toggled(){
 
 void OdinWindow::on_channelSelectAll_clicked(){
     for(int i = 0; i < 4; i ++){
-        QTimer::singleShot((i*40), [=] {
+        QTimer::singleShot((i*delayInterval), [=] {
             channelEnable[i]->setChecked(true);
             commandOdin->setChannelEnabled(i, true);
         });
@@ -447,7 +455,7 @@ void OdinWindow::on_channelSelectAll_clicked(){
 
 void OdinWindow::on_channelSelectNone_clicked(){
     for(int i = 0; i < 4; i ++){
-        QTimer::singleShot((i*40), [=] {
+        QTimer::singleShot((i*delayInterval), [=] {
             channelEnable[i]->setChecked(false);
             commandOdin->setChannelEnabled(i, false);
         });

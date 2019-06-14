@@ -55,6 +55,9 @@ public slots:
     void setLowerThreshold(double value);
     void setLastSentBytes(char *bytes);
     void setLastSentAmplitudes(double *amplitudes);
+    void sendHighpassFilter(QVector<double> *value);
+    void sendLowpassFilter(QVector<double> *value);
+    void sendNotchFilter(QVector<double> *value);
 
 protected:
     QVector<double> X_axis;

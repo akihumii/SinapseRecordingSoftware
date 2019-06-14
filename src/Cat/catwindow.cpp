@@ -6,7 +6,12 @@ CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
     commandCat = new CommandCat;
+    highpassValueSets = new QVector<double>;
+    lowpassValueSets = new QVector<double>;
+    notchValueSets = new QVector<double>;
     createLayout();
+//    highpassCheckBox->setChecked(true);
+//    notchCheckBox->setChecked(true);
     createStatusBar();
 }
 
@@ -150,7 +155,7 @@ QGroupBox *CatWindow::createParametersGroup(){
     windowOverlapSpinBox->setMaximumWidth(windowWidth);
     windowOverlapSpinBox->setMinimum(0);
     windowOverlapSpinBox->setMaximum(9999);
-    windowOverlapSpinBox->setValue(80);
+    windowOverlapSpinBox->setValue(50);
     windowSubLayout[1] = new QHBoxLayout;
     windowSubLayout[1]->addWidget(windowOverlapLabel);
     windowSubLayout[1]->addWidget(windowOverlapSpinBox);
@@ -190,13 +195,12 @@ QGroupBox *CatWindow::createParametersGroup(){
     QHBoxLayout *filteringSubLayout[3];
     QLabel *highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
     highpassCheckBox = new QCheckBox;
-    highpassCheckBox->setChecked(true);
     highpassSpinBox = new QSpinBox;
     highpassSpinBox->setMaximumWidth(windowWidth);
     highpassSpinBox->setMinimum(0);
     highpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
     highpassSpinBox->setValue(100);
-    highpassSpinBox->setMaximumWidth(windowWidth);
+    highpassSpinBox->setEnabled(false);
     filteringSubLayout[0] = new QHBoxLayout;
     filteringSubLayout[0]->addWidget(highpassCheckBox);
     filteringSubLayout[0]->addWidget(highpassLabel);
@@ -221,12 +225,12 @@ QGroupBox *CatWindow::createParametersGroup(){
 
     QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
     notchCheckBox = new QCheckBox;
-    notchCheckBox->setChecked(true);
     notchSpinBox = new QSpinBox;
     notchSpinBox->setMaximumWidth(windowWidth);
     notchSpinBox->setMinimum(0);
     notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
     notchSpinBox->setValue(50);
+    notchSpinBox->setEnabled(false);
     filteringSubLayout[2] = new QHBoxLayout;
     filteringSubLayout[2]->addWidget(notchCheckBox);
     filteringSubLayout[2]->addWidget(notchLabel);
@@ -306,68 +310,69 @@ void CatWindow::createStatusBar(){
 
 void CatWindow::sendParameters(){
     int delay = 0;
-    for(int i = 0; i < 4; i++){
-        QTimer::singleShot((startDelay+delay+i*40), [=] {
+    int delayInterval = 60;
+    for(int i = 0; i < 4; i++){  // send threhsold digits
+        QTimer::singleShot((startDelay+delay+i*delayInterval), [=] {
             commandCat->sendThreshold(i);
             strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
             emit commandSent(lastSentCommand);
         });
     }
-    delay += 160;
-    for(int i = 0; i < 4; i++){
-        QTimer::singleShot((startDelay+delay+i*40), [=] {
+    delay += 4*delayInterval;
+    for(int i = 0; i < 4; i++){  // send threshold power
+        QTimer::singleShot((startDelay+delay+i*delayInterval), [=] {
             commandCat->sendThresholdPower(i);
             strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
             emit commandSent(lastSentCommand);
         });
     }
-    delay += 160;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += 4*delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send decoding window size
         commandCat->sendDecodingWindowSize();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send overlap window size
         commandCat->sendOverlapWindowSize();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send sampling freq
         commandCat->sendSamplingFreq();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send extend stimulation
         commandCat->sendExtendStimulation();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send highpass freq
         commandCat->sendHighpassCutoffFreq();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send lowpass freq
         commandCat->sendLowpassCutoffFreq();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
-    QTimer::singleShot((startDelay+delay), [=] {
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  //send notch freq
         commandCat->sendNotchCutoffFreq();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
         emit commandSent(lastSentCommand);
         });
-    delay += 40;
+    delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {
         QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
         });
-    delay += 40;
+    delay += delayInterval;
 }
 
 void CatWindow::on_threshold_changed(){
@@ -455,6 +460,7 @@ void CatWindow::sendHighpassParameters(int value){
 void CatWindow::on_highpass_cutoff_freq_changed(){
     if(highpassSpinBox->text().toInt() != commandCat->getHighpassCutoffFreq()){
         sendHighpassParameters(highpassSpinBox->text().toInt());
+        sendHighpassSignal(highpassSpinBox->text().toInt());
     }
 }
 
@@ -466,6 +472,7 @@ void CatWindow::on_highpass_cutoff_freq_checkbox_changed(){
     else{
         highpassSpinBox->setEnabled(false);
         sendHighpassParameters(0);
+        sendHighpassSignal(0);
     }
 }
 
@@ -480,6 +487,7 @@ void CatWindow::sendLowpassParameters(int value){
 void CatWindow::on_lowpass_cutoff_freq_changed(){
     if(lowpassSpinBox->text().toInt() != commandCat->getLowpassCutoffFreq()){
         sendLowpassParameters(lowpassSpinBox->text().toInt());
+        sendLowpassSignal(lowpassSpinBox->text().toInt());
     }
 }
 
@@ -491,6 +499,7 @@ void CatWindow::on_lowpass_cutoff_freq_checkbox_changed(){
     else{
         lowpassSpinBox->setEnabled(false);
         sendLowpassParameters(0);
+        sendLowpassSignal(0);
     }
 }
 
@@ -506,6 +515,7 @@ void CatWindow::sendNotchParameters(int value){
 void CatWindow::on_notch_cutoff_freq_changed(){
     if(notchSpinBox->text().toInt() != commandCat->getNotchCutoffFreq()){
         sendNotchParameters(notchSpinBox->text().toInt());
+        sendNotchSignal(notchSpinBox->text().toInt());
     }
 }
 
@@ -517,6 +527,7 @@ void CatWindow::on_notch_cutoff_freq_checkbox_changed(){
     else{
         notchSpinBox->setEnabled(false);
         sendNotchParameters(0);
+        sendNotchSignal(0);
     }
 }
 
@@ -527,15 +538,47 @@ void CatWindow::sendFilteringParameters(){
     notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
 
     QTimer::singleShot(0, [=] {
-        highpassCheckBox->isChecked()? sendHighpassParameters(highpassSpinBox->text().toInt()) : sendHighpassParameters(0);
+        int highpassValue;
+        highpassCheckBox->isChecked()? highpassValue = highpassSpinBox->text().toInt() : highpassValue = 0;
+        sendHighpassParameters(highpassValue);
+        sendHighpassSignal(highpassValue);
     });
-    QTimer::singleShot(50, [=] {
-        lowpassCheckBox->isChecked()? sendLowpassParameters(lowpassSpinBox->text().toInt()) : sendLowpassParameters(0);
+    QTimer::singleShot(150, [=] {
+        int lowpassValue;
+        lowpassCheckBox->isChecked()? lowpassValue = lowpassSpinBox->text().toInt() : lowpassValue = 0;
+        sendLowpassParameters(lowpassValue);
+        sendLowpassSignal(lowpassValue);
     });
-    QTimer::singleShot(100, [=] {
-        notchCheckBox->isChecked()? sendNotchParameters(notchSpinBox->text().toInt()) : sendNotchParameters(0);
+    QTimer::singleShot(300, [=] {
+        int notchValue;
+        notchCheckBox->isChecked()? notchValue = notchSpinBox->text().toInt() : notchValue = 0;
+        sendNotchParameters(notchValue);
+        sendNotchSignal(notchValue);
     });
+}
 
+void CatWindow::sendHighpassSignal(double highpassValue){
+    highpassValueSets->clear();
+    highpassValueSets->append((double) highpassValue);
+    highpassValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
+    highpassValueSets->append((double) highpassCheckBox->isChecked());
+    emit highpassSent(highpassValueSets);
+}
+
+void CatWindow::sendLowpassSignal(double lowpassValue){
+    lowpassValueSets->clear();
+    lowpassValueSets->append((double) lowpassValue);
+    lowpassValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
+    lowpassValueSets->append((double) lowpassCheckBox->isChecked());
+    emit lowpassSent(lowpassValueSets);
+}
+
+void CatWindow::sendNotchSignal(double notchValue){
+    notchValueSets->clear();
+    notchValueSets->append((double) notchValue);
+    notchValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
+    notchValueSets->append((double) notchCheckBox->isChecked());
+    emit notchSent(notchValueSets);
 }
 
 CatWindow::~CatWindow(){

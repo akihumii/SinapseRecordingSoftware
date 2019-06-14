@@ -240,6 +240,21 @@ void Data::setLowerThreshold(double value){
     lowerThreshold = value;
 }
 
+void Data::sendHighpassFilter(QVector<double> *value){
+    setHighpassFilter(value->at(0), value->at(1));
+    setHighpassFilterEnabled((bool) value->at(2));
+}
+
+void Data::sendLowpassFilter(QVector<double> *value){
+    setLowpassFilter(value->at(0), value->at(1));
+    setLowpassFilterEnabled((bool) value->at(2));
+}
+
+void Data::sendNotchFilter(QVector<double> *value){
+    setNotchFilter(value->at(0), 20.0, value->at(1));
+    setNotchFilterEnabled((bool) value->at(2));
+}
+
 int Data::getDebounce(){
     return debounce;
 }

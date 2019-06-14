@@ -56,6 +56,10 @@ private:
     QPushButton *trainingCancel;
     QPushButton *trainingSave;
 
+    QVector<double> *highpassValueSets = new QVector<double>;
+    QVector<double> *lowpassValueSets = new QVector<double>;
+    QVector<double> *notchValueSets = new QVector<double>;
+
     int startDelay = 3000;
 
     void createLayout();
@@ -66,6 +70,10 @@ private:
     void sendLowpassParameters(int value);
     void sendNotchParameters(int value);
     void sendFilteringParameters();
+
+    void sendHighpassSignal(double highpassValue);
+    void sendLowpassSignal(double lowpassValue);
+    void sendNotchSignal(double notchValue);
 
     char *lastSentCommand = new char[3];
 
@@ -85,6 +93,9 @@ private slots:
 
 signals:
     void commandSent(char *bytes);
+    void highpassSent(QVector<double> *values);
+    void lowpassSent(QVector<double> *values);
+    void notchSent(QVector<double> *values);
 };
 
 }

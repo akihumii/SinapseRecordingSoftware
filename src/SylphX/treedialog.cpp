@@ -30,6 +30,9 @@ TreeDialog::TreeDialog(){
     catGUI->hide();
 
     connect(catGUI, SIGNAL(commandSent(char*)), sylphxGUI, SLOT(sendParameter(char*)));
+    connect(catGUI, SIGNAL(highpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendHighpassFilter(QVector<double>*)));
+    connect(catGUI, SIGNAL(lowpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendLowpassFilter(QVector<double>*)));
+    connect(catGUI, SIGNAL(notchSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendNotchFilter(QVector<double>*)));
 }
 
 void TreeDialog::createLayout(){
