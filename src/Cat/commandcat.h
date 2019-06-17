@@ -59,6 +59,9 @@ public:
     void sendNotchCutoffFreq();
 
     QByteArray getlastRpiCommand();
+    void updateRpiCommand(char *data);
+
+public slots:
 
 private:
     void appendRpiCommand(short data);
@@ -73,6 +76,10 @@ private:
     int notchCutoffFreq = 50;
 
     QByteArray rpiCommand;
+
+signals:
+    void appendCommandSignal(short data);
+
 };
 
 }

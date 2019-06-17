@@ -18,6 +18,7 @@ public:
 
     QLabel *statusBarLabel;
 public slots:
+    void setRpiCommand(char *data);
 
 private:
     CommandCat *commandCat;

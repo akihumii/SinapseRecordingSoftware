@@ -596,6 +596,12 @@ void CatWindow::sendNotchSignal(double notchValue){
     emit notchSent(notchValueSets);
 }
 
+void CatWindow::setRpiCommand(char *data){
+    commandCat->updateRpiCommand(data);
+    strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+    emit commandSent(lastSentCommand);
+}
+
 void CatWindow::on_odin_triggered(){
     emit showOdinSignal();
 }

@@ -25,7 +25,7 @@ void CommandCat::sendThreshold(int channel){
             break;
         }
     }
-    rpiCommand.append((const char) getThreshold(channel));
+    appendRpiCommand((short) getThreshold(channel));
     qDebug() << "Sent thresholds: " << rpiCommand;
 }
 
@@ -49,7 +49,7 @@ void CommandCat::sendThresholdPower(int channel){
             break;
         }
     }
-    rpiCommand.append((const char) getThresholdPower(channel));
+    appendRpiCommand((short) getThresholdPower(channel));
     qDebug() << "Sent threshold power: " << rpiCommand ;
 }
 
@@ -106,9 +106,20 @@ void CommandCat::appendRpiCommand(short data){
     if(data != 0 && data % 256 == 0){  // to solve the issue where the ocmmand will be terminated at 0 while being written into socket
         data += 1;
     }
-    for(int i = 0; i != sizeof(data); i++){
-        rpiCommand.append((const char)((data & (0xFF << (i*8))) >> (i*8)));
+    rpiCommand.append((const char)((data & (0xFF << (0*8))) >> (0*8)));
+    if(sizeof(data) > 1){
+        rpiCommand.append((const char)((data & (0xFF << (1*8))) >> (1*8)));
     }
+    else{
+        rpiCommand.append((const char) 0);  // can set to other value if it'll still terminate at zero
+    }
+}
+
+void CommandCat::updateRpiCommand(char *data){
+    rpiCommand.clear();
+    rpiCommand.append((const char) data[0]);
+    rpiCommand.append((const char) data[1]);
+    rpiCommand.append((const char) 1);
 }
 
 void CommandCat::setThreshold(int channel, int value){
