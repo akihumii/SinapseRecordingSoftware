@@ -35,6 +35,8 @@ TreeDialog::TreeDialog(){
     connect(catGUI, SIGNAL(highpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendHighpassFilter(QVector<double>*)));
     connect(catGUI, SIGNAL(lowpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendLowpassFilter(QVector<double>*)));
     connect(catGUI, SIGNAL(notchSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendNotchFilter(QVector<double>*)));
+    connect(catGUI, SIGNAL(showOdinSignal()), this, SLOT(on_stimulatorGUI_clicked()));
+    connect(catGUI, SIGNAL(showSylphSignal()), this, SLOT(on_recordingGUI_clicked()));
 
     connect(this, SIGNAL(sendParameters()), odinGUI, SLOT(sendParameter()));
 

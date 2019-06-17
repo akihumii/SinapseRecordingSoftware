@@ -23,6 +23,9 @@ private:
     CommandCat *commandCat;
 
     QStatusBar *statusBarMainWindow;
+    QMenu *fileMenu;
+    QAction *odinAction;
+    QAction *sylphAction;
 
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
@@ -64,6 +67,7 @@ private:
 
     void createLayout();
     void createStatusBar();
+    void createActions();
 
     void sendParameters();
     void sendHighpassParameters(int value);
@@ -90,12 +94,16 @@ private slots:
     void on_lowpass_cutoff_freq_checkbox_changed();
     void on_notch_cutoff_freq_changed();
     void on_notch_cutoff_freq_checkbox_changed();
+    void on_odin_triggered();
+    void on_sylph_triggered();
 
 signals:
     void commandSent(char *bytes);
     void highpassSent(QVector<double> *values);
     void lowpassSent(QVector<double> *values);
     void notchSent(QVector<double> *values);
+    void showOdinSignal();
+    void showSylphSignal();
 };
 
 }

@@ -10,6 +10,7 @@ CatWindow::CatWindow(){
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
     createLayout();
+    createActions();
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
     createStatusBar();
@@ -308,6 +309,20 @@ void CatWindow::createStatusBar(){
     statusBarMainWindow->setSizeGripEnabled(false);  //fixed window size
 }
 
+void CatWindow::createActions(){
+    odinAction = new QAction(tr("Od&in Control Panel"));
+    odinAction->setShortcut(tr("Ctrl+I"));
+    connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
+
+    sylphAction = new QAction(tr("Sylph Control Panel"));
+    sylphAction->setShortcut(tr("Ctrl+R"));
+    connect(sylphAction, SIGNAL(triggered(bool)), this, SLOT(on_sylph_triggered()));
+
+    fileMenu = menuBar()->addMenu(tr("G&UI"));
+    fileMenu->addAction(odinAction);
+    fileMenu->addAction(sylphAction);
+}
+
 void CatWindow::sendParameters(){
     int delay = 0;
     int delayInterval = 60;
@@ -579,6 +594,14 @@ void CatWindow::sendNotchSignal(double notchValue){
     notchValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
     notchValueSets->append((double) notchCheckBox->isChecked());
     emit notchSent(notchValueSets);
+}
+
+void CatWindow::on_odin_triggered(){
+    emit showOdinSignal();
+}
+
+void CatWindow::on_sylph_triggered(){
+    emit showSylphSignal();
 }
 
 CatWindow::~CatWindow(){
