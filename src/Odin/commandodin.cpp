@@ -40,7 +40,7 @@ void CommandOdin::sendCommand(){
 
 void CommandOdin::sendStart(){
     outgoingCommand.clear();
-    outgoingCommand.append((const char) 0xF8);
+    outgoingCommand.append((const char) START_STIMULATION);
     outgoingCommand.append((const char) 0xF8);
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(outgoingCommand);
@@ -49,9 +49,15 @@ void CommandOdin::sendStart(){
     socketOdin->writeCommand(outgoingCommand);
 }
 
+void CommandOdin::sendStartFlag(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) START_STIMULATION);
+    outgoingCommand.append((const char) 100);
+}
+
 void CommandOdin::sendStop(){
     outgoingCommand.clear();
-    outgoingCommand.append((const char) 0x8F);
+    outgoingCommand.append((const char) STOP_STIMULATION);
     outgoingCommand.append((const char) 0x8F);
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(outgoingCommand);

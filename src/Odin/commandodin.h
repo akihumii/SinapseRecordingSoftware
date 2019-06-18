@@ -8,6 +8,8 @@
 namespace Odin {
 
 typedef enum ADDRESS{
+    START_STIMULATION =0xF8,
+    STOP_STIMULATION = 0x8F,
     AMPLITUDE_CHN1 = 0xF1,
     AMPLITUDE_CHN2 = 0xF2,
     AMPLITUDE_CHN3 = 0xF3,
@@ -55,6 +57,7 @@ public:
     int getThreshold(int channel);
     int getThresholdPower(int channel);
     void sendStart();
+    void sendStartFlag();
     void sendStop();
     void sendAmplitude(int channel);
     void sendPulseDuration(int channel);

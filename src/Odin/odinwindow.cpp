@@ -343,27 +343,26 @@ void OdinWindow::sendParameter(){
 }
 
 void OdinWindow::sendCommand(){
-    QTimer::singleShot((STARTDELAY+440), [=] {
+    sendButton->setEnabled(false);
+    QTimer::singleShot((STARTDELAY+1000), [=] {
         start = !start;
+        sendButton->setEnabled(true);
     });
     if(!start){
+        int delay = 40;
         commandOdin->sendStart();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
-        QTimer::singleShot((STARTDELAY+360), [=] {  // send frequency
-            commandOdin->sendFrequency();
-            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
-            emit commandSent(lastSentCommand);
-        });
         for(int i = 0; i < 4; i++){  // send pulse duration
-            QTimer::singleShot((STARTDELAY+40+i*40), [=] {
+            QTimer::singleShot((STARTDELAY+delay+i*40), [=] {
                     commandOdin->sendPulseDuration(i);
                     strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
                     emit commandSent(lastSentCommand);
             });
         }
+        delay += 4*40;
         for(int i = 0; i < 4; i++){  // send amplitudes
-            QTimer::singleShot((STARTDELAY+200+i*40), [=] {
+            QTimer::singleShot((STARTDELAY+delay+i*60), [=] {
                 commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
                 qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
 
@@ -372,10 +371,18 @@ void OdinWindow::sendCommand(){
                 emit commandSent(lastSentCommand);
             });
         }
+        delay += 4*60;
 //        QTimer::singleShot((STARTDELAY+360), [=] {
 //            commandOdin->sendThresholdEnable();
 //        });
-        QTimer::singleShot((STARTDELAY+400), [=] {  // send channel enable
+
+        QTimer::singleShot((STARTDELAY+delay), [=] {  // send frequency
+            commandOdin->sendFrequency();
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+        delay += delayInterval;
+        QTimer::singleShot((STARTDELAY+delay), [=] {  // send channel enable
             for(int i = 0; i < 4; i++){
                 commandOdin->setChannelEnabled(i, channelEnable[i]->isChecked());
                 qDebug() << "Setting Channel Enable for channel " << i+1 << channelEnable[i]->isChecked();
@@ -383,9 +390,17 @@ void OdinWindow::sendCommand(){
             commandOdin->sendChannelEnable();
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
+
         });
+        delay += delayInterval;
+        QTimer::singleShot((STARTDELAY+delay), [=] {  // send start flag
+            commandOdin->sendStartFlag();
+            strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+            emit commandSent(lastSentCommand);
+        });
+        delay += delayInterval;
         sendButton->setText("Stop Odin!");
-        QTimer::singleShot((STARTDELAY+445), [=] {
+        QTimer::singleShot((STARTDELAY+delay), [=] {
             if(delayEnabledCheckBox->isChecked() && start){
                 loopingThread->delay = delaySpinBox->value()*1000;
                 loopingThread->start();
@@ -403,7 +418,7 @@ void OdinWindow::sendCommand(){
             delayEnabledCheckBox->setChecked(false);
 
             for(int i = 0; i < 4; i++){  // send amplitudes
-                QTimer::singleShot((550+i*40), [=] {
+                QTimer::singleShot((550+i*delayInterval), [=] {
                     commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
                     qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
 
@@ -418,12 +433,10 @@ void OdinWindow::sendCommand(){
 
 void OdinWindow::pauseOdin(){
     for(int i = 0; i < 4; i++){
-        QTimer::singleShot((i*delayInterval), [=] {
-            commandOdin->setChannelEnabled(i, false);
-            qDebug() << "Setting Channel Enable for channel " << i+1 << false;
-//            thresholdEnable[i]->setChecked(false);
-//            channelEnable[i]->setChecked(false);
-        });
+        commandOdin->setChannelEnabled(i, false);
+        qDebug() << "Setting Channel Enable for channel " << i+1 << false;
+//        thresholdEnable[i]->setChecked(false);
+//        channelEnable[i]->setChecked(false);
     }
     commandOdin->sendChannelEnable();
     strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
