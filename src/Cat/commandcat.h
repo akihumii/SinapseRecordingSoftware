@@ -20,7 +20,12 @@ typedef enum ADDRESS{
     HIGHPASS_CUTOFF_FREQ = 0xD7,
     LOWPASS_CUTOFF_FREQ = 0xD8,
     NOTCH_CUTOFF_FREQ = 0xD9,
-    EXTEND_STIMULATION = 0xDA
+    EXTEND_STIMULATION = 0xDA,
+    CLASSIFY_DIMENSION = 0xDB,
+    CLOSED_LOOP = 0xDC,
+    RESET_FLAG = 0xDD,
+    STIMULATION_FLAG = 0xDE,
+    SAVING_FLAG = 0xDF
 
 } ADDRESS;
 
@@ -39,6 +44,8 @@ public:
     void setHighpassCutoffFreq(int value);
     void setLowpassCutoffFreq(int value);
     void setNotchCutoffFreq(int value);
+    void setSMChannel(int channel, int value);
+    void setStartStimulation(bool flag);
     int getThreshold(int channel);
     int getThresholdPower(int channel);
     int getDecodingWindowSize();
@@ -48,6 +55,8 @@ public:
     int getHighpassCutoffFreq();
     int getLowpassCutoffFreq();
     int getNotchCutoffFreq();
+    int getSMChannel();
+    int getStartStimulation();
     void sendThreshold(int channel);
     void sendThresholdPower(int channel);
     void sendDecodingWindowSize();
@@ -57,6 +66,8 @@ public:
     void sendHighpassCutoffFreq();
     void sendLowpassCutoffFreq();
     void sendNotchCutoffFreq();
+    void sendSMChannel();
+    void sendStartStimulation();
 
     QByteArray getlastRpiCommand();
     void updateRpiCommand(char *data);
@@ -74,6 +85,8 @@ private:
     int highpassCutoffFreq = 100;
     int lowpassCutoffFreq = 0;
     int notchCutoffFreq = 50;
+    int SMChannel[2] = {1, 0};
+    bool startStimulationFlag = false;
 
     QByteArray rpiCommand;
 

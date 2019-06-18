@@ -33,6 +33,7 @@ private:
     QGroupBox *createSettingsGroup();
     QGroupBox *createTrainingGroup();
     QGroupBox *createParametersGroup();
+    QHBoxLayout *createStartButton();
 
     QLabel *trainingSaveDir;
 
@@ -59,6 +60,7 @@ private:
     QPushButton *trainingNext;
     QPushButton *trainingCancel;
     QPushButton *trainingSave;
+    QPushButton *startButton;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -81,8 +83,10 @@ private:
     void sendNotchSignal(double notchValue);
 
     char *lastSentCommand = new char[3];
+    bool startStimulationFlag = false;
 
 private slots:
+    void on_sm_channel_changed();
     void on_threshold_changed();
     void on_threshold_power_changed();
     void on_decoding_window_size_changed();
@@ -97,6 +101,7 @@ private slots:
     void on_notch_cutoff_freq_checkbox_changed();
     void on_odin_triggered();
     void on_sylph_triggered();
+    void on_start_changed();
 
 signals:
     void commandSent(char *bytes);

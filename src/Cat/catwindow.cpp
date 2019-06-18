@@ -23,6 +23,7 @@ void CatWindow::createLayout(){
     mainLayout->addWidget(createSettingsGroup());
     mainLayout->addWidget(createTrainingGroup());
     mainLayout->addWidget(createParametersGroup());
+    mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
@@ -61,9 +62,11 @@ QGroupBox *CatWindow::createSettingsGroup(){
     for(int i = 0; i < 2; i++){
         methodsSMChannelBox[i]->setMinimumWidth(150);
         SMChannelLayout->addWidget(methodsSMChannelBox[i]);
+        connect(methodsSMChannelBox[i], SIGNAL(clicked(bool)), this, SLOT(on_sm_channel_changed()));
     }
     QGroupBox *groupSMChannel = new QGroupBox();
     groupSMChannel->setLayout(SMChannelLayout);
+
 
     //Methods
     methodsClassifyBox[0] = new QRadioButton(tr("&Tresholding"));
@@ -255,6 +258,17 @@ QGroupBox *CatWindow::createParametersGroup(){
     return parametersGroup;
 }
 
+QHBoxLayout *CatWindow::createStartButton(){
+    QHBoxLayout *startLayout = new QHBoxLayout();
+
+    //start button
+    startButton = new QPushButton(tr("Start Integration"));
+    connect(startButton, SIGNAL(clicked(bool)), this, SLOT(on_start_changed()));
+    startLayout->addWidget(startButton);
+
+    return startLayout;
+}
+
 QGroupBox *CatWindow::createThreasholdingGroup(){
     QGroupBox *groupThreasholding = new QGroupBox(tr("Thresholding Parameters"));
 
@@ -342,6 +356,18 @@ void CatWindow::sendParameters(){
         });
     }
     delay += 4*delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send single or multi channel classification
+        commandCat->sendSMChannel();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    });
+    delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send start stimulation status
+        commandCat->sendStartStimulation();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    });
+    delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send decoding window size
         commandCat->sendDecodingWindowSize();
         strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
@@ -388,6 +414,19 @@ void CatWindow::sendParameters(){
         QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
         });
     delay += delayInterval;
+}
+
+void CatWindow::on_sm_channel_changed(){
+    int temp = commandCat->getSMChannel();
+    for(int i = 0; i < 2; i++){
+        commandCat->setSMChannel(i, methodsSMChannelBox[i]->isChecked());
+    }
+    if(temp != commandCat->getSMChannel()){
+        qDebug() << "Sent SM Channel to: " << commandCat->getSMChannel();
+        commandCat->sendSMChannel();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    }
 }
 
 void CatWindow::on_threshold_changed(){
@@ -543,6 +582,27 @@ void CatWindow::on_notch_cutoff_freq_checkbox_changed(){
         notchSpinBox->setEnabled(false);
         sendNotchParameters(0);
         sendNotchSignal(0);
+    }
+}
+
+void CatWindow::on_start_changed(){
+    if(!startStimulationFlag){
+        startStimulationFlag = true;
+        commandCat->setStartStimulation(startStimulationFlag);
+        startButton->setText("Stop Integration");
+        commandCat->sendStartStimulation();
+        qDebug() << "Sent start stimulation to : " << commandCat->getStartStimulation();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
+    }
+    else{
+        startStimulationFlag = false;
+        commandCat->setStartStimulation(startStimulationFlag);
+        startButton->setText("Start Integration");
+        commandCat->sendStartStimulation();
+        qDebug() << "Sent start stimulation to : " << commandCat->getStartStimulation();
+        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
+        emit commandSent(lastSentCommand);
     }
 }
 

@@ -64,18 +64,18 @@ void TreeDialog::createLayout(){
     button_stimulatorGUI->setShortcut(tr("Ctrl+I"));
     connect(button_stimulatorGUI, SIGNAL(clicked(bool)), this, SLOT(on_stimulatorGUI_clicked()));
 
-    button_startGUI = new QPushButton(tr("Start Integration"));
-    button_startGUI->setFixedHeight(buttonHeight);
+//    button_startGUI = new QPushButton(tr("Start Integration"));
+//    button_startGUI->setFixedHeight(buttonHeight);
 
     //layout
-    QHBoxLayout *mainSubLayout = new QHBoxLayout;
-    mainSubLayout->addWidget(button_recordingGUI);
-    mainSubLayout->addWidget(button_catGUI);
-    mainSubLayout->addWidget(button_stimulatorGUI);
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    mainLayout->addWidget(button_recordingGUI);
+    mainLayout->addWidget(button_catGUI);
+    mainLayout->addWidget(button_stimulatorGUI);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(mainSubLayout);
-    mainLayout->addWidget(button_startGUI);
+//    QVBoxLayout *mainLayout = new QVBoxLayout;
+//    mainLayout->addLayout(mainSubLayout);
+//    mainLayout->addWidget(button_startGUI);
 
     mainWidget->setLayout(mainLayout);
 //    setLayout(mainLayout);

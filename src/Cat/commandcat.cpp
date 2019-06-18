@@ -102,6 +102,20 @@ void CommandCat::sendNotchCutoffFreq(){
     qDebug() << "Send notch cutoff frequency: " << rpiCommand;
 }
 
+void CommandCat::sendSMChannel(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) CLASSIFY_DIMENSION);
+    appendRpiCommand((short) getSMChannel());
+    qDebug() << "Send sm channel: " << rpiCommand;
+}
+
+void CommandCat::sendStartStimulation(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) STIMULATION_FLAG);
+    appendRpiCommand((short) getStartStimulation());
+    qDebug() << "Send start stimulation: " << rpiCommand;
+}
+
 void CommandCat::appendRpiCommand(short data){
     if(data != 0 && data % 256 == 0){  // to solve the issue where the ocmmand will be terminated at 0 while being written into socket
         data += 1;
@@ -120,6 +134,10 @@ void CommandCat::updateRpiCommand(char *data){
     rpiCommand.append((const char) data[0]);
     rpiCommand.append((const char) data[1]);
     rpiCommand.append((const char) 1);
+}
+
+void CommandCat::setSMChannel(int channel, int value){
+    SMChannel[channel] = value;
 }
 
 void CommandCat::setThreshold(int channel, int value){
@@ -158,6 +176,17 @@ void CommandCat::setNotchCutoffFreq(int value){
     notchCutoffFreq = value;
 }
 
+void CommandCat::setStartStimulation(bool flag){
+    startStimulationFlag = flag;
+}
+
+int CommandCat::getSMChannel(){
+    int temp;
+    temp = SMChannel[1] << 1 | SMChannel[0];
+    temp += 520;
+    return temp;
+}
+
 int CommandCat::getDecodingWindowSize(){
     return decodingWindowSize;
 }
@@ -192,6 +221,12 @@ int CommandCat::getThreshold(int channel){
 
 int CommandCat::getThresholdPower(int channel){
     return thresholdPower[channel];
+}
+
+int CommandCat::getStartStimulation(){
+    int temp;
+    temp = 520 + (int) startStimulationFlag;
+    return temp;
 }
 
 QByteArray CommandCat::getlastRpiCommand(){
