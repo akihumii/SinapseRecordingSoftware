@@ -394,20 +394,31 @@ void OdinWindow::sendCommand(){
     }
     else{
         pauseOdin();
-        QTimer::singleShot((320), [=] {
+        QTimer::singleShot((500), [=] {
             commandOdin->sendStop();
             count = 0;
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
             sendButton->setText("Start Odin!");
             delayEnabledCheckBox->setChecked(false);
+
+            for(int i = 0; i < 4; i++){  // send amplitudes
+                QTimer::singleShot((550+i*40), [=] {
+                    commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
+                    qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
+
+                    commandOdin->sendAmplitude(i);
+                    strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+                    emit commandSent(lastSentCommand);
+                });
+            }
         });
     }
 }
 
 void OdinWindow::pauseOdin(){
     for(int i = 0; i < 4; i++){
-        QTimer::singleShot((i*40), [=] {
+        QTimer::singleShot((i*delayInterval), [=] {
             commandOdin->setChannelEnabled(i, false);
             qDebug() << "Setting Channel Enable for channel " << i+1 << false;
 //            thresholdEnable[i]->setChecked(false);
@@ -419,7 +430,7 @@ void OdinWindow::pauseOdin(){
     emit commandSent(lastSentCommand);
 
     for(int i = 0; i < 4; i++){
-        QTimer::singleShot((160+i*40), [=] {
+        QTimer::singleShot((160+i*delayInterval), [=] {
 //            amplitudeSpinBox[i]->setValue(0.0);
             commandOdin->setAmplitude(i, 0.0);
             commandOdin->sendAmplitude(i);

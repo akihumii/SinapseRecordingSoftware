@@ -85,7 +85,7 @@ private:
     bool thresholdDecreaseEnable = false;
 
     int commandCount = 0;
-    int delayInterval = 50;
+    int delayInterval = 60;
     int numChannelsEnabled = 0;
     char *lastSentCommand = new char[2];
     char *rpiCommand = new char[2];
