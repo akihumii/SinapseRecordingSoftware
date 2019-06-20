@@ -23,6 +23,7 @@ void CatWindow::createLayout(){
     mainLayout->addWidget(createSettingsGroup());
     mainLayout->addWidget(createTrainingGroup());
     mainLayout->addWidget(createParametersGroup());
+    mainLayout->addWidget(createRecordingGroup());
     mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
@@ -77,6 +78,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     for(int i = 0; i < 2; i++){
         methodsClassifyBox[i]->setMinimumWidth(150);
         methodsClassifyLayout->addWidget(methodsClassifyBox[i]);
+        connect(methodsClassifyBox[i], SIGNAL(clicked(bool)), this, SLOT(on_classify_methods_changed()));
     }
     QGroupBox *groupMethodsClassify = new QGroupBox();
     groupMethodsClassify->setLayout(methodsClassifyLayout);
@@ -258,6 +260,26 @@ QGroupBox *CatWindow::createParametersGroup(){
     return parametersGroup;
 }
 
+QGroupBox *CatWindow::createRecordingGroup(){
+    QGroupBox *groupRecording = new QGroupBox(tr("Recording"));
+
+    //buttons
+    recordingButton = new QPushButton(tr("Start Recording"));
+    connect(recordingButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_changed()));
+
+    recordingTransferButton = new QPushButton(tr("Transfer Recordings"));
+    connect(recordingTransferButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_transfer_changed()));
+
+    //Layout
+    QHBoxLayout *recordingLayout = new QHBoxLayout;
+    recordingLayout->addWidget(recordingButton);
+    recordingLayout->addWidget(recordingTransferButton);
+
+    groupRecording->setLayout(recordingLayout);
+
+    return groupRecording;
+}
+
 QHBoxLayout *CatWindow::createStartButton(){
     QHBoxLayout *startLayout = new QHBoxLayout();
 
@@ -343,77 +365,78 @@ void CatWindow::sendParameters(){
     for(int i = 0; i < 4; i++){  // send threhsold digits
         QTimer::singleShot((startDelay+delay+i*delayInterval), [=] {
             commandCat->sendThreshold(i);
-            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
+            emitCommandSent();
         });
     }
     delay += 4*delayInterval;
     for(int i = 0; i < 4; i++){  // send threshold power
         QTimer::singleShot((startDelay+delay+i*delayInterval), [=] {
             commandCat->sendThresholdPower(i);
-            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
+            emitCommandSent();
         });
     }
     delay += 4*delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send single or multi channel classification
         commandCat->sendSMChannel();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
     });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send start stimulation status
         commandCat->sendStartStimulation();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
     });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send decoding window size
         commandCat->sendDecodingWindowSize();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send overlap window size
         commandCat->sendOverlapWindowSize();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send sampling freq
         commandCat->sendSamplingFreq();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send extend stimulation
         commandCat->sendExtendStimulation();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send highpass freq
         commandCat->sendHighpassCutoffFreq();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send lowpass freq
         commandCat->sendLowpassCutoffFreq();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  //send notch freq
         commandCat->sendNotchCutoffFreq();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {
         QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
         });
     delay += delayInterval;
+}
+
+void CatWindow::on_classify_methods_changed(){
+    int temp = commandCat->getClassifyMethods();
+    for(int i = 0; i < 2; i++){
+        commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
+    }
+    if(temp != commandCat->getClassifyMethods()){
+        qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
+        commandCat->sendClassifyMethods();
+        emitCommandSent();
+    }
 }
 
 void CatWindow::on_sm_channel_changed(){
@@ -424,8 +447,7 @@ void CatWindow::on_sm_channel_changed(){
     if(temp != commandCat->getSMChannel()){
         qDebug() << "Sent SM Channel to: " << commandCat->getSMChannel();
         commandCat->sendSMChannel();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
     }
 }
 
@@ -435,8 +457,7 @@ void CatWindow::on_threshold_changed(){
             commandCat->setThreshold(i, thresholdingSpinBox[i]->text().toInt());
             qDebug() << "Sent channel " << i << "threshold power to : " << thresholdingSpinBox[i]->text().toInt();
             commandCat->sendThreshold(i);
-            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
+            emitCommandSent();
         }
     }
 }
@@ -447,8 +468,7 @@ void CatWindow::on_threshold_power_changed(){
             commandCat->setThresholdPower(i, thresholdingPowerSpinBox[i]->text().toInt());
             qDebug() << "Sent channel " << i << "threshold power to : " << thresholdingPowerSpinBox[i]->text().toInt();
             commandCat->sendThresholdPower(i);
-            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
+            emitCommandSent();
         }
     }
 }
@@ -458,8 +478,7 @@ void CatWindow::on_decoding_window_size_changed(){
         commandCat->setDecodingWindowSize(windowDecodingSpinBox->text().toInt());
         qDebug() << "Sent decoding window size to : " << windowDecodingSpinBox->text().toInt();
         commandCat->sendDecodingWindowSize();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
     }
 }
 
@@ -468,8 +487,7 @@ void CatWindow::on_overlap_window_size_changed(){
         commandCat->setOverlapWindowSize(windowOverlapSpinBox->text().toInt());
         qDebug() << "Sent overlap window size to : " << windowOverlapSpinBox->text().toInt();
         commandCat->sendOverlapWindowSize();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
     }
 }
 
@@ -486,8 +504,7 @@ void CatWindow::on_sampling_freq_changed(){
             commandCat->setSamplingFreq(windowSamplingFrequencySpinBox->text().toInt());
             qDebug() << "Sent decoding window size to : " << windowSamplingFrequencySpinBox->text().toInt();
             commandCat->sendSamplingFreq();
-            strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-            emit commandSent(lastSentCommand);
+            emitCommandSent();
         });
 
     }
@@ -498,8 +515,7 @@ void CatWindow::on_extend_stimulation_changed(){
         commandCat->setExtendStimulation(extendStimSpinBox->text().toInt());
         qDebug() << "Sent extend stimulation to : " << extendStimSpinBox->text().toInt();
         commandCat->sendExtendStimulation();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
+        emitCommandSent();
     }
 }
 
@@ -507,8 +523,7 @@ void CatWindow::sendHighpassParameters(int value){
     commandCat->setHighpassCutoffFreq(value);
     qDebug() << "Sent highpass cutoff freq to : " << value;
     commandCat->sendHighpassCutoffFreq();
-    strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-    emit commandSent(lastSentCommand);
+    emitCommandSent();
 }
 
 void CatWindow::on_highpass_cutoff_freq_changed(){
@@ -534,8 +549,7 @@ void CatWindow::sendLowpassParameters(int value){
     commandCat->setLowpassCutoffFreq(value);
     qDebug() << "Sent lowpass cutoff freq to : " << value;
     commandCat->sendLowpassCutoffFreq();
-    strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-    emit commandSent(lastSentCommand);
+    emitCommandSent();
 }
 
 void CatWindow::on_lowpass_cutoff_freq_changed(){
@@ -561,8 +575,7 @@ void CatWindow::sendNotchParameters(int value){
     commandCat->setNotchCutoffFreq(value);
     qDebug() << "Sent notch cutoff freq to : " << value;
     commandCat->sendNotchCutoffFreq();
-    strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-    emit commandSent(lastSentCommand);
+    emitCommandSent();
 
 }
 
@@ -585,25 +598,43 @@ void CatWindow::on_notch_cutoff_freq_checkbox_changed(){
     }
 }
 
+void CatWindow::on_recording_changed(){
+    if(!recordingFlag){
+        recordingFlag = true;
+        commandCat->setRecording(recordingFlag);
+        recordingButton->setText("Stop Recording");
+    }
+    else{
+        recordingFlag = false;
+        commandCat->setRecording(recordingFlag);
+        recordingButton->setText("Start Recording");
+    }
+    commandCat->sendRecording();
+    emitCommandSent();
+    qDebug() << "Sent recording to : " << commandCat->getRecording();
+}
+
+
+void CatWindow::on_recording_transfer_changed(){
+    commandCat->sendRecordingTransfer();
+    emitCommandSent();
+    qDebug() << "Sent recording transfer...";
+}
+
 void CatWindow::on_start_changed(){
     if(!startStimulationFlag){
         startStimulationFlag = true;
         commandCat->setStartStimulation(startStimulationFlag);
         startButton->setText("Stop Integration");
-        commandCat->sendStartStimulation();
-        qDebug() << "Sent start stimulation to : " << commandCat->getStartStimulation();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
     }
     else{
         startStimulationFlag = false;
         commandCat->setStartStimulation(startStimulationFlag);
         startButton->setText("Start Integration");
-        commandCat->sendStartStimulation();
-        qDebug() << "Sent start stimulation to : " << commandCat->getStartStimulation();
-        strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
-        emit commandSent(lastSentCommand);
     }
+    commandCat->sendStartStimulation();
+    emitCommandSent();
+    qDebug() << "Sent start stimulation to : " << commandCat->getStartStimulation();
 }
 
 void CatWindow::sendFilteringParameters(){
@@ -658,6 +689,10 @@ void CatWindow::sendNotchSignal(double notchValue){
 
 void CatWindow::setRpiCommand(char *data){
     commandCat->updateRpiCommand(data);
+    emitCommandSent();
+}
+
+void CatWindow::emitCommandSent(){
     strcpy(lastSentCommand, commandCat->getlastRpiCommand().data());
     emit commandSent(lastSentCommand);
 }

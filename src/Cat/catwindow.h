@@ -34,6 +34,7 @@ private:
     QGroupBox *createTrainingGroup();
     QGroupBox *createParametersGroup();
     QHBoxLayout *createStartButton();
+    QGroupBox *createRecordingGroup();
 
     QLabel *trainingSaveDir;
 
@@ -61,6 +62,8 @@ private:
     QPushButton *trainingCancel;
     QPushButton *trainingSave;
     QPushButton *startButton;
+    QPushButton *recordingButton;
+    QPushButton *recordingTransferButton;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -82,8 +85,11 @@ private:
     void sendLowpassSignal(double lowpassValue);
     void sendNotchSignal(double notchValue);
 
+    void emitCommandSent();
+
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
+    bool recordingFlag = false;
 
 private slots:
     void on_sm_channel_changed();
@@ -102,6 +108,9 @@ private slots:
     void on_odin_triggered();
     void on_sylph_triggered();
     void on_start_changed();
+    void on_recording_changed();
+    void on_recording_transfer_changed();
+    void on_classify_methods_changed();
 
 signals:
     void commandSent(char *bytes);
