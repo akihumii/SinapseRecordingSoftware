@@ -619,6 +619,7 @@ void CatWindow::on_recording_changed(){
 
 
 void CatWindow::on_recording_transfer_changed(){
+    recordingTransferButton->setEnabled(false);
     QString savingDirStr = "C:/Data";
     QDir savingDir(savingDirStr);
     if(!savingDir.exists()){  // check if saving folder exists; if not, create it
@@ -717,6 +718,7 @@ void CatWindow::receiveSavedFiles(){
             statusBarLabel->setText(tr("Transferring failed..."));
             qDebug() << "Transferring failed...";
         }
+        recordingTransferButton->setEnabled(true);
     });
 }
 
