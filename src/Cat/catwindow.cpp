@@ -704,13 +704,24 @@ void CatWindow::receiveSavedFiles(){
     params.append(savingDirStr);
     connect(&receivingSavedFiles, SIGNAL(readyReadStandardError()), this, SLOT(readOutput()));
     connect(&receivingSavedFiles, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
+    connect(&receivingSavedFiles, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            [=] (int exitCode, QProcess::ExitStatus exitStatus){
+        if(!exitStatus){
+            statusBarLabel->setText(tr("Finished transferring..."));
+            qDebug() << "Finished transferring...";
+        }
+        else{
+            statusBarLabel->setText(tr("Transferring failed..."));
+            qDebug() << "Transferring failed...";
+        }
+    });
     receivingSavedFiles.start(command, params, QIODevice::ReadWrite);
-    qDebug() << "Send recording transfer done...";
 }
 
 void CatWindow::readOutput(){
-    QString tempOutput = receivingSavedFiles.readAllStandardOutput();
-    qDebug() << "Standard output: " << tempOutput;
+    transferStatus.clear();
+    transferStatus.append(receivingSavedFiles.readAllStandardOutput());
+    statusBarLabel->setText(transferStatus);
 }
 
 void CatWindow::setRpiCommand(char *data){

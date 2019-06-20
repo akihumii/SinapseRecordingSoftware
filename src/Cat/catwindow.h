@@ -70,6 +70,7 @@ private:
     QVector<double> *notchValueSets = new QVector<double>;
 
     QProcess receivingSavedFiles;
+    QString transferStatus;
 
     int startDelay = 3000;
 
