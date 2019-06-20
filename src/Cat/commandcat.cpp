@@ -135,32 +135,6 @@ void CommandCat::sendRecordingTransfer(){
     rpiCommand.append((const char) RECORDING_TRANSFER);
     appendRpiCommand((short) 520);
     qDebug() << "Send recording transfer: " << rpiCommand;
-    receiveSavedFiles();
-}
-
-void CommandCat::receiveSavedFiles(){
-    QString savingDirStr = "C:/Data";
-    QDir savingDir(savingDirStr);
-    if(!savingDir.exists()){  // check if saving folder exists; if not, create it
-        savingDir.mkpath(".");
-    }
-    QString command = "pscp";
-    QStringList params;
-    params.append("-pw");
-    params.append("raspberry");
-    params.append("-scp");
-    params.append("-unsafe");
-    params.append("pi@192.168.4.3:/home/pi/Data/*.csv");
-    params.append(savingDirStr);
-    connect(&receivingSavedFiles, SIGNAL(readyReadStandardError()), this, SLOT(readOutput()));
-    connect(&receivingSavedFiles, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
-    receivingSavedFiles.start(command, params, QIODevice::ReadWrite);
-    qDebug() << "Send recording transfer done...";
-}
-
-void CommandCat::readOutput(){
-    qDebug() << "Standard error: " << receivingSavedFiles.readAllStandardError();
-    qDebug() << "Standard output: " << receivingSavedFiles.readAllStandardOutput();
 }
 
 void CommandCat::appendRpiCommand(short data){

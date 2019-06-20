@@ -619,6 +619,7 @@ void CatWindow::on_recording_transfer_changed(){
     commandCat->sendRecordingTransfer();
     emitCommandSent();
     qDebug() << "Sent recording transfer...";
+    receiveSavedFiles();
 }
 
 void CatWindow::on_start_changed(){
@@ -685,6 +686,31 @@ void CatWindow::sendNotchSignal(double notchValue){
     notchValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
     notchValueSets->append((double) notchCheckBox->isChecked());
     emit notchSent(notchValueSets);
+}
+
+void CatWindow::receiveSavedFiles(){
+    QString savingDirStr = "C:/Data";
+    QDir savingDir(savingDirStr);
+    if(!savingDir.exists()){  // check if saving folder exists; if not, create it
+        savingDir.mkpath(".");
+    }
+    QString command = "pscp";
+    QStringList params;
+    params.append("-pw");
+    params.append("raspberry");
+    params.append("-scp");
+    params.append("-unsafe");
+    params.append("pi@192.168.4.3:/home/pi/Data/*.csv");
+    params.append(savingDirStr);
+    connect(&receivingSavedFiles, SIGNAL(readyReadStandardError()), this, SLOT(readOutput()));
+    connect(&receivingSavedFiles, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
+    receivingSavedFiles.start(command, params, QIODevice::ReadWrite);
+    qDebug() << "Send recording transfer done...";
+}
+
+void CatWindow::readOutput(){
+    QString tempOutput = receivingSavedFiles.readAllStandardOutput();
+    qDebug() << "Standard output: " << tempOutput;
 }
 
 void CatWindow::setRpiCommand(char *data){

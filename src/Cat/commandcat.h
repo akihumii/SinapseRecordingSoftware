@@ -82,11 +82,8 @@ public:
     void updateRpiCommand(char *data);
 
 private slots:
-    void readOutput();
 
 private:
-    QProcess receivingSavedFiles;
-
     void appendRpiCommand(short data);
     int threshold[4] = {1, 1, 1, 1};
     int thresholdPower[4] = {10, 10, 10, 10};
@@ -101,8 +98,6 @@ private:
     int classifyMethods[2] = {1, 0};
     bool startStimulationFlag = false;
     bool recordingFlag = false;
-
-    void receiveSavedFiles();
 
     QByteArray rpiCommand;
 

@@ -69,6 +69,8 @@ private:
     QVector<double> *lowpassValueSets = new QVector<double>;
     QVector<double> *notchValueSets = new QVector<double>;
 
+    QProcess receivingSavedFiles;
+
     int startDelay = 3000;
 
     void createLayout();
@@ -86,6 +88,7 @@ private:
     void sendNotchSignal(double notchValue);
 
     void emitCommandSent();
+    void receiveSavedFiles();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
@@ -111,6 +114,7 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
+    void readOutput();
 
 signals:
     void commandSent(char *bytes);
