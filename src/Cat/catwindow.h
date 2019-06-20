@@ -71,6 +71,8 @@ private:
 
     QProcess receivingSavedFiles;
     QString transferStatus;
+    QStringList commandArg;
+    QString commandStdout;
 
     int startDelay = 3000;
 

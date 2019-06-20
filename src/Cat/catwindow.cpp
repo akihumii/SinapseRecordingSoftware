@@ -270,6 +270,9 @@ QGroupBox *CatWindow::createRecordingGroup(){
     recordingTransferButton = new QPushButton(tr("Transfer Recordings"));
     connect(recordingTransferButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_transfer_changed()));
 
+    //connection
+    receiveSavedFiles();
+
     //Layout
     QHBoxLayout *recordingLayout = new QHBoxLayout;
     recordingLayout->addWidget(recordingButton);
@@ -616,10 +619,20 @@ void CatWindow::on_recording_changed(){
 
 
 void CatWindow::on_recording_transfer_changed(){
-    commandCat->sendRecordingTransfer();
-    emitCommandSent();
-    qDebug() << "Sent recording transfer...";
-    receiveSavedFiles();
+    QString savingDirStr = "C:/Data";
+    QDir savingDir(savingDirStr);
+    if(!savingDir.exists()){  // check if saving folder exists; if not, create it
+        savingDir.mkpath(".");
+    }
+    QString command = "pscp";
+    commandArg.clear();
+    commandArg.append("-pw");
+    commandArg.append("raspberry");
+    commandArg.append("-scp");
+    commandArg.append("-unsafe");
+    commandArg.append("pi@192.168.4.3:/home/pi/Data/*.csv");
+    commandArg.append(savingDirStr);
+    receivingSavedFiles.start(command, commandArg, QIODevice::ReadWrite);
 }
 
 void CatWindow::on_start_changed(){
@@ -689,39 +702,31 @@ void CatWindow::sendNotchSignal(double notchValue){
 }
 
 void CatWindow::receiveSavedFiles(){
-    QString savingDirStr = "C:/Data";
-    QDir savingDir(savingDirStr);
-    if(!savingDir.exists()){  // check if saving folder exists; if not, create it
-        savingDir.mkpath(".");
-    }
-    QString command = "pscp";
-    QStringList params;
-    params.append("-pw");
-    params.append("raspberry");
-    params.append("-scp");
-    params.append("-unsafe");
-    params.append("pi@192.168.4.3:/home/pi/Data/*.csv");
-    params.append(savingDirStr);
     connect(&receivingSavedFiles, SIGNAL(readyReadStandardError()), this, SLOT(readOutput()));
     connect(&receivingSavedFiles, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
     connect(&receivingSavedFiles, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            [=] (int exitCode, QProcess::ExitStatus exitStatus){
+            [=] (int /*exitCode*/, QProcess::ExitStatus exitStatus){
         if(!exitStatus){
             statusBarLabel->setText(tr("Finished transferring..."));
             qDebug() << "Finished transferring...";
+            commandCat->sendRecordingTransfer();
+            emitCommandSent();
+            qDebug() << "Sent recording transfer...";
         }
         else{
             statusBarLabel->setText(tr("Transferring failed..."));
             qDebug() << "Transferring failed...";
         }
     });
-    receivingSavedFiles.start(command, params, QIODevice::ReadWrite);
 }
 
 void CatWindow::readOutput(){
+    commandStdout.clear();
+    commandStdout.append(receivingSavedFiles.readAllStandardOutput());
     transferStatus.clear();
-    transferStatus.append(receivingSavedFiles.readAllStandardOutput());
+    transferStatus.append(commandStdout);
     statusBarLabel->setText(transferStatus);
+    qDebug() << commandStdout;
 }
 
 void CatWindow::setRpiCommand(char *data){
