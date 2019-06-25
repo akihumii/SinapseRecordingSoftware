@@ -605,12 +605,14 @@ void CatWindow::on_recording_changed(){
     if(!recordingFlag){
         recordingFlag = true;
         commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Stop Recording");
+        recordingButton->setText("Stop Recor&ding");
+        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
     }
     else{
         recordingFlag = false;
         commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Start Recording");
+        recordingButton->setText("Start Recor&ding");
+        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!!"));
     }
     commandCat->sendRecording();
     emitCommandSent();
