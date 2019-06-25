@@ -92,6 +92,7 @@ private:
 
     void emitCommandSent();
     void receiveSavedFiles();
+    void controlInput(bool flag);
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;

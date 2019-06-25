@@ -21,7 +21,7 @@ void CatWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(createMethodsGroup());
     mainLayout->addWidget(createSettingsGroup());
-    mainLayout->addWidget(createTrainingGroup());
+//    mainLayout->addWidget(createTrainingGroup());
     mainLayout->addWidget(createParametersGroup());
     mainLayout->addWidget(createRecordingGroup());
     mainLayout->addLayout(createStartButton());
@@ -384,6 +384,11 @@ void CatWindow::sendParameters(){
         emitCommandSent();
     });
     delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send classify methods
+        commandCat->sendClassifyMethods();
+        emitCommandSent();
+    });
+    delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send start stimulation status
         commandCat->sendStartStimulation();
         emitCommandSent();
@@ -607,12 +612,14 @@ void CatWindow::on_recording_changed(){
         commandCat->setRecording(recordingFlag);
         recordingButton->setText("Stop Recor&ding");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
+        controlInput(false);
     }
     else{
         recordingFlag = false;
         commandCat->setRecording(recordingFlag);
         recordingButton->setText("Start Recor&ding");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!!"));
+        controlInput(true);
     }
     commandCat->sendRecording();
     emitCommandSent();
@@ -749,6 +756,20 @@ void CatWindow::on_odin_triggered(){
 
 void CatWindow::on_sylph_triggered(){
     emit showSylphSignal();
+}
+
+void CatWindow::controlInput(bool flag){
+    for(int i = 1; i < 2; i++){
+        methodsSMChannelBox[i]->setEnabled(flag);
+        methodsClassifyBox[i]->setEnabled(flag);
+    }
+    windowDecodingSpinBox->setEnabled(flag);
+    windowOverlapSpinBox->setEnabled(flag);
+    windowSamplingFrequencySpinBox->setEnabled(flag);
+    extendStimSpinBox->setEnabled(flag);
+    highpassCheckBox->setEnabled(flag);
+    lowpassCheckBox->setEnabled(flag);
+    notchCheckBox->setEnabled(flag);
 }
 
 CatWindow::~CatWindow(){
