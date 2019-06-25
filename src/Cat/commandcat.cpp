@@ -109,11 +109,32 @@ void CommandCat::sendSMChannel(){
     qDebug() << "Send sm channel: " << rpiCommand;
 }
 
+void CommandCat::sendClassifyMethods(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) CLASSIFY_MEHTODS);
+    appendRpiCommand((short) getClassifyMethods());
+    qDebug() << "Send classify methods: " << rpiCommand;
+}
+
 void CommandCat::sendStartStimulation(){
     rpiCommand.clear();
     rpiCommand.append((const char) STIMULATION_FLAG);
     appendRpiCommand((short) getStartStimulation());
     qDebug() << "Send start stimulation: " << rpiCommand;
+}
+
+void CommandCat::sendRecording(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) RECORDING_FLAG);
+    appendRpiCommand((short) getRecording());
+    qDebug() << "Send recording: " << rpiCommand;
+}
+
+void CommandCat::sendRecordingTransfer(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) RECORDING_TRANSFER);
+    appendRpiCommand((short) 520);
+    qDebug() << "Send recording transfer: " << rpiCommand;
 }
 
 void CommandCat::appendRpiCommand(short data){
@@ -138,6 +159,10 @@ void CommandCat::updateRpiCommand(char *data){
 
 void CommandCat::setSMChannel(int channel, int value){
     SMChannel[channel] = value;
+}
+
+void CommandCat::setClassifyMethods(int channel, int value){
+    classifyMethods[channel] = value;
 }
 
 void CommandCat::setThreshold(int channel, int value){
@@ -180,9 +205,20 @@ void CommandCat::setStartStimulation(bool flag){
     startStimulationFlag = flag;
 }
 
+void CommandCat::setRecording(bool flag){
+    recordingFlag = flag;
+}
+
 int CommandCat::getSMChannel(){
     int temp;
     temp = SMChannel[1] << 1 | SMChannel[0];
+    temp += 520;
+    return temp;
+}
+
+int CommandCat::getClassifyMethods(){
+    int temp;
+    temp = classifyMethods[1] << 1 | classifyMethods[0];
     temp += 520;
     return temp;
 }
@@ -226,6 +262,12 @@ int CommandCat::getThresholdPower(int channel){
 int CommandCat::getStartStimulation(){
     int temp;
     temp = 520 + (int) startStimulationFlag;
+    return temp;
+}
+
+int CommandCat::getRecording(){
+    int temp;
+    temp = 520 + (int) recordingFlag;
     return temp;
 }
 

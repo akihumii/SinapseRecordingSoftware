@@ -25,7 +25,9 @@ typedef enum ADDRESS{
     CLOSED_LOOP = 0xDC,
     RESET_FLAG = 0xDD,
     STIMULATION_FLAG = 0xDE,
-    SAVING_FLAG = 0xDF
+    CLASSIFY_MEHTODS = 0xDF,
+    RECORDING_FLAG = 0xE0,
+    RECORDING_TRANSFER = 0xE1
 
 } ADDRESS;
 
@@ -45,7 +47,9 @@ public:
     void setLowpassCutoffFreq(int value);
     void setNotchCutoffFreq(int value);
     void setSMChannel(int channel, int value);
+    void setClassifyMethods(int channel, int value);
     void setStartStimulation(bool flag);
+    void setRecording(bool flag);
     int getThreshold(int channel);
     int getThresholdPower(int channel);
     int getDecodingWindowSize();
@@ -56,7 +60,9 @@ public:
     int getLowpassCutoffFreq();
     int getNotchCutoffFreq();
     int getSMChannel();
+    int getClassifyMethods();
     int getStartStimulation();
+    int getRecording();
     void sendThreshold(int channel);
     void sendThresholdPower(int channel);
     void sendDecodingWindowSize();
@@ -67,12 +73,15 @@ public:
     void sendLowpassCutoffFreq();
     void sendNotchCutoffFreq();
     void sendSMChannel();
+    void sendClassifyMethods();
     void sendStartStimulation();
+    void sendRecording();
+    void sendRecordingTransfer();
 
     QByteArray getlastRpiCommand();
     void updateRpiCommand(char *data);
 
-public slots:
+private slots:
 
 private:
     void appendRpiCommand(short data);
@@ -86,7 +95,9 @@ private:
     int lowpassCutoffFreq = 0;
     int notchCutoffFreq = 50;
     int SMChannel[2] = {1, 0};
+    int classifyMethods[2] = {1, 0};
     bool startStimulationFlag = false;
+    bool recordingFlag = false;
 
     QByteArray rpiCommand;
 
