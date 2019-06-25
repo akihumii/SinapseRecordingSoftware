@@ -21,7 +21,7 @@ void CatWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(createMethodsGroup());
     mainLayout->addWidget(createSettingsGroup());
-    mainLayout->addWidget(createTrainingGroup());
+//    mainLayout->addWidget(createTrainingGroup());
     mainLayout->addWidget(createParametersGroup());
     mainLayout->addWidget(createRecordingGroup());
     mainLayout->addLayout(createStartButton());
@@ -44,7 +44,7 @@ QGroupBox *CatWindow::createMethodsGroup(){
 }
 
 QGroupBox *CatWindow::createSettingsGroup(){
-    QGroupBox *groupSettings= new QGroupBox(tr("Settings"));
+    groupSettings= new QGroupBox(tr("Settings"));
 
     //Labels
     QVBoxLayout *settingsLabelLayout = new QVBoxLayout;
@@ -140,7 +140,7 @@ QGroupBox *CatWindow::createTrainingGroup(){
 }
 
 QGroupBox *CatWindow::createParametersGroup(){
-    QGroupBox *parametersGroup = new QGroupBox(tr("Parameters"));
+    parametersGroup = new QGroupBox(tr("Parameters"));
 
     //window
     int windowWidth = 60;
@@ -384,6 +384,11 @@ void CatWindow::sendParameters(){
         emitCommandSent();
     });
     delay += delayInterval;
+    QTimer::singleShot((startDelay+delay), [=] {  // send classify methods
+        commandCat->sendClassifyMethods();
+        emitCommandSent();
+    });
+    delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send start stimulation status
         commandCat->sendStartStimulation();
         emitCommandSent();
@@ -605,12 +610,16 @@ void CatWindow::on_recording_changed(){
     if(!recordingFlag){
         recordingFlag = true;
         commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Stop Recording");
+        recordingButton->setText("Stop Recor&ding");
+        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
+        controlInput(false);
     }
     else{
         recordingFlag = false;
         commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Start Recording");
+        recordingButton->setText("Start Recor&ding");
+        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!!"));
+        controlInput(true);
     }
     commandCat->sendRecording();
     emitCommandSent();
@@ -747,6 +756,11 @@ void CatWindow::on_odin_triggered(){
 
 void CatWindow::on_sylph_triggered(){
     emit showSylphSignal();
+}
+
+void CatWindow::controlInput(bool flag){
+    groupSettings->setEnabled(flag);
+    parametersGroup->setEnabled(flag);
 }
 
 CatWindow::~CatWindow(){

@@ -36,6 +36,9 @@ private:
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
 
+    QGroupBox *parametersGroup;
+    QGroupBox *groupSettings;
+
     QLabel *trainingSaveDir;
 
     QRadioButton *methodsSMChannelBox[2];
@@ -92,6 +95,7 @@ private:
 
     void emitCommandSent();
     void receiveSavedFiles();
+    void controlInput(bool flag);
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
