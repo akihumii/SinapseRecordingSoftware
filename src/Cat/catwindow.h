@@ -36,6 +36,9 @@ private:
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
 
+    QGroupBox *parametersGroup;
+    QGroupBox *groupSettings;
+
     QLabel *trainingSaveDir;
 
     QRadioButton *methodsSMChannelBox[2];

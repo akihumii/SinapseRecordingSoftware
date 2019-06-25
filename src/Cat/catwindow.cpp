@@ -44,7 +44,7 @@ QGroupBox *CatWindow::createMethodsGroup(){
 }
 
 QGroupBox *CatWindow::createSettingsGroup(){
-    QGroupBox *groupSettings= new QGroupBox(tr("Settings"));
+    groupSettings= new QGroupBox(tr("Settings"));
 
     //Labels
     QVBoxLayout *settingsLabelLayout = new QVBoxLayout;
@@ -140,7 +140,7 @@ QGroupBox *CatWindow::createTrainingGroup(){
 }
 
 QGroupBox *CatWindow::createParametersGroup(){
-    QGroupBox *parametersGroup = new QGroupBox(tr("Parameters"));
+    parametersGroup = new QGroupBox(tr("Parameters"));
 
     //window
     int windowWidth = 60;
@@ -759,17 +759,8 @@ void CatWindow::on_sylph_triggered(){
 }
 
 void CatWindow::controlInput(bool flag){
-    for(int i = 1; i < 2; i++){
-        methodsSMChannelBox[i]->setEnabled(flag);
-        methodsClassifyBox[i]->setEnabled(flag);
-    }
-    windowDecodingSpinBox->setEnabled(flag);
-    windowOverlapSpinBox->setEnabled(flag);
-    windowSamplingFrequencySpinBox->setEnabled(flag);
-    extendStimSpinBox->setEnabled(flag);
-    highpassCheckBox->setEnabled(flag);
-    lowpassCheckBox->setEnabled(flag);
-    notchCheckBox->setEnabled(flag);
+    groupSettings->setEnabled(flag);
+    parametersGroup->setEnabled(flag);
 }
 
 CatWindow::~CatWindow(){
