@@ -2,8 +2,8 @@
 #define SOCKETSERVER_H
 
 #include <QObject>
-#include "../common/socketabstract.h"
-#include "../common/qtincludes.h"
+#include "socketabstract.h"
+#include "qtincludes.h"
 
 class SocketServer : public SocketAbstract {
     Q_OBJECT

@@ -29,7 +29,8 @@ HEADERS += \
     socketabstract.h \
     connectiondialog.h \
     led.h \
-    datastream.h
+    datastream.h \
+    socketserver.h
 
 SOURCES += \
     data.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
     signalaudio.cpp \
     socketabstract.cpp \
     connectiondialog.cpp \
-    datastream.cpp
+    datastream.cpp \
+    socketserver.cpp
 
 FORMS +=
