@@ -39,7 +39,7 @@ HEADERS += \
     ../Odin/odinwindow.h \
     ../Cat/catwindow.h \
     ../Cat/commandcat.h \
-    dynomometer.h \
+    socketserver.h \
     treedialog.h
 
 
@@ -57,5 +57,5 @@ SOURCES += \
     ../Odin/odinwindow.cpp \
     ../Cat/catwindow.cpp \
     ../Cat/commandcat.cpp \
-    dynomometer.cpp \
+    socketserver.cpp \
     treedialog.cpp

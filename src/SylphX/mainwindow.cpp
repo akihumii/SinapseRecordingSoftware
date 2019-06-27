@@ -12,7 +12,7 @@ MainWindow::MainWindow(){
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
-    dynomometer = new Dynomometer();
+    dynomometer = new SocketServer();
     dataStream = new DataStream(this);
     dataProcessor = new DataProcessor(dataStream);
     serialChannel = new SerialChannel(this, dataProcessor);
