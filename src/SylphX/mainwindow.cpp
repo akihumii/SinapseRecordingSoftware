@@ -13,6 +13,9 @@ MainWindow::MainWindow(){
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     dynomometer = new SocketServer();
+    dynomometer->setIpAddress("LocalHost");
+    dynomometer->setPortNumber(45454);
+    dynomometer->doListen();
     dataStream = new DataStream(this);
     dataProcessor = new DataProcessor(dataStream);
     serialChannel = new SerialChannel(this, dataProcessor);
@@ -22,7 +25,7 @@ MainWindow::MainWindow(){
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
 
-    connect(dynomometer, SIGNAL(dynoDataReady(double)), dataProcessor, SLOT(appendDynoData(double)));
+    connect(dynomometer, SIGNAL(dataReady(double)), dataProcessor, SLOT(appendDynoData(double)));
 
     dataTimer.start(50);     //tick timer every XXX msec
     createStatusBar();

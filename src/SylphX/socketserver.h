@@ -9,17 +9,23 @@ class SocketServer : public SocketAbstract {
     Q_OBJECT
 public:
     SocketServer();
+    void setIpAddress(QString address);
+    void setPortNumber(int value);
+    void doListen();
 private:
     QTcpServer *server;
-    QTcpSocket *socketDyno;
-    QVector<double> dynoData;
+    QTcpSocket *socket;
+    QVector<double> data;
+
+    QString ipAddress;
+    int portNumber;
 
 signals:
-    void dynoDataReady(double data);
+    void dataReady(double data);
 
 private slots:
-    void on_dynoPort_connect();
-    void getDynoData();
+    void on_port_connect();
+    void getData();
 
 public slots:
 
