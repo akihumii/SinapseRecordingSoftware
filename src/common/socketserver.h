@@ -13,16 +13,12 @@ public:
     void setPortNumber(int value);
     void doListen();
     void writeData(QByteArray data);
-    void appendData(QVector<QString> data);
-    void streamData();
-    void clearData();
     bool isConnected();
 
 private:
     QTcpServer *server;
     QTcpSocket *socket;
     QVector<QString> data;
-    QDataStream *out;
 
     QString ipAddress;
     int portNumber;

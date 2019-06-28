@@ -46,14 +46,6 @@ void SocketServer::doListen(){
     }
 }
 
-    }
-    else{
-        socket->disconnectFromHost();
-        connectedFlag = false;
-    }
-}
-}
-
 void SocketServer::setIpAddress(QString address){
     ipAddress = address;
 }
