@@ -83,7 +83,7 @@ private:
 
     int startDelay = 3000;
 
-    QByteArray savingFilename;
+    QVector<QString> *savingFilename;
 
     void createLayout();
     void createStatusBar();

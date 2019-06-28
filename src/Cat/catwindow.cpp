@@ -628,11 +628,11 @@ void CatWindow::on_recording_changed(){
     commandCat->sendRecording();
     emitCommandSent();
     qDebug() << "Sent recording to : " << commandCat->getRecording();
-    savingFilename.clear();
-    savingFilename.append("hi world!");
+//    savingFilename->clear();
+//    savingFilename->append("hi world!");
     if(savingFilenameSocket->isConnected()){
-        savingFilenameSocket->writeData(savingFilename);
-        qDebug() << savingFilename;
+//        savingFilenameSocket->streamData(savingFilename);
+//        qDebug() << savingFilename;
     }
     else{
         qDebug() << "Not connected so nothing is sent...";

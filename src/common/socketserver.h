@@ -13,6 +13,7 @@ public:
     void setPortNumber(int value);
     void doListen();
     void writeData(QByteArray data);
+    void streamData(QVector<QString> *data);
     bool isConnected();
 
 private:
