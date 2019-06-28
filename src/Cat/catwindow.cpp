@@ -6,6 +6,10 @@ CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
     commandCat = new CommandCat;
+    savingFilenameSocket = new SocketServer;
+    savingFilenameSocket->setIpAddress("192.168.4.4");
+    savingFilenameSocket->setPortNumber(7777);
+    savingFilenameSocket->doListen();
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
@@ -624,6 +628,15 @@ void CatWindow::on_recording_changed(){
     commandCat->sendRecording();
     emitCommandSent();
     qDebug() << "Sent recording to : " << commandCat->getRecording();
+    savingFilename.clear();
+    savingFilename.append("hi world!");
+    if(savingFilenameSocket->isConnected()){
+        savingFilenameSocket->writeData(savingFilename);
+        qDebug() << savingFilename;
+    }
+    else{
+        qDebug() << "Not connected so nothing is sent...";
+    }
 }
 
 

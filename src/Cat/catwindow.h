@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
+#include "../common/socketserver.h"
 #include "commandcat.h"
 #include <QtMath>
 
@@ -17,6 +18,9 @@ public:
     ~CatWindow();
 
     QLabel *statusBarLabel;
+
+    SocketServer *savingFilenameSocket;
+
 public slots:
     void setRpiCommand(char *data);
 
@@ -78,6 +82,8 @@ private:
     QString commandStdout;
 
     int startDelay = 3000;
+
+    QByteArray savingFilename;
 
     void createLayout();
     void createStatusBar();
