@@ -31,6 +31,7 @@ void SocketServer::on_port_connect(){
     connect(socket, SIGNAL(readyRead()), this, SLOT(getData()));
     qDebug() << ipAddress << "::" << portNumber << " is connected...";
     connectedFlag = true;
+    out = new QDataStream(socket);
 }
 
 void SocketServer::doListen(){
@@ -46,12 +47,26 @@ void SocketServer::doListen(){
     }
 }
 
+void SocketServer::streamData(){
+    if(socket->isOpen()){
+        for(int i = 0; i < data.size(); i++){
+            *out << data.at(i);
+        }
     }
     else{
         socket->disconnectFromHost();
         connectedFlag = false;
     }
+    clearData();
 }
+
+void SocketServer::appendData(QVector<QString> data){
+    data.append(data);
+}
+
+void SocketServer::clearData(){
+    data.remove(0, data.size());
+    data.resize(0);
 }
 
 void SocketServer::setIpAddress(QString address){
