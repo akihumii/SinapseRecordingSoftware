@@ -6,7 +6,7 @@ CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
     commandCat = new CommandCat;
-    filenameSocket = new SocketAbstract;
+    filenameSocket = new SocketFilename;
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
@@ -618,7 +618,7 @@ void CatWindow::on_recording_changed(){
         filenameSocket->doConnect("192.168.4.3", 7777);
         filename = "hi world!";
         commandCat->sendFilename(filename);
-        filenameSocket->socketAbstract->write(filename);
+        filenameSocket->write(commandCat->getFilenameCommand());
         filenameSocket->doDisconnect();
     }
     else{
@@ -771,6 +771,6 @@ void CatWindow::controlInput(bool flag){
 }
 
 CatWindow::~CatWindow(){
-    filenameSocket->doDisconnect();
+//    filenameSocket->doDisconnect();
 }
 }

@@ -80,6 +80,7 @@ public:
     void sendFilename(QString filename);
 
     QByteArray getlastRpiCommand();
+    QByteArray getFilenameCommand();
     void updateRpiCommand(char *data);
 
 private slots:

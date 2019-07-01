@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
-#include "../common/socketabstract.h"
 #include "commandcat.h"
+#include "socketfilename.h"
 #include <QtMath>
 
 namespace Cat {
@@ -23,7 +23,7 @@ public slots:
 
 private:
     CommandCat *commandCat;
-    SocketAbstract *filenameSocket;
+    SocketFilename *filenameSocket;
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;

@@ -281,5 +281,9 @@ QByteArray CommandCat::getlastRpiCommand(){
     return rpiCommand;
 }
 
+QByteArray CommandCat::getFilenameCommand(){
+    return filenameCommand;
+}
+
 }
 

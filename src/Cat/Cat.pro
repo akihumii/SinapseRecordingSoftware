@@ -27,10 +27,12 @@ DEPENDPATH += $$PWD../common
 
 SOURCES += main.cpp \
     catwindow.cpp \
-    commandcat.cpp
+    commandcat.cpp \
+    socketfilename.cpp
 
 HEADERS  += \
     catwindow.h \
-    commandcat.h
+    commandcat.h \
+    socketfilename.h
 
 FORMS    +=
