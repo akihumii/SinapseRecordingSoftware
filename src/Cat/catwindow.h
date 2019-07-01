@@ -5,6 +5,7 @@
 #include "../common/qtincludes.h"
 #include "commandcat.h"
 #include "socketfilename.h"
+#include "filenamedialog.h"
 #include <QtMath>
 
 namespace Cat {
@@ -24,6 +25,7 @@ public slots:
 private:
     CommandCat *commandCat;
     SocketFilename *filenameSocket;
+    FilenameDialog *filenameDialog;
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
@@ -125,6 +127,7 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
+    void on_filename_changed();
     void readOutput();
 
 signals:

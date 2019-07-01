@@ -28,11 +28,13 @@ DEPENDPATH += $$PWD../common
 SOURCES += main.cpp \
     catwindow.cpp \
     commandcat.cpp \
-    socketfilename.cpp
+    socketfilename.cpp \
+    filenamedialog.cpp
 
 HEADERS  += \
     catwindow.h \
     commandcat.h \
-    socketfilename.h
+    socketfilename.h \
+    filenamedialog.h
 
 FORMS    +=
