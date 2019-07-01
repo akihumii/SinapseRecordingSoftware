@@ -14,6 +14,7 @@ public:
     int getRate();
     void setChecked(bool flag);
     void sendDisconnectSignal();
+    void write(QByteArray command);
 
 protected:
     QTcpSocket *socketAbstract;

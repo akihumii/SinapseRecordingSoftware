@@ -6,6 +6,7 @@ CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
     commandCat = new CommandCat;
+    filenameSocket = new SocketAbstract;
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
@@ -613,6 +614,12 @@ void CatWindow::on_recording_changed(){
         recordingButton->setText("Stop Recor&ding");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
         controlInput(false);
+
+        filenameSocket->doConnect("192.168.4.3", 7777);
+        filename = "hi world!";
+        commandCat->sendFilename(filename);
+        filenameSocket->socketAbstract->write(filename);
+        filenameSocket->doDisconnect();
     }
     else{
         recordingFlag = false;
@@ -764,5 +771,6 @@ void CatWindow::controlInput(bool flag){
 }
 
 CatWindow::~CatWindow(){
+    filenameSocket->doDisconnect();
 }
 }

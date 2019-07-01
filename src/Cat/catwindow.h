@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
+#include "../common/socketabstract.h"
 #include "commandcat.h"
 #include <QtMath>
 
@@ -22,6 +23,7 @@ public slots:
 
 private:
     CommandCat *commandCat;
+    SocketAbstract *filenameSocket;
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
@@ -76,6 +78,8 @@ private:
     QString transferStatus;
     QStringList commandArg;
     QString commandStdout;
+
+    QString filename;
 
     int startDelay = 3000;
 

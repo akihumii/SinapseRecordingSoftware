@@ -77,6 +77,7 @@ public:
     void sendStartStimulation();
     void sendRecording();
     void sendRecordingTransfer();
+    void sendFilename(QString filename);
 
     QByteArray getlastRpiCommand();
     void updateRpiCommand(char *data);
@@ -100,6 +101,7 @@ private:
     bool recordingFlag = false;
 
     QByteArray rpiCommand;
+    QByteArray filenameCommand;
 
 signals:
     void appendCommandSignal(short data);
