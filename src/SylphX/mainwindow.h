@@ -14,7 +14,7 @@
 #include "../Odin/odinwindow.h"
 #include "../common/datastream.h"
 #include "../Cat/catwindow.h"
-#include "socketserver.h"
+#include "dynomometer.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -38,7 +38,7 @@ public:
     SerialChannel *serialChannel;
     DataProcessor *dataProcessor;
     DataStream *dataStream;
-    SocketServer *dynomometer;
+    Dynomometer *dynomometer;
 
     Odin::OdinWindow *x;
     Cat::CatWindow *catGUI;

@@ -5,10 +5,10 @@
 #include "../common/socketabstract.h"
 #include "../common/qtincludes.h"
 
-class SocketServer : public SocketAbstract {
+class Dynomometer : public SocketAbstract {
     Q_OBJECT
 public:
-    SocketServer();
+    Dynomometer();
 private:
     QTcpServer *server;
     QTcpSocket *socketDyno;
