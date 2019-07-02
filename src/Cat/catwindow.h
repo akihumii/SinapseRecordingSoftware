@@ -34,6 +34,7 @@ private:
 
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
+    QGroupBox *createStimPatternGroup();
     QGroupBox *createSettingsGroup();
     QGroupBox *createTrainingGroup();
     QGroupBox *createParametersGroup();
@@ -43,6 +44,7 @@ private:
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
     QGroupBox *groupThreasholding;
+    QGroupBox *groupStimPattern;
 
     QLabel *trainingSaveDir;
 
@@ -60,6 +62,9 @@ private:
     QSpinBox *notchSpinBox;
     QSpinBox *extendStimSpinBox;
 
+    QCheckBox *stimOnCheckBox[4];
+    QCheckBox *stimOffCheckBox[4];
+    QCheckBox *stimTargetCheckBox[4];
     QCheckBox *highpassCheckBox;
     QCheckBox *lowpassCheckBox;
     QCheckBox *notchCheckBox;

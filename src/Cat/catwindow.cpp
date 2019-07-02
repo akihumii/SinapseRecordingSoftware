@@ -42,6 +42,7 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
     methodsParameterLayout->addWidget(createThreasholdingGroup());
+    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
 
@@ -344,6 +345,97 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
     groupThreasholding->setLayout(thresholdingLayout);
 
     return groupThreasholding;
+}
+
+QGroupBox *CatWindow::createStimPatternGroup(){
+    groupStimPattern = new QGroupBox(tr("Stimulation Pattern"));
+
+//    QLabel *stimPatternLabel[4];
+//    stimPatternLabel[0] = new QLabel(tr(" "));
+//    stimPatternLabel[1] = new QLabel(tr("On: "));
+//    stimPatternLabel[2] = new QLabel(tr("Off: "));
+//    stimPatternLabel[3] = new QLabel(tr("Stimulation: "));
+
+//    QVBoxLayout *stimPatternLabelSubLayout = new QVBoxLayout;
+//    for(int i = 0; i < 4; i++){
+//        stimPatternLabelSubLayout->addWidget(stimPatternLabel[i]);
+//        stimPatternLabel[i]->setMinimumWidth(100);
+//    }
+
+//    QVBoxLayout *stimPatternVSubLayout[4];
+//    QLabel *channelLabel[4];
+//    for(int i = 0; i < 4; i++){
+//        stimPatternVSubLayout[i] = new QVBoxLayout;
+//        // channel label
+//        channelLabel[i] = new QLabel(tr("Channel ") + QString::number(i+1));
+//        stimPatternVSubLayout[i]->addWidget(channelLabel[i]);
+//    }
+
+//    QHBoxLayout *stimPatternHSubLayout = new QHBoxLayout;
+//    for(int i = 0; i < 4; i++){
+//        stimPatternHSubLayout->addLayout(stimPatternVSubLayout[i]);
+//    }
+
+//    QHBoxLayout *stimPatternLayout = new QHBoxLayout;
+//    stimPatternLayout->addLayout(stimPatternLabelSubLayout);
+//    stimPatternLayout->addLayout(stimPatternHSubLayout);
+
+    QHBoxLayout *stimPatternSubLayout[4];
+
+    int labelWidth = 200;
+
+    // Label:
+    stimPatternSubLayout[0] = new QHBoxLayout;
+    QLabel *stimEmptyLabel = new QLabel(tr(" "));
+    stimEmptyLabel->setMaximumWidth(labelWidth);
+    stimPatternSubLayout[0]->addWidget(stimEmptyLabel);
+//    QLabel *channelLabel[4];
+    for(int i = 0; i < 4; i++){
+        QLabel *channelLabel = new QLabel(tr("Channel ") + QString::number(i+1));
+        stimPatternSubLayout[0]->addWidget(channelLabel);
+    }
+
+    // stim on:
+    stimPatternSubLayout[1] = new QHBoxLayout;
+    QLabel *stimOnLabel = new QLabel(tr("On: "));
+    stimOnLabel->setMaximumWidth(labelWidth);
+    stimPatternSubLayout[1]->addWidget(stimOnLabel);
+    for(int i = 0; i < 4; i++){
+//        QLabel *channelNumber = new QLabel(QString::number(i+1));
+//        stimPatternSubLayout[1]->addWidget(channelNumber);
+        stimOnCheckBox[i] = new QCheckBox;
+        stimPatternSubLayout[1]->addWidget(stimOnCheckBox[i]);
+    }
+
+    // stim off:
+    stimPatternSubLayout[2] = new QHBoxLayout;
+    QLabel *stimOffLabel = new QLabel(tr("Off: "));
+    stimOffLabel->setMaximumWidth(labelWidth);
+    stimPatternSubLayout[2]->addWidget(stimOffLabel);
+    for(int i = 0;i < 4; i++){
+        stimOffCheckBox[i] = new QCheckBox;
+        stimPatternSubLayout[2]->addWidget(stimOffCheckBox[i]);
+    }
+
+    // stim target:
+    stimPatternSubLayout[3] = new QHBoxLayout;
+    QLabel *stimTargetLabel = new QLabel(tr("Stimulation: "));
+    stimTargetLabel->setMaximumWidth(labelWidth);
+    stimPatternSubLayout[3]->addWidget(stimTargetLabel);
+    for(int i = 0; i < 4; i++){
+        stimTargetCheckBox[i] = new QCheckBox;
+        stimPatternSubLayout[3]->addWidget(stimTargetCheckBox[i]);
+    }
+
+    //Layout
+    QVBoxLayout *stimPatternLayout = new QVBoxLayout;
+    for(int i = 0; i < 4; i++){
+        stimPatternLayout->addLayout(stimPatternSubLayout[i]);
+    }
+
+    groupStimPattern->setLayout(stimPatternLayout);
+
+    return groupStimPattern;
 }
 
 void CatWindow::createStatusBar(){
