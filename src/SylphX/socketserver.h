@@ -1,5 +1,5 @@
-#ifndef DYNOMOMETER_H
-#define DYNOMOMETER_H
+#ifndef SOCKETSERVER_H
+#define SOCKETSERVER_H
 
 #include <QObject>
 #include "../common/socketabstract.h"
@@ -25,4 +25,4 @@ public slots:
 
 };
 
-#endif // DYNOMOMETER_H
+#endif // SOCKETSERVER_H
