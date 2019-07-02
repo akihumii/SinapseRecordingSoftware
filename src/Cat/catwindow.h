@@ -42,6 +42,7 @@ private:
 
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
+    QGroupBox *groupThreasholding;
 
     QLabel *trainingSaveDir;
 

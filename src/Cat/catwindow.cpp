@@ -300,7 +300,7 @@ QHBoxLayout *CatWindow::createStartButton(){
 }
 
 QGroupBox *CatWindow::createThreasholdingGroup(){
-    QGroupBox *groupThreasholding = new QGroupBox(tr("Thresholding Parameters"));
+    groupThreasholding = new QGroupBox(tr("Thresholding Parameters"));
 
     QVBoxLayout *thresholdingSubLayout[4];
     QLabel *channelLabel[4];
@@ -445,6 +445,14 @@ void CatWindow::on_classify_methods_changed(){
     for(int i = 0; i < 2; i++){
         commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
     }
+
+    if(methodsClassifyBox[1]->isChecked()){  // if feature is selected as classify method
+        groupThreasholding->setEnabled(false);
+    }
+    else{
+        groupThreasholding->setEnabled(true);
+    }
+
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
