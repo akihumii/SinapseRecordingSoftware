@@ -77,8 +77,10 @@ public:
     void sendStartStimulation();
     void sendRecording();
     void sendRecordingTransfer();
+    void sendFilename(QString filename);
 
     QByteArray getlastRpiCommand();
+    QByteArray getFilenameCommand();
     void updateRpiCommand(char *data);
 
 private slots:
@@ -100,6 +102,7 @@ private:
     bool recordingFlag = false;
 
     QByteArray rpiCommand;
+    QByteArray filenameCommand;
 
 signals:
     void appendCommandSignal(short data);

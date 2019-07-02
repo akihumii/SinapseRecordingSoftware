@@ -137,6 +137,12 @@ void CommandCat::sendRecordingTransfer(){
     qDebug() << "Send recording transfer: " << rpiCommand;
 }
 
+void CommandCat::sendFilename(QString filename){
+    filenameCommand.clear();
+    filenameCommand.append(filename);
+    qDebug() << "Send filename: " << filenameCommand;
+}
+
 void CommandCat::appendRpiCommand(short data){
     if(data != 0 && data % 256 == 0){  // to solve the issue where the ocmmand will be terminated at 0 while being written into socket
         data += 1;
@@ -273,6 +279,10 @@ int CommandCat::getRecording(){
 
 QByteArray CommandCat::getlastRpiCommand(){
     return rpiCommand;
+}
+
+QByteArray CommandCat::getFilenameCommand(){
+    return filenameCommand;
 }
 
 }

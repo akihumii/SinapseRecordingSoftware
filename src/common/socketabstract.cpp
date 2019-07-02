@@ -43,6 +43,10 @@ int SocketAbstract::getRate(){
     return rate;
 }
 
+void SocketAbstract::write(QByteArray command){
+    socketAbstract->write(command);
+}
+
 void SocketAbstract::setChecked(bool flag){
     checked = flag;
 }

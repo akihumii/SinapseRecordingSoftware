@@ -6,6 +6,11 @@ CatWindow::CatWindow(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Cat Software V") + version);
     commandCat = new CommandCat;
+    filenameSocket = new SocketFilename;
+    filenameDialog = new FilenameDialog;
+    connect(filenameDialog, SIGNAL(filenameChanged()), this, SLOT(on_filename_changed()));
+//    filenameDialog->setFixedSize(filenameDialog->sizeHint());
+//    filenameDialog->show();
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
@@ -613,19 +618,32 @@ void CatWindow::on_recording_changed(){
         recordingButton->setText("Stop Recor&ding");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
         controlInput(false);
+
+        filenameDialog->setFilename(QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'"));
     }
     else{
         recordingFlag = false;
         commandCat->setRecording(recordingFlag);
         recordingButton->setText("Start Recor&ding");
-        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!!"));
+        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!!"));
         controlInput(true);
+
+        filenameDialog->show();
     }
     commandCat->sendRecording();
     emitCommandSent();
     qDebug() << "Sent recording to : " << commandCat->getRecording();
 }
 
+void CatWindow::on_filename_changed(){
+    filenameSocket->doConnect("192.168.4.3", 7777);
+    commandCat->sendFilename(filenameDialog->getFilename());
+    filenameSocket->write(commandCat->getFilenameCommand());
+    filenameSocket->doDisconnect();
+    filenameDialog->hide();
+
+    statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! Filename: ") + filenameDialog->getFilename());
+}
 
 void CatWindow::on_recording_transfer_changed(){
     recordingTransferButton->setEnabled(false);
@@ -764,5 +782,6 @@ void CatWindow::controlInput(bool flag){
 }
 
 CatWindow::~CatWindow(){
+//    filenameSocket->doDisconnect();
 }
 }
