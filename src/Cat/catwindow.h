@@ -136,6 +136,9 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
+    void on_stimulation_pattern_changed();
+    void on_stimulation_on_off_changed();
+    void on_stimulation_target_changed();
     void on_filename_changed();
     void readOutput();
 

@@ -116,6 +116,27 @@ void CommandCat::sendClassifyMethods(){
     qDebug() << "Send classify methods: " << rpiCommand;
 }
 
+void CommandCat::sendStimulationPattern(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) STIMULATION_PATTERN);
+    appendRpiCommand((short) getStimulationPattern());
+    qDebug() << "Send stimulation pattern: " << rpiCommand;
+}
+
+void CommandCat::sendStimulationPatternOnOff(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) STIMULATION_PATTERN_ON_OFF);
+    appendRpiCommand((short) getStimulationPatternOnOff());
+    qDebug() << "Send stimulation pattern on off: " << rpiCommand;
+}
+
+void CommandCat::sendStimulationPatternTarget(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) STIMULATION_PATTERN_TARGET);
+    appendRpiCommand((short) getStimulationPatternTarget());
+    qDebug() << "Send stimulation pattern target: " << rpiCommand;
+}
+
 void CommandCat::sendStartStimulation(){
     rpiCommand.clear();
     rpiCommand.append((const char) STIMULATION_FLAG);
@@ -169,6 +190,18 @@ void CommandCat::setSMChannel(int channel, int value){
 
 void CommandCat::setClassifyMethods(int channel, int value){
     classifyMethods[channel] = value;
+}
+
+void CommandCat::setStimulationPattern(int channel, int value){
+    stimulationPattern[channel] = value;
+}
+
+void CommandCat::setStimulationPatternOnOff(int channel, int value){
+    stimulationPatternOnOff[channel] = value;
+}
+
+void CommandCat::setStimulationPatternTarget(int channel, int value){
+    stimulationPatternTarget[channel] = value;
 }
 
 void CommandCat::setThreshold(int channel, int value){
@@ -225,6 +258,27 @@ int CommandCat::getSMChannel(){
 int CommandCat::getClassifyMethods(){
     int temp;
     temp = classifyMethods[1] << 1 | classifyMethods[0];
+    temp += 520;
+    return temp;
+}
+
+int CommandCat::getStimulationPattern(){
+    int temp;
+    temp = stimulationPattern[1] << 1 | stimulationPattern[0];
+    temp += 520;
+    return temp;
+}
+
+int CommandCat::getStimulationPatternOnOff(){
+    int temp;
+    temp = stimulationPatternOnOff[3] << 3 | stimulationPatternOnOff[2] << 2 | stimulationPatternOnOff[1] << 1 | stimulationPatternOnOff[0];
+    temp += 520;
+    return temp;
+}
+
+int CommandCat::getStimulationPatternTarget(){
+    int temp;
+    temp = stimulationPatternTarget[3] << 3 | stimulationPatternTarget[2] << 2 | stimulationPatternTarget[1] << 1 | stimulationPatternTarget[0];
     temp += 520;
     return temp;
 }

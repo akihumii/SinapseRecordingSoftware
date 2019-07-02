@@ -100,6 +100,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     for(int i = 0; i < 2; i++){
         methodsStimulationPatternBox[i]->setMinimumWidth(minimumBoxWidth);
         methodsStimulationPatternLayout->addWidget(methodsStimulationPatternBox[i]);
+        connect(methodsStimulationPatternBox[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_pattern_changed()));
     }
     QGroupBox *groupMethodsStimulationPattern = new QGroupBox();
     groupMethodsStimulationPattern->setLayout(methodsStimulationPatternLayout);
@@ -396,6 +397,11 @@ QGroupBox *CatWindow::createStimPatternGroup(){
         onoffStimBoxCh3[i] = new QRadioButton;
         onoffStimBoxCh4[i] = new QRadioButton;
 
+        connect(onoffStimBoxCh1[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+        connect(onoffStimBoxCh2[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+        connect(onoffStimBoxCh3[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+        connect(onoffStimBoxCh4[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+
         onoffStimSubLayout[1]->addWidget(onoffStimBoxCh1[i]);
         onoffStimSubLayout[2]->addWidget(onoffStimBoxCh2[i]);
         onoffStimSubLayout[3]->addWidget(onoffStimBoxCh3[i]);
@@ -423,22 +429,6 @@ QGroupBox *CatWindow::createStimPatternGroup(){
         stimPatternSubLayout[1]->addWidget(groupOnOffStimSubLayout[i]);
     }
 
-//    stimOnLabel->setMaximumWidth(labelWidth);
-//    stimPatternSubLayout[1]->addWidget(stimOnLabel);
-//    for(int i = 0; i < 4; i++){
-//        stimOnCheckBox[i] = new QCheckBox;
-//        stimPatternSubLayout[1]->addWidget(stimOnCheckBox[i]);
-//    }
-
-//    // stim off:
-//    stimPatternSubLayout[2] = new QHBoxLayout;
-//    stimOffLabel->setMaximumWidth(labelWidth);
-//    stimPatternSubLayout[2]->addWidget(stimOffLabel);
-//    for(int i = 0;i < 4; i++){
-//        stimOffCheckBox[i] = new QCheckBox;
-//        stimPatternSubLayout[2]->addWidget(stimOffCheckBox[i]);
-//    }
-
     // stim target:
     stimPatternSubLayout[2] = new QHBoxLayout;
     QLabel *stimTargetLabel = new QLabel(tr("Stimulation: "));
@@ -447,6 +437,7 @@ QGroupBox *CatWindow::createStimPatternGroup(){
     for(int i = 0; i < 4; i++){
         stimTargetCheckBox[i] = new QCheckBox;
         stimPatternSubLayout[2]->addWidget(stimTargetCheckBox[i]);
+        connect(stimTargetCheckBox[i], SIGNAL(toggled(bool)), this, SLOT(on_stimulation_target_changed()));
     }
 
     //Layout
@@ -456,6 +447,7 @@ QGroupBox *CatWindow::createStimPatternGroup(){
     }
 
     groupStimPattern->setLayout(stimPatternLayout);
+    groupStimPattern->setEnabled(false);
 
     return groupStimPattern;
 }
@@ -572,6 +564,49 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->sendClassifyMethods();
         emitCommandSent();
     }
+}
+
+void CatWindow::on_stimulation_pattern_changed(){
+    int temp = commandCat->getStimulationPattern();
+    for(int i = 0; i < 2; i++){
+        commandCat->setStimulationPattern(i, methodsStimulationPatternBox[i]->isChecked());
+    }
+
+    if(methodsStimulationPatternBox[1]->isChecked()){  // if Target stimulation pattern is selected
+        groupStimPattern->setEnabled(true);
+    }
+    else{
+        groupStimPattern->setEnabled(false);
+    }
+
+    if(temp != commandCat->getStimulationPattern()){
+        qDebug() << "Sent stimulation pattern to: " << commandCat->getStimulationPattern();
+        commandCat->sendStimulationPattern();
+        emitCommandSent();
+    }
+}
+
+void CatWindow::on_stimulation_on_off_changed(){
+    int temp = commandCat->getStimulationPatternOnOff();
+    commandCat->setStimulationPatternOnOff(0, onoffStimBoxCh1[0]->isChecked());
+    commandCat->setStimulationPatternOnOff(1, onoffStimBoxCh2[0]->isChecked());
+    commandCat->setStimulationPatternOnOff(2, onoffStimBoxCh3[0]->isChecked());
+    commandCat->setStimulationPatternOnOff(3, onoffStimBoxCh4[0]->isChecked());
+
+    if(temp != commandCat->getStimulationPatternOnOff()){
+        qDebug() << "Sent stimulation pattern on off to: " << commandCat->getStimulationPatternOnOff();
+        commandCat->sendStimulationPatternOnOff();
+        emitCommandSent();
+    }
+}
+
+void CatWindow::on_stimulation_target_changed(){
+    for(int i = 0; i < 4; i++){
+        commandCat->setStimulationPatternTarget(i, stimTargetCheckBox[i]->isChecked());
+    }
+    qDebug() << "Sent stimulation pattern target to: " << commandCat->getStimulationPatternTarget();
+    commandCat->sendStimulationPatternTarget();
+    emitCommandSent();
 }
 
 void CatWindow::on_sm_channel_changed(){
