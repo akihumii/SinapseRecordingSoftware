@@ -54,12 +54,15 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
     //Labels
     QVBoxLayout *settingsLabelLayout = new QVBoxLayout;
-    QLabel *settingsLabel[2];
+    QLabel *settingsLabel[3];
     settingsLabel[0] = new QLabel(tr("S/M Channel: "));
     settingsLabel[1] = new QLabel(tr("Methods: "));
-    for(int i = 0; i < 2; i++){
+    settingsLabel[2] = new QLabel(tr("Stim. Pattern: "));
+    for(int i = 0; i < 3; i++){
         settingsLabelLayout->addWidget(settingsLabel[i]);
     }
+
+    int minimumBoxWidth = 150;
 
     //S/M Channel
     methodsSMChannelBox[0] = new QRadioButton(tr("&Single-channel"));
@@ -67,7 +70,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     methodsSMChannelBox[1] = new QRadioButton(tr("&Multi-channel"));
     QHBoxLayout *SMChannelLayout = new QHBoxLayout;
     for(int i = 0; i < 2; i++){
-        methodsSMChannelBox[i]->setMinimumWidth(150);
+        methodsSMChannelBox[i]->setMinimumWidth(minimumBoxWidth);
         SMChannelLayout->addWidget(methodsSMChannelBox[i]);
         connect(methodsSMChannelBox[i], SIGNAL(clicked(bool)), this, SLOT(on_sm_channel_changed()));
     }
@@ -79,10 +82,9 @@ QGroupBox *CatWindow::createSettingsGroup(){
     methodsClassifyBox[0] = new QRadioButton(tr("&Tresholding"));
     methodsClassifyBox[0]->setChecked(true);
     methodsClassifyBox[1] = new QRadioButton(tr("&Features"));
-
     QHBoxLayout *methodsClassifyLayout = new QHBoxLayout;
     for(int i = 0; i < 2; i++){
-        methodsClassifyBox[i]->setMinimumWidth(150);
+        methodsClassifyBox[i]->setMinimumWidth(minimumBoxWidth);
         methodsClassifyLayout->addWidget(methodsClassifyBox[i]);
         connect(methodsClassifyBox[i], SIGNAL(clicked(bool)), this, SLOT(on_classify_methods_changed()));
     }
@@ -90,10 +92,24 @@ QGroupBox *CatWindow::createSettingsGroup(){
     groupMethodsClassify->setLayout(methodsClassifyLayout);
 
 
+    //Stimulation pattern
+    methodsStimulationPatternBox[0] = new QRadioButton(tr("N&ormal"));
+    methodsStimulationPatternBox[0]->setChecked(true);
+    methodsStimulationPatternBox[1] = new QRadioButton(tr("T&arget"));
+    QHBoxLayout *methodsStimulationPatternLayout = new QHBoxLayout;
+    for(int i = 0; i < 2; i++){
+        methodsStimulationPatternBox[i]->setMinimumWidth(minimumBoxWidth);
+        methodsStimulationPatternLayout->addWidget(methodsStimulationPatternBox[i]);
+    }
+    QGroupBox *groupMethodsStimulationPattern = new QGroupBox();
+    groupMethodsStimulationPattern->setLayout(methodsStimulationPatternLayout);
+
+
     //Layout
     QVBoxLayout *settingsRadioButtonLayout = new QVBoxLayout;
     settingsRadioButtonLayout->addWidget(groupSMChannel);
     settingsRadioButtonLayout->addWidget(groupMethodsClassify);
+    settingsRadioButtonLayout->addWidget(groupMethodsStimulationPattern);
 
     QHBoxLayout *settingsLayout = new QHBoxLayout;
     settingsLayout->addLayout(settingsLabelLayout);

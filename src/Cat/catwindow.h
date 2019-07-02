@@ -50,6 +50,7 @@ private:
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
+    QRadioButton *methodsStimulationPatternBox[2];
 
     QSpinBox *thresholdingSpinBox[4];
     QSpinBox *thresholdingPowerSpinBox[4];
