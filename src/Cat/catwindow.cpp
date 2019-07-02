@@ -366,7 +366,7 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
 QGroupBox *CatWindow::createStimPatternGroup(){
     groupStimPattern = new QGroupBox(tr("Stimulation Pattern"));
 
-    QHBoxLayout *stimPatternSubLayout[4];
+    QHBoxLayout *stimPatternSubLayout[3];
 
     int labelWidth = 200;
 
@@ -380,39 +380,78 @@ QGroupBox *CatWindow::createStimPatternGroup(){
         stimPatternSubLayout[0]->addWidget(channelLabel);
     }
 
-    // stim on:
-    stimPatternSubLayout[1] = new QHBoxLayout;
+    // stim on and off:
+    QVBoxLayout *onoffStimSubLayout[5];
     QLabel *stimOnLabel = new QLabel(tr("On: "));
-    stimOnLabel->setMaximumWidth(labelWidth);
-    stimPatternSubLayout[1]->addWidget(stimOnLabel);
-    for(int i = 0; i < 4; i++){
-        stimOnCheckBox[i] = new QCheckBox;
-        stimPatternSubLayout[1]->addWidget(stimOnCheckBox[i]);
+    QLabel *stimOffLabel = new QLabel(tr("Off: "));
+    for(int i = 0; i < 5; i++){
+        onoffStimSubLayout[i] = new QVBoxLayout;
+    }
+    onoffStimSubLayout[0]->addWidget(stimOnLabel);
+    onoffStimSubLayout[0]->addWidget(stimOffLabel);
+
+    for(int i = 0; i < 2; i++){
+        onoffStimBoxCh1[i] = new QRadioButton;
+        onoffStimBoxCh2[i] = new QRadioButton;
+        onoffStimBoxCh3[i] = new QRadioButton;
+        onoffStimBoxCh4[i] = new QRadioButton;
+
+        onoffStimSubLayout[1]->addWidget(onoffStimBoxCh1[i]);
+        onoffStimSubLayout[2]->addWidget(onoffStimBoxCh2[i]);
+        onoffStimSubLayout[3]->addWidget(onoffStimBoxCh3[i]);
+        onoffStimSubLayout[4]->addWidget(onoffStimBoxCh4[i]);
     }
 
-    // stim off:
-    stimPatternSubLayout[2] = new QHBoxLayout;
-    QLabel *stimOffLabel = new QLabel(tr("Off: "));
-    stimOffLabel->setMaximumWidth(labelWidth);
-    stimPatternSubLayout[2]->addWidget(stimOffLabel);
-    for(int i = 0;i < 4; i++){
-        stimOffCheckBox[i] = new QCheckBox;
-        stimPatternSubLayout[2]->addWidget(stimOffCheckBox[i]);
+    onoffStimBoxCh1[0]->setChecked(true);
+    onoffStimBoxCh2[0]->setChecked(true);
+    onoffStimBoxCh3[1]->setChecked(true);
+    onoffStimBoxCh4[1]->setChecked(true);
+
+    QGroupBox *groupOnOffStimSubLayout[4];
+    for(int i = 0; i < 4; i++){
+        groupOnOffStimSubLayout[i] = new QGroupBox;
     }
+    groupOnOffStimSubLayout[0]->setLayout(onoffStimSubLayout[1]);
+    groupOnOffStimSubLayout[1]->setLayout(onoffStimSubLayout[2]);
+    groupOnOffStimSubLayout[2]->setLayout(onoffStimSubLayout[3]);
+    groupOnOffStimSubLayout[3]->setLayout(onoffStimSubLayout[4]);
+
+
+    stimPatternSubLayout[1] = new QHBoxLayout;
+    stimPatternSubLayout[1]->addLayout(onoffStimSubLayout[0]);
+    for(int i = 0; i < 4; i++){
+        stimPatternSubLayout[1]->addWidget(groupOnOffStimSubLayout[i]);
+    }
+
+//    stimOnLabel->setMaximumWidth(labelWidth);
+//    stimPatternSubLayout[1]->addWidget(stimOnLabel);
+//    for(int i = 0; i < 4; i++){
+//        stimOnCheckBox[i] = new QCheckBox;
+//        stimPatternSubLayout[1]->addWidget(stimOnCheckBox[i]);
+//    }
+
+//    // stim off:
+//    stimPatternSubLayout[2] = new QHBoxLayout;
+//    stimOffLabel->setMaximumWidth(labelWidth);
+//    stimPatternSubLayout[2]->addWidget(stimOffLabel);
+//    for(int i = 0;i < 4; i++){
+//        stimOffCheckBox[i] = new QCheckBox;
+//        stimPatternSubLayout[2]->addWidget(stimOffCheckBox[i]);
+//    }
 
     // stim target:
-    stimPatternSubLayout[3] = new QHBoxLayout;
+    stimPatternSubLayout[2] = new QHBoxLayout;
     QLabel *stimTargetLabel = new QLabel(tr("Stimulation: "));
     stimTargetLabel->setMaximumWidth(labelWidth);
-    stimPatternSubLayout[3]->addWidget(stimTargetLabel);
+    stimPatternSubLayout[2]->addWidget(stimTargetLabel);
     for(int i = 0; i < 4; i++){
         stimTargetCheckBox[i] = new QCheckBox;
-        stimPatternSubLayout[3]->addWidget(stimTargetCheckBox[i]);
+        stimPatternSubLayout[2]->addWidget(stimTargetCheckBox[i]);
     }
 
     //Layout
     QVBoxLayout *stimPatternLayout = new QVBoxLayout;
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 3; i++){
         stimPatternLayout->addLayout(stimPatternSubLayout[i]);
     }
 

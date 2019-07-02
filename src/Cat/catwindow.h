@@ -51,6 +51,10 @@ private:
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
     QRadioButton *methodsStimulationPatternBox[2];
+    QRadioButton *onoffStimBoxCh1[2];
+    QRadioButton *onoffStimBoxCh2[2];
+    QRadioButton *onoffStimBoxCh3[2];
+    QRadioButton *onoffStimBoxCh4[2];
 
     QSpinBox *thresholdingSpinBox[4];
     QSpinBox *thresholdingPowerSpinBox[4];
@@ -63,8 +67,6 @@ private:
     QSpinBox *notchSpinBox;
     QSpinBox *extendStimSpinBox;
 
-    QCheckBox *stimOnCheckBox[4];
-    QCheckBox *stimOffCheckBox[4];
     QCheckBox *stimTargetCheckBox[4];
     QCheckBox *highpassCheckBox;
     QCheckBox *lowpassCheckBox;
