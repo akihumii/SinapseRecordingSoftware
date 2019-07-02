@@ -350,36 +350,6 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
 QGroupBox *CatWindow::createStimPatternGroup(){
     groupStimPattern = new QGroupBox(tr("Stimulation Pattern"));
 
-//    QLabel *stimPatternLabel[4];
-//    stimPatternLabel[0] = new QLabel(tr(" "));
-//    stimPatternLabel[1] = new QLabel(tr("On: "));
-//    stimPatternLabel[2] = new QLabel(tr("Off: "));
-//    stimPatternLabel[3] = new QLabel(tr("Stimulation: "));
-
-//    QVBoxLayout *stimPatternLabelSubLayout = new QVBoxLayout;
-//    for(int i = 0; i < 4; i++){
-//        stimPatternLabelSubLayout->addWidget(stimPatternLabel[i]);
-//        stimPatternLabel[i]->setMinimumWidth(100);
-//    }
-
-//    QVBoxLayout *stimPatternVSubLayout[4];
-//    QLabel *channelLabel[4];
-//    for(int i = 0; i < 4; i++){
-//        stimPatternVSubLayout[i] = new QVBoxLayout;
-//        // channel label
-//        channelLabel[i] = new QLabel(tr("Channel ") + QString::number(i+1));
-//        stimPatternVSubLayout[i]->addWidget(channelLabel[i]);
-//    }
-
-//    QHBoxLayout *stimPatternHSubLayout = new QHBoxLayout;
-//    for(int i = 0; i < 4; i++){
-//        stimPatternHSubLayout->addLayout(stimPatternVSubLayout[i]);
-//    }
-
-//    QHBoxLayout *stimPatternLayout = new QHBoxLayout;
-//    stimPatternLayout->addLayout(stimPatternLabelSubLayout);
-//    stimPatternLayout->addLayout(stimPatternHSubLayout);
-
     QHBoxLayout *stimPatternSubLayout[4];
 
     int labelWidth = 200;
@@ -389,7 +359,6 @@ QGroupBox *CatWindow::createStimPatternGroup(){
     QLabel *stimEmptyLabel = new QLabel(tr(" "));
     stimEmptyLabel->setMaximumWidth(labelWidth);
     stimPatternSubLayout[0]->addWidget(stimEmptyLabel);
-//    QLabel *channelLabel[4];
     for(int i = 0; i < 4; i++){
         QLabel *channelLabel = new QLabel(tr("Channel ") + QString::number(i+1));
         stimPatternSubLayout[0]->addWidget(channelLabel);
@@ -401,8 +370,6 @@ QGroupBox *CatWindow::createStimPatternGroup(){
     stimOnLabel->setMaximumWidth(labelWidth);
     stimPatternSubLayout[1]->addWidget(stimOnLabel);
     for(int i = 0; i < 4; i++){
-//        QLabel *channelNumber = new QLabel(QString::number(i+1));
-//        stimPatternSubLayout[1]->addWidget(channelNumber);
         stimOnCheckBox[i] = new QCheckBox;
         stimPatternSubLayout[1]->addWidget(stimOnCheckBox[i]);
     }
