@@ -42,6 +42,7 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
     methodsParameterLayout->addWidget(createThreasholdingGroup());
+    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
 
@@ -53,12 +54,15 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
     //Labels
     QVBoxLayout *settingsLabelLayout = new QVBoxLayout;
-    QLabel *settingsLabel[2];
+    QLabel *settingsLabel[3];
     settingsLabel[0] = new QLabel(tr("S/M Channel: "));
     settingsLabel[1] = new QLabel(tr("Methods: "));
-    for(int i = 0; i < 2; i++){
+    settingsLabel[2] = new QLabel(tr("Stim. Pattern: "));
+    for(int i = 0; i < 3; i++){
         settingsLabelLayout->addWidget(settingsLabel[i]);
     }
+
+    int minimumBoxWidth = 150;
 
     //S/M Channel
     methodsSMChannelBox[0] = new QRadioButton(tr("&Single-channel"));
@@ -66,7 +70,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     methodsSMChannelBox[1] = new QRadioButton(tr("&Multi-channel"));
     QHBoxLayout *SMChannelLayout = new QHBoxLayout;
     for(int i = 0; i < 2; i++){
-        methodsSMChannelBox[i]->setMinimumWidth(150);
+        methodsSMChannelBox[i]->setMinimumWidth(minimumBoxWidth);
         SMChannelLayout->addWidget(methodsSMChannelBox[i]);
         connect(methodsSMChannelBox[i], SIGNAL(clicked(bool)), this, SLOT(on_sm_channel_changed()));
     }
@@ -78,10 +82,9 @@ QGroupBox *CatWindow::createSettingsGroup(){
     methodsClassifyBox[0] = new QRadioButton(tr("&Tresholding"));
     methodsClassifyBox[0]->setChecked(true);
     methodsClassifyBox[1] = new QRadioButton(tr("&Features"));
-
     QHBoxLayout *methodsClassifyLayout = new QHBoxLayout;
     for(int i = 0; i < 2; i++){
-        methodsClassifyBox[i]->setMinimumWidth(150);
+        methodsClassifyBox[i]->setMinimumWidth(minimumBoxWidth);
         methodsClassifyLayout->addWidget(methodsClassifyBox[i]);
         connect(methodsClassifyBox[i], SIGNAL(clicked(bool)), this, SLOT(on_classify_methods_changed()));
     }
@@ -89,10 +92,25 @@ QGroupBox *CatWindow::createSettingsGroup(){
     groupMethodsClassify->setLayout(methodsClassifyLayout);
 
 
+    //Stimulation pattern
+    methodsStimulationPatternBox[0] = new QRadioButton(tr("N&ormal"));
+    methodsStimulationPatternBox[0]->setChecked(true);
+    methodsStimulationPatternBox[1] = new QRadioButton(tr("T&arget"));
+    QHBoxLayout *methodsStimulationPatternLayout = new QHBoxLayout;
+    for(int i = 0; i < 2; i++){
+        methodsStimulationPatternBox[i]->setMinimumWidth(minimumBoxWidth);
+        methodsStimulationPatternLayout->addWidget(methodsStimulationPatternBox[i]);
+        connect(methodsStimulationPatternBox[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_pattern_changed()));
+    }
+    QGroupBox *groupMethodsStimulationPattern = new QGroupBox();
+    groupMethodsStimulationPattern->setLayout(methodsStimulationPatternLayout);
+
+
     //Layout
     QVBoxLayout *settingsRadioButtonLayout = new QVBoxLayout;
     settingsRadioButtonLayout->addWidget(groupSMChannel);
     settingsRadioButtonLayout->addWidget(groupMethodsClassify);
+    settingsRadioButtonLayout->addWidget(groupMethodsStimulationPattern);
 
     QHBoxLayout *settingsLayout = new QHBoxLayout;
     settingsLayout->addLayout(settingsLabelLayout);
@@ -346,6 +364,94 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
     return groupThreasholding;
 }
 
+QGroupBox *CatWindow::createStimPatternGroup(){
+    groupStimPattern = new QGroupBox(tr("Stimulation Pattern"));
+
+    QHBoxLayout *stimPatternSubLayout[3];
+
+    int labelWidth = 200;
+
+    // Label:
+    stimPatternSubLayout[0] = new QHBoxLayout;
+    QLabel *stimEmptyLabel = new QLabel(tr(" "));
+    stimEmptyLabel->setMaximumWidth(labelWidth);
+    stimPatternSubLayout[0]->addWidget(stimEmptyLabel);
+    for(int i = 0; i < 4; i++){
+        QLabel *channelLabel = new QLabel(tr("Channel ") + QString::number(i+1));
+        stimPatternSubLayout[0]->addWidget(channelLabel);
+    }
+
+    // stim on and off:
+    QVBoxLayout *onoffStimSubLayout[5];
+    QLabel *stimOnLabel = new QLabel(tr("On: "));
+    QLabel *stimOffLabel = new QLabel(tr("Off: "));
+    for(int i = 0; i < 5; i++){
+        onoffStimSubLayout[i] = new QVBoxLayout;
+    }
+    onoffStimSubLayout[0]->addWidget(stimOnLabel);
+    onoffStimSubLayout[0]->addWidget(stimOffLabel);
+
+    for(int i = 0; i < 2; i++){
+        onoffStimBoxCh1[i] = new QRadioButton;
+        onoffStimBoxCh2[i] = new QRadioButton;
+        onoffStimBoxCh3[i] = new QRadioButton;
+        onoffStimBoxCh4[i] = new QRadioButton;
+
+        connect(onoffStimBoxCh1[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+        connect(onoffStimBoxCh2[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+        connect(onoffStimBoxCh3[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+        connect(onoffStimBoxCh4[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
+
+        onoffStimSubLayout[1]->addWidget(onoffStimBoxCh1[i]);
+        onoffStimSubLayout[2]->addWidget(onoffStimBoxCh2[i]);
+        onoffStimSubLayout[3]->addWidget(onoffStimBoxCh3[i]);
+        onoffStimSubLayout[4]->addWidget(onoffStimBoxCh4[i]);
+    }
+
+    onoffStimBoxCh1[0]->setChecked(true);
+    onoffStimBoxCh2[0]->setChecked(true);
+    onoffStimBoxCh3[1]->setChecked(true);
+    onoffStimBoxCh4[1]->setChecked(true);
+
+    QGroupBox *groupOnOffStimSubLayout[4];
+    for(int i = 0; i < 4; i++){
+        groupOnOffStimSubLayout[i] = new QGroupBox;
+    }
+    groupOnOffStimSubLayout[0]->setLayout(onoffStimSubLayout[1]);
+    groupOnOffStimSubLayout[1]->setLayout(onoffStimSubLayout[2]);
+    groupOnOffStimSubLayout[2]->setLayout(onoffStimSubLayout[3]);
+    groupOnOffStimSubLayout[3]->setLayout(onoffStimSubLayout[4]);
+
+
+    stimPatternSubLayout[1] = new QHBoxLayout;
+    stimPatternSubLayout[1]->addLayout(onoffStimSubLayout[0]);
+    for(int i = 0; i < 4; i++){
+        stimPatternSubLayout[1]->addWidget(groupOnOffStimSubLayout[i]);
+    }
+
+    // stim target:
+    stimPatternSubLayout[2] = new QHBoxLayout;
+    QLabel *stimTargetLabel = new QLabel(tr("Stimulation: "));
+    stimTargetLabel->setMaximumWidth(labelWidth);
+    stimPatternSubLayout[2]->addWidget(stimTargetLabel);
+    for(int i = 0; i < 4; i++){
+        stimTargetCheckBox[i] = new QCheckBox;
+        stimPatternSubLayout[2]->addWidget(stimTargetCheckBox[i]);
+        connect(stimTargetCheckBox[i], SIGNAL(toggled(bool)), this, SLOT(on_stimulation_target_changed()));
+    }
+
+    //Layout
+    QVBoxLayout *stimPatternLayout = new QVBoxLayout;
+    for(int i = 0; i < 3; i++){
+        stimPatternLayout->addLayout(stimPatternSubLayout[i]);
+    }
+
+    groupStimPattern->setLayout(stimPatternLayout);
+    groupStimPattern->setEnabled(false);
+
+    return groupStimPattern;
+}
+
 void CatWindow::createStatusBar(){
     statusBarLabel = new QLabel;
     statusBarMainWindow = statusBar();
@@ -458,6 +564,49 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->sendClassifyMethods();
         emitCommandSent();
     }
+}
+
+void CatWindow::on_stimulation_pattern_changed(){
+    int temp = commandCat->getStimulationPattern();
+    for(int i = 0; i < 2; i++){
+        commandCat->setStimulationPattern(i, methodsStimulationPatternBox[i]->isChecked());
+    }
+
+    if(methodsStimulationPatternBox[1]->isChecked()){  // if Target stimulation pattern is selected
+        groupStimPattern->setEnabled(true);
+    }
+    else{
+        groupStimPattern->setEnabled(false);
+    }
+
+    if(temp != commandCat->getStimulationPattern()){
+        qDebug() << "Sent stimulation pattern to: " << commandCat->getStimulationPattern();
+        commandCat->sendStimulationPattern();
+        emitCommandSent();
+    }
+}
+
+void CatWindow::on_stimulation_on_off_changed(){
+    int temp = commandCat->getStimulationPatternOnOff();
+    commandCat->setStimulationPatternOnOff(0, onoffStimBoxCh1[0]->isChecked());
+    commandCat->setStimulationPatternOnOff(1, onoffStimBoxCh2[0]->isChecked());
+    commandCat->setStimulationPatternOnOff(2, onoffStimBoxCh3[0]->isChecked());
+    commandCat->setStimulationPatternOnOff(3, onoffStimBoxCh4[0]->isChecked());
+
+    if(temp != commandCat->getStimulationPatternOnOff()){
+        qDebug() << "Sent stimulation pattern on off to: " << commandCat->getStimulationPatternOnOff();
+        commandCat->sendStimulationPatternOnOff();
+        emitCommandSent();
+    }
+}
+
+void CatWindow::on_stimulation_target_changed(){
+    for(int i = 0; i < 4; i++){
+        commandCat->setStimulationPatternTarget(i, stimTargetCheckBox[i]->isChecked());
+    }
+    qDebug() << "Sent stimulation pattern target to: " << commandCat->getStimulationPatternTarget();
+    commandCat->sendStimulationPatternTarget();
+    emitCommandSent();
 }
 
 void CatWindow::on_sm_channel_changed(){

@@ -34,6 +34,7 @@ private:
 
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
+    QGroupBox *createStimPatternGroup();
     QGroupBox *createSettingsGroup();
     QGroupBox *createTrainingGroup();
     QGroupBox *createParametersGroup();
@@ -43,11 +44,17 @@ private:
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
     QGroupBox *groupThreasholding;
+    QGroupBox *groupStimPattern;
 
     QLabel *trainingSaveDir;
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
+    QRadioButton *methodsStimulationPatternBox[2];
+    QRadioButton *onoffStimBoxCh1[2];
+    QRadioButton *onoffStimBoxCh2[2];
+    QRadioButton *onoffStimBoxCh3[2];
+    QRadioButton *onoffStimBoxCh4[2];
 
     QSpinBox *thresholdingSpinBox[4];
     QSpinBox *thresholdingPowerSpinBox[4];
@@ -60,6 +67,7 @@ private:
     QSpinBox *notchSpinBox;
     QSpinBox *extendStimSpinBox;
 
+    QCheckBox *stimTargetCheckBox[4];
     QCheckBox *highpassCheckBox;
     QCheckBox *lowpassCheckBox;
     QCheckBox *notchCheckBox;
@@ -128,6 +136,9 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
+    void on_stimulation_pattern_changed();
+    void on_stimulation_on_off_changed();
+    void on_stimulation_target_changed();
     void on_filename_changed();
     void readOutput();
 
