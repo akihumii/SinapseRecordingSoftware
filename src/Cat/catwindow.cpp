@@ -940,8 +940,13 @@ void CatWindow::controlInput(bool flag){
 }
 
 void CatWindow::on_filename_discard(){
+    filenameSocket->doConnect("192.168.4.3", 7777);
+    commandCat->sendFilename(filenameDiscard);
+    filenameSocket->write(commandCat->getFilenameCommand());
+    filenameSocket->doDisconnect();
+
     filenameDialog->hide();
-    statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File discarded!!!"));
+    statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
 }
 
 CatWindow::~CatWindow(){

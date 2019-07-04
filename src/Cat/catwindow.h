@@ -91,6 +91,7 @@ private:
     QString commandStdout;
 
     QString filename;
+    QString filenameDiscard = "DISCARDFILE!!!";
 
     int startDelay = 3000;
 
