@@ -23,14 +23,17 @@ private:
     void reject();
 
     QString filename;
+    QDialogButtonBox *buttonBox;
 
     QLineEdit *filenameLine;
 
 private slots:
+    void accept();
     void on_filename_changed();
 
 signals:
     void filenameChanged();
+    void filenameDiscard();
 };
 
 #endif // FILENAMEDIALOG_H

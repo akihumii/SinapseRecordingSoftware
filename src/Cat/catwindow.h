@@ -140,6 +140,7 @@ private slots:
     void on_stimulation_on_off_changed();
     void on_stimulation_target_changed();
     void on_filename_changed();
+    void on_filename_discard();
     void readOutput();
 
 signals:

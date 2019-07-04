@@ -9,6 +9,7 @@ CatWindow::CatWindow(){
     filenameSocket = new SocketFilename;
     filenameDialog = new FilenameDialog;
     connect(filenameDialog, SIGNAL(filenameChanged()), this, SLOT(on_filename_changed()));
+    connect(filenameDialog, SIGNAL(filenameDiscard()), this, SLOT(on_filename_discard()));
 //    filenameDialog->setFixedSize(filenameDialog->sizeHint());
 //    filenameDialog->show();
     highpassValueSets = new QVector<double>;
@@ -936,6 +937,11 @@ void CatWindow::on_sylph_triggered(){
 void CatWindow::controlInput(bool flag){
     groupSettings->setEnabled(flag);
     parametersGroup->setEnabled(flag);
+}
+
+void CatWindow::on_filename_discard(){
+    filenameDialog->hide();
+    statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File discarded!!!"));
 }
 
 CatWindow::~CatWindow(){
