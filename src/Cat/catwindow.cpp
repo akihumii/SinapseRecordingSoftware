@@ -39,11 +39,12 @@ void CatWindow::createLayout(){
 }
 
 QGroupBox *CatWindow::createMethodsGroup(){
-    QGroupBox *methodsGroup = new QGroupBox(tr("Mehtods"));
+    QGroupBox *methodsGroup = new QGroupBox(tr("Activation"));
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
+    methodsParameterLayout->addWidget(createMethodsClassifyGroup());
     methodsParameterLayout->addWidget(createThreasholdingGroup());
-    methodsParameterLayout->addWidget(createStimPatternGroup());
+//    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
 
@@ -55,11 +56,11 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
     //Labels
     QVBoxLayout *settingsLabelLayout = new QVBoxLayout;
-    QLabel *settingsLabel[3];
+    QLabel *settingsLabel[1];
     settingsLabel[0] = new QLabel(tr("S/M Channel: "));
-    settingsLabel[1] = new QLabel(tr("Methods: "));
-    settingsLabel[2] = new QLabel(tr("Stim. Pattern: "));
-    for(int i = 0; i < 3; i++){
+//    settingsLabel[1] = new QLabel(tr("Methods: "));
+//    settingsLabel[2] = new QLabel(tr("Stim. Pattern: "));
+    for(int i = 0; i < 1; i++){
         settingsLabelLayout->addWidget(settingsLabel[i]);
     }
 
@@ -79,20 +80,6 @@ QGroupBox *CatWindow::createSettingsGroup(){
     groupSMChannel->setLayout(SMChannelLayout);
 
 
-    //Methods
-    methodsClassifyBox[0] = new QRadioButton(tr("&Tresholding"));
-    methodsClassifyBox[0]->setChecked(true);
-    methodsClassifyBox[1] = new QRadioButton(tr("&Features"));
-    QHBoxLayout *methodsClassifyLayout = new QHBoxLayout;
-    for(int i = 0; i < 2; i++){
-        methodsClassifyBox[i]->setMinimumWidth(minimumBoxWidth);
-        methodsClassifyLayout->addWidget(methodsClassifyBox[i]);
-        connect(methodsClassifyBox[i], SIGNAL(clicked(bool)), this, SLOT(on_classify_methods_changed()));
-    }
-    QGroupBox *groupMethodsClassify = new QGroupBox();
-    groupMethodsClassify->setLayout(methodsClassifyLayout);
-
-
     //Stimulation pattern
     methodsStimulationPatternBox[0] = new QRadioButton(tr("N&ormal"));
     methodsStimulationPatternBox[0]->setChecked(true);
@@ -110,8 +97,8 @@ QGroupBox *CatWindow::createSettingsGroup(){
     //Layout
     QVBoxLayout *settingsRadioButtonLayout = new QVBoxLayout;
     settingsRadioButtonLayout->addWidget(groupSMChannel);
-    settingsRadioButtonLayout->addWidget(groupMethodsClassify);
-    settingsRadioButtonLayout->addWidget(groupMethodsStimulationPattern);
+//    settingsRadioButtonLayout->addWidget(groupMethodsClassify);
+//    settingsRadioButtonLayout->addWidget(groupMethodsStimulationPattern);
 
     QHBoxLayout *settingsLayout = new QHBoxLayout;
     settingsLayout->addLayout(settingsLabelLayout);
@@ -120,6 +107,22 @@ QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings->setLayout(settingsLayout);
 
     return groupSettings;
+}
+
+QGroupBox *CatWindow::createMethodsClassifyGroup(){
+    methodsClassifyBox[0] = new QRadioButton(tr("&Treshold"));
+    methodsClassifyBox[0]->setChecked(true);
+    methodsClassifyBox[1] = new QRadioButton(tr("&Feature"));
+    QHBoxLayout *methodsClassifyLayout = new QHBoxLayout;
+    for(int i = 0; i < 2; i++){
+        methodsClassifyBox[i]->setMinimumWidth(150);
+        methodsClassifyLayout->addWidget(methodsClassifyBox[i]);
+        connect(methodsClassifyBox[i], SIGNAL(clicked(bool)), this, SLOT(on_classify_methods_changed()));
+    }
+    QGroupBox *groupMethodsClassify = new QGroupBox();
+    groupMethodsClassify->setLayout(methodsClassifyLayout);
+
+    return groupMethodsClassify;
 }
 
 QGroupBox *CatWindow::createTrainingGroup(){
