@@ -132,7 +132,7 @@ private:
     int indexThreshold = 2;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
-    int boxWidth = 35;
+    int boxWidth = 22;
     int boxHeight = 22;
 
     void createLayout();

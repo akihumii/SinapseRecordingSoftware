@@ -35,6 +35,7 @@ void CatWindow::createLayout(){
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+    this->resize(this->sizeHint());
 }
 
 QGroupBox *CatWindow::createMethodsGroup(){
@@ -54,10 +55,6 @@ QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
 
     //add button
-    addSettingsButton = new QPushButton("+");
-    addSettingsButton->setFixedSize(boxWidth, boxHeight);
-    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
-
     doneSettingsButton = new QPushButton;
     doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
     doneSettingsButton->setFixedSize(35, 30);
@@ -114,6 +111,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
         removeSettingsButton[i] = new QPushButton("-");
         removeSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
         settingsButtonLayout->addWidget(removeSettingsButton[i]);
+        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
         connect(removeSettingsButton[i], SIGNAL(clicked(bool)), removeMapper, SLOT(map()));
         removeMapper->setMapping(removeSettingsButton[i], i);
     }
@@ -122,9 +120,20 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
     settingsInputLayout->addWidget(emptyInputRow);
     settingsOutputLayout->addWidget(emptyOutputRow);
+
     QLabel *emptyButton = new QLabel;
     emptyButton->setFixedSize(boxWidth, boxHeight);
-    indexThreshold < 30 ? settingsButtonLayout->addWidget(addSettingsButton) : settingsButtonLayout->addWidget(emptyButton);
+
+    addSettingsButton = new QPushButton("+");
+    addSettingsButton->setFixedSize(35, boxHeight);
+    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
+    if(indexThreshold < 30){
+        settingsButtonLayout->addWidget(addSettingsButton);
+//        settingsButtonLayout->setAlignment(addSettingsButton, Qt::AlignRight);
+    }
+    else{
+        settingsButtonLayout->addWidget(emptyButton);
+    }
 
     //Grouping
     settingsInputGroup = new QGroupBox(tr("Input"));
