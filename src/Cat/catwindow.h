@@ -48,6 +48,14 @@ private:
     QGroupBox *groupStimPattern;
 
     QLabel *trainingSaveDir;
+    QHBoxLayout *settingsLabelSubLayout[2];
+    QVBoxLayout *settingsInputLayout;
+    QHBoxLayout *settingsInputSubLayout[30];
+    QVBoxLayout *settingsOutputLayout;
+    QHBoxLayout *settingsOutputSubLayout[30];
+    QHBoxLayout *IOLayout;
+    QGroupBox *settingsInputGroup;
+    QGroupBox *settingsOutputGroup;
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
@@ -72,6 +80,14 @@ private:
     QCheckBox *highpassCheckBox;
     QCheckBox *lowpassCheckBox;
     QCheckBox *notchCheckBox;
+    QCheckBox *inputBoxCh1[30];
+    QCheckBox *inputBoxCh2[30];
+    QCheckBox *inputBoxCh3[30];
+    QCheckBox *inputBoxCh4[30];
+    QCheckBox *outputBoxCh1[30];
+    QCheckBox *outputBoxCh2[30];
+    QCheckBox *outputBoxCh3[30];
+    QCheckBox *outputBoxCh4[30];
 
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
@@ -81,6 +97,8 @@ private:
     QPushButton *startButton;
     QPushButton *recordingButton;
     QPushButton *recordingTransferButton;
+    QPushButton *addSettingsButton;
+    QPushButton *removeSettingsButton[30];
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -95,10 +113,17 @@ private:
     QString filenameDiscard = "DISCARDFILE!!!";
 
     int startDelay = 3000;
+    int indexThreshold = 2;
+    QVector<int> *inputCheckBoxValue;
+    QVector<int> *outputCheckBoxValue;
+    int boxWidth = 18;
+    int boxHeight = 18;
 
     void createLayout();
     void createStatusBar();
     void createActions();
+    void createChannelLabel();
+    void createSettingsLayout(int index);
 
     void sendParameters();
     void sendHighpassParameters(int value);

@@ -54,59 +54,119 @@ QGroupBox *CatWindow::createMethodsGroup(){
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
 
-    //Labels
-    QVBoxLayout *settingsLabelLayout = new QVBoxLayout;
-    QLabel *settingsLabel[1];
-    settingsLabel[0] = new QLabel(tr("S/M Channel: "));
-//    settingsLabel[1] = new QLabel(tr("Methods: "));
-//    settingsLabel[2] = new QLabel(tr("Stim. Pattern: "));
-    for(int i = 0; i < 1; i++){
-        settingsLabelLayout->addWidget(settingsLabel[i]);
-    }
+    //add button
+    addSettingsButton = new QPushButton("+");
+    addSettingsButton->setMaximumSize(boxWidth, boxHeight);
 
-    int minimumBoxWidth = 150;
-
-    //S/M Channel
-    methodsSMChannelBox[0] = new QRadioButton(tr("&Single-channel"));
-    methodsSMChannelBox[0]->setChecked(true);
-    methodsSMChannelBox[1] = new QRadioButton(tr("&Multi-channel"));
-    QHBoxLayout *SMChannelLayout = new QHBoxLayout;
+    QLabel *emptySpaces[2];
+    QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
     for(int i = 0; i < 2; i++){
-        methodsSMChannelBox[i]->setMinimumWidth(minimumBoxWidth);
-        SMChannelLayout->addWidget(methodsSMChannelBox[i]);
-        connect(methodsSMChannelBox[i], SIGNAL(clicked(bool)), this, SLOT(on_sm_channel_changed()));
+        emptySpaces[i] = new QLabel;
+        emptySpaces[i]->setMaximumHeight(13);
+        settingsButtonLayout->addWidget(emptySpaces[i]);
     }
-    QGroupBox *groupSMChannel = new QGroupBox();
-    groupSMChannel->setLayout(SMChannelLayout);
 
-
-    //Stimulation pattern
-    methodsStimulationPatternBox[0] = new QRadioButton(tr("N&ormal"));
-    methodsStimulationPatternBox[0]->setChecked(true);
-    methodsStimulationPatternBox[1] = new QRadioButton(tr("T&arget"));
-    QHBoxLayout *methodsStimulationPatternLayout = new QHBoxLayout;
-    for(int i = 0; i < 2; i++){
-        methodsStimulationPatternBox[i]->setMinimumWidth(minimumBoxWidth);
-        methodsStimulationPatternLayout->addWidget(methodsStimulationPatternBox[i]);
-        connect(methodsStimulationPatternBox[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_pattern_changed()));
+    //channel labels
+    QLabel *channelLabel[8];
+    QHBoxLayout *settingsInputLabelLayout = new QHBoxLayout;
+    for(int i = 0; i < 4; i++){
+        channelLabel[i] = new QLabel("Ch " + QString::number(i+1));
+        settingsInputLabelLayout->addWidget(channelLabel[i]);
     }
-    QGroupBox *groupMethodsStimulationPattern = new QGroupBox();
-    groupMethodsStimulationPattern->setLayout(methodsStimulationPatternLayout);
 
+    QHBoxLayout *settingsOutputLabelLayout = new QHBoxLayout;
+    for(int i = 4; i < 8; i++){
+        channelLabel[i] = new QLabel("Ch " + QString::number(i-3));
+        settingsOutputLabelLayout->addWidget(channelLabel[i]);
+    }
 
     //Layout
-    QVBoxLayout *settingsRadioButtonLayout = new QVBoxLayout;
-    settingsRadioButtonLayout->addWidget(groupSMChannel);
-//    settingsRadioButtonLayout->addWidget(groupMethodsClassify);
-//    settingsRadioButtonLayout->addWidget(groupMethodsStimulationPattern);
+    settingsInputLayout = new QVBoxLayout;
+    settingsInputLayout->addLayout(settingsInputLabelLayout);
 
-    QHBoxLayout *settingsLayout = new QHBoxLayout;
-    settingsLayout->addLayout(settingsLabelLayout);
-    settingsLayout->addLayout(settingsRadioButtonLayout);
+    settingsOutputLayout = new QVBoxLayout;
+    settingsOutputLayout->addLayout(settingsOutputLabelLayout);
 
-    groupSettings->setLayout(settingsLayout);
+    //Check boxes
+    for(int i = 0; i < indexThreshold; i++){
+        createSettingsLayout(i);
+        removeSettingsButton[i] = new QPushButton("-");
+        removeSettingsButton[i]->setMaximumSize(boxWidth, boxHeight);
+        settingsButtonLayout->addWidget(removeSettingsButton[i]);
+    }
+    QLabel *emptyInputRow = new QLabel;
+    QLabel *emptyOutputRow = new QLabel;
+
+    settingsInputLayout->addWidget(emptyInputRow);
+    settingsOutputLayout->addWidget(emptyOutputRow);
+    settingsButtonLayout->addWidget(addSettingsButton);
+
+    //Grouping
+    settingsInputGroup = new QGroupBox(tr("Input"));
+    settingsInputGroup->setLayout(settingsInputLayout);
+
+    settingsOutputGroup = new QGroupBox(tr("Output"));
+    settingsOutputGroup->setLayout(settingsOutputLayout);
+
+    IOLayout = new QHBoxLayout;
+    IOLayout->addLayout(settingsButtonLayout);
+    IOLayout->addWidget(settingsInputGroup);
+    IOLayout->addWidget(settingsOutputGroup);
+    groupSettings->setLayout(IOLayout);
 
     return groupSettings;
+}
+
+void CatWindow::createSettingsLayout(int index){
+    //Boxes
+    inputBoxCh1[index] = new QCheckBox;
+    inputBoxCh2[index] = new QCheckBox;
+    inputBoxCh3[index] = new QCheckBox;
+    inputBoxCh4[index] = new QCheckBox;
+    outputBoxCh1[index] = new QCheckBox;
+    outputBoxCh2[index] = new QCheckBox;
+    outputBoxCh3[index] = new QCheckBox;
+    outputBoxCh4[index] = new QCheckBox;
+
+    //Size
+    inputBoxCh1[index]->setMinimumSize(boxWidth, boxHeight);
+    inputBoxCh2[index]->setMinimumSize(boxWidth, boxHeight);
+    inputBoxCh3[index]->setMinimumSize(boxWidth, boxHeight);
+    inputBoxCh4[index]->setMinimumSize(boxWidth, boxHeight);
+    outputBoxCh1[index]->setMinimumSize(boxWidth, boxHeight);
+    outputBoxCh2[index]->setMinimumSize(boxWidth, boxHeight);
+    outputBoxCh3[index]->setMinimumSize(boxWidth, boxHeight);
+    outputBoxCh4[index]->setMinimumSize(boxWidth, boxHeight);
+
+
+//    for(int i = 0; i < 4; i++){
+//        (inputCheckBoxValue[index] >> i) ? inputBoxCh1[index]->setChecked(true) : inputBoxCh1[index]->setChecked(false);
+//        (inputCheckBoxValue[index] >> i) ? inputBoxCh2[index]->setChecked(true) : inputBoxCh2[index]->setChecked(false);
+//        (inputCheckBoxValue[index] >> i) ? inputBoxCh3[index]->setChecked(true) : inputBoxCh3[index]->setChecked(false);
+//        (inputCheckBoxValue[index] >> i) ? inputBoxCh4[index]->setChecked(true) : inputBoxCh4[index]->setChecked(false);
+
+//        (outputCheckBoxValue[index] >> i) ? outputBoxCh1[index]->setChecked(true) : outputBoxCh1[index]->setChecked(false);
+//        (outputCheckBoxValue[index] >> i) ? outputBoxCh2[index]->setChecked(true) : outputBoxCh2[index]->setChecked(false);
+//        (outputCheckBoxValue[index] >> i) ? outputBoxCh3[index]->setChecked(true) : outputBoxCh3[index]->setChecked(false);
+//        (outputCheckBoxValue[index] >> i) ? outputBoxCh4[index]->setChecked(true) : outputBoxCh4[index]->setChecked(false);
+//    }
+
+    //Layout
+    settingsInputSubLayout[index] = new QHBoxLayout;
+    settingsOutputSubLayout[index] = new QHBoxLayout;
+
+    settingsInputSubLayout[index]->addWidget(inputBoxCh1[index]);
+    settingsInputSubLayout[index]->addWidget(inputBoxCh2[index]);
+    settingsInputSubLayout[index]->addWidget(inputBoxCh3[index]);
+    settingsInputSubLayout[index]->addWidget(inputBoxCh4[index]);
+
+    settingsOutputSubLayout[index]->addWidget(outputBoxCh1[index]);
+    settingsOutputSubLayout[index]->addWidget(outputBoxCh2[index]);
+    settingsOutputSubLayout[index]->addWidget(outputBoxCh3[index]);
+    settingsOutputSubLayout[index]->addWidget(outputBoxCh4[index]);
+
+    settingsInputLayout->addLayout(settingsInputSubLayout[index]);
+    settingsOutputLayout->addLayout(settingsOutputSubLayout[index]);
 }
 
 QGroupBox *CatWindow::createMethodsClassifyGroup(){
@@ -381,8 +441,8 @@ QGroupBox *CatWindow::createStimPatternGroup(){
     stimEmptyLabel->setMaximumWidth(labelWidth);
     stimPatternSubLayout[0]->addWidget(stimEmptyLabel);
     for(int i = 0; i < 4; i++){
-        QLabel *channelLabel = new QLabel(tr("Channel ") + QString::number(i+1));
-        stimPatternSubLayout[0]->addWidget(channelLabel);
+        QLabel *channelLabels = new QLabel(tr("Channel ") + QString::number(i+1));
+        stimPatternSubLayout[0]->addWidget(channelLabels);
     }
 
     // stim on and off:
