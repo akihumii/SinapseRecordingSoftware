@@ -16,6 +16,7 @@ CatWindow::CatWindow(){
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
     createLayout();
+    sendParameters();
     createActions();
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
@@ -34,8 +35,6 @@ void CatWindow::createLayout(){
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
     mainLayout->setSizeConstraint( QLayout::SetFixedSize );
-
-    sendParameters();
 }
 
 QGroupBox *CatWindow::createMethodsGroup(){
@@ -57,6 +56,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     //add button
     addSettingsButton = new QPushButton("+");
     addSettingsButton->setMaximumSize(boxWidth, boxHeight);
+    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
 
     QLabel *emptySpaces[2];
     QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
@@ -117,6 +117,11 @@ QGroupBox *CatWindow::createSettingsGroup(){
     return groupSettings;
 }
 
+void CatWindow::on_add_checkbox_clicked(){
+    indexThreshold ++;
+    createLayout();
+}
+
 void CatWindow::createSettingsLayout(int index){
     //Boxes
     inputBoxCh1[index] = new QCheckBox;
@@ -171,8 +176,8 @@ void CatWindow::createSettingsLayout(int index){
 
 QGroupBox *CatWindow::createMethodsClassifyGroup(){
     methodsClassifyBox[0] = new QRadioButton(tr("&Treshold"));
-    methodsClassifyBox[0]->setChecked(true);
     methodsClassifyBox[1] = new QRadioButton(tr("&Feature"));
+    (commandCat->getClassifyMethods() - 520) & (1 << 0) ? methodsClassifyBox[0]->setChecked(true) : methodsClassifyBox[1]->setChecked(true);
     QHBoxLayout *methodsClassifyLayout = new QHBoxLayout;
     for(int i = 0; i < 2; i++){
         methodsClassifyBox[i]->setMinimumWidth(150);
@@ -237,7 +242,7 @@ QGroupBox *CatWindow::createParametersGroup(){
     windowDecodingSpinBox->setMaximumWidth(windowWidth);
     windowDecodingSpinBox->setMinimum(0);
     windowDecodingSpinBox->setMaximum(9999);
-    windowDecodingSpinBox->setValue(200);
+    windowDecodingSpinBox->setValue(commandCat->getDecodingWindowSize());
     windowSubLayout[0] = new QHBoxLayout;
     windowSubLayout[0]->addWidget(windowDecodingLabel);
     windowSubLayout[0]->addWidget(windowDecodingSpinBox);
@@ -248,7 +253,7 @@ QGroupBox *CatWindow::createParametersGroup(){
     windowOverlapSpinBox->setMaximumWidth(windowWidth);
     windowOverlapSpinBox->setMinimum(0);
     windowOverlapSpinBox->setMaximum(9999);
-    windowOverlapSpinBox->setValue(50);
+    windowOverlapSpinBox->setValue(commandCat->getOverlapWindowSize());
     windowSubLayout[1] = new QHBoxLayout;
     windowSubLayout[1]->addWidget(windowOverlapLabel);
     windowSubLayout[1]->addWidget(windowOverlapSpinBox);
@@ -259,7 +264,7 @@ QGroupBox *CatWindow::createParametersGroup(){
     windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
     windowSamplingFrequencySpinBox->setMinimum(0);
     windowSamplingFrequencySpinBox->setMaximum(30000);
-    windowSamplingFrequencySpinBox->setValue(1250);
+    windowSamplingFrequencySpinBox->setValue(commandCat->getSamplingFreq());
     windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
     windowSubLayout[2] = new QHBoxLayout;
     windowSubLayout[2]->addWidget(windowSamplingFrequencyLabel);
@@ -271,7 +276,7 @@ QGroupBox *CatWindow::createParametersGroup(){
     extendStimSpinBox->setMaximumWidth(windowWidth);
     extendStimSpinBox->setMinimum(0);
     extendStimSpinBox->setMaximum(9999);
-    extendStimSpinBox->setValue(0);
+    extendStimSpinBox->setValue(commandCat->getExtendStimulation());
     windowSubLayout[3] = new QHBoxLayout;
     windowSubLayout[3]->addWidget(extendStimLabel);
     windowSubLayout[3]->addWidget(extendStimSpinBox);
@@ -288,12 +293,13 @@ QGroupBox *CatWindow::createParametersGroup(){
     QHBoxLayout *filteringSubLayout[3];
     QLabel *highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
     highpassCheckBox = new QCheckBox;
+    highpassCheckBox->setChecked(highpassFlag);
     highpassSpinBox = new QSpinBox;
     highpassSpinBox->setMaximumWidth(windowWidth);
     highpassSpinBox->setMinimum(0);
     highpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    highpassSpinBox->setValue(100);
-    highpassSpinBox->setEnabled(false);
+    highpassSpinBox->setValue(commandCat->getHighpassCutoffFreq());
+    highpassSpinBox->setEnabled(highpassFlag);
     filteringSubLayout[0] = new QHBoxLayout;
     filteringSubLayout[0]->addWidget(highpassCheckBox);
     filteringSubLayout[0]->addWidget(highpassLabel);
@@ -303,12 +309,14 @@ QGroupBox *CatWindow::createParametersGroup(){
 
     QLabel *lowpassLabel = new QLabel(tr("Lowpass cutoff freq.: "));
     lowpassCheckBox = new QCheckBox;
+    lowpassCheckBox->setChecked(lowpassFlag);
     lowpassSpinBox = new QSpinBox;
     lowpassSpinBox->setMaximumWidth(windowWidth);
     lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
     lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    lowpassSpinBox->setValue(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    lowpassSpinBox->setEnabled(false);
+    commandCat->getLowpassCutoffFreq() ? lowpassSpinBox->setValue(commandCat->getLowpassCutoffFreq()) :
+                                         lowpassSpinBox->setValue(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
+    lowpassSpinBox->setEnabled(lowpassFlag);
     filteringSubLayout[1] = new QHBoxLayout;
     filteringSubLayout[1]->addWidget(lowpassCheckBox);
     filteringSubLayout[1]->addWidget(lowpassLabel);
@@ -318,12 +326,13 @@ QGroupBox *CatWindow::createParametersGroup(){
 
     QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
     notchCheckBox = new QCheckBox;
+    notchCheckBox->setChecked(notchFlag);
     notchSpinBox = new QSpinBox;
     notchSpinBox->setMaximumWidth(windowWidth);
     notchSpinBox->setMinimum(0);
     notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
-    notchSpinBox->setValue(50);
-    notchSpinBox->setEnabled(false);
+    notchSpinBox->setValue(commandCat->getNotchCutoffFreq());
+    notchSpinBox->setEnabled(notchFlag);
     filteringSubLayout[2] = new QHBoxLayout;
     filteringSubLayout[2]->addWidget(notchCheckBox);
     filteringSubLayout[2]->addWidget(notchLabel);
@@ -398,7 +407,7 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
         thresholdingSpinBox[i] = new QSpinBox;
         thresholdingSpinBox[i]->setMinimum(0);
         thresholdingSpinBox[i]->setMaximum(99);
-        thresholdingSpinBox[i]->setValue(1);
+        thresholdingSpinBox[i]->setValue(commandCat->getThreshold(i));
         thresholdingSpinBoxLayout->addWidget(thresholdingSpinBox[i]);
         connect(thresholdingSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_changed()));
 
@@ -410,7 +419,7 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
         thresholdingPowerSpinBox[i] = new QSpinBox;
         thresholdingPowerSpinBox[i]->setMinimum(-20);
         thresholdingPowerSpinBox[i]->setMaximum(10);
-        thresholdingPowerSpinBox[i]->setValue(10);
+        thresholdingPowerSpinBox[i]->setValue(commandCat->getThresholdPower(i));
         thresholdingSpinBoxLayout->addWidget(thresholdingPowerSpinBox[i]);
         connect(thresholdingPowerSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_threshold_power_changed()));
 
@@ -771,11 +780,13 @@ void CatWindow::on_highpass_cutoff_freq_checkbox_changed(){
     if(highpassCheckBox->isChecked()){
         highpassSpinBox->setEnabled(true);
         sendFilteringParameters();
+        highpassFlag = true;
     }
     else{
         highpassSpinBox->setEnabled(false);
         sendHighpassParameters(0);
         sendHighpassSignal(0);
+        highpassFlag = false;
     }
 }
 
@@ -797,11 +808,13 @@ void CatWindow::on_lowpass_cutoff_freq_checkbox_changed(){
     if(lowpassCheckBox->isChecked()){
         lowpassSpinBox->setEnabled(true);
         sendFilteringParameters();
+        lowpassFlag = true;
     }
     else{
         lowpassSpinBox->setEnabled(false);
         sendLowpassParameters(0);
         sendLowpassSignal(0);
+        lowpassFlag = false;
     }
 }
 
@@ -824,11 +837,13 @@ void CatWindow::on_notch_cutoff_freq_checkbox_changed(){
     if(notchCheckBox->isChecked()){
         notchSpinBox->setEnabled(true);
         sendFilteringParameters();
+        notchFlag = true;
     }
     else{
         notchSpinBox->setEnabled(false);
         sendNotchParameters(0);
         sendNotchSignal(0);
+        notchFlag = false;
     }
 }
 

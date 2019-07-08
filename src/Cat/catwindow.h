@@ -80,6 +80,10 @@ private:
     QCheckBox *highpassCheckBox;
     QCheckBox *lowpassCheckBox;
     QCheckBox *notchCheckBox;
+    bool highpassFlag = false;
+    bool lowpassFlag = false;
+    bool notchFlag = false;
+
     QCheckBox *inputBoxCh1[30];
     QCheckBox *inputBoxCh2[30];
     QCheckBox *inputBoxCh3[30];
@@ -168,6 +172,7 @@ private slots:
     void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
+    void on_add_checkbox_clicked();
     void readOutput();
 
 signals:

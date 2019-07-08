@@ -16,7 +16,7 @@ TreeDialog::TreeDialog(){
     odinGUI->hide();
 
     catGUI = new Cat::CatWindow();  //Cat
-    catGUI->setFixedSize(catGUI->sizeHint());
+//    catGUI->setFixedSize(catGUI->sizeHint());
     catGUI->hide();
 
     connect(sylphxGUI, SIGNAL(showCatSignal()), this, SLOT(on_catGUI_clicked()));
