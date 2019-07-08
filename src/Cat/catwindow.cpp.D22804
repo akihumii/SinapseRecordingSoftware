@@ -88,22 +88,9 @@ QGroupBox *CatWindow::createSettingsGroup(){
     settingsOutputLayout->addLayout(settingsOutputLabelLayout);
 
     //Check boxes
-    inputMapperCh1 = new QSignalMapper(this);
-    inputMapperCh2 = new QSignalMapper(this);
-    inputMapperCh3 = new QSignalMapper(this);
-    inputMapperCh4 = new QSignalMapper(this);
-    outputMapperCh1 = new QSignalMapper(this);
-    outputMapperCh2 = new QSignalMapper(this);
-    outputMapperCh3 = new QSignalMapper(this);
-    outputMapperCh4 = new QSignalMapper(this);
-    connect(inputMapperCh1, SIGNAL(mapped(int)), this, SLOT(on_input_ch1_changed(int)));
-    connect(inputMapperCh2, SIGNAL(mapped(int)), this, SLOT(on_input_ch2_changed(int)));
-    connect(inputMapperCh3, SIGNAL(mapped(int)), this, SLOT(on_input_ch3_changed(int)));
-    connect(inputMapperCh4, SIGNAL(mapped(int)), this, SLOT(on_input_ch4_changed(int)));
-    connect(outputMapperCh1, SIGNAL(mapped(int)), this, SLOT(on_output_ch1_changed(int)));
-    connect(outputMapperCh2, SIGNAL(mapped(int)), this, SLOT(on_output_ch2_changed(int)));
-    connect(outputMapperCh3, SIGNAL(mapped(int)), this, SLOT(on_output_ch3_changed(int)));
-    connect(outputMapperCh4, SIGNAL(mapped(int)), this, SLOT(on_output_ch4_changed(int)));
+    inputMapper = new QSignalMapper(this);
+    outputMapper = new QSignalMapper(this);
+    connect(inputMapperCh1, SIGNAL(mapped(int)), this, SLOT(on_stimulation_checkbox_changed(int)));
 
     for(int i = 0; i < indexThreshold; i++){
         createSettingsLayout(i);
@@ -162,34 +149,23 @@ void CatWindow::createSettingsLayout(int index){
     outputBoxCh4[index]->setMinimumSize(boxWidth, boxHeight);
 
     //Checks
-    inputCheckBoxValue[index] & (1 << 0) ? inputBoxCh1[index]->setChecked(true) : inputBoxCh1[index]->setChecked(false);
-    inputCheckBoxValue[index] & (1 << 1) ? inputBoxCh2[index]->setChecked(true) : inputBoxCh2[index]->setChecked(false);
-    inputCheckBoxValue[index] & (1 << 2) ? inputBoxCh3[index]->setChecked(true) : inputBoxCh3[index]->setChecked(false);
-    inputCheckBoxValue[index] & (1 << 3) ? inputBoxCh4[index]->setChecked(true) : inputBoxCh4[index]->setChecked(false);
+    for(int i = 0; i < 4; i++){
+        inputCheckBoxValue[index] & (1 << i) ? inputBoxCh1[index]->setChecked(true) : inputBoxCh1[index]->setChecked(false);
+        inputCheckBoxValue[index] & (1 << i) ? inputBoxCh2[index]->setChecked(true) : inputBoxCh2[index]->setChecked(false);
+        inputCheckBoxValue[index] & (1 << i) ? inputBoxCh3[index]->setChecked(true) : inputBoxCh3[index]->setChecked(false);
+        inputCheckBoxValue[index] & (1 << i) ? inputBoxCh4[index]->setChecked(true) : inputBoxCh4[index]->setChecked(false);
 
-    outputCheckBoxValue[index] & (1 << 0) ? outputBoxCh1[index]->setChecked(true) : outputBoxCh1[index]->setChecked(false);
-    outputCheckBoxValue[index] & (1 << 1) ? outputBoxCh2[index]->setChecked(true) : outputBoxCh2[index]->setChecked(false);
-    outputCheckBoxValue[index] & (1 << 2) ? outputBoxCh3[index]->setChecked(true) : outputBoxCh3[index]->setChecked(false);
-    outputCheckBoxValue[index] & (1 << 3) ? outputBoxCh4[index]->setChecked(true) : outputBoxCh4[index]->setChecked(false);
-
+        outputCheckBoxValue[index] & (1 << i) ? outputBoxCh1[index]->setChecked(true) : outputBoxCh1[index]->setChecked(false);
+        outputCheckBoxValue[index] & (1 << i) ? outputBoxCh2[index]->setChecked(true) : outputBoxCh2[index]->setChecked(false);
+        outputCheckBoxValue[index] & (1 << i) ? outputBoxCh3[index]->setChecked(true) : outputBoxCh3[index]->setChecked(false);
+        outputCheckBoxValue[index] & (1 << i) ? outputBoxCh4[index]->setChecked(true) : outputBoxCh4[index]->setChecked(false);
+    }
 
     //Connect
-    connect(inputBoxCh1[index], SIGNAL(toggled(bool)), inputMapperCh1, SLOT(map()));
-    connect(inputBoxCh2[index], SIGNAL(toggled(bool)), inputMapperCh2, SLOT(map()));
-    connect(inputBoxCh3[index], SIGNAL(toggled(bool)), inputMapperCh3, SLOT(map()));
-    connect(inputBoxCh4[index], SIGNAL(toggled(bool)), inputMapperCh4, SLOT(map()));
-    connect(outputBoxCh1[index], SIGNAL(toggled(bool)), outputMapperCh1, SLOT(map()));
-    connect(outputBoxCh2[index], SIGNAL(toggled(bool)), outputMapperCh2, SLOT(map()));
-    connect(outputBoxCh3[index], SIGNAL(toggled(bool)), outputMapperCh3, SLOT(map()));
-    connect(outputBoxCh4[index], SIGNAL(toggled(bool)), outputMapperCh4, SLOT(map()));
-    inputMapperCh1->setMapping(inputBoxCh1[index], index);
-    inputMapperCh2->setMapping(inputBoxCh2[index], index);
-    inputMapperCh3->setMapping(inputBoxCh3[index], index);
-    inputMapperCh4->setMapping(inputBoxCh4[index], index);
-    outputMapperCh1->setMapping(outputBoxCh1[index], index);
-    outputMapperCh2->setMapping(outputBoxCh2[index], index);
-    outputMapperCh3->setMapping(outputBoxCh3[index], index);
-    outputMapperCh4->setMapping(outputBoxCh4[index], index);
+    connect(inputBoxCh1[index], SIGNAL(clicked(bool)), inputMapper, SLOT(map()));
+    connect(outputBoxCh1[index], SIGNAL(clicked(bool)), outputMapper, SLOT(map()));
+    int inputCh1Values= {0, index, (int) intinputBoxCh1[index]->isChecked()};
+    inputMapperCh1->setMapping(inputBoxCh1[index], inputCh1Values);
 
 
     //Layout
@@ -210,36 +186,11 @@ void CatWindow::createSettingsLayout(int index){
     settingsOutputLayout->addLayout(settingsOutputSubLayout[index]);
 }
 
-void CatWindow::on_input_ch1_changed(int index){
-    inputBoxCh1[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 0)) : (inputCheckBoxValue[index] &= ~(1 << 0));
-}
-
-void CatWindow::on_input_ch2_changed(int index){
-    inputBoxCh2[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 1)) : (inputCheckBoxValue[index] &= ~(1 << 1));
-}
-
-void CatWindow::on_input_ch3_changed(int index){
-    inputBoxCh3[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 2)) : (inputCheckBoxValue[index] &= ~(1 << 2));
-}
-
-void CatWindow::on_input_ch4_changed(int index){
-    inputBoxCh4[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 3)) : (inputCheckBoxValue[index] &= ~(1 << 3));
-}
-
-void CatWindow::on_output_ch1_changed(int index){
-    outputBoxCh1[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 0)) : (outputCheckBoxValue[index] &= ~(1 << 0));
-}
-
-void CatWindow::on_output_ch2_changed(int index){
-    outputBoxCh2[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 1)) : (outputCheckBoxValue[index] &= ~(1 << 1));
-}
-
-void CatWindow::on_output_ch3_changed(int index){
-    outputBoxCh3[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 2)) : (outputCheckBoxValue[index] &= ~(1 << 2));
-}
-
-void CatWindow::on_output_ch4_changed(int index){
-    outputBoxCh4[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 3)) : (outputCheckBoxValue[index] &= ~(1 << 3));
+void CatWindow::on_stimulation_checkbox_changed(int values){
+    int channel = values[0];
+    int index = values[1];
+    int flag = values[2];
+    flag ? (inputCheckBoxValue[index] | (1 << channel)) : (inputCheckBoxValue[index] & !(1 << channel));
 }
 
 QGroupBox *CatWindow::createMethodsClassifyGroup(){

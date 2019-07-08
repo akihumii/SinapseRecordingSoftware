@@ -93,6 +93,15 @@ private:
     QCheckBox *outputBoxCh3[30];
     QCheckBox *outputBoxCh4[30];
 
+    QSignalMapper *inputMapperCh1;
+    QSignalMapper *inputMapperCh2;
+    QSignalMapper *inputMapperCh3;
+    QSignalMapper *inputMapperCh4;
+    QSignalMapper *outputMapperCh1;
+    QSignalMapper *outputMapperCh2;
+    QSignalMapper *outputMapperCh3;
+    QSignalMapper *outputMapperCh4;
+
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
     QPushButton *trainingNext;
@@ -118,8 +127,8 @@ private:
 
     int startDelay = 3000;
     int indexThreshold = 2;
-    QVector<int> *inputCheckBoxValue;
-    QVector<int> *outputCheckBoxValue;
+    int inputCheckBoxValue[30] = {0};
+    int outputCheckBoxValue[30] = {0};
     int boxWidth = 18;
     int boxHeight = 18;
 
@@ -172,6 +181,14 @@ private slots:
     void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
+    void on_input_ch1_changed(int index);
+    void on_input_ch2_changed(int index);
+    void on_input_ch3_changed(int index);
+    void on_input_ch4_changed(int index);
+    void on_output_ch1_changed(int index);
+    void on_output_ch2_changed(int index);
+    void on_output_ch3_changed(int index);
+    void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
     void readOutput();
 
