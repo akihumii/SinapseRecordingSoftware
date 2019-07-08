@@ -55,16 +55,16 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
     //add button
     addSettingsButton = new QPushButton("+");
-    addSettingsButton->setMaximumSize(boxWidth, boxHeight);
+    addSettingsButton->setFixedSize(boxWidth, boxHeight);
     connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
 
-    QLabel *emptySpaces[2];
+    doneSettingsButton = new QPushButton;
+    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
+    doneSettingsButton->setFixedSize(35, 30);
+    connect(doneSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
+
     QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
-    for(int i = 0; i < 2; i++){
-        emptySpaces[i] = new QLabel;
-        emptySpaces[i]->setMaximumHeight(13);
-        settingsButtonLayout->addWidget(emptySpaces[i]);
-    }
+    settingsButtonLayout->addWidget(doneSettingsButton);
 
     //channel labels
     QLabel *channelLabel[8];
@@ -112,7 +112,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     for(int i = 0; i < indexThreshold; i++){
         createSettingsLayout(i);  // create input and output boxes
         removeSettingsButton[i] = new QPushButton("-");
-        removeSettingsButton[i]->setMaximumSize(boxWidth, boxHeight);
+        removeSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
         settingsButtonLayout->addWidget(removeSettingsButton[i]);
         connect(removeSettingsButton[i], SIGNAL(clicked(bool)), removeMapper, SLOT(map()));
         removeMapper->setMapping(removeSettingsButton[i], i);
@@ -122,8 +122,9 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
     settingsInputLayout->addWidget(emptyInputRow);
     settingsOutputLayout->addWidget(emptyOutputRow);
-    settingsButtonLayout->addWidget(addSettingsButton);
-
+    QLabel *emptyButton = new QLabel;
+    emptyButton->setFixedSize(boxWidth, boxHeight);
+    indexThreshold < 30 ? settingsButtonLayout->addWidget(addSettingsButton) : settingsButtonLayout->addWidget(emptyButton);
 
     //Grouping
     settingsInputGroup = new QGroupBox(tr("Input"));
@@ -141,6 +142,20 @@ QGroupBox *CatWindow::createSettingsGroup(){
     return groupSettings;
 }
 
+void CatWindow::on_done_settings_changed(){
+    // set enable
+    settingsInputGroup->setEnabled(doneSettingsFlag);
+    settingsOutputGroup->setEnabled(doneSettingsFlag);
+    for(int i = 0; i < indexThreshold; i++){
+        removeSettingsButton[i]->setEnabled(doneSettingsFlag);
+    }
+    addSettingsButton->setEnabled(doneSettingsFlag);
+
+    doneSettingsFlag = !doneSettingsFlag;
+
+    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
+}
+
 void CatWindow::on_add_checkbox_clicked(){
     indexThreshold ++;
     createLayout();
@@ -151,6 +166,9 @@ void CatWindow::on_remove_checkbox_clicked(int index){
         inputCheckBoxValue[i] = inputCheckBoxValue[i+1];
         outputCheckBoxValue[i] = outputCheckBoxValue[i+1];
     }
+    inputCheckBoxValue[29] = 0;
+    outputCheckBoxValue[29] = 0;
+
     indexThreshold --;
     createLayout();
 }

@@ -111,8 +111,10 @@ private:
     QPushButton *startButton;
     QPushButton *recordingButton;
     QPushButton *recordingTransferButton;
+    QPushButton *doneSettingsButton;
     QPushButton *addSettingsButton;
     QPushButton *removeSettingsButton[30];
+    bool doneSettingsFlag = false;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -130,8 +132,8 @@ private:
     int indexThreshold = 2;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
-    int boxWidth = 18;
-    int boxHeight = 18;
+    int boxWidth = 35;
+    int boxHeight = 22;
 
     void createLayout();
     void createStatusBar();
@@ -192,6 +194,7 @@ private slots:
     void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
+    void on_done_settings_changed();
     void readOutput();
 
 signals:
