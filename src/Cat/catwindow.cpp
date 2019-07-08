@@ -87,7 +87,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     settingsOutputLayout = new QVBoxLayout;
     settingsOutputLayout->addLayout(settingsOutputLabelLayout);
 
-    //Check boxes
+    //Mapper
     inputMapperCh1 = new QSignalMapper(this);
     inputMapperCh2 = new QSignalMapper(this);
     inputMapperCh3 = new QSignalMapper(this);
@@ -105,11 +105,17 @@ QGroupBox *CatWindow::createSettingsGroup(){
     connect(outputMapperCh3, SIGNAL(mapped(int)), this, SLOT(on_output_ch3_changed(int)));
     connect(outputMapperCh4, SIGNAL(mapped(int)), this, SLOT(on_output_ch4_changed(int)));
 
+    removeMapper = new QSignalMapper(this);
+    connect(removeMapper, SIGNAL(mapped(int)), this, SLOT(on_remove_checkbox_clicked(int)));
+
+    //Row of checkboxes
     for(int i = 0; i < indexThreshold; i++){
-        createSettingsLayout(i);
+        createSettingsLayout(i);  // create input and output boxes
         removeSettingsButton[i] = new QPushButton("-");
         removeSettingsButton[i]->setMaximumSize(boxWidth, boxHeight);
         settingsButtonLayout->addWidget(removeSettingsButton[i]);
+        connect(removeSettingsButton[i], SIGNAL(clicked(bool)), removeMapper, SLOT(map()));
+        removeMapper->setMapping(removeSettingsButton[i], i);
     }
     QLabel *emptyInputRow = new QLabel;
     QLabel *emptyOutputRow = new QLabel;
@@ -137,6 +143,15 @@ QGroupBox *CatWindow::createSettingsGroup(){
 
 void CatWindow::on_add_checkbox_clicked(){
     indexThreshold ++;
+    createLayout();
+}
+
+void CatWindow::on_remove_checkbox_clicked(int index){
+    for(int i = index; i < 29; i++){
+        inputCheckBoxValue[i] = inputCheckBoxValue[i+1];
+        outputCheckBoxValue[i] = outputCheckBoxValue[i+1];
+    }
+    indexThreshold --;
     createLayout();
 }
 

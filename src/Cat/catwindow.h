@@ -93,6 +93,7 @@ private:
     QCheckBox *outputBoxCh3[30];
     QCheckBox *outputBoxCh4[30];
 
+    QSignalMapper *removeMapper;
     QSignalMapper *inputMapperCh1;
     QSignalMapper *inputMapperCh2;
     QSignalMapper *inputMapperCh3;
@@ -190,6 +191,7 @@ private slots:
     void on_output_ch3_changed(int index);
     void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
+    void on_remove_checkbox_clicked(int index);
     void readOutput();
 
 signals:
