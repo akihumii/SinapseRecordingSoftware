@@ -106,14 +106,21 @@ QGroupBox *CatWindow::createSettingsGroup(){
     connect(removeMapper, SIGNAL(mapped(int)), this, SLOT(on_remove_checkbox_clicked(int)));
 
     //Row of checkboxes
+    QHBoxLayout *removeSubLayout[indexThreshold];
+    QLabel *removeLabel[indexThreshold];
     for(int i = 0; i < indexThreshold; i++){
         createSettingsLayout(i);  // create input and output boxes
         removeSettingsButton[i] = new QPushButton("-");
         removeSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
-        settingsButtonLayout->addWidget(removeSettingsButton[i]);
-        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
         connect(removeSettingsButton[i], SIGNAL(clicked(bool)), removeMapper, SLOT(map()));
         removeMapper->setMapping(removeSettingsButton[i], i);
+
+        removeSubLayout[i] = new QHBoxLayout;
+        removeLabel[i] = new QLabel(QString::number(i+1));
+        removeSubLayout[i]->addWidget(removeLabel[i]);
+        removeSubLayout[i]->addWidget(removeSettingsButton[i]);
+        settingsButtonLayout->addLayout(removeSubLayout[i]);
+//        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
     }
     QLabel *emptyInputRow = new QLabel;
     QLabel *emptyOutputRow = new QLabel;
@@ -152,17 +159,48 @@ QGroupBox *CatWindow::createSettingsGroup(){
 }
 
 void CatWindow::on_done_settings_changed(){
-    // set enable
-    settingsInputGroup->setEnabled(doneSettingsFlag);
-    settingsOutputGroup->setEnabled(doneSettingsFlag);
-    for(int i = 0; i < indexThreshold; i++){
-        removeSettingsButton[i]->setEnabled(doneSettingsFlag);
-    }
-    addSettingsButton->setEnabled(doneSettingsFlag);
-
     doneSettingsFlag = !doneSettingsFlag;
 
-    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
+    if(doneSettingsFlag){
+        if(!check_input_boxes()){  //no repeated input
+            doneSettingsButton->setText("Edit");
+            statusBarLabel->setText(tr("Ready..."));
+        }
+        else{
+            doneSettingsFlag = !doneSettingsFlag;
+            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated sets: ") +
+                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]));
+        }
+    }
+    else{
+        doneSettingsButton->setText("Done");
+        statusBarLabel->setText(tr("Editting threshold input output..."));
+    }
+
+    // set enable
+    settingsInputGroup->setEnabled(!doneSettingsFlag);
+    settingsOutputGroup->setEnabled(!doneSettingsFlag);
+    for(int i = 0; i < indexThreshold; i++){
+        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
+    }
+    addSettingsButton->setEnabled(!doneSettingsFlag);
+}
+
+bool CatWindow::check_input_boxes(){
+    bool seen[255] = {false};
+    int loc[255] = {0};
+    for(int i = 0; i < indexThreshold; i++){
+        if(seen[inputCheckBoxValue[i]]){
+            repeatedLocs[0] = loc[inputCheckBoxValue[i]];
+            repeatedLocs[1] = i+1;
+            return true;
+        }
+        else{
+            seen[inputCheckBoxValue[i]] = true;
+            loc[inputCheckBoxValue[i]] = i+1;
+        }
+    }
+    return false;
 }
 
 void CatWindow::on_add_checkbox_clicked(){

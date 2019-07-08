@@ -92,6 +92,8 @@ private:
     QCheckBox *outputBoxCh2[30];
     QCheckBox *outputBoxCh3[30];
     QCheckBox *outputBoxCh4[30];
+    bool check_input_boxes();
+    int repeatedLocs[2] = {0};
 
     QSignalMapper *removeMapper;
     QSignalMapper *inputMapperCh1;
