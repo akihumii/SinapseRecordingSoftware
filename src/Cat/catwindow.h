@@ -6,6 +6,7 @@
 #include "commandcat.h"
 #include "socketfilename.h"
 #include "filenamedialog.h"
+#include "thresholdtab.h"
 #include <QtMath>
 
 namespace Cat {
@@ -26,6 +27,7 @@ private:
     CommandCat *commandCat;
     SocketFilename *filenameSocket;
     FilenameDialog *filenameDialog;
+    QWidget *thresholdTab;
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
@@ -35,27 +37,22 @@ private:
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
     QGroupBox *createStimPatternGroup();
-    QGroupBox *createSettingsGroup();
+    QTabWidget *createSettingsGroup();
     QGroupBox *createTrainingGroup();
     QGroupBox *createParametersGroup();
     QGroupBox *createMethodsClassifyGroup();
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
+    QHBoxLayout *createIOLayout();
 
     QGroupBox *parametersGroup;
-    QGroupBox *groupSettings;
+    QTabWidget *groupSettings;
     QGroupBox *groupThreasholding;
     QGroupBox *groupStimPattern;
 
-    QLabel *trainingSaveDir;
-    QHBoxLayout *settingsLabelSubLayout[2];
-    QVBoxLayout *settingsInputLayout;
-    QHBoxLayout *settingsInputSubLayout[30];
-    QVBoxLayout *settingsOutputLayout;
-    QHBoxLayout *settingsOutputSubLayout[30];
-    QHBoxLayout *IOLayout;
-    QGroupBox *settingsInputGroup;
-    QGroupBox *settingsOutputGroup;
+    // threhsold tab
+
+    //
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
@@ -84,27 +81,6 @@ private:
     bool lowpassFlag = false;
     bool notchFlag = false;
 
-    QCheckBox *inputBoxCh1[30];
-    QCheckBox *inputBoxCh2[30];
-    QCheckBox *inputBoxCh3[30];
-    QCheckBox *inputBoxCh4[30];
-    QCheckBox *outputBoxCh1[30];
-    QCheckBox *outputBoxCh2[30];
-    QCheckBox *outputBoxCh3[30];
-    QCheckBox *outputBoxCh4[30];
-    bool check_input_boxes();
-    int repeatedLocs[2] = {0};
-
-    QSignalMapper *removeMapper;
-    QSignalMapper *inputMapperCh1;
-    QSignalMapper *inputMapperCh2;
-    QSignalMapper *inputMapperCh3;
-    QSignalMapper *inputMapperCh4;
-    QSignalMapper *outputMapperCh1;
-    QSignalMapper *outputMapperCh2;
-    QSignalMapper *outputMapperCh3;
-    QSignalMapper *outputMapperCh4;
-
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
     QPushButton *trainingNext;
@@ -113,10 +89,7 @@ private:
     QPushButton *startButton;
     QPushButton *recordingButton;
     QPushButton *recordingTransferButton;
-    QPushButton *doneSettingsButton;
-    QPushButton *addSettingsButton;
-    QPushButton *removeSettingsButton[30];
-    bool doneSettingsFlag = false;
+
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -127,21 +100,17 @@ private:
     QStringList commandArg;
     QString commandStdout;
 
+    QLabel *trainingSaveDir;
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
 
     int startDelay = 3000;
-    int indexThreshold = 2;
-    int inputCheckBoxValue[30] = {0};
-    int outputCheckBoxValue[30] = {0};
-    int boxWidth = 22;
-    int boxHeight = 22;
+
 
     void createLayout();
     void createStatusBar();
     void createActions();
     void createChannelLabel();
-    void createSettingsLayout(int index);
 
     void sendParameters();
     void sendHighpassParameters(int value);
@@ -186,17 +155,8 @@ private slots:
     void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
-    void on_input_ch1_changed(int index);
-    void on_input_ch2_changed(int index);
-    void on_input_ch3_changed(int index);
-    void on_input_ch4_changed(int index);
-    void on_output_ch1_changed(int index);
-    void on_output_ch2_changed(int index);
-    void on_output_ch3_changed(int index);
-    void on_output_ch4_changed(int index);
-    void on_add_checkbox_clicked();
-    void on_remove_checkbox_clicked(int index);
-    void on_done_settings_changed();
+    void update_status_bar(QString text);
+    void refreshLayout();
     void readOutput();
 
 signals:

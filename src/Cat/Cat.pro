@@ -29,12 +29,14 @@ SOURCES += main.cpp \
     catwindow.cpp \
     commandcat.cpp \
     socketfilename.cpp \
-    filenamedialog.cpp
+    filenamedialog.cpp \
+    thresholdtab.cpp
 
 HEADERS  += \
     catwindow.h \
     commandcat.h \
     socketfilename.h \
-    filenamedialog.h
+    filenamedialog.h \
+    thresholdtab.h
 
 FORMS    +=

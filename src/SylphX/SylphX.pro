@@ -41,6 +41,7 @@ HEADERS += \
     ../Cat/commandcat.h \
     ../Cat/socketfilename.h \
     ../Cat/filenamedialog.h \
+    ../Cat/thresholdtab.h \
     dynomometer.h \
     treedialog.h
 
@@ -61,5 +62,6 @@ SOURCES += \
     ../Cat/commandcat.cpp \
     ../Cat/socketfilename.cpp \
     ../Cat/filenamedialog.cpp \
+    ../Cat/thresholdtab.cpp \
     dynomometer.cpp \
     treedialog.cpp
