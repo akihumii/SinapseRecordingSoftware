@@ -168,8 +168,8 @@ void CatWindow::on_done_settings_changed(){
         }
         else{
             doneSettingsFlag = !doneSettingsFlag;
-            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated sets: ") +
-                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]));
+            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
+                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
         }
     }
     else{
