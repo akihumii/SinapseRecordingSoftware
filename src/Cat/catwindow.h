@@ -43,10 +43,10 @@ private:
     QGroupBox *createRecordingGroup();
     QHBoxLayout *createThresholdTabLayouot();
 
+    QGroupBox *groupMethodsClassify;
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
     QGroupBox *groupThreasholding;
-    QGroupBox *groupStimPattern;
 
     QLabel *trainingSaveDir;
     QHBoxLayout *settingsLabelSubLayout[2];
@@ -60,6 +60,7 @@ private:
 
     QTabWidget *tabSettings;
     QWidget *thresholdTab;
+    QWidget *featureTab;
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
@@ -157,6 +158,7 @@ private:
     void sendLowpassSignal(double lowpassValue);
     void sendNotchSignal(double notchValue);
 
+    void sendStimulationPattern();
     void emitCommandSent();
     void receiveSavedFiles();
     void controlInput(bool flag);
@@ -185,9 +187,9 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
-    void on_stimulation_pattern_changed();
-    void on_stimulation_on_off_changed();
-    void on_stimulation_target_changed();
+//    void on_stimulation_pattern_changed();
+//    void on_stimulation_on_off_changed();
+//    void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
     void on_input_ch1_changed(int index);

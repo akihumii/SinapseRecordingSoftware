@@ -54,12 +54,17 @@ QGroupBox *CatWindow::createMethodsGroup(){
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
 
+    //widgets
     thresholdTab = new QWidget;
+    featureTab = new QWidget;
     thresholdTab->setLayout(createThresholdTabLayouot());
 
+    //tab
     tabSettings = new QTabWidget;
     tabSettings->addTab(thresholdTab, tr("Threshold"));
+    tabSettings->addTab(featureTab, tr("Features"));
 
+    //layout
     QHBoxLayout *settingsLayout = new QHBoxLayout;
     settingsLayout->addWidget(tabSettings);
 
@@ -176,9 +181,13 @@ void CatWindow::on_done_settings_changed(){
     doneSettingsFlag = !doneSettingsFlag;
 
     if(doneSettingsFlag){
-        if(!check_input_boxes()){  //no repeated input
+        if(!check_input_boxes()){  //done, no repeated input
             doneSettingsButton->setText("Edit");
             statusBarLabel->setText(tr("Ready..."));
+            commandCat->sendStimulationPatternFlag();
+            emitCommandSent();
+
+            sendStimulationPattern();
         }
         else{
             doneSettingsFlag = !doneSettingsFlag;
@@ -198,6 +207,16 @@ void CatWindow::on_done_settings_changed(){
         removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
     }
     addSettingsButton->setEnabled(!doneSettingsFlag);
+}
+
+void CatWindow::sendStimulationPattern(){
+    for(int i = 0; i < indexThreshold; i++){
+        int temp = 0;
+        temp = inputCheckBoxValue[i] | outputCheckBoxValue[i] << 4;
+        commandCat->setStimulationPattern(temp);
+        commandCat->sendStimulationPattern();
+        emitCommandSent();
+    }
 }
 
 bool CatWindow::check_input_boxes(){
@@ -346,7 +365,7 @@ QGroupBox *CatWindow::createMethodsClassifyGroup(){
         methodsClassifyLayout->addWidget(methodsClassifyBox[i]);
         connect(methodsClassifyBox[i], SIGNAL(clicked(bool)), this, SLOT(on_classify_methods_changed()));
     }
-    QGroupBox *groupMethodsClassify = new QGroupBox();
+    groupMethodsClassify = new QGroupBox();
     groupMethodsClassify->setLayout(methodsClassifyLayout);
 
     return groupMethodsClassify;
@@ -599,94 +618,6 @@ QGroupBox *CatWindow::createThreasholdingGroup(){
     return groupThreasholding;
 }
 
-QGroupBox *CatWindow::createStimPatternGroup(){
-    groupStimPattern = new QGroupBox(tr("Stimulation Pattern"));
-
-    QHBoxLayout *stimPatternSubLayout[3];
-
-    int labelWidth = 200;
-
-    // Label:
-    stimPatternSubLayout[0] = new QHBoxLayout;
-    QLabel *stimEmptyLabel = new QLabel(tr(" "));
-    stimEmptyLabel->setMaximumWidth(labelWidth);
-    stimPatternSubLayout[0]->addWidget(stimEmptyLabel);
-    for(int i = 0; i < 4; i++){
-        QLabel *channelLabels = new QLabel(tr("Channel ") + QString::number(i+1));
-        stimPatternSubLayout[0]->addWidget(channelLabels);
-    }
-
-    // stim on and off:
-    QVBoxLayout *onoffStimSubLayout[5];
-    QLabel *stimOnLabel = new QLabel(tr("On: "));
-    QLabel *stimOffLabel = new QLabel(tr("Off: "));
-    for(int i = 0; i < 5; i++){
-        onoffStimSubLayout[i] = new QVBoxLayout;
-    }
-    onoffStimSubLayout[0]->addWidget(stimOnLabel);
-    onoffStimSubLayout[0]->addWidget(stimOffLabel);
-
-    for(int i = 0; i < 2; i++){
-        onoffStimBoxCh1[i] = new QRadioButton;
-        onoffStimBoxCh2[i] = new QRadioButton;
-        onoffStimBoxCh3[i] = new QRadioButton;
-        onoffStimBoxCh4[i] = new QRadioButton;
-
-        connect(onoffStimBoxCh1[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
-        connect(onoffStimBoxCh2[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
-        connect(onoffStimBoxCh3[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
-        connect(onoffStimBoxCh4[i], SIGNAL(clicked(bool)), this, SLOT(on_stimulation_on_off_changed()));
-
-        onoffStimSubLayout[1]->addWidget(onoffStimBoxCh1[i]);
-        onoffStimSubLayout[2]->addWidget(onoffStimBoxCh2[i]);
-        onoffStimSubLayout[3]->addWidget(onoffStimBoxCh3[i]);
-        onoffStimSubLayout[4]->addWidget(onoffStimBoxCh4[i]);
-    }
-
-    onoffStimBoxCh1[0]->setChecked(true);
-    onoffStimBoxCh2[0]->setChecked(true);
-    onoffStimBoxCh3[1]->setChecked(true);
-    onoffStimBoxCh4[1]->setChecked(true);
-
-    QGroupBox *groupOnOffStimSubLayout[4];
-    for(int i = 0; i < 4; i++){
-        groupOnOffStimSubLayout[i] = new QGroupBox;
-    }
-    groupOnOffStimSubLayout[0]->setLayout(onoffStimSubLayout[1]);
-    groupOnOffStimSubLayout[1]->setLayout(onoffStimSubLayout[2]);
-    groupOnOffStimSubLayout[2]->setLayout(onoffStimSubLayout[3]);
-    groupOnOffStimSubLayout[3]->setLayout(onoffStimSubLayout[4]);
-
-
-    stimPatternSubLayout[1] = new QHBoxLayout;
-    stimPatternSubLayout[1]->addLayout(onoffStimSubLayout[0]);
-    for(int i = 0; i < 4; i++){
-        stimPatternSubLayout[1]->addWidget(groupOnOffStimSubLayout[i]);
-    }
-
-    // stim target:
-    stimPatternSubLayout[2] = new QHBoxLayout;
-    QLabel *stimTargetLabel = new QLabel(tr("Stimulation: "));
-    stimTargetLabel->setMaximumWidth(labelWidth);
-    stimPatternSubLayout[2]->addWidget(stimTargetLabel);
-    for(int i = 0; i < 4; i++){
-        stimTargetCheckBox[i] = new QCheckBox;
-        stimPatternSubLayout[2]->addWidget(stimTargetCheckBox[i]);
-        connect(stimTargetCheckBox[i], SIGNAL(toggled(bool)), this, SLOT(on_stimulation_target_changed()));
-    }
-
-    //Layout
-    QVBoxLayout *stimPatternLayout = new QVBoxLayout;
-    for(int i = 0; i < 3; i++){
-        stimPatternLayout->addLayout(stimPatternSubLayout[i]);
-    }
-
-    groupStimPattern->setLayout(stimPatternLayout);
-    groupStimPattern->setEnabled(false);
-
-    return groupStimPattern;
-}
-
 void CatWindow::createStatusBar(){
     statusBarLabel = new QLabel;
     statusBarMainWindow = statusBar();
@@ -787,61 +718,18 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
     }
 
-    if(methodsClassifyBox[1]->isChecked()){  // if feature is selected as classify method
-        groupThreasholding->setEnabled(false);
-    }
-    else{
-        groupThreasholding->setEnabled(true);
-    }
+    groupThreasholding->setEnabled(!methodsClassifyBox[1]->isChecked());  //disable when feature is selected
+    thresholdTab->setEnabled(!methodsClassifyBox[1]->isChecked());
+
+    featureTab->setEnabled(methodsClassifyBox[1]->isChecked());  // enable when feature is selected
+
+    methodsClassifyBox[1]->isChecked() ? tabSettings->setCurrentIndex(1) : tabSettings->setCurrentIndex(0);
 
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
         emitCommandSent();
     }
-}
-
-void CatWindow::on_stimulation_pattern_changed(){
-    int temp = commandCat->getStimulationPattern();
-    for(int i = 0; i < 2; i++){
-        commandCat->setStimulationPattern(i, methodsStimulationPatternBox[i]->isChecked());
-    }
-
-    if(methodsStimulationPatternBox[1]->isChecked()){  // if Target stimulation pattern is selected
-        groupStimPattern->setEnabled(true);
-    }
-    else{
-        groupStimPattern->setEnabled(false);
-    }
-
-    if(temp != commandCat->getStimulationPattern()){
-        qDebug() << "Sent stimulation pattern to: " << commandCat->getStimulationPattern();
-        commandCat->sendStimulationPattern();
-        emitCommandSent();
-    }
-}
-
-void CatWindow::on_stimulation_on_off_changed(){
-    int temp = commandCat->getStimulationPatternOnOff();
-    commandCat->setStimulationPatternOnOff(0, onoffStimBoxCh1[0]->isChecked());
-    commandCat->setStimulationPatternOnOff(1, onoffStimBoxCh2[0]->isChecked());
-    commandCat->setStimulationPatternOnOff(2, onoffStimBoxCh3[0]->isChecked());
-    commandCat->setStimulationPatternOnOff(3, onoffStimBoxCh4[0]->isChecked());
-
-    if(temp != commandCat->getStimulationPatternOnOff()){
-        qDebug() << "Sent stimulation pattern on off to: " << commandCat->getStimulationPatternOnOff();
-        commandCat->sendStimulationPatternOnOff();
-        emitCommandSent();
-    }
-}
-
-void CatWindow::on_stimulation_target_changed(){
-    for(int i = 0; i < 4; i++){
-        commandCat->setStimulationPatternTarget(i, stimTargetCheckBox[i]->isChecked());
-    }
-    qDebug() << "Sent stimulation pattern target to: " << commandCat->getStimulationPatternTarget();
-    commandCat->sendStimulationPatternTarget();
-    emitCommandSent();
 }
 
 void CatWindow::on_sm_channel_changed(){
@@ -1015,7 +903,7 @@ void CatWindow::on_recording_changed(){
         commandCat->setRecording(recordingFlag);
         recordingButton->setText("Stop Recor&ding");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
-        controlInput(false);
+//        controlInput(false);
 
         filenameDialog->setFilename(QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'"));
     }
@@ -1024,7 +912,7 @@ void CatWindow::on_recording_changed(){
         commandCat->setRecording(recordingFlag);
         recordingButton->setText("Start Recor&ding");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!!"));
-        controlInput(true);
+//        controlInput(true);
 
         filenameDialog->show();
     }
@@ -1062,15 +950,17 @@ void CatWindow::on_recording_transfer_changed(){
 }
 
 void CatWindow::on_start_changed(){
-    if(!startStimulationFlag){
+    if(!startStimulationFlag){  // start stimulation
         startStimulationFlag = true;
         commandCat->setStartStimulation(startStimulationFlag);
         startButton->setText("Stop Integration");
+        controlInput(false);
     }
     else{
         startStimulationFlag = false;
         commandCat->setStartStimulation(startStimulationFlag);
         startButton->setText("Start Integration");
+        controlInput(true);
     }
     commandCat->sendStartStimulation();
     emitCommandSent();
@@ -1177,6 +1067,7 @@ void CatWindow::on_sylph_triggered(){
 void CatWindow::controlInput(bool flag){
     groupSettings->setEnabled(flag);
     parametersGroup->setEnabled(flag);
+    groupMethodsClassify->setEnabled(flag);
 }
 
 void CatWindow::on_filename_discard(){
