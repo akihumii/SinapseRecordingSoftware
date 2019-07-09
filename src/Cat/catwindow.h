@@ -41,6 +41,7 @@ private:
     QGroupBox *createMethodsClassifyGroup();
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
+    QHBoxLayout *createThresholdTabLayouot();
 
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
@@ -56,6 +57,9 @@ private:
     QHBoxLayout *IOLayout;
     QGroupBox *settingsInputGroup;
     QGroupBox *settingsOutputGroup;
+
+    QTabWidget *tabSettings;
+    QWidget *thresholdTab;
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];

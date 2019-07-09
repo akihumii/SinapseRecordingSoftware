@@ -54,6 +54,21 @@ QGroupBox *CatWindow::createMethodsGroup(){
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
 
+    thresholdTab = new QWidget;
+    thresholdTab->setLayout(createThresholdTabLayouot());
+
+    tabSettings = new QTabWidget;
+    tabSettings->addTab(thresholdTab, tr("Threshold"));
+
+    QHBoxLayout *settingsLayout = new QHBoxLayout;
+    settingsLayout->addWidget(tabSettings);
+
+    groupSettings->setLayout(settingsLayout);
+
+    return groupSettings;
+}
+
+QHBoxLayout *CatWindow::createThresholdTabLayouot(){
     //add button
     doneSettingsButton = new QPushButton;
     doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
@@ -153,9 +168,8 @@ QGroupBox *CatWindow::createSettingsGroup(){
     IOLayout->addLayout(settingsButtonLayout);
     IOLayout->addWidget(settingsInputGroup);
     IOLayout->addWidget(settingsOutputGroup);
-    groupSettings->setLayout(IOLayout);
 
-    return groupSettings;
+    return IOLayout;
 }
 
 void CatWindow::on_done_settings_changed(){
