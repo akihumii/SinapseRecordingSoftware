@@ -58,6 +58,7 @@ QGroupBox *CatWindow::createSettingsGroup(){
     thresholdTab = new QWidget;
     featureTab = new QWidget;
     thresholdTab->setLayout(createThresholdTabLayouot());
+    featureTab->setLayout(createFeatureTabLayout());
 
     //tab
     tabSettings = new QTabWidget;
@@ -73,7 +74,40 @@ QGroupBox *CatWindow::createSettingsGroup(){
     return groupSettings;
 }
 
+QHBoxLayout *CatWindow::createFeatureTabLayout(){
+    QHBoxLayout *featureTabLayout = new QHBoxLayout;
+
+    //add button
+    doneFeatureSettingsButton = new QPushButton;
+    doneFeatureSettingsFlag ? doneFeatureSettingsButton->setText("Edit") : doneFeatureSettingsButton->setText("Done");
+    doneFeatureSettingsButton->setFixedSize(35, 30);
+
+    QVBoxLayout *settingsFeatureButtonLayout = new QVBoxLayout();
+    settingsFeatureButtonLayout->addWidget(doneFeatureSettingsButton);
+
+    //row of checkboxes
+    QLabel *emptyFeatureButton = new QLabel;
+    emptyFeatureButton->setFixedSize(boxWidth, boxHeight);
+
+    addFeatureSettingsButton = new QPushButton("+");
+    addFeatureSettingsButton->setFixedSize(35, boxHeight);
+    if(indexFeature < 30){
+        settingsFeatureButtonLayout->addWidget(addFeatureSettingsButton);
+    }
+    else{
+        settingsFeatureButtonLayout->addWidget(emptyFeatureButton);
+    }
+
+    //Grouping
+    featureTabLayout->addLayout(settingsFeatureButtonLayout);
+
+    return featureTabLayout;
+
+}
+
 QHBoxLayout *CatWindow::createThresholdTabLayouot(){
+    QHBoxLayout *thresholdTabLayout = new QHBoxLayout;
+
     //add button
     doneSettingsButton = new QPushButton;
     doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
@@ -169,12 +203,11 @@ QHBoxLayout *CatWindow::createThresholdTabLayouot(){
     settingsOutputGroup = new QGroupBox(tr("Output"));
     settingsOutputGroup->setLayout(settingsOutputLayout);
 
-    IOLayout = new QHBoxLayout;
-    IOLayout->addLayout(settingsButtonLayout);
-    IOLayout->addWidget(settingsInputGroup);
-    IOLayout->addWidget(settingsOutputGroup);
+    thresholdTabLayout->addLayout(settingsButtonLayout);
+    thresholdTabLayout->addWidget(settingsInputGroup);
+    thresholdTabLayout->addWidget(settingsOutputGroup);
 
-    return IOLayout;
+    return thresholdTabLayout;
 }
 
 void CatWindow::on_done_settings_changed(){

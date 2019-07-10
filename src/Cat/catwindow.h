@@ -42,6 +42,7 @@ private:
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
     QHBoxLayout *createThresholdTabLayouot();
+    QHBoxLayout *createFeatureTabLayout();
 
     QGroupBox *groupMethodsClassify;
     QGroupBox *parametersGroup;
@@ -54,7 +55,6 @@ private:
     QHBoxLayout *settingsInputSubLayout[30];
     QVBoxLayout *settingsOutputLayout;
     QHBoxLayout *settingsOutputSubLayout[30];
-    QHBoxLayout *IOLayout;
     QGroupBox *settingsInputGroup;
     QGroupBox *settingsOutputGroup;
 
@@ -121,7 +121,11 @@ private:
     QPushButton *doneSettingsButton;
     QPushButton *addSettingsButton;
     QPushButton *removeSettingsButton[30];
+    QPushButton *doneFeatureSettingsButton;
+    QPushButton *addFeatureSettingsButton;
+    QPushButton *removeFeatureSettingsButton[30];
     bool doneSettingsFlag = false;
+    bool doneFeatureSettingsFlag = false;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -137,6 +141,7 @@ private:
 
     int startDelay = 3000;
     int indexThreshold = 2;
+    int indexFeature = 2;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
     int boxWidth = 22;
