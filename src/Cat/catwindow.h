@@ -113,6 +113,7 @@ private:
     int repeatedLocs[2] = {0};
 
     QSignalMapper *removeMapper;
+    QSignalMapper *removeFeatureMapper;
     QSignalMapper *inputMapperCh1;
     QSignalMapper *inputMapperCh2;
     QSignalMapper *inputMapperCh3;
@@ -121,6 +122,11 @@ private:
     QSignalMapper *outputMapperCh2;
     QSignalMapper *outputMapperCh3;
     QSignalMapper *outputMapperCh4;
+    QSignalMapper *featureInputMapper;
+    QSignalMapper *featureOutputMapperCh1;
+    QSignalMapper *featureOutputMapperCh2;
+    QSignalMapper *featureOutputMapperCh3;
+    QSignalMapper *featureOutputMapperCh4;
 
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
@@ -151,11 +157,14 @@ private:
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
 
+    int currentTab = 0;
     int startDelay = 3000;
     int indexThreshold = 2;
     int indexFeature = 2;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
+    int featureInputCheckBoxValue[30] = {0};
+    int featureOutputCheckBoxValue[30] = {0};
     int boxWidth = 22;
     int boxHeight = 22;
 
@@ -180,6 +189,7 @@ private:
     void emitCommandSent();
     void receiveSavedFiles();
     void controlInput(bool flag);
+    void disableInputClassifyMethods();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
@@ -210,6 +220,7 @@ private slots:
 //    void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
+    void on_tab_changed(int value);
     void on_input_ch1_changed(int index);
     void on_input_ch2_changed(int index);
     void on_input_ch3_changed(int index);
