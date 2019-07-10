@@ -50,13 +50,19 @@ private:
     QGroupBox *groupThreasholding;
 
     QLabel *trainingSaveDir;
-    QHBoxLayout *settingsLabelSubLayout[2];
+
     QVBoxLayout *settingsInputLayout;
     QHBoxLayout *settingsInputSubLayout[30];
     QVBoxLayout *settingsOutputLayout;
     QHBoxLayout *settingsOutputSubLayout[30];
+    QVBoxLayout *settingsFeatureInputLayout;
+    QHBoxLayout *settingsFeatureInputSubLayout[30];
+    QVBoxLayout *settingsFeatureOutputLayout;
+    QHBoxLayout *settingsFeatureOutputSubLayout[30];
     QGroupBox *settingsInputGroup;
     QGroupBox *settingsOutputGroup;
+    QGroupBox *settingsFeatureInputGroup;
+    QGroupBox *settingsFeatureOutputGroup;
 
     QTabWidget *tabSettings;
     QWidget *thresholdTab;
@@ -97,6 +103,12 @@ private:
     QCheckBox *outputBoxCh2[30];
     QCheckBox *outputBoxCh3[30];
     QCheckBox *outputBoxCh4[30];
+    QCheckBox *featureInputBox[30];
+    QCheckBox *featureOutputBoxCh1[30];
+    QCheckBox *featureOutputBoxCh2[30];
+    QCheckBox *featureOutputBoxCh3[30];
+    QCheckBox *featureOutputBoxCh4[30];
+
     bool check_input_boxes();
     int repeatedLocs[2] = {0};
 
@@ -152,6 +164,7 @@ private:
     void createActions();
     void createChannelLabel();
     void createSettingsLayout(int index);
+    void createFeatureSettingsLayout(int index);
 
     void sendParameters();
     void sendHighpassParameters(int value);

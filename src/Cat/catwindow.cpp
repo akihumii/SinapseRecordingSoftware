@@ -85,7 +85,44 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     QVBoxLayout *settingsFeatureButtonLayout = new QVBoxLayout();
     settingsFeatureButtonLayout->addWidget(doneFeatureSettingsButton);
 
+    //channel labels
+    QLabel *channelFeatureLabel[5];
+    channelFeatureLabel[0] = new QLabel("Movement");
+
+    QHBoxLayout *settingsFeatureOutputLabelLayout = new QHBoxLayout;
+    for(int i = 1; i < 5; i++){
+        channelFeatureLabel[i] = new QLabel("Channel " + QString::number(i));
+        settingsFeatureOutputLabelLayout->addWidget(channelFeatureLabel[i]);
+    }
+
+    //Layout
+    settingsFeatureInputLayout = new QVBoxLayout;
+    settingsFeatureInputLayout->addWidget(channelFeatureLabel[0]);
+
+    settingsFeatureOutputLayout = new QVBoxLayout;
+    settingsFeatureOutputLayout->addLayout(settingsFeatureOutputLabelLayout);
+
     //row of checkboxes
+    QHBoxLayout *removeFeatureSubLayout[indexFeature];
+    QLabel *removeFeatureLabel[indexFeature];
+    for(int i = 0; i < indexFeature; i++){
+        createFeatureSettingsLayout(i);  //create input and output boxes
+
+        removeFeatureSettingsButton[i] = new QPushButton("-");
+        removeFeatureSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
+
+        removeFeatureLabel[i] = new QLabel(QString::number(i+1));
+
+        removeFeatureSubLayout[i] = new QHBoxLayout;
+        removeFeatureSubLayout[i]->addWidget(removeFeatureLabel[i]);
+        removeFeatureSubLayout[i]->addWidget(removeFeatureSettingsButton[i]);
+        settingsFeatureButtonLayout->addLayout(removeFeatureSubLayout[i]);
+    }
+    QLabel *emptyFeatureInputRow = new QLabel;
+    QLabel *emptyFeatureOutputRow = new QLabel;
+    settingsFeatureInputLayout->addWidget(emptyFeatureInputRow);
+    settingsFeatureOutputLayout->addWidget(emptyFeatureOutputRow);
+
     QLabel *emptyFeatureButton = new QLabel;
     emptyFeatureButton->setFixedSize(boxWidth, boxHeight);
 
@@ -99,10 +136,48 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     }
 
     //Grouping
+    settingsFeatureInputGroup = new QGroupBox(tr("Input"));
+    settingsFeatureInputGroup->setLayout(settingsFeatureInputLayout);
+
+    settingsFeatureOutputGroup = new QGroupBox(tr("Output"));
+    settingsFeatureOutputGroup->setLayout(settingsFeatureOutputLayout);
+
     featureTabLayout->addLayout(settingsFeatureButtonLayout);
+    featureTabLayout->addWidget(settingsFeatureInputGroup);
+    featureTabLayout->addWidget(settingsFeatureOutputGroup);
 
     return featureTabLayout;
 
+}
+
+void CatWindow::createFeatureSettingsLayout(int index){
+    //Boxes
+    featureInputBox[index] = new QCheckBox;
+    featureOutputBoxCh1[index] = new QCheckBox;
+    featureOutputBoxCh2[index] = new QCheckBox;
+    featureOutputBoxCh3[index] = new QCheckBox;
+    featureOutputBoxCh4[index] = new QCheckBox;
+
+    //Size
+    featureInputBox[index]->setMinimumSize(boxWidth, boxHeight);
+    featureOutputBoxCh1[index]->setMinimumSize(boxWidth, boxHeight);
+    featureOutputBoxCh2[index]->setMinimumSize(boxWidth, boxHeight);
+    featureOutputBoxCh3[index]->setMinimumSize(boxWidth, boxHeight);
+    featureOutputBoxCh4[index]->setMinimumSize(boxWidth, boxHeight);
+
+    //Layout
+    settingsFeatureInputSubLayout[index] = new QHBoxLayout;
+    settingsFeatureOutputSubLayout[index] = new QHBoxLayout;
+
+    settingsFeatureInputSubLayout[index]->addWidget(featureInputBox[index]);
+
+    settingsFeatureOutputSubLayout[index]->addWidget(featureOutputBoxCh1[index]);
+    settingsFeatureOutputSubLayout[index]->addWidget(featureOutputBoxCh2[index]);
+    settingsFeatureOutputSubLayout[index]->addWidget(featureOutputBoxCh3[index]);
+    settingsFeatureOutputSubLayout[index]->addWidget(featureOutputBoxCh4[index]);
+
+    settingsFeatureInputLayout->addLayout(settingsFeatureInputSubLayout[index]);
+    settingsFeatureOutputLayout->addLayout(settingsFeatureOutputSubLayout[index]);
 }
 
 QHBoxLayout *CatWindow::createThresholdTabLayouot(){
