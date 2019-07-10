@@ -144,6 +144,7 @@ private:
     QPushButton *removeFeatureSettingsButton[30];
     bool doneSettingsFlag = false;
     bool doneFeatureSettingsFlag = false;
+    bool doneFlagTemp = false;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -161,6 +162,7 @@ private:
     int startDelay = 3000;
     int indexThreshold = 2;
     int indexFeature = 2;
+    int indexTemp = 2;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
     int featureInputCheckBoxValue[30] = {0};

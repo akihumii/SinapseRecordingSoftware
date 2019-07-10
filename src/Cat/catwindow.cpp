@@ -86,6 +86,7 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     doneFeatureSettingsButton = new QPushButton;
     doneFeatureSettingsFlag ? doneFeatureSettingsButton->setText("Edit") : doneFeatureSettingsButton->setText("Done");
     doneFeatureSettingsButton->setFixedSize(35, 30);
+    connect(doneFeatureSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
 
     QVBoxLayout *settingsFeatureButtonLayout = new QVBoxLayout();
     settingsFeatureButtonLayout->addWidget(doneFeatureSettingsButton);
@@ -130,6 +131,8 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
 
         removeFeatureSettingsButton[i] = new QPushButton("-");
         removeFeatureSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
+        connect(removeFeatureSettingsButton[i], SIGNAL(clicked(bool)), removeFeatureMapper, SLOT(map()));
+        removeFeatureMapper->setMapping(removeFeatureSettingsButton[i], i);
 
         removeFeatureLabel[i] = new QLabel(QString::number(i+1));
 
@@ -195,12 +198,16 @@ void CatWindow::createFeatureSettingsLayout(int index){
     featureOutputBoxCh4[index]->setChecked(featureOutputCheckBoxValue[index] & (1 << 3));
 
     //Connect
-    connect(featureInputBox[index], SIGNAL(toggled(bool))), featureInputMapper, SLOT(map());
+    connect(featureInputBox[index], SIGNAL(toggled(bool)), featureInputMapper, SLOT(map()));
     connect(featureOutputBoxCh1[index], SIGNAL(toggled(bool)), featureOutputMapperCh1, SLOT(map()));
     connect(featureOutputBoxCh2[index], SIGNAL(toggled(bool)), featureOutputMapperCh2, SLOT(map()));
     connect(featureOutputBoxCh3[index], SIGNAL(toggled(bool)), featureOutputMapperCh3, SLOT(map()));
     connect(featureOutputBoxCh4[index], SIGNAL(toggled(bool)), featureOutputMapperCh4, SLOT(map()));
-
+    featureInputMapper->setMapping(featureInputBox[index], index);
+    featureOutputMapperCh1->setMapping(featureOutputBoxCh1[index], index);
+    featureOutputMapperCh2->setMapping(featureOutputBoxCh2[index], index);
+    featureOutputMapperCh3->setMapping(featureOutputBoxCh3[index], index);
+    featureOutputMapperCh4->setMapping(featureOutputBoxCh4[index], index);
 
     //Layout
     settingsFeatureInputSubLayout[index] = new QHBoxLayout;
@@ -323,11 +330,18 @@ QHBoxLayout *CatWindow::createThresholdTabLayouot(){
 }
 
 void CatWindow::on_done_settings_changed(){
-    doneSettingsFlag = !doneSettingsFlag;
+    if(!tabSettings->currentIndex()){  //threshold
+        doneFlagTemp = doneSettingsFlag;
+    }
+    else{
+        doneFlagTemp = doneFeatureSettingsFlag;
+    }
+    doneFlagTemp = !doneFlagTemp;
+//    doneSettingsFlag = !doneSettingsFlag;
 
-    if(doneSettingsFlag){
+    if(doneFlagTemp){
         if(!check_input_boxes()){  //done, no repeated input
-            doneSettingsButton->setText("Edit");
+            !tabSettings->currentIndex() ? doneSettingsButton->setText("Edit") : doneFeatureSettingsButton->setText("Edit");
             statusBarLabel->setText(tr("Ready..."));
             commandCat->sendStimulationPatternFlag();
             emitCommandSent();
@@ -335,29 +349,55 @@ void CatWindow::on_done_settings_changed(){
             sendStimulationPattern();
         }
         else{
-            doneSettingsFlag = !doneSettingsFlag;
+            doneFlagTemp = !doneFlagTemp;
+//            doneSettingsFlag = !doneSettingsFlag;
             statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
                                        QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
         }
     }
     else{
-        doneSettingsButton->setText("Done");
+        !tabSettings->currentIndex() ? doneSettingsButton->setText("Done") : doneFeatureSettingsButton->setText("Done");
         statusBarLabel->setText(tr("Editting threshold input output..."));
     }
 
     // set enable
-    settingsInputGroup->setEnabled(!doneSettingsFlag);
-    settingsOutputGroup->setEnabled(!doneSettingsFlag);
-    for(int i = 0; i < indexThreshold; i++){
-        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
+    if(!tabSettings->currentIndex()){  //threshold
+        doneSettingsFlag = doneFlagTemp;
+        settingsInputGroup->setEnabled(!doneSettingsFlag);
+        settingsOutputGroup->setEnabled(!doneSettingsFlag);
+        for(int i = 0; i < indexThreshold; i++){
+            removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
+        }
+        addSettingsButton->setEnabled(!doneSettingsFlag);
     }
-    addSettingsButton->setEnabled(!doneSettingsFlag);
+    else{
+        doneFeatureSettingsFlag = doneFlagTemp;
+        settingsFeatureInputGroup->setEnabled(!doneFeatureSettingsFlag);
+        settingsFeatureOutputGroup->setEnabled(!doneFeatureSettingsFlag);
+        for(int i = 0; i < indexFeature; i++){
+            removeFeatureSettingsButton[i]->setEnabled(!doneFeatureSettingsFlag);
+        }
+        addFeatureSettingsButton->setEnabled(!doneFeatureSettingsFlag);
+    }
+
 }
 
 void CatWindow::sendStimulationPattern(){
-    for(int i = 0; i < indexThreshold; i++){
+    if(!tabSettings->currentIndex()){  //threshold
+        indexTemp = indexThreshold;
+    }
+    else{
+        indexTemp = indexFeature;
+    }
+
+    for(int i = 0; i < indexTemp; i++){
         int temp = 0;
-        temp = inputCheckBoxValue[i] | outputCheckBoxValue[i] << 4;
+        if(!tabSettings->currentIndex()){
+            temp = inputCheckBoxValue[i] | outputCheckBoxValue[i] << 4;
+        }
+        else{
+            temp = featureInputCheckBoxValue[i] | featureOutputCheckBoxValue[i] << 4;
+        }
         commandCat->setStimulationPattern(temp);
         commandCat->sendStimulationPattern();
         emitCommandSent();
@@ -367,18 +407,24 @@ void CatWindow::sendStimulationPattern(){
 bool CatWindow::check_input_boxes(){
     bool seen[255] = {false};
     int loc[255] = {0};
-    for(int i = 0; i < indexThreshold; i++){
-        if(seen[inputCheckBoxValue[i]]){
-            repeatedLocs[0] = loc[inputCheckBoxValue[i]];
-            repeatedLocs[1] = i+1;
-            return true;
+    if(!tabSettings->currentIndex()){  // threshold
+        for(int i = 0; i < indexThreshold; i++){
+            if(seen[inputCheckBoxValue[i]]){
+                repeatedLocs[0] = loc[inputCheckBoxValue[i]];
+                repeatedLocs[1] = i+1;
+                return true;
+            }
+            else{
+                seen[inputCheckBoxValue[i]] = true;
+                loc[inputCheckBoxValue[i]] = i+1;
+            }
         }
-        else{
-            seen[inputCheckBoxValue[i]] = true;
-            loc[inputCheckBoxValue[i]] = i+1;
-        }
+        return false;
     }
-    return false;
+    else{  // feature
+        return false;
+    }
+
 }
 
 void CatWindow::on_add_checkbox_clicked(){
@@ -398,6 +444,13 @@ void CatWindow::on_remove_checkbox_clicked(int index){
         indexThreshold --;
     }
     else{
+        for(int i = index; i < 29; i++){
+            featureInputCheckBoxValue[i] = featureInputCheckBoxValue[i+1];
+            featureOutputCheckBoxValue[i] = featureOutputCheckBoxValue[i+1];
+        }
+        featureInputCheckBoxValue[29] = 0;
+        featureOutputCheckBoxValue[29] = 0;
+
         indexFeature --;
     }
     createLayout();
@@ -453,7 +506,6 @@ void CatWindow::createSettingsLayout(int index){
     outputMapperCh3->setMapping(outputBoxCh3[index], index);
     outputMapperCh4->setMapping(outputBoxCh4[index], index);
 
-
     //Layout
     settingsInputSubLayout[index] = new QHBoxLayout;
     settingsOutputSubLayout[index] = new QHBoxLayout;
@@ -477,6 +529,7 @@ void CatWindow::on_input_ch1_changed(int index){
         inputBoxCh1[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 0)) : (inputCheckBoxValue[index] &= ~(1 << 0));
     }
     else{
+        featureInputCheckBoxValue[index] = featureInputBox[index]->isChecked();
     }
 }
 
@@ -493,19 +546,39 @@ void CatWindow::on_input_ch4_changed(int index){
 }
 
 void CatWindow::on_output_ch1_changed(int index){
-    outputBoxCh1[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 0)) : (outputCheckBoxValue[index] &= ~(1 << 0));
+    if(!tabSettings->currentIndex()){  //threshold
+        outputBoxCh1[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 0)) : (outputCheckBoxValue[index] &= ~(1 << 0));
+    }
+    else{
+        featureOutputBoxCh1[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 0)) : (outputCheckBoxValue[index] &= ~(1 << 0));
+    }
 }
 
 void CatWindow::on_output_ch2_changed(int index){
-    outputBoxCh2[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 1)) : (outputCheckBoxValue[index] &= ~(1 << 1));
+    if(!tabSettings->currentIndex()){  //threshold
+        outputBoxCh2[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 1)) : (outputCheckBoxValue[index] &= ~(1 << 1));
+    }
+    else{
+        featureOutputBoxCh2[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 1)) : (outputCheckBoxValue[index] &= ~(1 << 1));
+    }
 }
 
 void CatWindow::on_output_ch3_changed(int index){
-    outputBoxCh3[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 2)) : (outputCheckBoxValue[index] &= ~(1 << 2));
+    if(!tabSettings->currentIndex()){  //threshold
+        outputBoxCh3[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 2)) : (outputCheckBoxValue[index] &= ~(1 << 2));
+    }
+    else{
+        featureOutputBoxCh3[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 2)) : (outputCheckBoxValue[index] &= ~(1 << 2));
+    }
 }
 
 void CatWindow::on_output_ch4_changed(int index){
-    outputBoxCh4[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 3)) : (outputCheckBoxValue[index] &= ~(1 << 3));
+    if(!tabSettings->currentIndex()){  //threshold
+        outputBoxCh4[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 3)) : (outputCheckBoxValue[index] &= ~(1 << 3));
+    }
+    else{
+        featureOutputBoxCh4[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 3)) : (outputCheckBoxValue[index] &= ~(1 << 3));
+    }
 }
 
 QGroupBox *CatWindow::createMethodsClassifyGroup(){
