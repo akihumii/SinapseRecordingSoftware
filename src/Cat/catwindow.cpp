@@ -362,25 +362,35 @@ void CatWindow::sendStimulationPattern(){
     }
 }
 
-bool CatWindow::check_input_boxes(){
-    bool seen[255] = {false};
-    int loc[255] = {0};
-    for(int i = 0; i < indexThreshold; i++){
-        if(seen[inputCheckBoxValue[i]]){
-            repeatedLocs[0] = loc[inputCheckBoxValue[i]];
-            repeatedLocs[1] = i+1;
-            return true;
-        }
-        else{
-            seen[inputCheckBoxValue[i]] = true;
-            loc[inputCheckBoxValue[i]] = i+1;
+void CatWindow::check_input_boxes(){
+    if(methodsClassifyBox[0]->isChecked()){
+        bool seen[255] = {false};
+        int loc[255] = {0};
+    //    qDebug() << "indexThreshold: " << indexThreshold;
+        for(int i = 0; i < indexThreshold; i++){
+    //        qDebug() << "input checkbox value: " << inputCheckBoxValue[i];
+    //        qDebug() << "seen value: " << seen[inputCheckBoxValue[i]];
+            if(seen[inputCheckBoxValue[i]]){
+                repeatedLocs[0] = loc[inputCheckBoxValue[i]];
+                repeatedLocs[1] = i+1;
+    //            qDebug() << "changing status bar label..."
+                statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") + QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
+                startButton->setEnabled(false);
+                return;
+            }
+            else{
+                seen[inputCheckBoxValue[i]] = true;
+                loc[inputCheckBoxValue[i]] = i+1;
+            }
         }
     }
-    return false;
+    startButton->setEnabled(true);
+    statusBarLabel->setText(tr("Ready..."));
 }
 
 void CatWindow::on_add_checkbox_clicked(){
     indexThreshold++;
+    check_input_boxes();
     createLayout();
 }
 
@@ -393,6 +403,7 @@ void CatWindow::on_remove_checkbox_clicked(int index){
     outputCheckBoxValue[29] = 0;
 
     indexThreshold --;
+    check_input_boxes();
     createLayout();
 }
 
@@ -467,6 +478,7 @@ void CatWindow::createSettingsLayout(int index){
 void CatWindow::on_input_ch1_changed(int index){
     if(methodsClassifyBox[0]->isChecked()){  //threshold
         inputBoxCh1[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 0)) : (inputCheckBoxValue[index] &= ~(1 << 0));
+        check_input_boxes();
     }
     else{
         featureInputCheckBoxValue[index] = featureInputBox[index]->isChecked();
@@ -475,14 +487,17 @@ void CatWindow::on_input_ch1_changed(int index){
 
 void CatWindow::on_input_ch2_changed(int index){
     inputBoxCh2[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 1)) : (inputCheckBoxValue[index] &= ~(1 << 1));
+    check_input_boxes();
 }
 
 void CatWindow::on_input_ch3_changed(int index){
     inputBoxCh3[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 2)) : (inputCheckBoxValue[index] &= ~(1 << 2));
+    check_input_boxes();
 }
 
 void CatWindow::on_input_ch4_changed(int index){
     inputBoxCh4[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 3)) : (inputCheckBoxValue[index] &= ~(1 << 3));
+    check_input_boxes();
 }
 
 void CatWindow::on_output_ch1_changed(int index){
@@ -890,6 +905,7 @@ void CatWindow::on_classify_methods_changed(){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
         emitCommandSent();
+        check_input_boxes();
         createLayout();
     }
 }

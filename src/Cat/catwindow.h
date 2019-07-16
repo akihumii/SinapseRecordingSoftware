@@ -109,7 +109,7 @@ private:
     QCheckBox *featureOutputBoxCh3[30];
     QCheckBox *featureOutputBoxCh4[30];
 
-    bool check_input_boxes();
+    void check_input_boxes();
     int repeatedLocs[2] = {0};
 
     QSignalMapper *removeMapper;
@@ -136,15 +136,15 @@ private:
     QPushButton *startButton;
     QPushButton *recordingButton;
     QPushButton *recordingTransferButton;
-    QPushButton *doneSettingsButton;
+//    QPushButton *doneSettingsButton;
     QPushButton *addSettingsButton;
     QPushButton *removeSettingsButton[30];
-    QPushButton *doneFeatureSettingsButton;
-    QPushButton *addFeatureSettingsButton;
-    QPushButton *removeFeatureSettingsButton[30];
-    bool doneSettingsFlag = false;
-    bool doneFeatureSettingsFlag = false;
-    bool doneFlagTemp = false;
+//    QPushButton *doneFeatureSettingsButton;
+//    QPushButton *addFeatureSettingsButton;
+//    QPushButton *removeFeatureSettingsButton[30];
+//    bool doneSettingsFlag = false;
+//    bool doneFeatureSettingsFlag = false;
+//    bool doneFlagTemp = false;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
