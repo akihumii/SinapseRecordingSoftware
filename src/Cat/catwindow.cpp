@@ -43,7 +43,7 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
     methodsParameterLayout->addWidget(createMethodsClassifyGroup());
-    methodsParameterLayout->addWidget(createThreasholdingGroup());
+//    methodsParameterLayout->addWidget(createThreasholdingGroup());
 //    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
@@ -82,18 +82,9 @@ QGroupBox *CatWindow::createSettingsGroup(){
 QHBoxLayout *CatWindow::createFeatureTabLayout(){
     QHBoxLayout *featureTabLayout = new QHBoxLayout;
 
-    //add button
-    doneFeatureSettingsButton = new QPushButton;
-    doneFeatureSettingsFlag ? doneFeatureSettingsButton->setText("Edit") : doneFeatureSettingsButton->setText("Done");
-    doneFeatureSettingsButton->setFixedSize(35, 30);
-    connect(doneFeatureSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
-
-    QVBoxLayout *settingsFeatureButtonLayout = new QVBoxLayout();
-    settingsFeatureButtonLayout->addWidget(doneFeatureSettingsButton);
-
     //channel labels
     QLabel *channelFeatureLabel[5];
-    channelFeatureLabel[0] = new QLabel("Movement");
+    channelFeatureLabel[0] = new QLabel("");
 
     QHBoxLayout *settingsFeatureOutputLabelLayout = new QHBoxLayout;
     for(int i = 1; i < 5; i++){
@@ -120,26 +111,9 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     connect(featureOutputMapperCh3, SIGNAL(mapped(int)), this, SLOT(on_output_ch3_changed(int)));
     connect(featureOutputMapperCh4, SIGNAL(mapped(int)), this, SLOT(on_output_ch4_changed(int)));
 
-    removeFeatureMapper = new QSignalMapper(this);
-    connect(removeFeatureMapper, SIGNAL(mapped(int)), this, SLOT(on_remove_checkbox_clicked(int)));
-
     //row of checkboxes
-    QHBoxLayout *removeFeatureSubLayout[indexFeature];
-    QLabel *removeFeatureLabel[indexFeature];
     for(int i = 0; i < indexFeature; i++){
         createFeatureSettingsLayout(i);  //create input and output boxes
-
-        removeFeatureSettingsButton[i] = new QPushButton("-");
-        removeFeatureSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
-        connect(removeFeatureSettingsButton[i], SIGNAL(clicked(bool)), removeFeatureMapper, SLOT(map()));
-        removeFeatureMapper->setMapping(removeFeatureSettingsButton[i], i);
-
-        removeFeatureLabel[i] = new QLabel(QString::number(i+1));
-
-        removeFeatureSubLayout[i] = new QHBoxLayout;
-        removeFeatureSubLayout[i]->addWidget(removeFeatureLabel[i]);
-        removeFeatureSubLayout[i]->addWidget(removeFeatureSettingsButton[i]);
-        settingsFeatureButtonLayout->addLayout(removeFeatureSubLayout[i]);
     }
     QLabel *emptyFeatureInputRow = new QLabel;
     QLabel *emptyFeatureOutputRow = new QLabel;
@@ -149,16 +123,6 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     QLabel *emptyFeatureButton = new QLabel;
     emptyFeatureButton->setFixedSize(boxWidth, boxHeight);
 
-    addFeatureSettingsButton = new QPushButton("+");
-    addFeatureSettingsButton->setFixedSize(35, boxHeight);
-    connect(addFeatureSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
-    if(indexFeature < 30){
-        settingsFeatureButtonLayout->addWidget(addFeatureSettingsButton);
-    }
-    else{
-        settingsFeatureButtonLayout->addWidget(emptyFeatureButton);
-    }
-
     //Grouping
     settingsFeatureInputGroup = new QGroupBox(tr("Input"));
     settingsFeatureInputGroup->setLayout(settingsFeatureInputLayout);
@@ -166,7 +130,6 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     settingsFeatureOutputGroup = new QGroupBox(tr("Output"));
     settingsFeatureOutputGroup->setLayout(settingsFeatureOutputLayout);
 
-    featureTabLayout->addLayout(settingsFeatureButtonLayout);
     featureTabLayout->addWidget(settingsFeatureInputGroup);
     featureTabLayout->addWidget(settingsFeatureOutputGroup);
 
@@ -209,11 +172,15 @@ void CatWindow::createFeatureSettingsLayout(int index){
     featureOutputMapperCh3->setMapping(featureOutputBoxCh3[index], index);
     featureOutputMapperCh4->setMapping(featureOutputBoxCh4[index], index);
 
+    //Labels
+    QLabel *movementLabel = new QLabel("Movement " + QString::number(index + 1) + "              ");
+
     //Layout
     settingsFeatureInputSubLayout[index] = new QHBoxLayout;
     settingsFeatureOutputSubLayout[index] = new QHBoxLayout;
 
     settingsFeatureInputSubLayout[index]->addWidget(featureInputBox[index]);
+    settingsFeatureInputSubLayout[index]->addWidget(movementLabel);
 
     settingsFeatureOutputSubLayout[index]->addWidget(featureOutputBoxCh1[index]);
     settingsFeatureOutputSubLayout[index]->addWidget(featureOutputBoxCh2[index]);
@@ -224,8 +191,8 @@ void CatWindow::createFeatureSettingsLayout(int index){
     settingsFeatureOutputLayout->addLayout(settingsFeatureOutputSubLayout[index]);
 }
 
-QHBoxLayout *CatWindow::createThresholdTabLayouot(){
-    QHBoxLayout *thresholdTabLayout = new QHBoxLayout;
+QVBoxLayout *CatWindow::createThresholdTabLayouot(){
+    QVBoxLayout *thresholdTabLayout = new QVBoxLayout;
 
     //add button
     doneSettingsButton = new QPushButton;
@@ -322,9 +289,17 @@ QHBoxLayout *CatWindow::createThresholdTabLayouot(){
     settingsOutputGroup = new QGroupBox(tr("Output"));
     settingsOutputGroup->setLayout(settingsOutputLayout);
 
-    thresholdTabLayout->addLayout(settingsButtonLayout);
-    thresholdTabLayout->addWidget(settingsInputGroup);
-    thresholdTabLayout->addWidget(settingsOutputGroup);
+    //Major Grouping
+    QHBoxLayout *settingsThresholdGroupLayout = new QHBoxLayout;
+    settingsThresholdGroupLayout->addLayout(settingsButtonLayout);
+    settingsThresholdGroupLayout->addWidget(settingsInputGroup);
+    settingsThresholdGroupLayout->addWidget(settingsOutputGroup);
+
+    QGroupBox *settingsThresholdGroup = new QGroupBox;
+    settingsThresholdGroup->setLayout(settingsThresholdGroupLayout);
+
+    thresholdTabLayout->addWidget(createThreasholdingGroup());
+    thresholdTabLayout->addWidget(settingsThresholdGroup);
 
     return thresholdTabLayout;
 }
@@ -428,12 +403,11 @@ bool CatWindow::check_input_boxes(){
 }
 
 void CatWindow::on_add_checkbox_clicked(){
-    tabSettings->currentIndex() ? indexFeature++ : indexThreshold++;
+    indexThreshold++;
     createLayout();
 }
 
 void CatWindow::on_remove_checkbox_clicked(int index){
-    if(!tabSettings->currentIndex()){
         for(int i = index; i < 29; i++){
             inputCheckBoxValue[i] = inputCheckBoxValue[i+1];
             outputCheckBoxValue[i] = outputCheckBoxValue[i+1];
@@ -442,18 +416,6 @@ void CatWindow::on_remove_checkbox_clicked(int index){
         outputCheckBoxValue[29] = 0;
 
         indexThreshold --;
-    }
-    else{
-        for(int i = index; i < 29; i++){
-            featureInputCheckBoxValue[i] = featureInputCheckBoxValue[i+1];
-            featureOutputCheckBoxValue[i] = featureOutputCheckBoxValue[i+1];
-        }
-        featureInputCheckBoxValue[29] = 0;
-        featureOutputCheckBoxValue[29] = 0;
-
-        indexFeature --;
-    }
-    createLayout();
 }
 
 void CatWindow::createSettingsLayout(int index){

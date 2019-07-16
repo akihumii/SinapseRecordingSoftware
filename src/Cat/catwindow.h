@@ -41,7 +41,7 @@ private:
     QGroupBox *createMethodsClassifyGroup();
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
-    QHBoxLayout *createThresholdTabLayouot();
+    QVBoxLayout *createThresholdTabLayouot();
     QHBoxLayout *createFeatureTabLayout();
 
     QGroupBox *groupMethodsClassify;
