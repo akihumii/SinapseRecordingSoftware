@@ -136,15 +136,8 @@ private:
     QPushButton *startButton;
     QPushButton *recordingButton;
     QPushButton *recordingTransferButton;
-//    QPushButton *doneSettingsButton;
     QPushButton *addSettingsButton;
     QPushButton *removeSettingsButton[30];
-//    QPushButton *doneFeatureSettingsButton;
-//    QPushButton *addFeatureSettingsButton;
-//    QPushButton *removeFeatureSettingsButton[30];
-//    bool doneSettingsFlag = false;
-//    bool doneFeatureSettingsFlag = false;
-//    bool doneFlagTemp = false;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -191,7 +184,6 @@ private:
     void emitCommandSent();
     void receiveSavedFiles();
     void controlInput(bool flag);
-    void disableInputClassifyMethods();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
@@ -217,12 +209,8 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
-//    void on_stimulation_pattern_changed();
-//    void on_stimulation_on_off_changed();
-//    void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
-//    void on_tab_changed(int value);
     void on_input_ch1_changed(int index);
     void on_input_ch2_changed(int index);
     void on_input_ch3_changed(int index);
@@ -233,7 +221,6 @@ private slots:
     void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
-//    void on_done_settings_changed();
     void readOutput();
 
 signals:
