@@ -41,8 +41,8 @@ private:
     QGroupBox *createMethodsClassifyGroup();
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
-    QVBoxLayout *createThresholdTabLayouot();
-    QHBoxLayout *createFeatureTabLayout();
+    QVBoxLayout *createThresholdLayouot();
+    QHBoxLayout *createFeatureLayout();
 
     QGroupBox *groupMethodsClassify;
     QGroupBox *parametersGroup;
@@ -222,7 +222,7 @@ private slots:
 //    void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
-    void on_tab_changed(int value);
+//    void on_tab_changed(int value);
     void on_input_ch1_changed(int index);
     void on_input_ch2_changed(int index);
     void on_input_ch3_changed(int index);

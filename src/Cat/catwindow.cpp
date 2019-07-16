@@ -34,7 +34,7 @@ void CatWindow::createLayout(){
     mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
-    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
+//    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
     this->resize(this->sizeHint());
 }
 
@@ -53,34 +53,35 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
+    methodsClassifyBox[0]->isChecked() ? groupSettings->setLayout(createThresholdLayouot()) : groupSettings->setLayout(createFeatureLayout());
 
-    //widgets
-    thresholdTab = new QWidget;
-    featureTab = new QWidget;
-    thresholdTab->setLayout(createThresholdTabLayouot());
-    featureTab->setLayout(createFeatureTabLayout());
+//    //widgets
+//    thresholdTab = new QWidget;
+//    featureTab = new QWidget;
+//    thresholdTab->setLayout(createThresholdTabLayouot());
+//    featureTab->setLayout(createFeatureTabLayout());
 
-    //tab
-    tabSettings = new QTabWidget;
-    connect(tabSettings, SIGNAL(currentChanged(int)), this, SLOT(on_tab_changed(int)));
+//    //tab
+//    tabSettings = new QTabWidget;
+//    connect(tabSettings, SIGNAL(currentChanged(int)), this, SLOT(on_tab_changed(int)));
 
-    tabSettings->addTab(thresholdTab, tr("Threshold"));
-    tabSettings->addTab(featureTab, tr("Features"));
+//    tabSettings->addTab(thresholdTab, tr("Threshold"));
+//    tabSettings->addTab(featureTab, tr("Features"));
 
-    disableInputClassifyMethods();
-//    tabSettings->setCurrentIndex(!((commandCat->getClassifyMethods() - 520) & (1 << 0)));
+//    disableInputClassifyMethods();
+////    tabSettings->setCurrentIndex(!((commandCat->getClassifyMethods() - 520) & (1 << 0)));
 
-    //layout
-    QHBoxLayout *settingsLayout = new QHBoxLayout;
-    settingsLayout->addWidget(tabSettings);
+//    //layout
+//    QHBoxLayout *settingsLayout = new QHBoxLayout;
+//    settingsLayout->addWidget(tabSettings);
 
-    groupSettings->setLayout(settingsLayout);
+//    groupSettings->setLayout(settingsLayout);
 
     return groupSettings;
 }
 
-QHBoxLayout *CatWindow::createFeatureTabLayout(){
-    QHBoxLayout *featureTabLayout = new QHBoxLayout;
+QHBoxLayout *CatWindow::createFeatureLayout(){
+    QHBoxLayout *featureLayout = new QHBoxLayout;
 
     //channel labels
     QLabel *channelFeatureLabel[5];
@@ -130,10 +131,10 @@ QHBoxLayout *CatWindow::createFeatureTabLayout(){
     settingsFeatureOutputGroup = new QGroupBox(tr("Output"));
     settingsFeatureOutputGroup->setLayout(settingsFeatureOutputLayout);
 
-    featureTabLayout->addWidget(settingsFeatureInputGroup);
-    featureTabLayout->addWidget(settingsFeatureOutputGroup);
+    featureLayout->addWidget(settingsFeatureInputGroup);
+    featureLayout->addWidget(settingsFeatureOutputGroup);
 
-    return featureTabLayout;
+    return featureLayout;
 
 }
 
@@ -191,8 +192,8 @@ void CatWindow::createFeatureSettingsLayout(int index){
     settingsFeatureOutputLayout->addLayout(settingsFeatureOutputSubLayout[index]);
 }
 
-QVBoxLayout *CatWindow::createThresholdTabLayouot(){
-    QVBoxLayout *thresholdTabLayout = new QVBoxLayout;
+QVBoxLayout *CatWindow::createThresholdLayouot(){
+    QVBoxLayout *thresholdLayout = new QVBoxLayout;
 
     //add button
     doneSettingsButton = new QPushButton;
@@ -298,25 +299,20 @@ QVBoxLayout *CatWindow::createThresholdTabLayouot(){
     QGroupBox *settingsThresholdGroup = new QGroupBox;
     settingsThresholdGroup->setLayout(settingsThresholdGroupLayout);
 
-    thresholdTabLayout->addWidget(createThreasholdingGroup());
-    thresholdTabLayout->addWidget(settingsThresholdGroup);
+    thresholdLayout->addWidget(createThreasholdingGroup());
+    thresholdLayout->addWidget(settingsThresholdGroup);
 
-    return thresholdTabLayout;
+    return thresholdLayout;
 }
 
 void CatWindow::on_done_settings_changed(){
-    if(!tabSettings->currentIndex()){  //threshold
-        doneFlagTemp = doneSettingsFlag;
-    }
-    else{
-        doneFlagTemp = doneFeatureSettingsFlag;
-    }
+    doneFlagTemp = doneSettingsFlag;
     doneFlagTemp = !doneFlagTemp;
 //    doneSettingsFlag = !doneSettingsFlag;
 
     if(doneFlagTemp){
         if(!check_input_boxes()){  //done, no repeated input
-            !tabSettings->currentIndex() ? doneSettingsButton->setText("Edit") : doneFeatureSettingsButton->setText("Edit");
+            doneSettingsButton->setText("Edit");
             statusBarLabel->setText(tr("Ready..."));
             commandCat->sendStimulationPatternFlag();
             emitCommandSent();
@@ -331,34 +327,22 @@ void CatWindow::on_done_settings_changed(){
         }
     }
     else{
-        !tabSettings->currentIndex() ? doneSettingsButton->setText("Done") : doneFeatureSettingsButton->setText("Done");
+        doneSettingsButton->setText("Done");
         statusBarLabel->setText(tr("Editting threshold input output..."));
     }
 
     // set enable
-    if(!tabSettings->currentIndex()){  //threshold
-        doneSettingsFlag = doneFlagTemp;
-        settingsInputGroup->setEnabled(!doneSettingsFlag);
-        settingsOutputGroup->setEnabled(!doneSettingsFlag);
-        for(int i = 0; i < indexThreshold; i++){
-            removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
-        }
-        addSettingsButton->setEnabled(!doneSettingsFlag);
+    doneSettingsFlag = doneFlagTemp;
+    settingsInputGroup->setEnabled(!doneSettingsFlag);
+    settingsOutputGroup->setEnabled(!doneSettingsFlag);
+    for(int i = 0; i < indexThreshold; i++){
+        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
     }
-    else{
-        doneFeatureSettingsFlag = doneFlagTemp;
-        settingsFeatureInputGroup->setEnabled(!doneFeatureSettingsFlag);
-        settingsFeatureOutputGroup->setEnabled(!doneFeatureSettingsFlag);
-        for(int i = 0; i < indexFeature; i++){
-            removeFeatureSettingsButton[i]->setEnabled(!doneFeatureSettingsFlag);
-        }
-        addFeatureSettingsButton->setEnabled(!doneFeatureSettingsFlag);
-    }
-
+    addSettingsButton->setEnabled(!doneSettingsFlag);
 }
 
 void CatWindow::sendStimulationPattern(){
-    if(!tabSettings->currentIndex()){  //threshold
+    if(methodsClassifyBox[0]->isChecked()){  //threshold
         indexTemp = indexThreshold;
     }
     else{
@@ -367,7 +351,7 @@ void CatWindow::sendStimulationPattern(){
 
     for(int i = 0; i < indexTemp; i++){
         int temp = 0;
-        if(!tabSettings->currentIndex()){
+        if(methodsClassifyBox[0]->isChecked()){
             temp = inputCheckBoxValue[i] | outputCheckBoxValue[i] << 4;
         }
         else{
@@ -382,24 +366,18 @@ void CatWindow::sendStimulationPattern(){
 bool CatWindow::check_input_boxes(){
     bool seen[255] = {false};
     int loc[255] = {0};
-    if(!tabSettings->currentIndex()){  // threshold
-        for(int i = 0; i < indexThreshold; i++){
-            if(seen[inputCheckBoxValue[i]]){
-                repeatedLocs[0] = loc[inputCheckBoxValue[i]];
-                repeatedLocs[1] = i+1;
-                return true;
-            }
-            else{
-                seen[inputCheckBoxValue[i]] = true;
-                loc[inputCheckBoxValue[i]] = i+1;
-            }
+    for(int i = 0; i < indexThreshold; i++){
+        if(seen[inputCheckBoxValue[i]]){
+            repeatedLocs[0] = loc[inputCheckBoxValue[i]];
+            repeatedLocs[1] = i+1;
+            return true;
         }
-        return false;
+        else{
+            seen[inputCheckBoxValue[i]] = true;
+            loc[inputCheckBoxValue[i]] = i+1;
+        }
     }
-    else{  // feature
-        return false;
-    }
-
+    return false;
 }
 
 void CatWindow::on_add_checkbox_clicked(){
@@ -408,14 +386,15 @@ void CatWindow::on_add_checkbox_clicked(){
 }
 
 void CatWindow::on_remove_checkbox_clicked(int index){
-        for(int i = index; i < 29; i++){
-            inputCheckBoxValue[i] = inputCheckBoxValue[i+1];
-            outputCheckBoxValue[i] = outputCheckBoxValue[i+1];
-        }
-        inputCheckBoxValue[29] = 0;
-        outputCheckBoxValue[29] = 0;
+    for(int i = index; i < 29; i++){
+        inputCheckBoxValue[i] = inputCheckBoxValue[i+1];
+        outputCheckBoxValue[i] = outputCheckBoxValue[i+1];
+    }
+    inputCheckBoxValue[29] = 0;
+    outputCheckBoxValue[29] = 0;
 
-        indexThreshold --;
+    indexThreshold --;
+    createLayout();
 }
 
 void CatWindow::createSettingsLayout(int index){
@@ -487,7 +466,7 @@ void CatWindow::createSettingsLayout(int index){
 }
 
 void CatWindow::on_input_ch1_changed(int index){
-    if(!tabSettings->currentIndex()){  //threshold
+    if(methodsClassifyBox[0]->isChecked()){  //threshold
         inputBoxCh1[index]->isChecked() ? (inputCheckBoxValue[index] |= (1 << 0)) : (inputCheckBoxValue[index] &= ~(1 << 0));
     }
     else{
@@ -508,7 +487,7 @@ void CatWindow::on_input_ch4_changed(int index){
 }
 
 void CatWindow::on_output_ch1_changed(int index){
-    if(!tabSettings->currentIndex()){  //threshold
+    if(methodsClassifyBox[0]->isChecked()){  //threshold
         outputBoxCh1[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 0)) : (outputCheckBoxValue[index] &= ~(1 << 0));
     }
     else{
@@ -517,7 +496,7 @@ void CatWindow::on_output_ch1_changed(int index){
 }
 
 void CatWindow::on_output_ch2_changed(int index){
-    if(!tabSettings->currentIndex()){  //threshold
+    if(methodsClassifyBox[0]->isChecked()){  //threshold
         outputBoxCh2[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 1)) : (outputCheckBoxValue[index] &= ~(1 << 1));
     }
     else{
@@ -526,7 +505,7 @@ void CatWindow::on_output_ch2_changed(int index){
 }
 
 void CatWindow::on_output_ch3_changed(int index){
-    if(!tabSettings->currentIndex()){  //threshold
+    if(methodsClassifyBox[0]->isChecked()){  //threshold
         outputBoxCh3[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 2)) : (outputCheckBoxValue[index] &= ~(1 << 2));
     }
     else{
@@ -535,7 +514,7 @@ void CatWindow::on_output_ch3_changed(int index){
 }
 
 void CatWindow::on_output_ch4_changed(int index){
-    if(!tabSettings->currentIndex()){  //threshold
+    if(methodsClassifyBox[0]->isChecked()){  //threshold
         outputBoxCh4[index]->isChecked() ? (outputCheckBoxValue[index] |= (1 << 3)) : (outputCheckBoxValue[index] &= ~(1 << 3));
     }
     else{
@@ -906,12 +885,13 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
     }
 
-    disableInputClassifyMethods();
+//    disableInputClassifyMethods();
 
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
         emitCommandSent();
+        createLayout();
     }
 }
 
@@ -1104,9 +1084,9 @@ void CatWindow::on_recording_changed(){
     qDebug() << "Sent recording to : " << commandCat->getRecording();
 }
 
-void CatWindow::on_tab_changed(int value){
-    currentTab = value;
-}
+//void CatWindow::on_tab_changed(int value){
+//    currentTab = value;
+//}
 
 void CatWindow::on_filename_changed(){
     filenameSocket->doConnect("192.168.4.3", 7777);
@@ -1268,12 +1248,12 @@ void CatWindow::on_filename_discard(){
 }
 
 void CatWindow::disableInputClassifyMethods(){
-    groupThreasholding->setEnabled(!methodsClassifyBox[1]->isChecked());  //disable when feature is selected
-    thresholdTab->setEnabled(!methodsClassifyBox[1]->isChecked());
+//    groupThreasholding->setEnabled(!methodsClassifyBox[1]->isChecked());  //disable when feature is selected
+//    thresholdTab->setEnabled(!methodsClassifyBox[1]->isChecked());
 
-    featureTab->setEnabled(methodsClassifyBox[1]->isChecked());  // enable when feature is selected
+//    featureTab->setEnabled(methodsClassifyBox[1]->isChecked());  // enable when feature is selected
 
-    tabSettings->setCurrentIndex(methodsClassifyBox[1]->isChecked());
+//    tabSettings->setCurrentIndex(methodsClassifyBox[1]->isChecked());
 }
 CatWindow::~CatWindow(){
 //    filenameSocket->doDisconnect();
