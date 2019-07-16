@@ -196,13 +196,13 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
     QVBoxLayout *thresholdLayout = new QVBoxLayout;
 
     //add button
-    doneSettingsButton = new QPushButton;
-    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
-    doneSettingsButton->setFixedSize(35, 30);
-    connect(doneSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
+//    doneSettingsButton = new QPushButton;
+//    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
+//    doneSettingsButton->setFixedSize(35, 30);
+//    connect(doneSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
 
-    QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
-    settingsButtonLayout->addWidget(doneSettingsButton);
+
+
 
     //channel labels
     QLabel *channelLabel[8];
@@ -247,6 +247,16 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
     connect(removeMapper, SIGNAL(mapped(int)), this, SLOT(on_remove_checkbox_clicked(int)));
 
     //Row of checkboxes
+    QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
+    addSettingsButton = new QPushButton("+");
+    addSettingsButton->setFixedSize(35, 30);
+    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
+    settingsButtonLayout->addWidget(addSettingsButton);
+    if(indexThreshold >= 30){
+        addSettingsButton->setEnabled(false);
+//        settingsButtonLayout->setAlignment(addSettingsButton, Qt::AlignRight);
+    }
+
     QHBoxLayout *removeSubLayout[indexThreshold];
     QLabel *removeLabel[indexThreshold];
     for(int i = 0; i < indexThreshold; i++){
@@ -258,30 +268,19 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
 
         removeSubLayout[i] = new QHBoxLayout;
         removeLabel[i] = new QLabel(QString::number(i+1));
+        removeLabel[i]->setFixedSize(15, boxHeight);
         removeSubLayout[i]->addWidget(removeLabel[i]);
         removeSubLayout[i]->addWidget(removeSettingsButton[i]);
         settingsButtonLayout->addLayout(removeSubLayout[i]);
 //        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
     }
-    QLabel *emptyInputRow = new QLabel;
-    QLabel *emptyOutputRow = new QLabel;
+//    QLabel *emptyInputRow = new QLabel;
+//    QLabel *emptyOutputRow = new QLabel;
 
-    settingsInputLayout->addWidget(emptyInputRow);
-    settingsOutputLayout->addWidget(emptyOutputRow);
+//    settingsInputLayout->addWidget(emptyInputRow);
+//    settingsOutputLayout->addWidget(emptyOutputRow);
 
-    QLabel *emptyButton = new QLabel;
-    emptyButton->setFixedSize(boxWidth, boxHeight);
 
-    addSettingsButton = new QPushButton("+");
-    addSettingsButton->setFixedSize(35, boxHeight);
-    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
-    if(indexThreshold < 30){
-        settingsButtonLayout->addWidget(addSettingsButton);
-//        settingsButtonLayout->setAlignment(addSettingsButton, Qt::AlignRight);
-    }
-    else{
-        settingsButtonLayout->addWidget(emptyButton);
-    }
 
     //Grouping
     settingsInputGroup = new QGroupBox(tr("Input"));
@@ -305,41 +304,41 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
     return thresholdLayout;
 }
 
-void CatWindow::on_done_settings_changed(){
-    doneFlagTemp = doneSettingsFlag;
-    doneFlagTemp = !doneFlagTemp;
-//    doneSettingsFlag = !doneSettingsFlag;
+//void CatWindow::on_done_settings_changed(){
+//    doneFlagTemp = doneSettingsFlag;
+//    doneFlagTemp = !doneFlagTemp;
+////    doneSettingsFlag = !doneSettingsFlag;
 
-    if(doneFlagTemp){
-        if(!check_input_boxes()){  //done, no repeated input
-            doneSettingsButton->setText("Edit");
-            statusBarLabel->setText(tr("Ready..."));
-            commandCat->sendStimulationPatternFlag();
-            emitCommandSent();
+//    if(doneFlagTemp){
+//        if(!check_input_boxes()){  //done, no repeated input
+////            doneSettingsButton->setText("Edit");
+//            statusBarLabel->setText(tr("Ready..."));
+//            commandCat->sendStimulationPatternFlag();
+//            emitCommandSent();
 
-            sendStimulationPattern();
-        }
-        else{
-            doneFlagTemp = !doneFlagTemp;
-//            doneSettingsFlag = !doneSettingsFlag;
-            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
-                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
-        }
-    }
-    else{
-        doneSettingsButton->setText("Done");
-        statusBarLabel->setText(tr("Editting threshold input output..."));
-    }
+//            sendStimulationPattern();
+//        }
+//        else{
+//            doneFlagTemp = !doneFlagTemp;
+////            doneSettingsFlag = !doneSettingsFlag;
+//            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
+//                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
+//        }
+//    }
+//    else{
+////        doneSettingsButton->setText("Done");
+//        statusBarLabel->setText(tr("Editting threshold input output..."));
+//    }
 
-    // set enable
-    doneSettingsFlag = doneFlagTemp;
-    settingsInputGroup->setEnabled(!doneSettingsFlag);
-    settingsOutputGroup->setEnabled(!doneSettingsFlag);
-    for(int i = 0; i < indexThreshold; i++){
-        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
-    }
-    addSettingsButton->setEnabled(!doneSettingsFlag);
-}
+//    // set enable
+//    doneSettingsFlag = doneFlagTemp;
+//    settingsInputGroup->setEnabled(!doneSettingsFlag);
+//    settingsOutputGroup->setEnabled(!doneSettingsFlag);
+//    for(int i = 0; i < indexThreshold; i++){
+//        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
+//    }
+//    addSettingsButton->setEnabled(!doneSettingsFlag);
+//}
 
 void CatWindow::sendStimulationPattern(){
     if(methodsClassifyBox[0]->isChecked()){  //threshold

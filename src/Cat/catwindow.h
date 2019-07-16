@@ -160,15 +160,15 @@ private:
 
     int currentTab = 0;
     int startDelay = 3000;
-    int indexThreshold = 2;
-    int indexFeature = 2;
-    int indexTemp = 2;
+    int indexThreshold = 1;
+    int indexFeature = 3;
+    int indexTemp = 1;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
     int featureInputCheckBoxValue[30] = {0};
     int featureOutputCheckBoxValue[30] = {0};
-    int boxWidth = 22;
-    int boxHeight = 22;
+    int boxWidth = 20;
+    int boxHeight = 20;
 
     void createLayout();
     void createStatusBar();
@@ -233,7 +233,7 @@ private slots:
     void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
-    void on_done_settings_changed();
+//    void on_done_settings_changed();
     void readOutput();
 
 signals:
