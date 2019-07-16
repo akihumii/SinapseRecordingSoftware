@@ -376,6 +376,7 @@ void CatWindow::check_input_boxes(){
     //            qDebug() << "changing status bar label..."
                 statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") + QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
                 startButton->setEnabled(false);
+                addSettingsButton->setEnabled(false);
                 return;
             }
             else{
@@ -385,13 +386,14 @@ void CatWindow::check_input_boxes(){
         }
     }
     startButton->setEnabled(true);
+    addSettingsButton->setEnabled(true);
     statusBarLabel->setText(tr("Ready..."));
 }
 
 void CatWindow::on_add_checkbox_clicked(){
     indexThreshold++;
-    check_input_boxes();
     createLayout();
+    check_input_boxes();
 }
 
 void CatWindow::on_remove_checkbox_clicked(int index){
@@ -403,8 +405,8 @@ void CatWindow::on_remove_checkbox_clicked(int index){
     outputCheckBoxValue[29] = 0;
 
     indexThreshold --;
-    check_input_boxes();
     createLayout();
+    check_input_boxes();
 }
 
 void CatWindow::createSettingsLayout(int index){
@@ -905,8 +907,8 @@ void CatWindow::on_classify_methods_changed(){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
         emitCommandSent();
-        check_input_boxes();
         createLayout();
+        check_input_boxes();
     }
 }
 
