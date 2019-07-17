@@ -6,7 +6,7 @@ TreeDialog::TreeDialog(){
     QString version(APP_VERSION);
     setWindowTitle(tr("Tree Software V") + version);
     createLayout();
-
+    createAction();
 
     odinGUI = new Odin::OdinWindow();  //Odin
     odinGUI->setFixedSize(odinGUI->sizeHint());
@@ -88,6 +88,15 @@ void TreeDialog::createLayout(){
     mainLayout->setSizeConstraint( QLayout::SetFixedSize);
 }
 
+void TreeDialog::createAction(){
+    sylphAction = new QAction(tr("S&ylph Graph"));
+    sylphAction->setShortcut(tr("Ctrl+Y"));
+    connect(sylphAction, SIGNAL(triggered(bool)), this, SLOT(on_sylph_triggered()));
+
+    fileMenu = menuBar()->addMenu(tr("G&UI"));
+    fileMenu->addAction(sylphAction);
+}
+
 void TreeDialog::on_recordingGUI_clicked(){
     recordingGUI->show();
 }
@@ -98,6 +107,10 @@ void TreeDialog::on_stimulatorGUI_clicked(){
 
 void TreeDialog::on_catGUI_clicked(){
     catGUI->show();
+}
+
+void TreeDialog::on_sylph_triggered(){
+    sylphxGUI->show();
 }
 
 TreeDialog::~TreeDialog(){

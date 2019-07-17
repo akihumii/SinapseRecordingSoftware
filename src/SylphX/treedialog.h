@@ -24,17 +24,22 @@ public:
     RecordingDialog *recordingGUI;
 
 private:
+    QMenu *fileMenu;
+    QAction *sylphAction;
+
     QPushButton *button_recordingGUI;
     QPushButton *button_catGUI;
     QPushButton *button_stimulatorGUI;
     QPushButton *button_startGUI;
 
     void createLayout();
+    void createAction();
 
 private slots:
     void on_recordingGUI_clicked();
     void on_stimulatorGUI_clicked();
     void on_catGUI_clicked();
+    void on_sylph_triggered();
 
 signals:
     void sendParameters();
