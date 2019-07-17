@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 #include "../Odin/odinwindow.h"
 #include "../Cat/catwindow.h"
+#include "recordingdialog.h"
 
 namespace SylphX {
 
@@ -20,6 +21,7 @@ public:
     MainWindow *sylphxGUI;
     Odin::OdinWindow *odinGUI;
     Cat::CatWindow *catGUI;
+    RecordingDialog *recordingGUI;
 
 private:
     QPushButton *button_recordingGUI;

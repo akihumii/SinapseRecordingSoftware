@@ -7,9 +7,6 @@ TreeDialog::TreeDialog(){
     setWindowTitle(tr("Tree Software V") + version);
     createLayout();
 
-    sylphxGUI = new MainWindow;  //SylphX
-    sylphxGUI->setMinimumSize(1366, 768);
-    sylphxGUI->hide();
 
     odinGUI = new Odin::OdinWindow();  //Odin
     odinGUI->setFixedSize(odinGUI->sizeHint());
@@ -18,6 +15,14 @@ TreeDialog::TreeDialog(){
     catGUI = new Cat::CatWindow();  //Cat
 //    catGUI->setFixedSize(catGUI->sizeHint());
     catGUI->hide();
+
+    sylphxGUI = new MainWindow;  //SylphX
+    sylphxGUI->setMinimumSize(1366, 768);
+    sylphxGUI->show();
+
+    recordingGUI = new RecordingDialog;  //GUI for recording parameters
+    recordingGUI->setFixedSize(recordingGUI->sizeHint());
+    recordingGUI->show();
 
     connect(sylphxGUI, SIGNAL(showCatSignal()), this, SLOT(on_catGUI_clicked()));
     connect(sylphxGUI, SIGNAL(showOdinSignal()), this, SLOT(on_stimulatorGUI_clicked()));
@@ -32,9 +37,9 @@ TreeDialog::TreeDialog(){
     connect(odinGUI, SIGNAL(showCatSignal()), this, SLOT(on_catGUI_clicked()));
 
     connect(catGUI, SIGNAL(commandSent(char*)), sylphxGUI, SLOT(sendParameter(char*)));
-    connect(catGUI, SIGNAL(highpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendHighpassFilter(QVector<double>*)));
-    connect(catGUI, SIGNAL(lowpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendLowpassFilter(QVector<double>*)));
-    connect(catGUI, SIGNAL(notchSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendNotchFilter(QVector<double>*)));
+//    connect(catGUI, SIGNAL(highpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendHighpassFilter(QVector<double>*)));
+//    connect(catGUI, SIGNAL(lowpassSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendLowpassFilter(QVector<double>*)));
+//    connect(catGUI, SIGNAL(notchSent(QVector<double>*)), sylphxGUI->dataProcessor, SLOT(sendNotchFilter(QVector<double>*)));
     connect(catGUI, SIGNAL(showOdinSignal()), this, SLOT(on_stimulatorGUI_clicked()));
     connect(catGUI, SIGNAL(showSylphSignal()), this, SLOT(on_recordingGUI_clicked()));
 
@@ -84,7 +89,7 @@ void TreeDialog::createLayout(){
 }
 
 void TreeDialog::on_recordingGUI_clicked(){
-    sylphxGUI->show();
+    recordingGUI->show();
 }
 
 void TreeDialog::on_stimulatorGUI_clicked(){

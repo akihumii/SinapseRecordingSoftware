@@ -28,9 +28,8 @@ void CatWindow::createLayout(){
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(createMethodsGroup());
     mainLayout->addWidget(createSettingsGroup());
-//    mainLayout->addWidget(createTrainingGroup());
     mainLayout->addWidget(createParametersGroup());
-    mainLayout->addWidget(createRecordingGroup());
+//    mainLayout->addWidget(createRecordingGroup());
     mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
@@ -43,8 +42,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
     methodsParameterLayout->addWidget(createMethodsClassifyGroup());
-//    methodsParameterLayout->addWidget(createThreasholdingGroup());
-//    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
 
@@ -54,28 +51,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
     methodsClassifyBox[0]->isChecked() ? groupSettings->setLayout(createThresholdLayouot()) : groupSettings->setLayout(createFeatureLayout());
-
-//    //widgets
-//    thresholdTab = new QWidget;
-//    featureTab = new QWidget;
-//    thresholdTab->setLayout(createThresholdTabLayouot());
-//    featureTab->setLayout(createFeatureTabLayout());
-
-//    //tab
-//    tabSettings = new QTabWidget;
-//    connect(tabSettings, SIGNAL(currentChanged(int)), this, SLOT(on_tab_changed(int)));
-
-//    tabSettings->addTab(thresholdTab, tr("Threshold"));
-//    tabSettings->addTab(featureTab, tr("Features"));
-
-//    disableInputClassifyMethods();
-////    tabSettings->setCurrentIndex(!((commandCat->getClassifyMethods() - 520) & (1 << 0)));
-
-//    //layout
-//    QHBoxLayout *settingsLayout = new QHBoxLayout;
-//    settingsLayout->addWidget(tabSettings);
-
-//    groupSettings->setLayout(settingsLayout);
 
     return groupSettings;
 }
@@ -195,15 +170,6 @@ void CatWindow::createFeatureSettingsLayout(int index){
 QVBoxLayout *CatWindow::createThresholdLayouot(){
     QVBoxLayout *thresholdLayout = new QVBoxLayout;
 
-    //add button
-//    doneSettingsButton = new QPushButton;
-//    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
-//    doneSettingsButton->setFixedSize(35, 30);
-//    connect(doneSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
-
-
-
-
     //channel labels
     QLabel *channelLabel[8];
     QHBoxLayout *settingsInputLabelLayout = new QHBoxLayout;
@@ -274,11 +240,6 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
         settingsButtonLayout->addLayout(removeSubLayout[i]);
 //        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
     }
-//    QLabel *emptyInputRow = new QLabel;
-//    QLabel *emptyOutputRow = new QLabel;
-
-//    settingsInputLayout->addWidget(emptyInputRow);
-//    settingsOutputLayout->addWidget(emptyOutputRow);
 
 
 
@@ -303,42 +264,6 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
 
     return thresholdLayout;
 }
-
-//void CatWindow::on_done_settings_changed(){
-//    doneFlagTemp = doneSettingsFlag;
-//    doneFlagTemp = !doneFlagTemp;
-////    doneSettingsFlag = !doneSettingsFlag;
-
-//    if(doneFlagTemp){
-//        if(!check_input_boxes()){  //done, no repeated input
-////            doneSettingsButton->setText("Edit");
-//            statusBarLabel->setText(tr("Ready..."));
-//            commandCat->sendStimulationPatternFlag();
-//            emitCommandSent();
-
-//            sendStimulationPattern();
-//        }
-//        else{
-//            doneFlagTemp = !doneFlagTemp;
-////            doneSettingsFlag = !doneSettingsFlag;
-//            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
-//                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
-//        }
-//    }
-//    else{
-////        doneSettingsButton->setText("Done");
-//        statusBarLabel->setText(tr("Editting threshold input output..."));
-//    }
-
-//    // set enable
-//    doneSettingsFlag = doneFlagTemp;
-//    settingsInputGroup->setEnabled(!doneSettingsFlag);
-//    settingsOutputGroup->setEnabled(!doneSettingsFlag);
-//    for(int i = 0; i < indexThreshold; i++){
-//        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
-//    }
-//    addSettingsButton->setEnabled(!doneSettingsFlag);
-//}
 
 void CatWindow::sendStimulationPattern(){
     if(methodsClassifyBox[0]->isChecked()){  //threshold
@@ -366,14 +291,10 @@ void CatWindow::check_input_boxes(){
     if(methodsClassifyBox[0]->isChecked()){
         bool seen[255] = {false};
         int loc[255] = {0};
-    //    qDebug() << "indexThreshold: " << indexThreshold;
         for(int i = 0; i < indexThreshold; i++){
-    //        qDebug() << "input checkbox value: " << inputCheckBoxValue[i];
-    //        qDebug() << "seen value: " << seen[inputCheckBoxValue[i]];
             if(seen[inputCheckBoxValue[i]]){
                 repeatedLocs[0] = loc[inputCheckBoxValue[i]];
                 repeatedLocs[1] = i+1;
-    //            qDebug() << "changing status bar label..."
                 statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") + QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
                 startButton->setEnabled(false);
                 addSettingsButton->setEnabled(false);
@@ -599,11 +520,11 @@ QGroupBox *CatWindow::createParametersGroup(){
     parametersGroup = new QGroupBox(tr("Parameters"));
 
     //window
-    int windowWidth = 60;
-    QHBoxLayout *windowSubLayout[4];
+//    int windowWidth = 60;
+    QHBoxLayout *windowSubLayout[3];
     QLabel* windowDecodingLabel = new QLabel(tr("Decoding window size (ms): "));
     windowDecodingSpinBox = new QSpinBox;
-    windowDecodingSpinBox->setMaximumWidth(windowWidth);
+//    windowDecodingSpinBox->setMaximumWidth(windowWidth);
     windowDecodingSpinBox->setMinimum(0);
     windowDecodingSpinBox->setMaximum(9999);
     windowDecodingSpinBox->setValue(commandCat->getDecodingWindowSize());
@@ -614,7 +535,7 @@ QGroupBox *CatWindow::createParametersGroup(){
 
     QLabel *windowOverlapLabel = new QLabel(tr("Overlap window size (ms): "));
     windowOverlapSpinBox = new QSpinBox;
-    windowOverlapSpinBox->setMaximumWidth(windowWidth);
+//    windowOverlapSpinBox->setMaximumWidth(windowWidth);
     windowOverlapSpinBox->setMinimum(0);
     windowOverlapSpinBox->setMaximum(9999);
     windowOverlapSpinBox->setValue(commandCat->getOverlapWindowSize());
@@ -623,125 +544,125 @@ QGroupBox *CatWindow::createParametersGroup(){
     windowSubLayout[1]->addWidget(windowOverlapSpinBox);
     connect(windowOverlapSpinBox, SIGNAL(editingFinished()), this, SLOT(on_overlap_window_size_changed()));
 
-    QLabel *windowSamplingFrequencyLabel = new QLabel(tr("Sampling frequency (Hz): "));
-    windowSamplingFrequencySpinBox = new QSpinBox;
-    windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
-    windowSamplingFrequencySpinBox->setMinimum(0);
-    windowSamplingFrequencySpinBox->setMaximum(30000);
-    windowSamplingFrequencySpinBox->setValue(commandCat->getSamplingFreq());
-    windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
-    windowSubLayout[2] = new QHBoxLayout;
-    windowSubLayout[2]->addWidget(windowSamplingFrequencyLabel);
-    windowSubLayout[2]->addWidget(windowSamplingFrequencySpinBox);
-    connect(windowSamplingFrequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_sampling_freq_changed()));
+//    QLabel *windowSamplingFrequencyLabel = new QLabel(tr("Sampling frequency (Hz): "));
+//    windowSamplingFrequencySpinBox = new QSpinBox;
+//    windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
+//    windowSamplingFrequencySpinBox->setMinimum(0);
+//    windowSamplingFrequencySpinBox->setMaximum(30000);
+//    windowSamplingFrequencySpinBox->setValue(commandCat->getSamplingFreq());
+//    windowSamplingFrequencySpinBox->setMaximumWidth(windowWidth);
+//    windowSubLayout[2] = new QHBoxLayout;
+//    windowSubLayout[2]->addWidget(windowSamplingFrequencyLabel);
+//    windowSubLayout[2]->addWidget(windowSamplingFrequencySpinBox);
+//    connect(windowSamplingFrequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_sampling_freq_changed()));
 
     QLabel *extendStimLabel = new QLabel(tr("Extend Stimulation (ms): "));
     extendStimSpinBox = new QSpinBox;
-    extendStimSpinBox->setMaximumWidth(windowWidth);
+//    extendStimSpinBox->setMaximumWidth(windowWidth);
     extendStimSpinBox->setMinimum(0);
     extendStimSpinBox->setMaximum(9999);
     extendStimSpinBox->setValue(commandCat->getExtendStimulation());
-    windowSubLayout[3] = new QHBoxLayout;
-    windowSubLayout[3]->addWidget(extendStimLabel);
-    windowSubLayout[3]->addWidget(extendStimSpinBox);
+    windowSubLayout[2] = new QHBoxLayout;
+    windowSubLayout[2]->addWidget(extendStimLabel);
+    windowSubLayout[2]->addWidget(extendStimSpinBox);
     connect(extendStimSpinBox, SIGNAL(editingFinished()), this, SLOT(on_extend_stimulation_changed()));
 
 
     //layout window
     QVBoxLayout *windowLayout = new QVBoxLayout();
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 3; i++){
         windowLayout->addLayout(windowSubLayout[i]);
     }
 
-    //filtering
-    QHBoxLayout *filteringSubLayout[3];
-    QLabel *highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
-    highpassCheckBox = new QCheckBox;
-    highpassCheckBox->setChecked(highpassFlag);
-    highpassSpinBox = new QSpinBox;
-    highpassSpinBox->setMaximumWidth(windowWidth);
-    highpassSpinBox->setMinimum(0);
-    highpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    highpassSpinBox->setValue(commandCat->getHighpassCutoffFreq());
-    highpassSpinBox->setEnabled(highpassFlag);
-    filteringSubLayout[0] = new QHBoxLayout;
-    filteringSubLayout[0]->addWidget(highpassCheckBox);
-    filteringSubLayout[0]->addWidget(highpassLabel);
-    filteringSubLayout[0]->addWidget(highpassSpinBox);
-    connect(highpassSpinBox, SIGNAL(editingFinished()), this, SLOT(on_highpass_cutoff_freq_changed()));
-    connect(highpassCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_highpass_cutoff_freq_checkbox_changed()));
+//    //filtering
+//    QHBoxLayout *filteringSubLayout[3];
+//    QLabel *highpassLabel = new QLabel(tr("Highpass cutoff freq.: "));
+//    highpassCheckBox = new QCheckBox;
+//    highpassCheckBox->setChecked(highpassFlag);
+//    highpassSpinBox = new QSpinBox;
+//    highpassSpinBox->setMaximumWidth(windowWidth);
+//    highpassSpinBox->setMinimum(0);
+//    highpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
+//    highpassSpinBox->setValue(commandCat->getHighpassCutoffFreq());
+//    highpassSpinBox->setEnabled(highpassFlag);
+//    filteringSubLayout[0] = new QHBoxLayout;
+//    filteringSubLayout[0]->addWidget(highpassCheckBox);
+//    filteringSubLayout[0]->addWidget(highpassLabel);
+//    filteringSubLayout[0]->addWidget(highpassSpinBox);
+//    connect(highpassSpinBox, SIGNAL(editingFinished()), this, SLOT(on_highpass_cutoff_freq_changed()));
+//    connect(highpassCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_highpass_cutoff_freq_checkbox_changed()));
 
-    QLabel *lowpassLabel = new QLabel(tr("Lowpass cutoff freq.: "));
-    lowpassCheckBox = new QCheckBox;
-    lowpassCheckBox->setChecked(lowpassFlag);
-    lowpassSpinBox = new QSpinBox;
-    lowpassSpinBox->setMaximumWidth(windowWidth);
-    lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
-    lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    commandCat->getLowpassCutoffFreq() ? lowpassSpinBox->setValue(commandCat->getLowpassCutoffFreq()) :
-                                         lowpassSpinBox->setValue(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    lowpassSpinBox->setEnabled(lowpassFlag);
-    filteringSubLayout[1] = new QHBoxLayout;
-    filteringSubLayout[1]->addWidget(lowpassCheckBox);
-    filteringSubLayout[1]->addWidget(lowpassLabel);
-    filteringSubLayout[1]->addWidget(lowpassSpinBox);
-    connect(lowpassSpinBox, SIGNAL(editingFinished()), this, SLOT(on_lowpass_cutoff_freq_changed()));
-    connect(lowpassCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_lowpass_cutoff_freq_checkbox_changed()));
+//    QLabel *lowpassLabel = new QLabel(tr("Lowpass cutoff freq.: "));
+//    lowpassCheckBox = new QCheckBox;
+//    lowpassCheckBox->setChecked(lowpassFlag);
+//    lowpassSpinBox = new QSpinBox;
+//    lowpassSpinBox->setMaximumWidth(windowWidth);
+//    lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
+//    lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
+//    commandCat->getLowpassCutoffFreq() ? lowpassSpinBox->setValue(commandCat->getLowpassCutoffFreq()) :
+//                                         lowpassSpinBox->setValue(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
+//    lowpassSpinBox->setEnabled(lowpassFlag);
+//    filteringSubLayout[1] = new QHBoxLayout;
+//    filteringSubLayout[1]->addWidget(lowpassCheckBox);
+//    filteringSubLayout[1]->addWidget(lowpassLabel);
+//    filteringSubLayout[1]->addWidget(lowpassSpinBox);
+//    connect(lowpassSpinBox, SIGNAL(editingFinished()), this, SLOT(on_lowpass_cutoff_freq_changed()));
+//    connect(lowpassCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_lowpass_cutoff_freq_checkbox_changed()));
 
-    QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
-    notchCheckBox = new QCheckBox;
-    notchCheckBox->setChecked(notchFlag);
-    notchSpinBox = new QSpinBox;
-    notchSpinBox->setMaximumWidth(windowWidth);
-    notchSpinBox->setMinimum(0);
-    notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
-    notchSpinBox->setValue(commandCat->getNotchCutoffFreq());
-    notchSpinBox->setEnabled(notchFlag);
-    filteringSubLayout[2] = new QHBoxLayout;
-    filteringSubLayout[2]->addWidget(notchCheckBox);
-    filteringSubLayout[2]->addWidget(notchLabel);
-    filteringSubLayout[2]->addWidget(notchSpinBox);
-    connect(notchSpinBox, SIGNAL(editingFinished()), this, SLOT(on_notch_cutoff_freq_changed()));
-    connect(notchCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_notch_cutoff_freq_checkbox_changed()));
+//    QLabel *notchLabel = new QLabel(tr("Notch cutoff freq.: "));
+//    notchCheckBox = new QCheckBox;
+//    notchCheckBox->setChecked(notchFlag);
+//    notchSpinBox = new QSpinBox;
+//    notchSpinBox->setMaximumWidth(windowWidth);
+//    notchSpinBox->setMinimum(0);
+//    notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
+//    notchSpinBox->setValue(commandCat->getNotchCutoffFreq());
+//    notchSpinBox->setEnabled(notchFlag);
+//    filteringSubLayout[2] = new QHBoxLayout;
+//    filteringSubLayout[2]->addWidget(notchCheckBox);
+//    filteringSubLayout[2]->addWidget(notchLabel);
+//    filteringSubLayout[2]->addWidget(notchSpinBox);
+//    connect(notchSpinBox, SIGNAL(editingFinished()), this, SLOT(on_notch_cutoff_freq_changed()));
+//    connect(notchCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_notch_cutoff_freq_checkbox_changed()));
 
-    //layout filtering
-    QVBoxLayout *filteringLayout = new QVBoxLayout();
-    for(int i = 0; i < 3; i++){
-        filteringLayout->addLayout(filteringSubLayout[i]);
-    }
+//    //layout filtering
+//    QVBoxLayout *filteringLayout = new QVBoxLayout();
+//    for(int i = 0; i < 3; i++){
+//        filteringLayout->addLayout(filteringSubLayout[i]);
+//    }
 
     //layout
     QHBoxLayout *parametersLayout = new QHBoxLayout();
     parametersLayout->addLayout(windowLayout);
-    parametersLayout->addLayout(filteringLayout);
+//    parametersLayout->addLayout(filteringLayout);
 
     parametersGroup->setLayout(parametersLayout);
 
     return parametersGroup;
 }
 
-QGroupBox *CatWindow::createRecordingGroup(){
-    QGroupBox *groupRecording = new QGroupBox(tr("Recording"));
+//QGroupBox *CatWindow::createRecordingGroup(){
+//    QGroupBox *groupRecording = new QGroupBox(tr("Recording"));
 
-    //buttons
-    recordingButton = new QPushButton(tr("Start Recording"));
-    connect(recordingButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_changed()));
+//    //buttons
+//    recordingButton = new QPushButton(tr("Start Recording"));
+//    connect(recordingButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_changed()));
 
-    recordingTransferButton = new QPushButton(tr("Transfer Recordings"));
-    connect(recordingTransferButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_transfer_changed()));
+//    recordingTransferButton = new QPushButton(tr("Transfer Recordings"));
+//    connect(recordingTransferButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_transfer_changed()));
 
-    //connection
-    receiveSavedFiles();
+//    //connection
+//    receiveSavedFiles();
 
-    //Layout
-    QHBoxLayout *recordingLayout = new QHBoxLayout;
-    recordingLayout->addWidget(recordingButton);
-    recordingLayout->addWidget(recordingTransferButton);
+//    //Layout
+//    QHBoxLayout *recordingLayout = new QHBoxLayout;
+//    recordingLayout->addWidget(recordingButton);
+//    recordingLayout->addWidget(recordingTransferButton);
 
-    groupRecording->setLayout(recordingLayout);
+//    groupRecording->setLayout(recordingLayout);
 
-    return groupRecording;
-}
+//    return groupRecording;
+//}
 
 QHBoxLayout *CatWindow::createStartButton(){
     QHBoxLayout *startLayout = new QHBoxLayout();
@@ -901,8 +822,6 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
     }
 
-//    disableInputClassifyMethods();
-
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
@@ -964,24 +883,24 @@ void CatWindow::on_overlap_window_size_changed(){
     }
 }
 
-void CatWindow::on_sampling_freq_changed(){
-    if(windowSamplingFrequencySpinBox->text().toInt() != commandCat->getSamplingFreq()){
-        highpassSpinBox->setMaximum(lowpassSpinBox->text().toInt() - 1);
-        lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
-        lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-        notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
+//void CatWindow::on_sampling_freq_changed(){
+//    if(windowSamplingFrequencySpinBox->text().toInt() != commandCat->getSamplingFreq()){
+//        highpassSpinBox->setMaximum(lowpassSpinBox->text().toInt() - 1);
+//        lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
+//        lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
+//        notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
 
-        sendFilteringParameters();
+//        sendFilteringParameters();
 
-        QTimer::singleShot(150, [=] {
-            commandCat->setSamplingFreq(windowSamplingFrequencySpinBox->text().toInt());
-            qDebug() << "Sent decoding window size to : " << windowSamplingFrequencySpinBox->text().toInt();
-            commandCat->sendSamplingFreq();
-            emitCommandSent();
-        });
+//        QTimer::singleShot(150, [=] {
+//            commandCat->setSamplingFreq(windowSamplingFrequencySpinBox->text().toInt());
+//            qDebug() << "Sent decoding window size to : " << windowSamplingFrequencySpinBox->text().toInt();
+//            commandCat->sendSamplingFreq();
+//            emitCommandSent();
+//        });
 
-    }
-}
+//    }
+//}
 
 void CatWindow::on_extend_stimulation_changed(){
     if(extendStimSpinBox->text().toInt() != commandCat->getExtendStimulation()){
@@ -992,117 +911,113 @@ void CatWindow::on_extend_stimulation_changed(){
     }
 }
 
-void CatWindow::sendHighpassParameters(int value){
-    commandCat->setHighpassCutoffFreq(value);
-    qDebug() << "Sent highpass cutoff freq to : " << value;
-    commandCat->sendHighpassCutoffFreq();
-    emitCommandSent();
-}
+//void CatWindow::sendHighpassParameters(int value){
+//    commandCat->setHighpassCutoffFreq(value);
+//    qDebug() << "Sent highpass cutoff freq to : " << value;
+//    commandCat->sendHighpassCutoffFreq();
+//    emitCommandSent();
+//}
 
-void CatWindow::on_highpass_cutoff_freq_changed(){
-    if(highpassSpinBox->text().toInt() != commandCat->getHighpassCutoffFreq()){
-        sendHighpassParameters(highpassSpinBox->text().toInt());
-        sendHighpassSignal(highpassSpinBox->text().toInt());
-    }
-}
+//void CatWindow::on_highpass_cutoff_freq_changed(){
+//    if(highpassSpinBox->text().toInt() != commandCat->getHighpassCutoffFreq()){
+//        sendHighpassParameters(highpassSpinBox->text().toInt());
+//        sendHighpassSignal(highpassSpinBox->text().toInt());
+//    }
+//}
 
-void CatWindow::on_highpass_cutoff_freq_checkbox_changed(){
-    if(highpassCheckBox->isChecked()){
-        highpassSpinBox->setEnabled(true);
-        sendFilteringParameters();
-        highpassFlag = true;
-    }
-    else{
-        highpassSpinBox->setEnabled(false);
-        sendHighpassParameters(0);
-        sendHighpassSignal(0);
-        highpassFlag = false;
-    }
-}
+//void CatWindow::on_highpass_cutoff_freq_checkbox_changed(){
+//    if(highpassCheckBox->isChecked()){
+//        highpassSpinBox->setEnabled(true);
+//        sendFilteringParameters();
+//        highpassFlag = true;
+//    }
+//    else{
+//        highpassSpinBox->setEnabled(false);
+//        sendHighpassParameters(0);
+//        sendHighpassSignal(0);
+//        highpassFlag = false;
+//    }
+//}
 
-void CatWindow::sendLowpassParameters(int value){
-    commandCat->setLowpassCutoffFreq(value);
-    qDebug() << "Sent lowpass cutoff freq to : " << value;
-    commandCat->sendLowpassCutoffFreq();
-    emitCommandSent();
-}
+//void CatWindow::sendLowpassParameters(int value){
+//    commandCat->setLowpassCutoffFreq(value);
+//    qDebug() << "Sent lowpass cutoff freq to : " << value;
+//    commandCat->sendLowpassCutoffFreq();
+//    emitCommandSent();
+//}
 
-void CatWindow::on_lowpass_cutoff_freq_changed(){
-    if(lowpassSpinBox->text().toInt() != commandCat->getLowpassCutoffFreq()){
-        sendLowpassParameters(lowpassSpinBox->text().toInt());
-        sendLowpassSignal(lowpassSpinBox->text().toInt());
-    }
-}
+//void CatWindow::on_lowpass_cutoff_freq_changed(){
+//    if(lowpassSpinBox->text().toInt() != commandCat->getLowpassCutoffFreq()){
+//        sendLowpassParameters(lowpassSpinBox->text().toInt());
+//        sendLowpassSignal(lowpassSpinBox->text().toInt());
+//    }
+//}
 
-void CatWindow::on_lowpass_cutoff_freq_checkbox_changed(){
-    if(lowpassCheckBox->isChecked()){
-        lowpassSpinBox->setEnabled(true);
-        sendFilteringParameters();
-        lowpassFlag = true;
-    }
-    else{
-        lowpassSpinBox->setEnabled(false);
-        sendLowpassParameters(0);
-        sendLowpassSignal(0);
-        lowpassFlag = false;
-    }
-}
+//void CatWindow::on_lowpass_cutoff_freq_checkbox_changed(){
+//    if(lowpassCheckBox->isChecked()){
+//        lowpassSpinBox->setEnabled(true);
+//        sendFilteringParameters();
+//        lowpassFlag = true;
+//    }
+//    else{
+//        lowpassSpinBox->setEnabled(false);
+//        sendLowpassParameters(0);
+//        sendLowpassSignal(0);
+//        lowpassFlag = false;
+//    }
+//}
 
-void CatWindow::sendNotchParameters(int value){
-    commandCat->setNotchCutoffFreq(value);
-    qDebug() << "Sent notch cutoff freq to : " << value;
-    commandCat->sendNotchCutoffFreq();
-    emitCommandSent();
+//void CatWindow::sendNotchParameters(int value){
+//    commandCat->setNotchCutoffFreq(value);
+//    qDebug() << "Sent notch cutoff freq to : " << value;
+//    commandCat->sendNotchCutoffFreq();
+//    emitCommandSent();
 
-}
+//}
 
-void CatWindow::on_notch_cutoff_freq_changed(){
-    if(notchSpinBox->text().toInt() != commandCat->getNotchCutoffFreq()){
-        sendNotchParameters(notchSpinBox->text().toInt());
-        sendNotchSignal(notchSpinBox->text().toInt());
-    }
-}
+//void CatWindow::on_notch_cutoff_freq_changed(){
+//    if(notchSpinBox->text().toInt() != commandCat->getNotchCutoffFreq()){
+//        sendNotchParameters(notchSpinBox->text().toInt());
+//        sendNotchSignal(notchSpinBox->text().toInt());
+//    }
+//}
 
-void CatWindow::on_notch_cutoff_freq_checkbox_changed(){
-    if(notchCheckBox->isChecked()){
-        notchSpinBox->setEnabled(true);
-        sendFilteringParameters();
-        notchFlag = true;
-    }
-    else{
-        notchSpinBox->setEnabled(false);
-        sendNotchParameters(0);
-        sendNotchSignal(0);
-        notchFlag = false;
-    }
-}
+//void CatWindow::on_notch_cutoff_freq_checkbox_changed(){
+//    if(notchCheckBox->isChecked()){
+//        notchSpinBox->setEnabled(true);
+//        sendFilteringParameters();
+//        notchFlag = true;
+//    }
+//    else{
+//        notchSpinBox->setEnabled(false);
+//        sendNotchParameters(0);
+//        sendNotchSignal(0);
+//        notchFlag = false;
+//    }
+//}
 
-void CatWindow::on_recording_changed(){
-    if(!recordingFlag){
-        recordingFlag = true;
-        commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Stop Recor&ding");
-        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
-//        controlInput(false);
+//void CatWindow::on_recording_changed(){
+//    if(!recordingFlag){
+//        recordingFlag = true;
+//        commandCat->setRecording(recordingFlag);
+//        recordingButton->setText("Stop Recor&ding");
+//        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
+////        controlInput(false);
 
-        filenameDialog->setFilename(QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'"));
-    }
-    else{
-        recordingFlag = false;
-        commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Start Recor&ding");
-        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!!"));
-//        controlInput(true);
+//        filenameDialog->setFilename(QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'"));
+//    }
+//    else{
+//        recordingFlag = false;
+//        commandCat->setRecording(recordingFlag);
+//        recordingButton->setText("Start Recor&ding");
+//        statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!!"));
+////        controlInput(true);
 
-        filenameDialog->show();
-    }
-    commandCat->sendRecording();
-    emitCommandSent();
-    qDebug() << "Sent recording to : " << commandCat->getRecording();
-}
-
-//void CatWindow::on_tab_changed(int value){
-//    currentTab = value;
+//        filenameDialog->show();
+//    }
+//    commandCat->sendRecording();
+//    emitCommandSent();
+//    qDebug() << "Sent recording to : " << commandCat->getRecording();
 //}
 
 void CatWindow::on_filename_changed(){
@@ -1115,23 +1030,23 @@ void CatWindow::on_filename_changed(){
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! Filename: ") + filenameDialog->getFilename());
 }
 
-void CatWindow::on_recording_transfer_changed(){
-    recordingTransferButton->setEnabled(false);
-    QString savingDirStr = "C:/Data";
-    QDir savingDir(savingDirStr);
-    if(!savingDir.exists()){  // check if saving folder exists; if not, create it
-        savingDir.mkpath(".");
-    }
-    QString command = "pscp";
-    commandArg.clear();
-    commandArg.append("-pw");
-    commandArg.append("raspberry");
-    commandArg.append("-scp");
-    commandArg.append("-unsafe");
-    commandArg.append("pi@192.168.4.3:/home/pi/Data/*.csv");
-    commandArg.append(savingDirStr);
-    receivingSavedFiles.start(command, commandArg, QIODevice::ReadWrite);
-}
+//void CatWindow::on_recording_transfer_changed(){
+//    recordingTransferButton->setEnabled(false);
+//    QString savingDirStr = "C:/Data";
+//    QDir savingDir(savingDirStr);
+//    if(!savingDir.exists()){  // check if saving folder exists; if not, create it
+//        savingDir.mkpath(".");
+//    }
+//    QString command = "pscp";
+//    commandArg.clear();
+//    commandArg.append("-pw");
+//    commandArg.append("raspberry");
+//    commandArg.append("-scp");
+//    commandArg.append("-unsafe");
+//    commandArg.append("pi@192.168.4.3:/home/pi/Data/*.csv");
+//    commandArg.append(savingDirStr);
+//    receivingSavedFiles.start(command, commandArg, QIODevice::ReadWrite);
+//}
 
 void CatWindow::on_start_changed(){
     if(!startStimulationFlag){  // start stimulation
@@ -1151,84 +1066,84 @@ void CatWindow::on_start_changed(){
     qDebug() << "Sent start stimulation to : " << commandCat->getStartStimulation();
 }
 
-void CatWindow::sendFilteringParameters(){
-    highpassSpinBox->setMaximum(lowpassSpinBox->text().toInt() - 1);
-    lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
-    lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
-    notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
+//void CatWindow::sendFilteringParameters(){
+//    highpassSpinBox->setMaximum(lowpassSpinBox->text().toInt() - 1);
+//    lowpassSpinBox->setMinimum(highpassSpinBox->text().toInt() + 1);
+//    lowpassSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()/2 - 1);
+//    notchSpinBox->setMaximum(windowSamplingFrequencySpinBox->text().toInt()-1);
 
-    QTimer::singleShot(0, [=] {
-        int highpassValue;
-        highpassCheckBox->isChecked()? highpassValue = highpassSpinBox->text().toInt() : highpassValue = 0;
-        sendHighpassParameters(highpassValue);
-        sendHighpassSignal(highpassValue);
-    });
-    QTimer::singleShot(150, [=] {
-        int lowpassValue;
-        lowpassCheckBox->isChecked()? lowpassValue = lowpassSpinBox->text().toInt() : lowpassValue = 0;
-        sendLowpassParameters(lowpassValue);
-        sendLowpassSignal(lowpassValue);
-    });
-    QTimer::singleShot(300, [=] {
-        int notchValue;
-        notchCheckBox->isChecked()? notchValue = notchSpinBox->text().toInt() : notchValue = 0;
-        sendNotchParameters(notchValue);
-        sendNotchSignal(notchValue);
-    });
-}
+//    QTimer::singleShot(0, [=] {
+//        int highpassValue;
+//        highpassCheckBox->isChecked()? highpassValue = highpassSpinBox->text().toInt() : highpassValue = 0;
+//        sendHighpassParameters(highpassValue);
+//        sendHighpassSignal(highpassValue);
+//    });
+//    QTimer::singleShot(150, [=] {
+//        int lowpassValue;
+//        lowpassCheckBox->isChecked()? lowpassValue = lowpassSpinBox->text().toInt() : lowpassValue = 0;
+//        sendLowpassParameters(lowpassValue);
+//        sendLowpassSignal(lowpassValue);
+//    });
+//    QTimer::singleShot(300, [=] {
+//        int notchValue;
+//        notchCheckBox->isChecked()? notchValue = notchSpinBox->text().toInt() : notchValue = 0;
+//        sendNotchParameters(notchValue);
+//        sendNotchSignal(notchValue);
+//    });
+//}
 
-void CatWindow::sendHighpassSignal(double highpassValue){
-    highpassValueSets->clear();
-    highpassValueSets->append((double) highpassValue);
-    highpassValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
-    highpassValueSets->append((double) highpassCheckBox->isChecked());
-    emit highpassSent(highpassValueSets);
-}
+//void CatWindow::sendHighpassSignal(double highpassValue){
+//    highpassValueSets->clear();
+//    highpassValueSets->append((double) highpassValue);
+//    highpassValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
+//    highpassValueSets->append((double) highpassCheckBox->isChecked());
+//    emit highpassSent(highpassValueSets);
+//}
 
-void CatWindow::sendLowpassSignal(double lowpassValue){
-    lowpassValueSets->clear();
-    lowpassValueSets->append((double) lowpassValue);
-    lowpassValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
-    lowpassValueSets->append((double) lowpassCheckBox->isChecked());
-    emit lowpassSent(lowpassValueSets);
-}
+//void CatWindow::sendLowpassSignal(double lowpassValue){
+//    lowpassValueSets->clear();
+//    lowpassValueSets->append((double) lowpassValue);
+//    lowpassValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
+//    lowpassValueSets->append((double) lowpassCheckBox->isChecked());
+//    emit lowpassSent(lowpassValueSets);
+//}
 
-void CatWindow::sendNotchSignal(double notchValue){
-    notchValueSets->clear();
-    notchValueSets->append((double) notchValue);
-    notchValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
-    notchValueSets->append((double) notchCheckBox->isChecked());
-    emit notchSent(notchValueSets);
-}
+//void CatWindow::sendNotchSignal(double notchValue){
+//    notchValueSets->clear();
+//    notchValueSets->append((double) notchValue);
+//    notchValueSets->append((double) windowSamplingFrequencySpinBox->text().toDouble());
+//    notchValueSets->append((double) notchCheckBox->isChecked());
+//    emit notchSent(notchValueSets);
+//}
 
-void CatWindow::receiveSavedFiles(){
-    connect(&receivingSavedFiles, SIGNAL(readyReadStandardError()), this, SLOT(readOutput()));
-    connect(&receivingSavedFiles, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
-    connect(&receivingSavedFiles, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            [=] (int /*exitCode*/, QProcess::ExitStatus exitStatus){
-        if(!exitStatus){
-            statusBarLabel->setText(tr("Finished transferring..."));
-            qDebug() << "Finished transferring...";
-            commandCat->sendRecordingTransfer();
-            emitCommandSent();
-            qDebug() << "Sent recording transfer...";
-        }
-        else{
-            statusBarLabel->setText(tr("Transferring failed..."));
-            qDebug() << "Transferring failed...";
-        }
-        recordingTransferButton->setEnabled(true);
-    });
-}
+//void CatWindow::receiveSavedFiles(){
+//    connect(&receivingSavedFiles, SIGNAL(readyReadStandardError()), this, SLOT(readOutput()));
+//    connect(&receivingSavedFiles, SIGNAL(readyReadStandardOutput()), this, SLOT(readOutput()));
+//    connect(&receivingSavedFiles, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+//            [=] (int /*exitCode*/, QProcess::ExitStatus exitStatus){
+//        if(!exitStatus){
+//            statusBarLabel->setText(tr("Finished transferring..."));
+//            qDebug() << "Finished transferring...";
+//            commandCat->sendRecordingTransfer();
+//            emitCommandSent();
+//            qDebug() << "Sent recording transfer...";
+//        }
+//        else{
+//            statusBarLabel->setText(tr("Transferring failed..."));
+//            qDebug() << "Transferring failed...";
+//        }
+//        recordingTransferButton->setEnabled(true);
+//    });
+//}
 
-void CatWindow::readOutput(){
-    commandStdout.clear();
-    commandStdout.append(receivingSavedFiles.readAllStandardOutput());
-    transferStatus.clear();
-    transferStatus.append(commandStdout);
-    statusBarLabel->setText(transferStatus);
-    qDebug() << commandStdout;
-}
+//void CatWindow::readOutput(){
+//    commandStdout.clear();
+//    commandStdout.append(receivingSavedFiles.readAllStandardOutput());
+//    transferStatus.clear();
+//    transferStatus.append(commandStdout);
+//    statusBarLabel->setText(transferStatus);
+//    qDebug() << commandStdout;
+//}
 
 void CatWindow::setRpiCommand(char *data){
     commandCat->updateRpiCommand(data);
@@ -1264,14 +1179,6 @@ void CatWindow::on_filename_discard(){
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
 }
 
-void CatWindow::disableInputClassifyMethods(){
-//    groupThreasholding->setEnabled(!methodsClassifyBox[1]->isChecked());  //disable when feature is selected
-//    thresholdTab->setEnabled(!methodsClassifyBox[1]->isChecked());
-
-//    featureTab->setEnabled(methodsClassifyBox[1]->isChecked());  // enable when feature is selected
-
-//    tabSettings->setCurrentIndex(methodsClassifyBox[1]->isChecked());
-}
 CatWindow::~CatWindow(){
 //    filenameSocket->doDisconnect();
 }

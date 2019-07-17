@@ -81,19 +81,16 @@ private:
     QSpinBox *numClassSpinBox;
     QSpinBox *windowDecodingSpinBox;
     QSpinBox *windowOverlapSpinBox;
-    QSpinBox *windowSamplingFrequencySpinBox;
-    QSpinBox *highpassSpinBox;
-    QSpinBox *lowpassSpinBox;
-    QSpinBox *notchSpinBox;
+
     QSpinBox *extendStimSpinBox;
 
     QCheckBox *stimTargetCheckBox[4];
-    QCheckBox *highpassCheckBox;
-    QCheckBox *lowpassCheckBox;
-    QCheckBox *notchCheckBox;
-    bool highpassFlag = false;
-    bool lowpassFlag = false;
-    bool notchFlag = false;
+//    QCheckBox *highpassCheckBox;
+//    QCheckBox *lowpassCheckBox;
+//    QCheckBox *notchCheckBox;
+//    bool highpassFlag = false;
+//    bool lowpassFlag = false;
+//    bool notchFlag = false;
 
     QCheckBox *inputBoxCh1[30];
     QCheckBox *inputBoxCh2[30];
@@ -134,8 +131,8 @@ private:
     QPushButton *trainingCancel;
     QPushButton *trainingSave;
     QPushButton *startButton;
-    QPushButton *recordingButton;
-    QPushButton *recordingTransferButton;
+//    QPushButton *recordingButton;
+//    QPushButton *recordingTransferButton;
     QPushButton *addSettingsButton;
     QPushButton *removeSettingsButton[30];
 
@@ -143,10 +140,10 @@ private:
     QVector<double> *lowpassValueSets = new QVector<double>;
     QVector<double> *notchValueSets = new QVector<double>;
 
-    QProcess receivingSavedFiles;
-    QString transferStatus;
-    QStringList commandArg;
-    QString commandStdout;
+//    QProcess receivingSavedFiles;
+//    QString transferStatus;
+//    QStringList commandArg;
+//    QString commandStdout;
 
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
@@ -171,18 +168,18 @@ private:
     void createFeatureSettingsLayout(int index);
 
     void sendParameters();
-    void sendHighpassParameters(int value);
-    void sendLowpassParameters(int value);
-    void sendNotchParameters(int value);
-    void sendFilteringParameters();
+//    void sendHighpassParameters(int value);
+//    void sendLowpassParameters(int value);
+//    void sendNotchParameters(int value);
+//    void sendFilteringParameters();
 
-    void sendHighpassSignal(double highpassValue);
-    void sendLowpassSignal(double lowpassValue);
-    void sendNotchSignal(double notchValue);
+//    void sendHighpassSignal(double highpassValue);
+//    void sendLowpassSignal(double lowpassValue);
+//    void sendNotchSignal(double notchValue);
 
     void sendStimulationPattern();
     void emitCommandSent();
-    void receiveSavedFiles();
+//    void receiveSavedFiles();
     void controlInput(bool flag);
 
     char *lastSentCommand = new char[3];
@@ -195,19 +192,19 @@ private slots:
     void on_threshold_power_changed();
     void on_decoding_window_size_changed();
     void on_overlap_window_size_changed();
-    void on_sampling_freq_changed();
+//    void on_sampling_freq_changed();
     void on_extend_stimulation_changed();
-    void on_highpass_cutoff_freq_changed();
-    void on_highpass_cutoff_freq_checkbox_changed();
-    void on_lowpass_cutoff_freq_changed();
-    void on_lowpass_cutoff_freq_checkbox_changed();
-    void on_notch_cutoff_freq_changed();
-    void on_notch_cutoff_freq_checkbox_changed();
+//    void on_highpass_cutoff_freq_changed();
+//    void on_highpass_cutoff_freq_checkbox_changed();
+//    void on_lowpass_cutoff_freq_changed();
+//    void on_lowpass_cutoff_freq_checkbox_changed();
+//    void on_notch_cutoff_freq_changed();
+//    void on_notch_cutoff_freq_checkbox_changed();
     void on_odin_triggered();
     void on_sylph_triggered();
     void on_start_changed();
-    void on_recording_changed();
-    void on_recording_transfer_changed();
+//    void on_recording_changed();
+//    void on_recording_transfer_changed();
     void on_classify_methods_changed();
     void on_filename_changed();
     void on_filename_discard();
@@ -221,13 +218,13 @@ private slots:
     void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
-    void readOutput();
+//    void readOutput();
 
 signals:
     void commandSent(char *bytes);
-    void highpassSent(QVector<double> *values);
-    void lowpassSent(QVector<double> *values);
-    void notchSent(QVector<double> *values);
+//    void highpassSent(QVector<double> *values);
+//    void lowpassSent(QVector<double> *values);
+//    void notchSent(QVector<double> *values);
     void showOdinSignal();
     void showSylphSignal();
 };
