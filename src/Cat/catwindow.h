@@ -32,6 +32,8 @@ private:
     QAction *odinAction;
     QAction *sylphAction;
 
+    QWidget *mainWidget;
+
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
     QGroupBox *createStimPatternGroup();
@@ -138,6 +140,7 @@ private:
     QPushButton *recordingTransferButton;
     QPushButton *addSettingsButton;
     QPushButton *removeSettingsButton[30];
+    QPushButton *updateNumClassButton;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -150,12 +153,13 @@ private:
 
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
+    QByteArray numClassValue;
+    QString commandNumClass = "GIMMENUMCLASS!!!";
 
     int currentTab = 0;
     int startDelay = 3000;
     int indexThreshold = 1;
     int indexFeature = 3;
-    int indexTemp = 1;
     int inputCheckBoxValue[30] = {0};
     int outputCheckBoxValue[30] = {0};
     int featureInputCheckBoxValue[30] = {0};
@@ -181,6 +185,7 @@ private:
     void sendNotchSignal(double notchValue);
 
     void sendStimulationPattern();
+    void updateStimulationPattern();
     void emitCommandSent();
     void receiveSavedFiles();
     void controlInput(bool flag);
@@ -221,6 +226,7 @@ private slots:
     void on_output_ch4_changed(int index);
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
+    void on_update_numClass_changed();
     void readOutput();
 
 signals:

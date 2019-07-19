@@ -15,6 +15,10 @@ public:
     void setChecked(bool flag);
     void sendDisconnectSignal();
     void write(QByteArray command);
+    QByteArray read();
+
+private:
+    int bufferRead = 8;
 
 protected:
     QTcpSocket *socketAbstract;
