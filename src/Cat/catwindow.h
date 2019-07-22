@@ -32,21 +32,43 @@ private:
     QAction *odinAction;
     QAction *sylphAction;
 
+    QWidget *mainWidget;
+
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
     QGroupBox *createStimPatternGroup();
     QGroupBox *createSettingsGroup();
     QGroupBox *createTrainingGroup();
     QGroupBox *createParametersGroup();
+    QGroupBox *createMethodsClassifyGroup();
     QHBoxLayout *createStartButton();
     QGroupBox *createRecordingGroup();
+    QVBoxLayout *createThresholdLayouot();
+    QHBoxLayout *createFeatureLayout();
 
+    QGroupBox *groupMethodsClassify;
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
     QGroupBox *groupThreasholding;
-    QGroupBox *groupStimPattern;
 
     QLabel *trainingSaveDir;
+
+    QVBoxLayout *settingsInputLayout;
+    QHBoxLayout *settingsInputSubLayout[30];
+    QVBoxLayout *settingsOutputLayout;
+    QHBoxLayout *settingsOutputSubLayout[30];
+    QVBoxLayout *settingsFeatureInputLayout;
+    QHBoxLayout *settingsFeatureInputSubLayout[30];
+    QVBoxLayout *settingsFeatureOutputLayout;
+    QHBoxLayout *settingsFeatureOutputSubLayout[30];
+    QGroupBox *settingsInputGroup;
+    QGroupBox *settingsOutputGroup;
+    QGroupBox *settingsFeatureInputGroup;
+    QGroupBox *settingsFeatureOutputGroup;
+
+    QTabWidget *tabSettings;
+    QWidget *thresholdTab;
+    QWidget *featureTab;
 
     QRadioButton *methodsSMChannelBox[2];
     QRadioButton *methodsClassifyBox[2];
@@ -71,6 +93,42 @@ private:
     QCheckBox *highpassCheckBox;
     QCheckBox *lowpassCheckBox;
     QCheckBox *notchCheckBox;
+    bool highpassFlag = false;
+    bool lowpassFlag = false;
+    bool notchFlag = false;
+
+    QCheckBox *inputBoxCh1[30];
+    QCheckBox *inputBoxCh2[30];
+    QCheckBox *inputBoxCh3[30];
+    QCheckBox *inputBoxCh4[30];
+    QCheckBox *outputBoxCh1[30];
+    QCheckBox *outputBoxCh2[30];
+    QCheckBox *outputBoxCh3[30];
+    QCheckBox *outputBoxCh4[30];
+    QCheckBox *featureInputBox[30];
+    QCheckBox *featureOutputBoxCh1[30];
+    QCheckBox *featureOutputBoxCh2[30];
+    QCheckBox *featureOutputBoxCh3[30];
+    QCheckBox *featureOutputBoxCh4[30];
+
+    void check_input_boxes();
+    int repeatedLocs[2] = {0};
+
+    QSignalMapper *removeMapper;
+    QSignalMapper *removeFeatureMapper;
+    QSignalMapper *inputMapperCh1;
+    QSignalMapper *inputMapperCh2;
+    QSignalMapper *inputMapperCh3;
+    QSignalMapper *inputMapperCh4;
+    QSignalMapper *outputMapperCh1;
+    QSignalMapper *outputMapperCh2;
+    QSignalMapper *outputMapperCh3;
+    QSignalMapper *outputMapperCh4;
+    QSignalMapper *featureInputMapper;
+    QSignalMapper *featureOutputMapperCh1;
+    QSignalMapper *featureOutputMapperCh2;
+    QSignalMapper *featureOutputMapperCh3;
+    QSignalMapper *featureOutputMapperCh4;
 
     QPushButton *trainingStart;
     QPushButton *trainingRedo;
@@ -80,6 +138,9 @@ private:
     QPushButton *startButton;
     QPushButton *recordingButton;
     QPushButton *recordingTransferButton;
+    QPushButton *addSettingsButton;
+    QPushButton *removeSettingsButton[30];
+    QPushButton *updateNumClassButton;
 
     QVector<double> *highpassValueSets = new QVector<double>;
     QVector<double> *lowpassValueSets = new QVector<double>;
@@ -92,12 +153,26 @@ private:
 
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
+    QByteArray numClassValue;
+    QString commandNumClass = "GIMMENUMCLASS!!!";
 
+    int currentTab = 0;
     int startDelay = 3000;
+    int indexThreshold = 1;
+    int indexFeature = 3;
+    int inputCheckBoxValue[30] = {0};
+    int outputCheckBoxValue[30] = {0};
+    int featureInputCheckBoxValue[30] = {0};
+    int featureOutputCheckBoxValue[30] = {0};
+    int boxWidth = 20;
+    int boxHeight = 20;
 
     void createLayout();
     void createStatusBar();
     void createActions();
+    void createChannelLabel();
+    void createSettingsLayout(int index);
+    void createFeatureSettingsLayout(int index);
 
     void sendParameters();
     void sendHighpassParameters(int value);
@@ -109,6 +184,8 @@ private:
     void sendLowpassSignal(double lowpassValue);
     void sendNotchSignal(double notchValue);
 
+    void sendStimulationPattern();
+    void updateStimulationPattern();
     void emitCommandSent();
     void receiveSavedFiles();
     void controlInput(bool flag);
@@ -137,11 +214,19 @@ private slots:
     void on_recording_changed();
     void on_recording_transfer_changed();
     void on_classify_methods_changed();
-    void on_stimulation_pattern_changed();
-    void on_stimulation_on_off_changed();
-    void on_stimulation_target_changed();
     void on_filename_changed();
     void on_filename_discard();
+    void on_input_ch1_changed(int index);
+    void on_input_ch2_changed(int index);
+    void on_input_ch3_changed(int index);
+    void on_input_ch4_changed(int index);
+    void on_output_ch1_changed(int index);
+    void on_output_ch2_changed(int index);
+    void on_output_ch3_changed(int index);
+    void on_output_ch4_changed(int index);
+    void on_add_checkbox_clicked();
+    void on_remove_checkbox_clicked(int index);
+    void on_update_numClass_changed();
     void readOutput();
 
 signals:

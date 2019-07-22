@@ -29,9 +29,7 @@ typedef enum ADDRESS{
     RECORDING_FLAG = 0xE0,
     RECORDING_TRANSFER = 0xE1,
     STIMULATION_PATTERN = 0xE2,
-    STIMULATION_PATTERN_ON_OFF = 0xE3,
-    STIMULATION_PATTERN_TARGET = 0xE4
-
+    STIMULATION_PATTERN_FLAG = 0xE3
 } ADDRESS;
 
 class CommandCat : public QObject
@@ -51,9 +49,9 @@ public:
     void setNotchCutoffFreq(int value);
     void setSMChannel(int channel, int value);
     void setClassifyMethods(int channel, int value);
-    void setStimulationPattern(int channel, int value);
-    void setStimulationPatternOnOff(int channel, int value);
-    void setStimulationPatternTarget(int channel, int value);
+    void setStimulationPattern(int value);
+//    void setStimulationPatternOnOff(int channel, int value);
+//    void setStimulationPatternTarget(int channel, int value);
     void setStartStimulation(bool flag);
     void setRecording(bool flag);
     int getThreshold(int channel);
@@ -68,8 +66,8 @@ public:
     int getSMChannel();
     int getClassifyMethods();
     int getStimulationPattern();
-    int getStimulationPatternOnOff();
-    int getStimulationPatternTarget();
+//    int getStimulationPatternOnOff();
+//    int getStimulationPatternTarget();
     int getStartStimulation();
     int getRecording();
     void sendThreshold(int channel);
@@ -84,8 +82,9 @@ public:
     void sendSMChannel();
     void sendClassifyMethods();
     void sendStimulationPattern();
-    void sendStimulationPatternOnOff();
-    void sendStimulationPatternTarget();
+    void sendStimulationPatternFlag();
+//    void sendStimulationPatternOnOff();
+//    void sendStimulationPatternTarget();
     void sendStartStimulation();
     void sendRecording();
     void sendRecordingTransfer();
@@ -110,9 +109,9 @@ private:
     int notchCutoffFreq = 50;
     int SMChannel[2] = {1, 0};
     int classifyMethods[2] = {1, 0};
-    int stimulationPattern[2] = {1, 0};
-    int stimulationPatternOnOff[4] = {1, 1, 0, 0};
-    int stimulationPatternTarget[4] = {0, 0, 0, 0};
+    int stimulationPattern = 0;
+//    int stimulationPatternOnOff[4] = {1, 1, 0, 0};
+//    int stimulationPatternTarget[4] = {0, 0, 0, 0};
     bool startStimulationFlag = false;
     bool recordingFlag = false;
 

@@ -47,6 +47,10 @@ void SocketAbstract::write(QByteArray command){
     socketAbstract->write(command);
 }
 
+QByteArray SocketAbstract::read(){
+    return socketAbstract->read(bufferRead);
+}
+
 void SocketAbstract::setChecked(bool flag){
     checked = flag;
 }
