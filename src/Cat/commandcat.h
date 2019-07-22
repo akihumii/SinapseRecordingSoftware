@@ -107,7 +107,7 @@ private:
     int highpassCutoffFreq = 100;
     int lowpassCutoffFreq = 0;
     int notchCutoffFreq = 50;
-    int SMChannel[2] = {0, 1};
+    int SMChannel[2] = {1, 0};
     int classifyMethods[2] = {1, 0};
     int stimulationPattern = 0;
 //    int stimulationPatternOnOff[4] = {1, 1, 0, 0};

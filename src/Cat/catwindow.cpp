@@ -94,7 +94,7 @@ QHBoxLayout *CatWindow::createFeatureLayout(){
     QHBoxLayout *settingsFeatureOutputLabelLayout = new QHBoxLayout;
     QLabel *channelFeatureLabel[4];
     for(int i = 0; i < 4; i++){
-        channelFeatureLabel[i] = new QLabel("Channel " + QString::number(i));
+        channelFeatureLabel[i] = new QLabel("Channel " + QString::number(i+1));
         settingsFeatureOutputLabelLayout->addWidget(channelFeatureLabel[i]);
     }
 
@@ -515,7 +515,7 @@ void CatWindow::on_output_ch1_changed(int index){
         check_input_boxes();
     }
     else{
-        featureOutputBoxCh1[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 0)) : (outputCheckBoxValue[index] &= ~(1 << 0));
+        featureOutputBoxCh1[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 0)) : (featureOutputCheckBoxValue[index] &= ~(1 << 0));
         updateStimulationPattern();
     }
 }
@@ -526,7 +526,7 @@ void CatWindow::on_output_ch2_changed(int index){
         check_input_boxes();
     }
     else{
-        featureOutputBoxCh2[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 1)) : (outputCheckBoxValue[index] &= ~(1 << 1));
+        featureOutputBoxCh2[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 1)) : (featureOutputCheckBoxValue[index] &= ~(1 << 1));
         updateStimulationPattern();
     }
 }
@@ -537,7 +537,7 @@ void CatWindow::on_output_ch3_changed(int index){
         check_input_boxes();
     }
     else{
-        featureOutputBoxCh3[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 2)) : (outputCheckBoxValue[index] &= ~(1 << 2));
+        featureOutputBoxCh3[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 2)) : (featureOutputCheckBoxValue[index] &= ~(1 << 2));
         updateStimulationPattern();
     }
 }
@@ -548,7 +548,7 @@ void CatWindow::on_output_ch4_changed(int index){
         check_input_boxes();
     }
     else{
-        featureOutputBoxCh4[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 3)) : (outputCheckBoxValue[index] &= ~(1 << 3));
+        featureOutputBoxCh4[index]->isChecked() ? (featureOutputCheckBoxValue[index] |= (1 << 3)) : (featureOutputCheckBoxValue[index] &= ~(1 << 3));
         updateStimulationPattern();
     }
 }
@@ -914,6 +914,7 @@ void CatWindow::on_classify_methods_changed(){
     int temp = commandCat->getClassifyMethods();
     for(int i = 0; i < 2; i++){
         commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
+        commandCat->setSMChannel(i, methodsClassifyBox[i]->isChecked());
     }
 
 //    disableInputClassifyMethods();
@@ -921,6 +922,10 @@ void CatWindow::on_classify_methods_changed(){
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
+        emitCommandSent();
+
+        qDebug() << "Sent SM channel to: " << commandCat->getSMChannel();
+        commandCat->sendSMChannel();
         emitCommandSent();
 
         createLayout();
