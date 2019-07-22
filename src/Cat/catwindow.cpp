@@ -44,8 +44,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
     methodsParameterLayout->addWidget(createMethodsClassifyGroup());
-//    methodsParameterLayout->addWidget(createThreasholdingGroup());
-//    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
 
@@ -55,28 +53,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
     methodsClassifyBox[0]->isChecked() ? groupSettings->setLayout(createThresholdLayouot()) : groupSettings->setLayout(createFeatureLayout());
-
-//    //widgets
-//    thresholdTab = new QWidget;
-//    featureTab = new QWidget;
-//    thresholdTab->setLayout(createThresholdTabLayouot());
-//    featureTab->setLayout(createFeatureTabLayout());
-
-//    //tab
-//    tabSettings = new QTabWidget;
-//    connect(tabSettings, SIGNAL(currentChanged(int)), this, SLOT(on_tab_changed(int)));
-
-//    tabSettings->addTab(thresholdTab, tr("Threshold"));
-//    tabSettings->addTab(featureTab, tr("Features"));
-
-//    disableInputClassifyMethods();
-////    tabSettings->setCurrentIndex(!((commandCat->getClassifyMethods() - 520) & (1 << 0)));
-
-//    //layout
-//    QHBoxLayout *settingsLayout = new QHBoxLayout;
-//    settingsLayout->addWidget(tabSettings);
-
-//    groupSettings->setLayout(settingsLayout);
 
     return groupSettings;
 }
@@ -200,15 +176,6 @@ void CatWindow::createFeatureSettingsLayout(int index){
 QVBoxLayout *CatWindow::createThresholdLayouot(){
     QVBoxLayout *thresholdLayout = new QVBoxLayout;
 
-    //add button
-//    doneSettingsButton = new QPushButton;
-//    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
-//    doneSettingsButton->setFixedSize(35, 30);
-//    connect(doneSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
-
-
-
-
     //channel labels
     QLabel *channelLabel[8];
     QHBoxLayout *settingsInputLabelLayout = new QHBoxLayout;
@@ -279,13 +246,6 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
         settingsButtonLayout->addLayout(removeSubLayout[i]);
 //        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
     }
-//    QLabel *emptyInputRow = new QLabel;
-//    QLabel *emptyOutputRow = new QLabel;
-
-//    settingsInputLayout->addWidget(emptyInputRow);
-//    settingsOutputLayout->addWidget(emptyOutputRow);
-
-
 
     //Grouping
     settingsInputGroup = new QGroupBox(tr("Input"));
@@ -308,42 +268,6 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
 
     return thresholdLayout;
 }
-
-//void CatWindow::on_done_settings_changed(){
-//    doneFlagTemp = doneSettingsFlag;
-//    doneFlagTemp = !doneFlagTemp;
-////    doneSettingsFlag = !doneSettingsFlag;
-
-//    if(doneFlagTemp){
-//        if(!check_input_boxes()){  //done, no repeated input
-////            doneSettingsButton->setText("Edit");
-//            statusBarLabel->setText(tr("Ready..."));
-//            commandCat->sendStimulationPatternFlag();
-//            emitCommandSent();
-
-//            sendStimulationPattern();
-//        }
-//        else{
-//            doneFlagTemp = !doneFlagTemp;
-////            doneSettingsFlag = !doneSettingsFlag;
-//            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
-//                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
-//        }
-//    }
-//    else{
-////        doneSettingsButton->setText("Done");
-//        statusBarLabel->setText(tr("Editting threshold input output..."));
-//    }
-
-//    // set enable
-//    doneSettingsFlag = doneFlagTemp;
-//    settingsInputGroup->setEnabled(!doneSettingsFlag);
-//    settingsOutputGroup->setEnabled(!doneSettingsFlag);
-//    for(int i = 0; i < indexThreshold; i++){
-//        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
-//    }
-//    addSettingsButton->setEnabled(!doneSettingsFlag);
-//}
 
 void CatWindow::sendStimulationPattern(){
     if(methodsClassifyBox[0]->isChecked()){  //threshold
@@ -918,8 +842,6 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->setSMChannel(i, methodsClassifyBox[i]->isChecked());
     }
 
-//    disableInputClassifyMethods();
-
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
@@ -1303,15 +1225,6 @@ void CatWindow::on_filename_discard(){
     filenameDialog->hide();
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
 }
-
-//void CatWindow::disableInputClassifyMethods(){
-//    groupThreasholding->setEnabled(!methodsClassifyBox[1]->isChecked());  //disable when feature is selected
-//    thresholdTab->setEnabled(!methodsClassifyBox[1]->isChecked());
-
-//    featureTab->setEnabled(methodsClassifyBox[1]->isChecked());  // enable when feature is selected
-
-//    tabSettings->setCurrentIndex(methodsClassifyBox[1]->isChecked());
-//}
 
 CatWindow::~CatWindow(){
 //    filenameSocket->doDisconnect();
