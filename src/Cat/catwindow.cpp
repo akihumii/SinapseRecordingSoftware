@@ -739,7 +739,8 @@ QGroupBox *CatWindow::createRecordingGroup(){
     QGroupBox *groupRecording = new QGroupBox(tr("Recording"));
 
     //buttons
-    recordingButton = new QPushButton(tr("Start Recording"));
+    recordingButton = new QPushButton;
+    commandCat->getRecording() == 520 ? recordingButton->setText("Start Recor&ding") : recordingButton->setText("Stop Recor&ding");
     connect(recordingButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_changed()));
 
     recordingTransferButton = new QPushButton(tr("Transfer Recordings"));
@@ -1263,8 +1264,10 @@ void CatWindow::readOutput(){
     commandStdout.append(receivingSavedFiles.readAllStandardOutput());
     transferStatus.clear();
     transferStatus.append(commandStdout);
-    statusBarLabel->setText(transferStatus);
-    qDebug() << commandStdout;
+    if(!transferStatus.isEmpty()){
+        statusBarLabel->setText(transferStatus);
+        qDebug() << commandStdout;
+    }
 }
 
 void CatWindow::setRpiCommand(char *data){
