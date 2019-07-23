@@ -12,18 +12,21 @@ CatWindow::CatWindow(){
     connect(filenameDialog, SIGNAL(filenameDiscard()), this, SLOT(on_filename_discard()));
 //    filenameDialog->setFixedSize(filenameDialog->sizeHint());
 //    filenameDialog->show();
+    configurationFile = new ConfigurationFile;
+    configurationFile->setFilenameSettingsMostRecent("catMostRecent.ini");
+    connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(writeSettings()));
+    connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(readSettings()));
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
-//    fileSettingsObject = new QFile;
-    readMostRecentSettings();
+    createStatusBar();
+    configurationFile->readMostRecentSettings();
     createLayout();
     sendParameters();
     startDelay = 0;  //no need to wait for other connection anymore
     createActions();
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
-    createStatusBar();
     on_update_numClass_changed();
 }
 
@@ -38,6 +41,7 @@ void CatWindow::createLayout(){
     mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
+    check_input_boxes();
 //    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
     this->resize(this->sizeHint());
 }
@@ -326,7 +330,6 @@ void CatWindow::check_input_boxes(){
 void CatWindow::on_add_checkbox_clicked(){
     indexThreshold++;
     createLayout();
-    check_input_boxes();
 }
 
 void CatWindow::on_remove_checkbox_clicked(int index){
@@ -339,7 +342,6 @@ void CatWindow::on_remove_checkbox_clicked(int index){
 
     indexThreshold --;
     createLayout();
-    check_input_boxes();
 }
 
 void CatWindow::createSettingsLayout(int index){
@@ -753,14 +755,17 @@ void CatWindow::createStatusBar(){
 
 void CatWindow::createActions(){
     //FileMenu
-    openSettingsAction = new QAction(tr("&Open Settings"));
-    connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_read_settings_changed()));
+    openSettingsAction = new QAction(tr("&Open"));
+    openSettingsAction->setShortcut(tr("Ctrl+O"));
+    connect(openSettingsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_read_settings_changed()));
 
-    saveSettingsAction = new QAction(tr("&Save Settings"));
+    saveSettingsAction = new QAction(tr("&Save"));
+    saveSettingsAction->setShortcut(tr("Ctrl+S"));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
 
-    saveSettingsAsAction = new QAction(tr("S&ave Settings As..."));
-    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
+    saveSettingsAsAction = new QAction(tr("S&ave As"));
+    saveSettingsAsAction->setShortcut(tr("Ctrl+A"));
+    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_write_settings_changed()));
 
     //GUIMenu
     odinAction = new QAction(tr("Od&in Control Panel"));
@@ -873,7 +878,6 @@ void CatWindow::on_classify_methods_changed(){
         emitCommandSent();
 
         createLayout();
-        check_input_boxes();
     }
 }
 
@@ -889,7 +893,7 @@ void CatWindow::on_update_numClass_changed(){
         indexFeature = numClassValue.toInt();
         filenameSocket->doDisconnect();
         createLayout();
-        statusBarLabel->setText("Ready...");
+//        statusBarLabel->setText("Ready...");
     });
 }
 
@@ -1248,7 +1252,7 @@ void CatWindow::on_filename_discard(){
 }
 
 void CatWindow::writeSettings(){
-    QSettings settings(filenameSettings, QSettings::IniFormat);
+    QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
 
     settings.setValue("methodsClassifyBox", methodsClassifyBox[0]->isChecked());  //classify methods
     settings.beginWriteArray("threshold");  //threshold
@@ -1285,12 +1289,12 @@ void CatWindow::writeSettings(){
     settings.setValue("notchFlag", notchFlag);
     settings.endGroup();
 
-    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
+    statusBarLabel->setText(tr("Save settings as: ") + configurationFile->getFilenameSettings());
     qDebug() << "all saved keys: " << settings.allKeys();
 }
 
 void CatWindow::readSettings(){
-    QSettings settings(filenameSettings, QSettings::IniFormat);
+    QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
 
     commandCat->setClassifyMethods(0, settings.value("methodsClassifyBox").toBool());  //classify methods
     commandCat->setSMChannel(0, settings.value("methodsClassifyBox").toBool());
@@ -1331,50 +1335,14 @@ void CatWindow::readSettings(){
     notchFlag = settings.value("notchFlag").toBool();
     settings.endGroup();
 
+//    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
     createLayout();
     mainWidget->setEnabled(false);
     sendParameters();
 }
 
-void CatWindow::on_write_settings_changed(){
-    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings as..."), filenameSettingsDir, tr("Config Files (*.ini)"));
-    if(!filenameSettings.isEmpty()){
-        qDebug() << "User is writing configuration file as: " << filenameSettings;
-        changeFilenameSettingsDir();
-        writeSettings();
-    }
-}
-
-void CatWindow::on_read_settings_changed(){
-    filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), filenameSettingsDir, tr("Config Files (*.ini)"));
-    if(!filenameSettings.isEmpty()){
-        changeFilenameSettingsDir();
-        qDebug() << "User is opening configuration file: " << filenameSettings;
-        readSettings();
-    }
-}
-
-void CatWindow::writeMostRecentSettings(){
-    filenameSettings = filenameSettingsMostRecent;
-    writeSettings();
-    qDebug() << "Most recent configuration file has been saved as: " << filenameSettings;
-}
-
-void CatWindow::readMostRecentSettings(){
-    if(QFile::exists(filenameSettingsMostRecent)){
-        filenameSettings = filenameSettingsMostRecent;
-        readSettings();
-        qDebug() << "Loaded most recent configuration file: " << filenameSettings;
-    }
-}
-
-void CatWindow::changeFilenameSettingsDir(){
-    QFileInfo fi(filenameSettings);
-    filenameSettingsDir = fi.filePath();
-}
-
 void CatWindow::closeEvent(QCloseEvent *event){
-    writeMostRecentSettings();
+    configurationFile->writeMostRecentSettings();
     event->accept();
 }
 

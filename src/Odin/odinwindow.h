@@ -6,6 +6,7 @@
 #include "../common/qcustomplot.h"
 #include "../common/connectiondialog.h"
 #include "../common/led.h"
+#include "../common/configurationfile.h"
 #include "serialodin.h"
 #include "commandodin.h"
 #include "socketodin.h"
@@ -36,6 +37,7 @@ private:
     LoopingThread *loopingThread;
     QTcpServer *tcpServer;
     QTcpSocket *tcpServerConnection;
+    ConfigurationFile *configurationFile;
 
     QWidget *mainWidget;
     QStatusBar *statusBarMainWindow;
@@ -74,16 +76,12 @@ private:
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
     QMenu *fileMenu;
+    QMenu *GUIMenu;
     QAction *openSettingsAction;
     QAction *saveSettingsAction;
     QAction *saveSettingsAsAction;
-    QMenu *GUIMenu;
     QAction *sylphxAction;
     QAction *catAction;
-
-    QString filenameSettings;
-    QString filenameSettingsDir = QDir::currentPath();
-    QString filenameSettingsMostRecent = "odinMostRecent.ini";
 
     Led *sentLED;
     Led *receivedLED;
@@ -103,10 +101,7 @@ private:
     double *lastSentAmplitude = new double[4];
     int count = 0;
 
-    void readSettings();
-    void readMostRecentSettings();
     void closeEvent(QCloseEvent *event);
-    void changeFilenameSettingsDir();
 
     bool connectOdin();
     void createLayout();
@@ -137,10 +132,8 @@ private slots:
     void on_thresholdSelectNone_clicked();
     void on_sylphx_triggered();
     void on_cat_triggered();
-    void on_write_settings_changed();
-    void on_read_settings_changed();
+    void readSettings();
     void writeSettings();
-    void writeMostRecentSettings();
 
 signals:
     void commandSent(char *bytes);

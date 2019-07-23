@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "../common/qtincludes.h"
+#include "../common/configurationfile.h"
 #include "commandcat.h"
 #include "socketfilename.h"
 #include "filenamedialog.h"
@@ -26,6 +27,7 @@ private:
     CommandCat *commandCat;
     SocketFilename *filenameSocket;
     FilenameDialog *filenameDialog;
+    ConfigurationFile *configurationFile;
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
@@ -35,12 +37,6 @@ private:
     QMenu *GUIMenu;
     QAction *odinAction;
     QAction *sylphAction;
-
-//    QFile *fileSettingsObject;
-//    QDataStream *out;
-    QString filenameSettings;
-    QString filenameSettingsDir = QDir::currentPath();
-    QString filenameSettingsMostRecent = "catMostRecent.ini";
 
     QWidget *mainWidget;
 
@@ -200,10 +196,7 @@ private:
     void receiveSavedFiles();
     void controlInput(bool flag);
 
-    void readSettings();
-    void readMostRecentSettings();
     void closeEvent(QCloseEvent *event);
-    void changeFilenameSettingsDir();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
@@ -242,10 +235,8 @@ private slots:
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
     void on_update_numClass_changed();
-    void on_write_settings_changed();
-    void on_read_settings_changed();
     void writeSettings();
-    void writeMostRecentSettings();
+    void readSettings();
     void readOutput();
 
 signals:

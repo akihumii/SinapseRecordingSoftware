@@ -10,6 +10,10 @@ OdinWindow::OdinWindow(){
     commandOdin = new CommandOdin(serialOdin, socketOdin);
     tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
+    configurationFile = new ConfigurationFile;
+    configurationFile->setFilenameSettingsMostRecent("odinMostRecent.ini");
+    connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(writeSettings()));
+    connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(readSettings()));
     loopingThread = new LoopingThread();
     QThread *thread = new QThread;
     loopingThread->moveToThread(thread);
@@ -17,7 +21,7 @@ OdinWindow::OdinWindow(){
     connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
 
-    readMostRecentSettings();
+    configurationFile->readMostRecentSettings();
     createLayout();
     createActions();
     createStatusBar();
@@ -38,14 +42,17 @@ OdinWindow::OdinWindow(){
 
 void OdinWindow::createActions(){
     //FileMenu
-    openSettingsAction = new QAction(tr("&Open Settings"));
-    connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_read_settings_changed()));
+    openSettingsAction = new QAction(tr("&Open"));
+    openSettingsAction->setShortcut(tr("Ctrl+O"));
+    connect(openSettingsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_read_settings_changed()));
 
-    saveSettingsAction = new QAction(tr("&Save Settings"));
+    saveSettingsAction = new QAction(tr("&Save"));
+    saveSettingsAction->setShortcut(tr("Ctrl+S"));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
 
-    saveSettingsAsAction = new QAction(tr("S&ave Settings As..."));
-    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
+    saveSettingsAsAction = new QAction(tr("S&ave As"));
+    saveSettingsAsAction->setShortcut(tr("Ctrl+A"));
+    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_write_settings_changed()));
 
     //GUIMenu
     sylphxAction = new QAction(tr("SylphX Control Panel"));
@@ -739,7 +746,7 @@ void OdinWindow::increaseCurrent(){
 }
 
 void OdinWindow::writeSettings(){
-    QSettings settings(filenameSettings, QSettings::IniFormat);
+    QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
 
     settings.setValue("channelEnable", commandOdin->getChannelEnabled());  //channel enable
     settings.beginWriteArray("parameters");  //amplitudes & pulse duation
@@ -753,12 +760,12 @@ void OdinWindow::writeSettings(){
     settings.setValue("delayFlag", delayFlag);  //delay
     settings.setValue("delayValue", delayValue);
 
-    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
+    statusBarLabel->setText(tr("Save settings as: ") + configurationFile->getFilenameSettings());
     qDebug() << "all saved keys: " << settings.allKeys();
 }
 
 void OdinWindow::readSettings(){
-    QSettings settings(filenameSettings, QSettings::IniFormat);
+    QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
 
     for(int i = 0; i < 4; i++){
         commandOdin->setChannelEnabled(i, settings.value("channelEnable").toInt() >> i);  //channel enable
@@ -774,50 +781,14 @@ void OdinWindow::readSettings(){
     delayFlag = settings.value("delayFlag").toBool();  //delay
     delayValue = settings.value("delayValue").toInt();
 
+//    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
     createLayout();
     mainWidget->setEnabled(false);
     sendParameter();
 }
 
-void OdinWindow::on_write_settings_changed(){
-    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings as..."), filenameSettingsDir, tr("Config Files (*.ini)"));
-    if(!filenameSettings.isEmpty()){
-        qDebug() << "User is writing configuration file as: " << filenameSettings;
-        changeFilenameSettingsDir();
-        writeSettings();
-    }
-}
-
-void OdinWindow::on_read_settings_changed(){
-    filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), filenameSettingsDir, tr("Config Files (*.ini)"));
-    if(!filenameSettings.isEmpty()){
-        changeFilenameSettingsDir();
-        qDebug() << "User is opening configuration file: " << filenameSettings;
-        readSettings();
-    }
-}
-
-void OdinWindow::writeMostRecentSettings(){
-    filenameSettings = filenameSettingsMostRecent;
-    writeSettings();
-    qDebug() << "Most recent configuration file has been saved as: " << filenameSettings;
-}
-
-void OdinWindow::readMostRecentSettings(){
-    if(QFile::exists(filenameSettingsMostRecent)){
-        filenameSettings = filenameSettingsMostRecent;
-        readSettings();
-        qDebug() << "Loaded most recent configuration file: " << filenameSettings;
-    }
-}
-
-void OdinWindow::changeFilenameSettingsDir(){
-    QFileInfo fi(filenameSettings);
-    filenameSettingsDir = fi.filePath();
-}
-
 void OdinWindow::closeEvent(QCloseEvent *event){
-    writeMostRecentSettings();
+    configurationFile->writeMostRecentSettings();
     event->accept();
 }
 
