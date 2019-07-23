@@ -15,6 +15,7 @@ CatWindow::CatWindow(){
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
+    fileSettingsObject = new QFile;
     createLayout();
     sendParameters();
     createActions();
@@ -749,6 +750,11 @@ void CatWindow::createStatusBar(){
 }
 
 void CatWindow::createActions(){
+    //FileMenu
+    saveSettingsAction = new QAction(tr("&Save Settings"));
+    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
+
+    //GUIMenu
     odinAction = new QAction(tr("Od&in Control Panel"));
     odinAction->setShortcut(tr("Ctrl+I"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
@@ -757,9 +763,13 @@ void CatWindow::createActions(){
     sylphAction->setShortcut(tr("Ctrl+R"));
     connect(sylphAction, SIGNAL(triggered(bool)), this, SLOT(on_sylph_triggered()));
 
-    fileMenu = menuBar()->addMenu(tr("G&UI"));
-    fileMenu->addAction(odinAction);
-    fileMenu->addAction(sylphAction);
+    //Add to menu
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(saveSettingsAction);
+
+    GUIMenu = menuBar()->addMenu(tr("G&UI"));
+    GUIMenu->addAction(odinAction);
+    GUIMenu->addAction(sylphAction);
 }
 
 void CatWindow::sendParameters(){
@@ -1224,6 +1234,31 @@ void CatWindow::on_filename_discard(){
 
     filenameDialog->hide();
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
+}
+
+void CatWindow::on_write_settings_changed(){
+//    filenameSettings = QDir::homePath() + "/Desktop/" + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
+    getSettingsDir();
+    fileSettingsObject->setFileName(filenameSettings);
+    if(fileSettingsObject->open(QIODevice::WriteOnly)){
+        qDebug() << "File opened... " << filenameSettings;
+    }
+    else{
+        qDebug() << "File failed to open... " << filenameSettings;
+    }
+    out = new QDataStream(fileSettingsObject);
+    qDebug() << "created out...";
+
+    *out << (int)methodsClassifyBox[0]->isChecked();
+//    methodsClassifyBox[0]->isChecked() ? *out << 0 : *out << 1;  //SMChannel
+
+    qDebug() << "save output: " << out;
+}
+
+void CatWindow::getSettingsDir(){
+    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings file as..."), QDir::currentPath(),
+                                                    tr("Config Files (*.ini)"));
+    qDebug() << "User has selected configuration file as: " << filenameSettings;
 }
 
 CatWindow::~CatWindow(){
