@@ -34,8 +34,8 @@ private:
     QAction *odinAction;
     QAction *sylphAction;
 
-    QFile *fileSettingsObject;
-    QDataStream *out;
+//    QFile *fileSettingsObject;
+//    QDataStream *out;
     QString filenameSettings;
 
     QWidget *mainWidget;
@@ -196,7 +196,7 @@ private:
     void receiveSavedFiles();
     void controlInput(bool flag);
 
-    void getSettingsDir();
+    void writeSettingsDir();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;

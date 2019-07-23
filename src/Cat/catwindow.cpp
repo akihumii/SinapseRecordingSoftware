@@ -15,7 +15,7 @@ CatWindow::CatWindow(){
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
-    fileSettingsObject = new QFile;
+//    fileSettingsObject = new QFile;
     createLayout();
     sendParameters();
     createActions();
@@ -751,7 +751,7 @@ void CatWindow::createStatusBar(){
 
 void CatWindow::createActions(){
     //FileMenu
-    saveSettingsAction = new QAction(tr("&Save Settings"));
+    saveSettingsAction = new QAction(tr("&Save Settings As..."));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
 
     //GUIMenu
@@ -1237,25 +1237,45 @@ void CatWindow::on_filename_discard(){
 }
 
 void CatWindow::on_write_settings_changed(){
-//    filenameSettings = QDir::homePath() + "/Desktop/" + QDateTime::currentDateTime().toString("'data_'yyyyMMdd_HHmmss'.csv'");
-    getSettingsDir();
-    fileSettingsObject->setFileName(filenameSettings);
-    if(fileSettingsObject->open(QIODevice::WriteOnly)){
-        qDebug() << "File opened... " << filenameSettings;
-    }
-    else{
-        qDebug() << "File failed to open... " << filenameSettings;
-    }
-    out = new QDataStream(fileSettingsObject);
-    qDebug() << "created out...";
+    writeSettingsDir();
+    QSettings settings(filenameSettings, QSettings::IniFormat);
 
-    *out << (int)methodsClassifyBox[0]->isChecked();
-//    methodsClassifyBox[0]->isChecked() ? *out << 0 : *out << 1;  //SMChannel
+    settings.beginWriteArray("threshold");  //threshold
+    for(int i = 0; i < 4; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("digit", thresholdingSpinBox[i]->text());
+        settings.setValue("power", thresholdingPowerSpinBox[i]->text());
+    }
+    settings.endArray();
+    settings.setValue("methodsClassifyBox", methodsClassifyBox[0]->isChecked());  //classify methods
+    settings.beginWriteArray("thresholdStimulation");
+    for(int i = 0; i < indexThreshold; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("input", inputCheckBoxValue[i]);
+        settings.setValue("output", outputCheckBoxValue[i]);
+    }
+    settings.endArray();
+    settings.beginWriteArray("featureStimulation");
+    for(int i = 0; i < indexFeature; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("input", featureInputCheckBoxValue[i]);
+        settings.setValue("output", featureOutputCheckBoxValue[i]);
+    }
+    settings.endArray();
+    settings.beginGroup("parameters");
+    settings.setValue("decoding", windowDecodingSpinBox->text());
+    settings.setValue("overlap", windowOverlapSpinBox->text());
+    settings.setValue("samplingFrequency", windowSamplingFrequencySpinBox->text());
+    settings.setValue("extendStimulation", extendStimSpinBox->text());
+    settings.setValue("highpass", highpassSpinBox->text());
+    settings.setValue("lowpass", lowpassSpinBox->text());
+    settings.setValue("notch", notchSpinBox->text());
+    settings.endGroup();
 
-    qDebug() << "save output: " << out;
+    qDebug() << "all saved keys: " << settings.allKeys();
 }
 
-void CatWindow::getSettingsDir(){
+void CatWindow::writeSettingsDir(){
     filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings file as..."), QDir::currentPath(),
                                                     tr("Config Files (*.ini)"));
     qDebug() << "User has selected configuration file as: " << filenameSettings;
