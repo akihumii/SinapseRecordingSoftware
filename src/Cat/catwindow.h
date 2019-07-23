@@ -39,6 +39,7 @@ private:
 //    QDataStream *out;
     QString filenameSettings;
     QString filenameSettingsDir = QDir::currentPath();
+    QString filenameSettingsMostRecent = "catMostRecent.ini";
 
     QWidget *mainWidget;
 

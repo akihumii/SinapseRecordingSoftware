@@ -1346,16 +1346,16 @@ void CatWindow::on_open_settings_changed(){
 }
 
 void CatWindow::writeMostRecentSettings(){
-    filenameSettings = "socatMostRecent.ini";
+    filenameSettings = filenameSettingsMostRecent;
     writeSettings();
-    qDebug() << "most recent configuration file has been saved...";
+    qDebug() << "Most recent configuration file has been saved as: " << filenameSettings;
 }
 
 void CatWindow::readMostRecentSettings(){
-    if(QFile::exists("socatMostRecent.ini")){
-        filenameSettings = "socatMostRecent.ini";
+    if(QFile::exists(filenameSettingsMostRecent)){
+        filenameSettings = filenameSettingsMostRecent;
         readSettings();
-        qDebug() << "Load most recent configuration file...";
+        qDebug() << "Loaded most recent configuration file: " << filenameSettings;
     }
 }
 
