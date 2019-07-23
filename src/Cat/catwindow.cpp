@@ -1333,16 +1333,20 @@ void CatWindow::readSettings(){
 
 void CatWindow::on_write_settings_changed(){
     filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings as..."), filenameSettingsDir, tr("Config Files (*.ini)"));
-    qDebug() << "User is writing configuration file as: " << filenameSettings;
-    changeFilenameSettingsDir();
-    writeSettings();
+    if(!filenameSettings.isEmpty()){
+        qDebug() << "User is writing configuration file as: " << filenameSettings;
+        changeFilenameSettingsDir();
+        writeSettings();
+    }
 }
 
 void CatWindow::on_open_settings_changed(){
     filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), filenameSettingsDir, tr("Config Files (*.ini)"));
-    changeFilenameSettingsDir();
-    qDebug() << "User is opening configuration file: " << filenameSettings;
-    readSettings();
+    if(!filenameSettings.isEmpty()){
+        changeFilenameSettingsDir();
+        qDebug() << "User is opening configuration file: " << filenameSettings;
+        readSettings();
+    }
 }
 
 void CatWindow::writeMostRecentSettings(){
