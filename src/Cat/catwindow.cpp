@@ -322,7 +322,7 @@ void CatWindow::check_input_boxes(){
         }
     }
     startButton->setEnabled(true);
-    addSettingsButton->setEnabled(true);
+    if(methodsClassifyBox[0]->isChecked()) addSettingsButton->setEnabled(true);
     updateStimulationPattern();
     statusBarLabel->setText(tr("Ready..."));
 }
