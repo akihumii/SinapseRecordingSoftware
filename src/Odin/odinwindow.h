@@ -37,6 +37,7 @@ private:
     QTcpServer *tcpServer;
     QTcpSocket *tcpServerConnection;
 
+    QWidget *mainWidget;
     QStatusBar *statusBarMainWindow;
 
     QPushButton *sendParameterButton;
@@ -73,8 +74,15 @@ private:
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
     QMenu *fileMenu;
+    QAction *openSettingsAction;
+    QAction *saveSettingsAction;
+    QMenu *GUIMenu;
     QAction *sylphxAction;
     QAction *catAction;
+
+    QString filenameSettings;
+    QString filenameSettingsDir = QDir::currentPath();
+    QString filenameSettingsMostRecent = "odinMostRecent.ini";
 
     Led *sentLED;
     Led *receivedLED;
@@ -83,14 +91,22 @@ private:
     bool highcurrent = true;
     bool thresholdIncreaseEnable = false;
     bool thresholdDecreaseEnable = false;
+    bool delayFlag = false;
 
     int commandCount = 0;
+    int delayValue = 0;
     int delayInterval = 60;
     int numChannelsEnabled = 0;
     char *lastSentCommand = new char[2];
     char *rpiCommand = new char[2];
     double *lastSentAmplitude = new double[4];
     int count = 0;
+
+    void writeSettings();
+    void readSettings();
+    void readMostRecentSettings();
+    void closeEvent(QCloseEvent *event);
+    void changeFilenameSettingsDir();
 
     bool connectOdin();
     void createLayout();
@@ -121,6 +137,9 @@ private slots:
     void on_thresholdSelectNone_clicked();
     void on_sylphx_triggered();
     void on_cat_triggered();
+    void on_write_settings_changed();
+    void on_read_settings_changed();
+    void writeMostRecentSettings();
 
 signals:
     void commandSent(char *bytes);

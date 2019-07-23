@@ -754,7 +754,7 @@ void CatWindow::createStatusBar(){
 void CatWindow::createActions(){
     //FileMenu
     openSettingsAction = new QAction(tr("&Open Settings"));
-    connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_open_settings_changed()));
+    connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_read_settings_changed()));
 
     saveSettingsAction = new QAction(tr("&Save Settings As..."));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
@@ -1340,7 +1340,7 @@ void CatWindow::on_write_settings_changed(){
     }
 }
 
-void CatWindow::on_open_settings_changed(){
+void CatWindow::on_read_settings_changed(){
     filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), filenameSettingsDir, tr("Config Files (*.ini)"));
     if(!filenameSettings.isEmpty()){
         changeFilenameSettingsDir();

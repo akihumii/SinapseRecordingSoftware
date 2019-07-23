@@ -243,7 +243,7 @@ private slots:
     void on_remove_checkbox_clicked(int index);
     void on_update_numClass_changed();
     void on_write_settings_changed();
-    void on_open_settings_changed();
+    void on_read_settings_changed();
     void writeMostRecentSettings();
     void readOutput();
 
