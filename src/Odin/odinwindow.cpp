@@ -41,8 +41,11 @@ void OdinWindow::createActions(){
     openSettingsAction = new QAction(tr("&Open Settings"));
     connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_read_settings_changed()));
 
-    saveSettingsAction = new QAction(tr("&Save Settings As..."));
-    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
+    saveSettingsAction = new QAction(tr("&Save Settings"));
+    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
+
+    saveSettingsAsAction = new QAction(tr("S&ave Settings As..."));
+    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
 
     //GUIMenu
     sylphxAction = new QAction(tr("SylphX Control Panel"));
@@ -57,6 +60,8 @@ void OdinWindow::createActions(){
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openSettingsAction);
     fileMenu->addAction(saveSettingsAction);
+    fileMenu->addAction(saveSettingsAsAction);
+
     GUIMenu = menuBar()->addMenu(tr("G&UI"));
     GUIMenu->addAction(sylphxAction);
     GUIMenu->addAction(catAction);
@@ -748,6 +753,7 @@ void OdinWindow::writeSettings(){
     settings.setValue("delayFlag", delayFlag);  //delay
     settings.setValue("delayValue", delayValue);
 
+    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
     qDebug() << "all saved keys: " << settings.allKeys();
 }
 

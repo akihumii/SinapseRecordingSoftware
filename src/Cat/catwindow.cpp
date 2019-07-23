@@ -756,8 +756,11 @@ void CatWindow::createActions(){
     openSettingsAction = new QAction(tr("&Open Settings"));
     connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_read_settings_changed()));
 
-    saveSettingsAction = new QAction(tr("&Save Settings As..."));
-    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
+    saveSettingsAction = new QAction(tr("&Save Settings"));
+    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
+
+    saveSettingsAsAction = new QAction(tr("S&ave Settings As..."));
+    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
 
     //GUIMenu
     odinAction = new QAction(tr("Od&in Control Panel"));
@@ -772,6 +775,7 @@ void CatWindow::createActions(){
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openSettingsAction);
     fileMenu->addAction(saveSettingsAction);
+    fileMenu->addAction(saveSettingsAsAction);
 
     GUIMenu = menuBar()->addMenu(tr("G&UI"));
     GUIMenu->addAction(odinAction);
@@ -1281,6 +1285,7 @@ void CatWindow::writeSettings(){
     settings.setValue("notchFlag", notchFlag);
     settings.endGroup();
 
+    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
     qDebug() << "all saved keys: " << settings.allKeys();
 }
 

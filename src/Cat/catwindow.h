@@ -31,6 +31,7 @@ private:
     QMenu *fileMenu;
     QAction *openSettingsAction;
     QAction *saveSettingsAction;
+    QAction *saveSettingsAsAction;
     QMenu *GUIMenu;
     QAction *odinAction;
     QAction *sylphAction;
@@ -199,7 +200,6 @@ private:
     void receiveSavedFiles();
     void controlInput(bool flag);
 
-    void writeSettings();
     void readSettings();
     void readMostRecentSettings();
     void closeEvent(QCloseEvent *event);
@@ -244,6 +244,7 @@ private slots:
     void on_update_numClass_changed();
     void on_write_settings_changed();
     void on_read_settings_changed();
+    void writeSettings();
     void writeMostRecentSettings();
     void readOutput();
 

@@ -76,6 +76,7 @@ private:
     QMenu *fileMenu;
     QAction *openSettingsAction;
     QAction *saveSettingsAction;
+    QAction *saveSettingsAsAction;
     QMenu *GUIMenu;
     QAction *sylphxAction;
     QAction *catAction;
@@ -102,7 +103,6 @@ private:
     double *lastSentAmplitude = new double[4];
     int count = 0;
 
-    void writeSettings();
     void readSettings();
     void readMostRecentSettings();
     void closeEvent(QCloseEvent *event);
@@ -139,6 +139,7 @@ private slots:
     void on_cat_triggered();
     void on_write_settings_changed();
     void on_read_settings_changed();
+    void writeSettings();
     void writeMostRecentSettings();
 
 signals:
