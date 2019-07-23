@@ -38,6 +38,7 @@ private:
 //    QFile *fileSettingsObject;
 //    QDataStream *out;
     QString filenameSettings;
+    QString filenameSettingsDir = QDir::currentPath();
 
     QWidget *mainWidget;
 
@@ -197,8 +198,11 @@ private:
     void receiveSavedFiles();
     void controlInput(bool flag);
 
-    void writeSettingsDir();
-    void openSettingsDir();
+    void writeSettings();
+    void readSettings();
+    void readMostRecentSettings();
+    void closeEvent(QCloseEvent *event);
+    void changeFilenameSettingsDir();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
@@ -239,6 +243,7 @@ private slots:
     void on_update_numClass_changed();
     void on_write_settings_changed();
     void on_open_settings_changed();
+    void writeMostRecentSettings();
     void readOutput();
 
 signals:

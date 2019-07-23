@@ -16,8 +16,10 @@ CatWindow::CatWindow(){
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
 //    fileSettingsObject = new QFile;
+    readMostRecentSettings();
     createLayout();
     sendParameters();
+    startDelay = 0;  //no need to wait for other connection anymore
     createActions();
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
@@ -845,6 +847,7 @@ void CatWindow::sendParameters(){
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {
         QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
+        mainWidget->setEnabled(true);
         });
     delay += delayInterval;
 }
@@ -1240,8 +1243,7 @@ void CatWindow::on_filename_discard(){
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
 }
 
-void CatWindow::on_write_settings_changed(){
-    writeSettingsDir();
+void CatWindow::writeSettings(){
     QSettings settings(filenameSettings, QSettings::IniFormat);
 
     settings.setValue("methodsClassifyBox", methodsClassifyBox[0]->isChecked());  //classify methods
@@ -1282,8 +1284,7 @@ void CatWindow::on_write_settings_changed(){
     qDebug() << "all saved keys: " << settings.allKeys();
 }
 
-void CatWindow::on_open_settings_changed(){
-    openSettingsDir();
+void CatWindow::readSettings(){
     QSettings settings(filenameSettings, QSettings::IniFormat);
 
     commandCat->setClassifyMethods(0, settings.value("methodsClassifyBox").toBool());  //classify methods
@@ -1326,20 +1327,48 @@ void CatWindow::on_open_settings_changed(){
     settings.endGroup();
 
     createLayout();
+    mainWidget->setEnabled(false);
     sendParameters();
 }
 
-void CatWindow::writeSettingsDir(){
-    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings as..."), QDir::currentPath(), tr("Config Files (*.ini)"));
+void CatWindow::on_write_settings_changed(){
+    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings as..."), filenameSettingsDir, tr("Config Files (*.ini)"));
     qDebug() << "User is writing configuration file as: " << filenameSettings;
+    changeFilenameSettingsDir();
+    writeSettings();
 }
 
-void CatWindow::openSettingsDir(){
-    filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), QDir::currentPath(), tr("Config Files (*.ini)"));
+void CatWindow::on_open_settings_changed(){
+    filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), filenameSettingsDir, tr("Config Files (*.ini)"));
+    changeFilenameSettingsDir();
     qDebug() << "User is opening configuration file: " << filenameSettings;
+    readSettings();
+}
+
+void CatWindow::writeMostRecentSettings(){
+    filenameSettings = "socatMostRecent.ini";
+    writeSettings();
+    qDebug() << "most recent configuration file has been saved...";
+}
+
+void CatWindow::readMostRecentSettings(){
+    if(QFile::exists("socatMostRecent.ini")){
+        filenameSettings = "socatMostRecent.ini";
+        readSettings();
+        qDebug() << "Load most recent configuration file...";
+    }
+}
+
+void CatWindow::changeFilenameSettingsDir(){
+    QFileInfo fi(filenameSettings);
+    filenameSettingsDir = fi.filePath();
+}
+
+void CatWindow::closeEvent(QCloseEvent *event){
+    writeMostRecentSettings();
+    event->accept();
 }
 
 CatWindow::~CatWindow(){
-//    filenameSocket->doDisconnect();
 }
 }
