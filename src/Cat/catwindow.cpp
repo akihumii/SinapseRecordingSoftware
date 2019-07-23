@@ -751,6 +751,9 @@ void CatWindow::createStatusBar(){
 
 void CatWindow::createActions(){
     //FileMenu
+    openSettingsAction = new QAction(tr("&Open Settings"));
+    connect(openSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_open_settings_changed()));
+
     saveSettingsAction = new QAction(tr("&Save Settings As..."));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
 
@@ -765,6 +768,7 @@ void CatWindow::createActions(){
 
     //Add to menu
     fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(openSettingsAction);
     fileMenu->addAction(saveSettingsAction);
 
     GUIMenu = menuBar()->addMenu(tr("G&UI"));
@@ -1240,45 +1244,99 @@ void CatWindow::on_write_settings_changed(){
     writeSettingsDir();
     QSettings settings(filenameSettings, QSettings::IniFormat);
 
+    settings.setValue("methodsClassifyBox", methodsClassifyBox[0]->isChecked());  //classify methods
     settings.beginWriteArray("threshold");  //threshold
     for(int i = 0; i < 4; i++){
         settings.setArrayIndex(i);
-        settings.setValue("digit", thresholdingSpinBox[i]->text());
-        settings.setValue("power", thresholdingPowerSpinBox[i]->text());
+        settings.setValue("digit", commandCat->getThreshold(i));
+        settings.setValue("power", commandCat->getThresholdPower(i));
     }
     settings.endArray();
-    settings.setValue("methodsClassifyBox", methodsClassifyBox[0]->isChecked());  //classify methods
-    settings.beginWriteArray("thresholdStimulation");
+    settings.beginWriteArray("thresholdStimulation");  //threshold stimulation pattern
     for(int i = 0; i < indexThreshold; i++){
         settings.setArrayIndex(i);
         settings.setValue("input", inputCheckBoxValue[i]);
         settings.setValue("output", outputCheckBoxValue[i]);
     }
     settings.endArray();
-    settings.beginWriteArray("featureStimulation");
+    settings.beginWriteArray("featureStimulation");  //feature stimulation pattern
     for(int i = 0; i < indexFeature; i++){
         settings.setArrayIndex(i);
         settings.setValue("input", featureInputCheckBoxValue[i]);
         settings.setValue("output", featureOutputCheckBoxValue[i]);
     }
     settings.endArray();
-    settings.beginGroup("parameters");
+    settings.beginGroup("parameters");  //parameters
     settings.setValue("decoding", windowDecodingSpinBox->text());
     settings.setValue("overlap", windowOverlapSpinBox->text());
     settings.setValue("samplingFrequency", windowSamplingFrequencySpinBox->text());
     settings.setValue("extendStimulation", extendStimSpinBox->text());
     settings.setValue("highpass", highpassSpinBox->text());
+    settings.setValue("highpassFlag", highpassFlag);
     settings.setValue("lowpass", lowpassSpinBox->text());
+    settings.setValue("lowpassFlag", lowpassFlag);
     settings.setValue("notch", notchSpinBox->text());
+    settings.setValue("notchFlag", notchFlag);
     settings.endGroup();
 
     qDebug() << "all saved keys: " << settings.allKeys();
 }
 
+void CatWindow::on_open_settings_changed(){
+    openSettingsDir();
+    QSettings settings(filenameSettings, QSettings::IniFormat);
+
+    commandCat->setClassifyMethods(0, settings.value("methodsClassifyBox").toBool());  //classify methods
+    commandCat->setSMChannel(0, settings.value("methodsClassifyBox").toBool());
+    commandCat->setClassifyMethods(1, !settings.value("methodsClassifyBox").toBool());  //classify methods
+    commandCat->setSMChannel(1, !settings.value("methodsClassifyBox").toBool());
+    qDebug() << "classifyMethodsBox that is checked: " << !((commandCat->getClassifyMethods() - 520) & (1 << 0));
+    settings.beginReadArray("threshold");  //threshold
+    for(int i = 0; i < 4; i++){
+        settings.setArrayIndex(i);
+        commandCat->setThreshold(i, settings.value("digit").toInt());
+        commandCat->setThresholdPower(i, settings.value("power").toInt());
+    }
+    settings.endArray();
+    indexThreshold = settings.beginReadArray("thresholdStimulation");  //threshold stimulation pattern
+    for(int i = 0; i < indexThreshold; i++){
+        settings.setArrayIndex(i);
+        inputCheckBoxValue[i] = settings.value("input").toInt();
+        outputCheckBoxValue[i] = settings.value("output").toInt();
+    }
+    settings.endArray();
+    indexFeature = settings.beginReadArray("featureStimulation");  //feature stimulation pattern
+    for(int i = 0; i < indexFeature; i++){
+        settings.setArrayIndex(i);
+        featureInputCheckBoxValue[i] = settings.value("input").toInt();
+        featureOutputCheckBoxValue[i] = settings.value("output").toInt();
+    }
+    settings.endArray();
+    settings.beginGroup("parameters");  //parameters
+    commandCat->setDecodingWindowSize(settings.value("decoding").toInt());
+    commandCat->setOverlapWindowSize(settings.value("overlap").toInt());
+    commandCat->setSamplingFreq(settings.value("samplingFrequency").toInt());
+    commandCat->setExtendStimulation(settings.value("extendStimulation").toInt());
+    commandCat->setHighpassCutoffFreq(settings.value("highpass").toInt());
+    highpassFlag = settings.value("highpassFlag").toBool();
+    commandCat->setLowpassCutoffFreq(settings.value("lowpass").toInt());
+    lowpassFlag = settings.value("lowpassFlag").toBool();
+    commandCat->setNotchCutoffFreq(settings.value("notch").toInt());
+    notchFlag = settings.value("notchFlag").toBool();
+    settings.endGroup();
+
+    createLayout();
+    sendParameters();
+}
+
 void CatWindow::writeSettingsDir(){
-    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings file as..."), QDir::currentPath(),
-                                                    tr("Config Files (*.ini)"));
-    qDebug() << "User has selected configuration file as: " << filenameSettings;
+    filenameSettings = QFileDialog::getSaveFileName(this, tr("Save settings as..."), QDir::currentPath(), tr("Config Files (*.ini)"));
+    qDebug() << "User is writing configuration file as: " << filenameSettings;
+}
+
+void CatWindow::openSettingsDir(){
+    filenameSettings = QFileDialog::getOpenFileName(this, tr("Open settings..."), QDir::currentPath(), tr("Config Files (*.ini)"));
+    qDebug() << "User is opening configuration file: " << filenameSettings;
 }
 
 CatWindow::~CatWindow(){

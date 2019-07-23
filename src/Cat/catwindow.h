@@ -29,6 +29,7 @@ private:
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
+    QAction *openSettingsAction;
     QAction *saveSettingsAction;
     QMenu *GUIMenu;
     QAction *odinAction;
@@ -197,6 +198,7 @@ private:
     void controlInput(bool flag);
 
     void writeSettingsDir();
+    void openSettingsDir();
 
     char *lastSentCommand = new char[3];
     bool startStimulationFlag = false;
@@ -236,6 +238,7 @@ private slots:
     void on_remove_checkbox_clicked(int index);
     void on_update_numClass_changed();
     void on_write_settings_changed();
+    void on_open_settings_changed();
     void readOutput();
 
 signals:
