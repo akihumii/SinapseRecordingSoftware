@@ -32,6 +32,7 @@ private:
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
     QAction *openSettingsAction;
+    QAction *openSettingsRecentAction;
     QAction *saveSettingsAction;
     QAction *saveSettingsAsAction;
     QMenu *GUIMenu;
@@ -157,6 +158,8 @@ private:
     QStringList commandArg;
     QString commandStdout;
 
+    QStringList filenameSettingsAll;
+
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
     QByteArray numClassValue;
@@ -235,6 +238,7 @@ private slots:
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
     void on_update_numClass_changed();
+    void on_open_recent_changed();
     void writeSettings();
     void readSettings();
     void readOutput();

@@ -41,7 +41,7 @@ void CatWindow::createLayout(){
     mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
-    check_input_boxes();
+    if(methodsClassifyBox[0]->isChecked()) check_input_boxes();
 //    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
     this->resize(this->sizeHint());
 }
@@ -322,7 +322,7 @@ void CatWindow::check_input_boxes(){
         }
     }
     startButton->setEnabled(true);
-    if(methodsClassifyBox[0]->isChecked()) addSettingsButton->setEnabled(true);
+    addSettingsButton->setEnabled(true);
     updateStimulationPattern();
     statusBarLabel->setText(tr("Ready..."));
 }
@@ -759,6 +759,16 @@ void CatWindow::createActions(){
     openSettingsAction->setShortcut(tr("Ctrl+O"));
     connect(openSettingsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_read_settings_changed()));
 
+    openSettingsRecentAction = new QAction(tr("O&pen Recent"));
+    openSettingsRecentAction->setShortcut(tr("Ctrl+P"));
+    connect(openSettingsRecentAction, SIGNAL(triggered(bool)), this, SLOT(on_open_recent_changed()));
+//    filenameSettingsAll = configurationFile->getFilenameSettingsAll();
+//    int size = filenameSettingsAll.size();
+//    QMenu *openSettingsRecenctSubMenu[size];
+//    for(int i = 0; i < size; i++){
+
+//    }
+
     saveSettingsAction = new QAction(tr("&Save"));
     saveSettingsAction->setShortcut(tr("Ctrl+S"));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
@@ -779,6 +789,7 @@ void CatWindow::createActions(){
     //Add to menu
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openSettingsAction);
+    fileMenu->addAction(openSettingsRecentAction);
     fileMenu->addAction(saveSettingsAction);
     fileMenu->addAction(saveSettingsAsAction);
 
@@ -1251,6 +1262,10 @@ void CatWindow::on_filename_discard(){
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
 }
 
+void CatWindow::on_open_recent_changed(){
+    qDebug() << "config file filenameSettingsAll!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " << configurationFile->getFilenameSettingsAll();
+}
+
 void CatWindow::writeSettings(){
     QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
 
@@ -1300,7 +1315,6 @@ void CatWindow::readSettings(){
     commandCat->setSMChannel(0, settings.value("methodsClassifyBox").toBool());
     commandCat->setClassifyMethods(1, !settings.value("methodsClassifyBox").toBool());  //classify methods
     commandCat->setSMChannel(1, !settings.value("methodsClassifyBox").toBool());
-    qDebug() << "classifyMethodsBox that is checked: " << !((commandCat->getClassifyMethods() - 520) & (1 << 0));
     settings.beginReadArray("threshold");  //threshold
     for(int i = 0; i < 4; i++){
         settings.setArrayIndex(i);
@@ -1335,8 +1349,10 @@ void CatWindow::readSettings(){
     notchFlag = settings.value("notchFlag").toBool();
     settings.endGroup();
 
+
 //    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
     createLayout();
+
     mainWidget->setEnabled(false);
     sendParameters();
 }
