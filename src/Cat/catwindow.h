@@ -31,7 +31,6 @@ private:
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
-    QMenu *fileMenuTwo;
     QAction *openSettingsAction;
 //    QAction *openSettingsRecentAction;
     QMenu *openSettingsRecentAction;
@@ -170,8 +169,8 @@ private:
     int indexTemp = -1;
     bool firstLoadingFlag = true;
     QSignalMapper *filenameSettingsAllMapper;
-
     QString filename;
+
     QString filenameDiscard = "DISCARDFILE!!!";
     QByteArray numClassValue;
     QString commandNumClass = "GIMMENUMCLASS!!!";

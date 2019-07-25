@@ -10,10 +10,6 @@ OdinWindow::OdinWindow(){
     commandOdin = new CommandOdin(serialOdin, socketOdin);
     tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
-    configurationFile = new ConfigurationFile;
-    configurationFile->setFilenameSettingsMostRecent("odinMostRecent.ini");
-    connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(writeSettings()));
-    connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(readSettings()));
     loopingThread = new LoopingThread();
     QThread *thread = new QThread;
     loopingThread->moveToThread(thread);
@@ -21,10 +17,18 @@ OdinWindow::OdinWindow(){
     connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
 
-    configurationFile->readMostRecentSettings();
-    createLayout();
-    createActions();
+    configurationFile = new ConfigurationFile;
+    configurationFile->setFilenameSettingsMostRecent(filenameMostRecent);
+    connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(writeSettings()));
+    connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(on_read_settings_changed()));
+    filenameSettingsAllMapper = new QSignalMapper(this);
+    connect(filenameSettingsAllMapper, SIGNAL(mapped(int)), this, SLOT(on_read_settings_selected_changed(int)));
+
     createStatusBar();
+    createActions();
+    configurationFile->readMostRecentSettings();
+    firstLoadingFlag = false;
+    createLayout();
     connectOdin();
 
     qDebug() << tcpServer->serverPort() << tcpServer->serverAddress().toString();
@@ -66,6 +70,13 @@ void OdinWindow::createActions(){
     //Add to menu
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openSettingsAction);
+    openSettingsRecentAction = fileMenu->addMenu(tr("O&pen Recent"));
+    for(int i = 0; i < 10; i++){
+        recentFilenameSettings[i] = new QAction;
+        connect(recentFilenameSettings[i], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
+        filenameSettingsAllMapper->setMapping(recentFilenameSettings[i], i);
+    }
+
     fileMenu->addAction(saveSettingsAction);
     fileMenu->addAction(saveSettingsAsAction);
 
@@ -745,8 +756,8 @@ void OdinWindow::increaseCurrent(){
     tcpServerConnection->close();
 }
 
-void OdinWindow::writeSettings(){
-    QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
+void OdinWindow::on_write_settings_changed(){
+    QSettings settings(filenameSettings, QSettings::IniFormat);
 
     settings.setValue("channelEnable", commandOdin->getChannelEnabled());  //channel enable
     settings.beginWriteArray("parameters");  //amplitudes & pulse duation
@@ -759,13 +770,20 @@ void OdinWindow::writeSettings(){
     settings.setValue("frequency", commandOdin->getFrequency());  //frequency
     settings.setValue("delayFlag", delayFlag);  //delay
     settings.setValue("delayValue", delayValue);
+    if(filenameSettings.contains(filenameMostRecent)){
+        qDebug() << "Writing most recent settings filename......";
+        settings.setValue("filenameSettingsAll", filenameSettingsAll);
+    }
 
-    statusBarLabel->setText(tr("Save settings as: ") + configurationFile->getFilenameSettings());
+    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
     qDebug() << "all saved keys: " << settings.allKeys();
+    qDebug() << "local filename now: " << filenameSettings;
+    qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
+    updateFilenameSettingsAll();
 }
 
 void OdinWindow::readSettings(){
-    QSettings settings(configurationFile->getFilenameSettings(), QSettings::IniFormat);
+    QSettings settings(filenameSettings, QSettings::IniFormat);
 
     for(int i = 0; i < 4; i++){
         commandOdin->setChannelEnabled(i, settings.value("channelEnable").toInt() >> i);  //channel enable
@@ -780,11 +798,108 @@ void OdinWindow::readSettings(){
     commandOdin->setFrequency(settings.value("frequency").toInt());  //frequency
     delayFlag = settings.value("delayFlag").toBool();  //delay
     delayValue = settings.value("delayValue").toInt();
+    if(firstLoadingFlag){
+        qDebug() << "Reading most recent settings filename......";
+        filenameSettingsAll = settings.value("filenameSettingsAll").toStringList();
+        indexRecentFilenameSettings = filenameSettingsAll.size();
+        qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll << "\nSize: " << indexRecentFilenameSettings;
+        updateOpenSettingsRecent();
+    }
 
 //    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
     createLayout();
+
     mainWidget->setEnabled(false);
+    updateFilenameSettingsAll();
     sendParameter();
+    qDebug() << "local filename now: " << filenameSettings;
+    qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
+
+}
+
+void OdinWindow::updateFilenameSettingsAll(){
+    if(!filenameSettings.contains(filenameMostRecent)){  //exclude the most recent filename
+        if(!filenameSettingsAll.contains(filenameSettings)){  //check if it's contained in the recent filename list
+            filenameSettingsAll.prepend(filenameSettings);  //add into filenameSettingsAll
+            indexRecentFilenameSettings ++;
+        }
+        else{  //move that
+            int index = filenameSettingsAll.indexOf(QRegExp("*"+filenameSettings+"*", Qt::CaseInsensitive, QRegExp::Wildcard));
+            filenameSettingsAll.move(index, 0);
+        }
+        updateOpenSettingsRecent();
+    }
+}
+
+void OdinWindow::updateOpenSettingsRecent(){
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+    qDebug() << "filenameSettingsAll: " << filenameSettingsAll;
+    if(indexRecentFilenameSettings >= 10){
+        filenameSettingsAll.removeLast();
+        indexRecentFilenameSettings --;
+    }
+    int diff = indexRecentFilenameSettings - indexRecentFilenameAction;
+    if(diff > 0){
+        for(int i = 0; i < diff; i++){
+            openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameAction + i]);  //add into list
+        }
+    }
+    else if(diff < 0){
+        for(int i = 0; i < (-diff); i++){
+            openSettingsRecentAction->removeAction(recentFilenameSettings[indexRecentFilenameAction - i - 1]);  //remove from list
+        }
+    }
+    indexRecentFilenameAction = indexRecentFilenameSettings;
+
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+
+    for(int i = 0; i < indexRecentFilenameSettings; i++){
+        recentFilenameSettings[i]->setText(filenameSettingsAll[i]);
+    }
+}
+
+void OdinWindow::writeSettings(){
+    filenameSettings = configurationFile->getFilenameSettings();
+    on_write_settings_changed();
+}
+
+void OdinWindow::on_read_settings_changed(){
+    if(!(firstLoadingFlag && filename.contains(filenameMostRecent))){
+        filenameSettings = configurationFile->getFilenameSettings();
+        qDebug() << "reading settings that is not the most recent settings...";
+        readSettings();
+    }
+}
+
+void OdinWindow::on_read_settings_selected_changed(int index){
+    filenameSettingsTemp = filenameSettingsAll[index];
+    QFile file(filenameSettingsTemp);
+    qDebug() << "status of the file is: " << file.exists();
+    if(file.exists()){
+        filenameSettings = filenameSettingsAll[index];
+        readSettings();
+    }
+    else{
+        qDebug() << "file doesn't exist...!!!";
+        indexTemp = index;
+        QMessageBox removeFilenameBox;
+        removeFilenameBox.setText(filenameSettingsTemp + " does not exist...\nRemove from list?");
+        removeFilenameBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        removeFilenameBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = removeFilenameBox.exec();
+
+        switch(ret){
+            case QMessageBox::Ok:
+                filenameSettingsAll.removeAt(indexTemp);  //remove filename in filenameSettingsAll
+                indexRecentFilenameSettings --;
+                updateOpenSettingsRecent();
+                break;
+            case QMessageBox::Cancel:
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void OdinWindow::closeEvent(QCloseEvent *event){

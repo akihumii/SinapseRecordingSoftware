@@ -76,12 +76,25 @@ private:
     QList<QSerialPortInfo> portInfo;
     QString connectionStatus;
     QMenu *fileMenu;
-    QMenu *GUIMenu;
     QAction *openSettingsAction;
+    QMenu *openSettingsRecentAction;
+    QAction *recentFilenameSettings[10];
     QAction *saveSettingsAction;
     QAction *saveSettingsAsAction;
+    QMenu *GUIMenu;
     QAction *sylphxAction;
     QAction *catAction;
+
+    QString filenameMostRecent = "odinMostRecent.ini";
+    QString filenameSettings = filenameMostRecent;
+    QString filenameSettingsTemp;
+    QStringList filenameSettingsAll;
+    int indexRecentFilenameSettings = 0;
+    int indexRecentFilenameAction = 0;
+    int indexTemp = -1;
+    bool firstLoadingFlag = true;
+    QSignalMapper *filenameSettingsAllMapper;
+    QString filename;
 
     Led *sentLED;
     Led *receivedLED;
@@ -100,6 +113,10 @@ private:
     char *rpiCommand = new char[2];
     double *lastSentAmplitude = new double[4];
     int count = 0;
+
+    void updateFilenameSettingsAll();
+    void updateOpenSettingsRecent();
+    void readSettings();
 
     void closeEvent(QCloseEvent *event);
 
@@ -132,7 +149,9 @@ private slots:
     void on_thresholdSelectNone_clicked();
     void on_sylphx_triggered();
     void on_cat_triggered();
-    void readSettings();
+    void on_write_settings_changed();
+    void on_read_settings_changed();
+    void on_read_settings_selected_changed(int index);
     void writeSettings();
 
 signals:
