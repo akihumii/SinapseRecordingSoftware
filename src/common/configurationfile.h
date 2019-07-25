@@ -25,8 +25,6 @@ private:
     QString filenameSettingsMostRecent = "mostRecent.ini";
 
     void changeFilenameSettingsDir();
-    void addFilenameSettingsAll();
-    void readFilenameSettingsAll();
 
 public slots:
     void on_write_settings_changed();

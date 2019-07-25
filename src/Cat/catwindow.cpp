@@ -16,14 +16,14 @@ CatWindow::CatWindow(){
     configurationFile->setFilenameSettingsMostRecent(filenameMostRecent);
     connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(on_write_settings_changed()));
     connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(on_read_settings_changed()));
+    filenameSettingsAllMapper = new QSignalMapper(this);
+    connect(filenameSettingsAllMapper, SIGNAL(mapped(int)), this, SLOT(on_read_settings_selected_changed(int)));
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
     createStatusBar();
     configurationFile->readMostRecentSettings();
     createActions();
-    filenameSettingsAllMapper = new QSignalMapper(this);
-    connect(filenameSettingsAllMapper, SIGNAL(mapped(int)), this, SLOT(on_read_settings_selected_changed(int)));
     createLayout();
     sendParameters();
     startDelay = 0;  //no need to wait for other connection anymore
@@ -761,10 +761,6 @@ void CatWindow::createActions(){
     openSettingsAction->setShortcut(tr("Ctrl+O"));
     connect(openSettingsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_read_settings_changed()));
 
-//    openSettingsRecentAction = new QAction(tr("&Open Recent"));
-//    openSettingsRecentAction->setShortcut(tr("Ctrl+P"));
-//    connect(openSettingsRecentAction, SIGNAL(triggered(bool)), this, SLOT(on_open_recent_changed()));
-
     saveSettingsAction = new QAction(tr("&Save"));
     saveSettingsAction->setShortcut(tr("Ctrl+S"));
     connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
@@ -785,14 +781,13 @@ void CatWindow::createActions(){
     //Add to menu
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openSettingsAction);
-//    fileMenu->addAction(openSettingsRecentAction);
     openSettingsRecentAction = fileMenu->addMenu(tr("O&pen Recent"));
-//    filenameSettingsAll = configurationFile->getFilenameSettingsAll();
-//    int size = filenameSettingsAll.size();
-//    QMenu *openSettingsRecenctSubMenu[size];
-//    for(int i = 0; i < size; i++){
+    for(int i = 0; i < 10; i++){
+        recentFilenameSettings[i] = new QAction;
+        connect(recentFilenameSettings[i], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
+        filenameSettingsAllMapper->setMapping(recentFilenameSettings[i], i);
+    }
 
-//    }
     fileMenu->addAction(saveSettingsAction);
     fileMenu->addAction(saveSettingsAsAction);
 
@@ -1268,17 +1263,8 @@ void CatWindow::on_filename_discard(){
 void CatWindow::updateFilenameSettingsAll(){
     if(!filenameSettings.contains(filenameMostRecent)){  //exclude the most recent filename
         if(!filenameSettingsAll.contains(filenameSettings)){  //check if it's contained in the recent filename list
-            if(indexRecentFilenameSettings < 10){
-                recentFilenameSettings[indexRecentFilenameSettings] = new QAction;  //add action
-                connect(recentFilenameSettings[indexRecentFilenameSettings], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
-                filenameSettingsAllMapper->setMapping(recentFilenameSettings[indexRecentFilenameSettings], indexRecentFilenameSettings);
-                openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameSettings]);  //add into menu
-                indexRecentFilenameSettings ++;  //add the indexFilenameSettings
-            }
-            else{
-                filenameSettingsAll.removeLast();
-            }
             filenameSettingsAll.prepend(filenameSettings);  //add into filenameSettingsAll
+            indexRecentFilenameSettings ++;
         }
         else{  //move that
             int index = filenameSettingsAll.indexOf(QRegExp("*"+filenameSettings+"*", Qt::CaseInsensitive, QRegExp::Wildcard));
@@ -1289,6 +1275,29 @@ void CatWindow::updateFilenameSettingsAll(){
 }
 
 void CatWindow::updateOpenSettingsRecent(){
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+    qDebug() << "filenameSettingsAll: " << filenameSettingsAll;
+    if(indexRecentFilenameSettings >= 10){
+        filenameSettingsAll.removeLast();
+        indexRecentFilenameSettings --;
+    }
+    int diff = indexRecentFilenameSettings - indexRecentFilenameAction;
+    if(diff > 0){
+        for(int i = 0; i < diff; i++){
+            openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameAction + i]);  //add into list
+        }
+    }
+    else if(diff < 0){
+        for(int i = 0; i < (-diff); i++){
+            qDebug() << "removing action: " << indexRecentFilenameAction - i - 1;
+//            recentFilenameSettings[indexRecentFilenameAction - i]->setVisible(false);  //remove from list
+            openSettingsRecentAction->removeAction(recentFilenameSettings[indexRecentFilenameAction - i - 1]);  //remove from list
+        }
+    }
+    indexRecentFilenameAction = indexRecentFilenameSettings;
+
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+
     for(int i = 0; i < indexRecentFilenameSettings; i++){
         recentFilenameSettings[i]->setText(filenameSettingsAll[i]);
     }
@@ -1331,6 +1340,15 @@ void CatWindow::on_write_settings_changed(){
     settings.setValue("notch", notchSpinBox->text());
     settings.setValue("notchFlag", notchFlag);
     settings.endGroup();
+    if(configurationFile->getFilenameSettings().contains(filenameMostRecent)){
+        qDebug() << "Writing most recent settings filename......";
+        settings.beginWriteArray("filenameSettingsAll");
+        for(int i = 0; i < indexRecentFilenameSettings; i++){
+            settings.setArrayIndex(i);
+            settings.setValue("filename", filenameSettingsAll);
+        }
+        settings.endArray();
+    }
 
     statusBarLabel->setText(tr("Save settings as: ") + configurationFile->getFilenameSettings());
     qDebug() << "all saved keys: " << settings.allKeys();
@@ -1340,6 +1358,7 @@ void CatWindow::on_read_settings_changed(){
     filenameSettingsTemp = configurationFile->getFilenameSettings();
     if(indexTemp == -1 || !filenameSettingsTemp.contains(filenameSettings)){
         filenameSettings = filenameSettingsTemp;
+        qDebug() << "reading settings that is not the most recent settings...";
         readSettings();
     }
 }
@@ -1349,7 +1368,7 @@ void CatWindow::on_read_settings_selected_changed(int index){
     QFile file(filenameSettingsTemp);
     qDebug() << "status of the file is: " << file.exists();
     if(file.exists()){
-        if(index != 0){
+        if(filenameSettings != filenameSettingsAll[index]){
             filenameSettings = filenameSettingsAll[index];
             readSettings();
         }
@@ -1365,7 +1384,9 @@ void CatWindow::on_read_settings_selected_changed(int index){
 
         switch(ret){
             case QMessageBox::Ok:
-                removeFilename();
+                filenameSettingsAll.removeAt(indexTemp);  //remove filename in filenameSettingsAll
+                indexRecentFilenameSettings --;
+                updateOpenSettingsRecent();
                 break;
             case QMessageBox::Cancel:
                 break;
@@ -1373,13 +1394,6 @@ void CatWindow::on_read_settings_selected_changed(int index){
                 break;
         }
     }
-}
-
-void CatWindow::removeFilename(){
-    filenameSettingsAll.removeAt(indexTemp);  //remove filename in filenameSettingsAll
-    openSettingsRecentAction->removeAction(recentFilenameSettings[indexTemp]);  //remove filename in recent file list
-    indexRecentFilenameSettings --;  //decrease the number of filenameSettingsAll
-    updateOpenSettingsRecent();
 }
 
 void CatWindow::readSettings(){
@@ -1422,6 +1436,16 @@ void CatWindow::readSettings(){
     commandCat->setNotchCutoffFreq(settings.value("notch").toInt());
     notchFlag = settings.value("notchFlag").toBool();
     settings.endGroup();
+    if(filenameSettings.contains(filenameMostRecent)){
+        qDebug() << "Reading most recent settings filename......";
+        indexRecentFilenameSettings = settings.beginReadArray("filenameSettingsAll");  //read filenameSettingsAll
+        for(int i = 0; i < indexRecentFilenameSettings; i++){
+            settings.setArrayIndex(i);
+            filenameSettingsAll.prepend(settings.value("filename").toString());
+        }
+        settings.endArray();
+        qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll;
+    }
 
 //    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
     createLayout();
