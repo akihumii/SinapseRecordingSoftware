@@ -212,7 +212,6 @@ private:
 
     void updateFilenameSettingsAll();
     void updateOpenSettingsRecent();
-    void writeSettings();
     void readSettings();
 
     void closeEvent(QCloseEvent *event);
@@ -257,6 +256,7 @@ private slots:
     void on_write_settings_changed();
     void on_read_settings_changed();
     void on_read_settings_selected_changed(int index);
+    void writeSettings();
 //    void on_reject_removeFilename_changed();
     void readOutput();
 
