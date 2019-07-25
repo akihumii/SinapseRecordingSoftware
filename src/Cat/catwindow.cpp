@@ -20,8 +20,8 @@ CatWindow::CatWindow(){
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
     createStatusBar();
-    createActions();
     configurationFile->readMostRecentSettings();
+    createActions();
     filenameSettingsAllMapper = new QSignalMapper(this);
     connect(filenameSettingsAllMapper, SIGNAL(mapped(int)), this, SLOT(on_read_settings_selected_changed(int)));
     createLayout();
@@ -767,7 +767,7 @@ void CatWindow::createActions(){
 
     saveSettingsAction = new QAction(tr("&Save"));
     saveSettingsAction->setShortcut(tr("Ctrl+S"));
-    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
+    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
 
     saveSettingsAsAction = new QAction(tr("S&ave As"));
     saveSettingsAsAction->setShortcut(tr("Ctrl+A"));
@@ -1338,7 +1338,7 @@ void CatWindow::on_write_settings_changed(){
 
 void CatWindow::on_read_settings_changed(){
     filenameSettingsTemp = configurationFile->getFilenameSettings();
-    if(!filenameSettingsTemp.contains(filenameSettings)){
+    if(indexTemp == -1 || !filenameSettingsTemp.contains(filenameSettings)){
         filenameSettings = filenameSettingsTemp;
         readSettings();
     }
