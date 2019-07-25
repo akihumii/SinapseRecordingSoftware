@@ -1268,33 +1268,29 @@ void CatWindow::on_filename_discard(){
 void CatWindow::updateFilenameSettingsAll(){
     if(!filenameSettings.contains(filenameMostRecent)){  //exclude the most recent filename
         if(!filenameSettingsAll.contains(filenameSettings)){  //check if it's contained in the recent filename list
-//            if(indexRecentFilenameSettings > 9){
-//                for(int i = 0; i < 9; i++){
-//                    recentFilenameSettings[i] = recentFilenameSettings[i+1];
-//                }
-//            }
-            recentFilenameSettings[indexRecentFilenameSettings] = new QAction;
-            connect(recentFilenameSettings[indexRecentFilenameSettings], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
-            filenameSettingsAllMapper->setMapping(recentFilenameSettings[indexRecentFilenameSettings], indexRecentFilenameSettings);
-            openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameSettings]);
-//            !indexRecentFilenameSettings ? openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameSettings]) :
-//                                           openSettingsRecentAction->insertAction(recentFilenameSettings[0], recentFilenameSettings[indexRecentFilenameSettings]);
-            qDebug() << "for now the recentfilenameSettings is: " << recentFilenameSettings;
-            filenameSettingsAll.prepend(filenameSettings);
-            qDebug() << "and the filenameSettingsAll is: " << filenameSettingsAll;
-            if(indexRecentFilenameSettings <= 9) indexRecentFilenameSettings ++;
-            qDebug() << "the index is: " << indexRecentFilenameSettings;
+            if(indexRecentFilenameSettings < 10){
+                recentFilenameSettings[indexRecentFilenameSettings] = new QAction;  //add action
+                connect(recentFilenameSettings[indexRecentFilenameSettings], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
+                filenameSettingsAllMapper->setMapping(recentFilenameSettings[indexRecentFilenameSettings], indexRecentFilenameSettings);
+                openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameSettings]);  //add into menu
+                indexRecentFilenameSettings ++;  //add the indexFilenameSettings
+            }
+            else{
+                filenameSettingsAll.removeLast();
+            }
+            filenameSettingsAll.prepend(filenameSettings);  //add into filenameSettingsAll
         }
         else{  //move that
             int index = filenameSettingsAll.indexOf(QRegExp("*"+filenameSettings+"*", Qt::CaseInsensitive, QRegExp::Wildcard));
-            qDebug() << "the repeated filename in recent filename list appears at index: " << index;
             filenameSettingsAll.move(index, 0);
         }
+        updateOpenSettingsRecent();
+    }
+}
 
-        for(int i = 0; i < indexRecentFilenameSettings; i++){
-            recentFilenameSettings[i]->setText(filenameSettingsAll[i]);
-            qDebug() << i << recentFilenameSettings[i];
-        }
+void CatWindow::updateOpenSettingsRecent(){
+    for(int i = 0; i < indexRecentFilenameSettings; i++){
+        recentFilenameSettings[i]->setText(filenameSettingsAll[i]);
     }
 }
 
@@ -1349,12 +1345,41 @@ void CatWindow::on_read_settings_changed(){
 }
 
 void CatWindow::on_read_settings_selected_changed(int index){
-    if(index != 0){
-        qDebug() << "We're inisde!!!: " << index;
-        filenameSettings = filenameSettingsAll[index];
-        readSettings();
+    filenameSettingsTemp = filenameSettingsAll[index];
+    QFile file(filenameSettingsTemp);
+    qDebug() << "status of the file is: " << file.exists();
+    if(file.exists()){
+        if(index != 0){
+            filenameSettings = filenameSettingsAll[index];
+            readSettings();
+        }
     }
-    qDebug() << "Reading recent files: " << index;
+    else{
+        qDebug() << "file doesn't exist...!!!";
+        indexTemp = index;
+        QMessageBox removeFilenameBox;
+        removeFilenameBox.setText(filenameSettingsTemp + " does not exist...\nRemove from list?");
+        removeFilenameBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        removeFilenameBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = removeFilenameBox.exec();
+
+        switch(ret){
+            case QMessageBox::Ok:
+                removeFilename();
+                break;
+            case QMessageBox::Cancel:
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void CatWindow::removeFilename(){
+    filenameSettingsAll.removeAt(indexTemp);  //remove filename in filenameSettingsAll
+    openSettingsRecentAction->removeAction(recentFilenameSettings[indexTemp]);  //remove filename in recent file list
+    indexRecentFilenameSettings --;  //decrease the number of filenameSettingsAll
+    updateOpenSettingsRecent();
 }
 
 void CatWindow::readSettings(){

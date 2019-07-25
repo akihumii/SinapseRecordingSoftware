@@ -166,6 +166,7 @@ private:
     QString filenameSettingsTemp;
     QStringList filenameSettingsAll;
     int indexRecentFilenameSettings = 0;
+    int indexTemp = 0;
     QSignalMapper *filenameSettingsAllMapper;
 
     QString filename;
@@ -208,6 +209,8 @@ private:
     void controlInput(bool flag);
 
     void updateFilenameSettingsAll();
+    void updateOpenSettingsRecent();
+    void removeFilename();
     void writeSettings();
     void readSettings();
 
@@ -253,6 +256,7 @@ private slots:
     void on_write_settings_changed();
     void on_read_settings_changed();
     void on_read_settings_selected_changed(int index);
+//    void on_reject_removeFilename_changed();
     void readOutput();
 
 signals:
