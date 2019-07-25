@@ -22,8 +22,8 @@ CatWindow::CatWindow(){
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
     createStatusBar();
-    configurationFile->readMostRecentSettings();
     createActions();
+    configurationFile->readMostRecentSettings();
     createLayout();
     sendParameters();
     startDelay = 0;  //no need to wait for other connection anymore
@@ -1289,8 +1289,6 @@ void CatWindow::updateOpenSettingsRecent(){
     }
     else if(diff < 0){
         for(int i = 0; i < (-diff); i++){
-            qDebug() << "removing action: " << indexRecentFilenameAction - i - 1;
-//            recentFilenameSettings[indexRecentFilenameAction - i]->setVisible(false);  //remove from list
             openSettingsRecentAction->removeAction(recentFilenameSettings[indexRecentFilenameAction - i - 1]);  //remove from list
         }
     }
@@ -1342,12 +1340,7 @@ void CatWindow::on_write_settings_changed(){
     settings.endGroup();
     if(configurationFile->getFilenameSettings().contains(filenameMostRecent)){
         qDebug() << "Writing most recent settings filename......";
-        settings.beginWriteArray("filenameSettingsAll");
-        for(int i = 0; i < indexRecentFilenameSettings; i++){
-            settings.setArrayIndex(i);
-            settings.setValue("filename", filenameSettingsAll);
-        }
-        settings.endArray();
+        settings.setValue("filenameSettingsAll", filenameSettingsAll);
     }
 
     statusBarLabel->setText(tr("Save settings as: ") + configurationFile->getFilenameSettings());
@@ -1356,7 +1349,7 @@ void CatWindow::on_write_settings_changed(){
 
 void CatWindow::on_read_settings_changed(){
     filenameSettingsTemp = configurationFile->getFilenameSettings();
-    if(indexTemp == -1 || !filenameSettingsTemp.contains(filenameSettings)){
+    if(firstLoadingFlag || !filenameSettingsTemp.contains(filenameSettings)){
         filenameSettings = filenameSettingsTemp;
         qDebug() << "reading settings that is not the most recent settings...";
         readSettings();
@@ -1436,15 +1429,13 @@ void CatWindow::readSettings(){
     commandCat->setNotchCutoffFreq(settings.value("notch").toInt());
     notchFlag = settings.value("notchFlag").toBool();
     settings.endGroup();
-    if(filenameSettings.contains(filenameMostRecent)){
+    if(firstLoadingFlag){
         qDebug() << "Reading most recent settings filename......";
-        indexRecentFilenameSettings = settings.beginReadArray("filenameSettingsAll");  //read filenameSettingsAll
-        for(int i = 0; i < indexRecentFilenameSettings; i++){
-            settings.setArrayIndex(i);
-            filenameSettingsAll.prepend(settings.value("filename").toString());
-        }
-        settings.endArray();
-        qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll;
+        filenameSettingsAll = settings.value("filenameSettingsAll").toStringList();
+        indexRecentFilenameSettings = filenameSettingsAll.size();
+        qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll << "\nSize: " << indexRecentFilenameSettings;
+        updateOpenSettingsRecent();
+        firstLoadingFlag = false;
     }
 
 //    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());

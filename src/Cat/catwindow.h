@@ -168,6 +168,7 @@ private:
     int indexRecentFilenameSettings = 0;
     int indexRecentFilenameAction = 0;
     int indexTemp = -1;
+    bool firstLoadingFlag = true;
     QSignalMapper *filenameSettingsAllMapper;
 
     QString filename;
