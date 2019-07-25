@@ -1,15 +1,14 @@
 #include "configurationfile.h"
 
 ConfigurationFile::ConfigurationFile(){
-
 }
 
 void ConfigurationFile::on_write_settings_changed(){
     filenameSettingsTemp = QFileDialog::getSaveFileName(this, tr("Save settings as..."), filenameSettingsDir, tr("Config Files (*.ini)"));
     if(!filenameSettingsTemp.isEmpty()){
         filenameSettings = filenameSettingsTemp;
-        qDebug() << "User is writing configuration file as: " << filenameSettings;
         changeFilenameSettingsDir();
+        qDebug() << "User is writing configuration file as: " << filenameSettings;
         emit writeSettingsSignal();
     }
 }
@@ -31,8 +30,8 @@ void ConfigurationFile::writeMostRecentSettings(){
 }
 
 void ConfigurationFile::readMostRecentSettings(){
-    if(QFile::exists(filenameSettingsMostRecent)){
-        filenameSettings = filenameSettingsMostRecent;
+    filenameSettings = filenameSettingsMostRecent;
+    if(QFile::exists(filenameSettings)){
         emit readSettingsSignal();
         qDebug() << "Loaded most recent configuration file: " << filenameSettings;
     }
@@ -51,3 +50,6 @@ QString ConfigurationFile::getFilenameSettings(){
     return filenameSettings;
 }
 
+QStringList ConfigurationFile::getFilenameSettingsAll(){
+    return filenameSettingsAll;
+}
