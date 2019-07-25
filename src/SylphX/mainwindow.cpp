@@ -310,11 +310,11 @@ void MainWindow::connectSylph(){
 
         socketSylph->doConnect(ip, p);
 
-        for(int i = 1; !socketSylph->isConnected() && i < 4; i++){
-            p = 8888;
-            ip = "192.168.4."+QString::number(i);
-            socketSylph->doConnect(ip, p);
-        }
+//        for(int i = 1; !socketSylph->isConnected() && i < 4; i++){
+//            p = 8888;
+//            ip = "192.168.4."+QString::number(i);
+//            socketSylph->doConnect(ip, p);
+//        }
 
         if(socketSylph->isConnected()){
             updateStatusBar(0, "Connected to Sylph WiFi Module at " + ip + "/" + QString::number(p));

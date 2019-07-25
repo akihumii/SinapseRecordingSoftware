@@ -17,9 +17,18 @@ OdinWindow::OdinWindow(){
     connect(socketOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
     connect(serialOdin, SIGNAL(odinDisconnected()), this, SLOT(on_odinDisconnected()));
 
-    createLayout();
-    createActions();
+    configurationFile = new ConfigurationFile;
+    configurationFile->setFilenameSettingsMostRecent(filenameMostRecent);
+    connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(writeSettings()));
+    connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(on_read_settings_changed()));
+    filenameSettingsAllMapper = new QSignalMapper(this);
+    connect(filenameSettingsAllMapper, SIGNAL(mapped(int)), this, SLOT(on_read_settings_selected_changed(int)));
+
     createStatusBar();
+    createActions();
+    configurationFile->readMostRecentSettings();
+    firstLoadingFlag = false;
+    createLayout();
     connectOdin();
 
     qDebug() << tcpServer->serverPort() << tcpServer->serverAddress().toString();
@@ -36,6 +45,20 @@ OdinWindow::OdinWindow(){
 }
 
 void OdinWindow::createActions(){
+    //FileMenu
+    openSettingsAction = new QAction(tr("&Open"));
+    openSettingsAction->setShortcut(tr("Ctrl+O"));
+    connect(openSettingsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_read_settings_changed()));
+
+    saveSettingsAction = new QAction(tr("&Save"));
+    saveSettingsAction->setShortcut(tr("Ctrl+S"));
+    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(writeSettings()));
+
+    saveSettingsAsAction = new QAction(tr("S&ave As"));
+    saveSettingsAsAction->setShortcut(tr("Ctrl+A"));
+    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_write_settings_changed()));
+
+    //GUIMenu
     sylphxAction = new QAction(tr("SylphX Control Panel"));
     sylphxAction->setShortcut(tr("Ctrl+R"));
     connect(sylphxAction, SIGNAL(triggered(bool)), this, SLOT(on_sylphx_triggered()));
@@ -44,16 +67,30 @@ void OdinWindow::createActions(){
     catAction->setShortcut(tr("Ctrl+T"));
     connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
 
-    fileMenu = menuBar()->addMenu(tr("G&UI"));
-    fileMenu->addAction(sylphxAction);
-    fileMenu->addAction(catAction);
+    //Add to menu
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(openSettingsAction);
+    openSettingsRecentAction = fileMenu->addMenu(tr("O&pen Recent"));
+    for(int i = 0; i < 10; i++){
+        recentFilenameSettings[i] = new QAction;
+        connect(recentFilenameSettings[i], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
+        filenameSettingsAllMapper->setMapping(recentFilenameSettings[i], i);
+    }
+
+    fileMenu->addAction(saveSettingsAction);
+    fileMenu->addAction(saveSettingsAsAction);
+
+    GUIMenu = menuBar()->addMenu(tr("G&UI"));
+    GUIMenu->addAction(sylphxAction);
+    GUIMenu->addAction(catAction);
 }
 
 void OdinWindow::createLayout(){
     stimParameters = new QGroupBox(tr("Stimulator Parameters"));
     paraLabels[0] = new QLabel(tr(" "));
     paraLabels[1] = new QLabel(tr("Channel Enabled: "));
-    paraLabels[2] = new QLabel(tr("Threshold Enable: "));
+    paraLabels[2] = new QLabel;
+//    paraLabels[2] = new QLabel(tr("Threshold Enable: "));
     paraLabels[3] = new QLabel(tr("Amplitude(uA): "));
     paraLabels[4] = new QLabel(tr("Pulse Duration(us): "));
     paraLabels[5] = new QLabel(tr("Frequency(Hz): "));
@@ -70,25 +107,26 @@ void OdinWindow::createLayout(){
         stimParaLayout[0]->addWidget(chnLabels[i]);
 
         channelEnable[i] = new QCheckBox;
+        channelEnable[i]->setChecked(commandOdin->getChannelEnabled() >> i);
         stimParaLayout[1]->addWidget(channelEnable[i]);
         connect(channelEnable[i], SIGNAL(toggled(bool)), this, SLOT(on_channelEnable_toggled()));
 
         thresholdEnable[i] = new QCheckBox;
-        stimParaLayout[2]->addWidget(thresholdEnable[i]);
+//        stimParaLayout[2]->addWidget(thresholdEnable[i]);
         connect(thresholdEnable[i], SIGNAL(toggled(bool)), this, SLOT(on_thresholdEnable_toggled()));
 
         amplitudeSpinBox[i] = new QDoubleSpinBox;
         amplitudeSpinBox[i]->setMinimum(0.0);
         amplitudeSpinBox[i]->setMaximum(19.0);
         amplitudeSpinBox[i]->setSingleStep(1.0);
-        amplitudeSpinBox[i]->setValue(0.0);
+        amplitudeSpinBox[i]->setValue(commandOdin->getAmplitude(i));
         stimParaLayout[3]->addWidget(amplitudeSpinBox[i]);
         connect(amplitudeSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_amplitude_Changed()));
 
         pulseDurationSpinBox[i] = new QSpinBox;
         pulseDurationSpinBox[i]->setMinimum(20);
         pulseDurationSpinBox[i]->setMaximum(1000);
-        pulseDurationSpinBox[i]->setValue(200);
+        pulseDurationSpinBox[i]->setValue(commandOdin->getPulseDuration(i));
         stimParaLayout[4]->addWidget(pulseDurationSpinBox[i]);
         connect(pulseDurationSpinBox[i], SIGNAL(editingFinished()), this, SLOT(on_pulseDuration_Changed()));
     }
@@ -97,7 +135,7 @@ void OdinWindow::createLayout(){
     frequencySpinBox->setMinimumWidth(360);
     frequencySpinBox->setMinimum(10);
     frequencySpinBox->setMaximum(200);
-    frequencySpinBox->setValue(50);
+    frequencySpinBox->setValue(commandOdin->getFrequency());
     connect(frequencySpinBox, SIGNAL(editingFinished()), this, SLOT(on_frequency_Changed()));
     stimParaLayout[5]->addWidget(frequencySpinBox);
 
@@ -129,10 +167,11 @@ void OdinWindow::createLayout(){
 
     delayParameters = new QGroupBox(tr("Delay Parameters"));
     delayEnabledCheckBox = new QCheckBox;
+    delayEnabledCheckBox->setChecked(delayFlag);
     connect(delayEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_delayEnabled_toggled()));
     QLabel *delayLabel = new QLabel(tr("Turn off after (seconds) : "));
     delaySpinBox = new QSpinBox;
-    delaySpinBox->setValue(0);
+    delaySpinBox->setValue(delayValue);
     delaySpinBox->setMinimumWidth(220);
     delaySpinBox->setMaximum(60000);
 
@@ -209,11 +248,11 @@ void OdinWindow::createLayout(){
     buttonLayout->addWidget(sendButton);
     buttonLayout->addWidget(modeButton);
 
-    QWidget *mainWidget = new QWidget;
+    mainWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(stimParameters);
     mainLayout->addWidget(delayParameters);
-    mainLayout->addWidget(thresholdParameters);
+//    mainLayout->addWidget(thresholdParameters);
     mainLayout->addLayout(buttonLayout);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
@@ -333,6 +372,7 @@ void OdinWindow::sendParameter(){
 //    }
     QTimer::singleShot((STARTDELAY+delay), [=] {
         QMessageBox::information(this, "Done!", "Stimulator parameters have been sent...");
+        mainWidget->setEnabled(true);
     });
     delay += delayInterval;
     sendParameterButton->setEnabled(false);
@@ -454,6 +494,7 @@ void OdinWindow::pauseOdin(){
 }
 
 void OdinWindow::on_delayEnabled_toggled(){
+    delayFlag = delayEnabledCheckBox->isChecked();
     if(delayEnabledCheckBox->isChecked() && start){
         loopingThread->delay = delaySpinBox->value()*1000 + 1300;
         loopingThread->start();
@@ -713,6 +754,157 @@ void OdinWindow::increaseCurrent(){
     //Needa debug if should be sendCommand(); here or not.
     on_amplitude_Changed();
     tcpServerConnection->close();
+}
+
+void OdinWindow::on_write_settings_changed(){
+    QSettings settings(filenameSettings, QSettings::IniFormat);
+
+    settings.setValue("channelEnable", commandOdin->getChannelEnabled());  //channel enable
+    settings.beginWriteArray("parameters");  //amplitudes & pulse duation
+    for(int i = 0; i < 4; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("amplitude", commandOdin->getAmplitude(i));
+        settings.setValue("pulseDuration", commandOdin->getPulseDuration(i));
+    }
+    settings.endArray();
+    settings.setValue("frequency", commandOdin->getFrequency());  //frequency
+    settings.setValue("delayFlag", delayFlag);  //delay
+    settings.setValue("delayValue", delayValue);
+    if(filenameSettings.contains(filenameMostRecent)){
+        qDebug() << "Writing most recent settings filename......";
+        settings.setValue("filenameSettingsAll", filenameSettingsAll);
+    }
+
+    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
+    qDebug() << "all saved keys: " << settings.allKeys();
+    qDebug() << "local filename now: " << filenameSettings;
+    qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
+    updateFilenameSettingsAll();
+}
+
+void OdinWindow::readSettings(){
+    QSettings settings(filenameSettings, QSettings::IniFormat);
+
+    for(int i = 0; i < 4; i++){
+        commandOdin->setChannelEnabled(i, settings.value("channelEnable").toInt() >> i);  //channel enable
+    }
+    settings.beginReadArray("parameters");  //amplitude & pulse duration
+    for(int i = 0; i < 4; i++){
+        settings.setArrayIndex(i);
+        commandOdin->setAmplitude(i, settings.value("amplitude").toDouble());
+        commandOdin->setPulseDuration(i, settings.value("pulseDuration").toInt());
+    }
+    settings.endArray();
+    commandOdin->setFrequency(settings.value("frequency").toInt());  //frequency
+    delayFlag = settings.value("delayFlag").toBool();  //delay
+    delayValue = settings.value("delayValue").toInt();
+    if(firstLoadingFlag){
+        qDebug() << "Reading most recent settings filename......";
+        filenameSettingsAll = settings.value("filenameSettingsAll").toStringList();
+        indexRecentFilenameSettings = filenameSettingsAll.size();
+        qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll << "\nSize: " << indexRecentFilenameSettings;
+        updateOpenSettingsRecent();
+    }
+
+//    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
+    createLayout();
+
+    mainWidget->setEnabled(false);
+    updateFilenameSettingsAll();
+    sendParameter();
+    qDebug() << "local filename now: " << filenameSettings;
+    qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
+
+}
+
+void OdinWindow::updateFilenameSettingsAll(){
+    if(!filenameSettings.contains(filenameMostRecent)){  //exclude the most recent filename
+        if(!filenameSettingsAll.contains(filenameSettings)){  //check if it's contained in the recent filename list
+            filenameSettingsAll.prepend(filenameSettings);  //add into filenameSettingsAll
+            indexRecentFilenameSettings ++;
+        }
+        else{  //move that
+            int index = filenameSettingsAll.indexOf(QRegExp("*"+filenameSettings+"*", Qt::CaseInsensitive, QRegExp::Wildcard));
+            filenameSettingsAll.move(index, 0);
+        }
+        updateOpenSettingsRecent();
+    }
+}
+
+void OdinWindow::updateOpenSettingsRecent(){
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+    qDebug() << "filenameSettingsAll: " << filenameSettingsAll;
+    if(indexRecentFilenameSettings >= 10){
+        filenameSettingsAll.removeLast();
+        indexRecentFilenameSettings --;
+    }
+    int diff = indexRecentFilenameSettings - indexRecentFilenameAction;
+    if(diff > 0){
+        for(int i = 0; i < diff; i++){
+            openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameAction + i]);  //add into list
+        }
+    }
+    else if(diff < 0){
+        for(int i = 0; i < (-diff); i++){
+            openSettingsRecentAction->removeAction(recentFilenameSettings[indexRecentFilenameAction - i - 1]);  //remove from list
+        }
+    }
+    indexRecentFilenameAction = indexRecentFilenameSettings;
+
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+
+    for(int i = 0; i < indexRecentFilenameSettings; i++){
+        recentFilenameSettings[i]->setText(filenameSettingsAll[i]);
+    }
+}
+
+void OdinWindow::writeSettings(){
+    filenameSettings = configurationFile->getFilenameSettings();
+    on_write_settings_changed();
+}
+
+void OdinWindow::on_read_settings_changed(){
+    if(!(firstLoadingFlag && filename.contains(filenameMostRecent))){
+        filenameSettings = configurationFile->getFilenameSettings();
+        qDebug() << "reading settings that is not the most recent settings...";
+        readSettings();
+    }
+}
+
+void OdinWindow::on_read_settings_selected_changed(int index){
+    filenameSettingsTemp = filenameSettingsAll[index];
+    QFile file(filenameSettingsTemp);
+    qDebug() << "status of the file is: " << file.exists();
+    if(file.exists()){
+        filenameSettings = filenameSettingsAll[index];
+        readSettings();
+    }
+    else{
+        qDebug() << "file doesn't exist...!!!";
+        indexTemp = index;
+        QMessageBox removeFilenameBox;
+        removeFilenameBox.setText(filenameSettingsTemp + " does not exist...\nRemove from list?");
+        removeFilenameBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        removeFilenameBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = removeFilenameBox.exec();
+
+        switch(ret){
+            case QMessageBox::Ok:
+                filenameSettingsAll.removeAt(indexTemp);  //remove filename in filenameSettingsAll
+                indexRecentFilenameSettings --;
+                updateOpenSettingsRecent();
+                break;
+            case QMessageBox::Cancel:
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void OdinWindow::closeEvent(QCloseEvent *event){
+    configurationFile->writeMostRecentSettings();
+    event->accept();
 }
 
 void OdinWindow::on_sylphx_triggered(){

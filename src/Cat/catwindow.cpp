@@ -12,15 +12,24 @@ CatWindow::CatWindow(){
     connect(filenameDialog, SIGNAL(filenameDiscard()), this, SLOT(on_filename_discard()));
 //    filenameDialog->setFixedSize(filenameDialog->sizeHint());
 //    filenameDialog->show();
+    configurationFile = new ConfigurationFile;
+    configurationFile->setFilenameSettingsMostRecent(filenameMostRecent);
+    connect(configurationFile, SIGNAL(writeSettingsSignal()), this, SLOT(writeSettings()));
+    connect(configurationFile, SIGNAL(readSettingsSignal()), this, SLOT(on_read_settings_changed()));
+    filenameSettingsAllMapper = new QSignalMapper(this);
+    connect(filenameSettingsAllMapper, SIGNAL(mapped(int)), this, SLOT(on_read_settings_selected_changed(int)));
     highpassValueSets = new QVector<double>;
     lowpassValueSets = new QVector<double>;
     notchValueSets = new QVector<double>;
+    createStatusBar();
+    createActions();
+    configurationFile->readMostRecentSettings();
+    firstLoadingFlag = false;
     createLayout();
     sendParameters();
-    createActions();
+    startDelay = 0;  //no need to wait for other connection anymore
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
-    createStatusBar();
     on_update_numClass_changed();
 }
 
@@ -35,6 +44,7 @@ void CatWindow::createLayout(){
     mainLayout->addLayout(createStartButton());
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
+    if(methodsClassifyBox[0]->isChecked()) check_input_boxes();
 //    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
     this->resize(this->sizeHint());
 }
@@ -44,8 +54,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
 
     QVBoxLayout *methodsParameterLayout = new QVBoxLayout;
     methodsParameterLayout->addWidget(createMethodsClassifyGroup());
-//    methodsParameterLayout->addWidget(createThreasholdingGroup());
-//    methodsParameterLayout->addWidget(createStimPatternGroup());
 
     methodsGroup->setLayout(methodsParameterLayout);
 
@@ -55,28 +63,6 @@ QGroupBox *CatWindow::createMethodsGroup(){
 QGroupBox *CatWindow::createSettingsGroup(){
     groupSettings= new QGroupBox(tr("Settings"));
     methodsClassifyBox[0]->isChecked() ? groupSettings->setLayout(createThresholdLayouot()) : groupSettings->setLayout(createFeatureLayout());
-
-//    //widgets
-//    thresholdTab = new QWidget;
-//    featureTab = new QWidget;
-//    thresholdTab->setLayout(createThresholdTabLayouot());
-//    featureTab->setLayout(createFeatureTabLayout());
-
-//    //tab
-//    tabSettings = new QTabWidget;
-//    connect(tabSettings, SIGNAL(currentChanged(int)), this, SLOT(on_tab_changed(int)));
-
-//    tabSettings->addTab(thresholdTab, tr("Threshold"));
-//    tabSettings->addTab(featureTab, tr("Features"));
-
-//    disableInputClassifyMethods();
-////    tabSettings->setCurrentIndex(!((commandCat->getClassifyMethods() - 520) & (1 << 0)));
-
-//    //layout
-//    QHBoxLayout *settingsLayout = new QHBoxLayout;
-//    settingsLayout->addWidget(tabSettings);
-
-//    groupSettings->setLayout(settingsLayout);
 
     return groupSettings;
 }
@@ -200,15 +186,6 @@ void CatWindow::createFeatureSettingsLayout(int index){
 QVBoxLayout *CatWindow::createThresholdLayouot(){
     QVBoxLayout *thresholdLayout = new QVBoxLayout;
 
-    //add button
-//    doneSettingsButton = new QPushButton;
-//    doneSettingsFlag ? doneSettingsButton->setText("Edit") : doneSettingsButton->setText("Done");
-//    doneSettingsButton->setFixedSize(35, 30);
-//    connect(doneSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_done_settings_changed()));
-
-
-
-
     //channel labels
     QLabel *channelLabel[8];
     QHBoxLayout *settingsInputLabelLayout = new QHBoxLayout;
@@ -279,13 +256,6 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
         settingsButtonLayout->addLayout(removeSubLayout[i]);
 //        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
     }
-//    QLabel *emptyInputRow = new QLabel;
-//    QLabel *emptyOutputRow = new QLabel;
-
-//    settingsInputLayout->addWidget(emptyInputRow);
-//    settingsOutputLayout->addWidget(emptyOutputRow);
-
-
 
     //Grouping
     settingsInputGroup = new QGroupBox(tr("Input"));
@@ -308,42 +278,6 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
 
     return thresholdLayout;
 }
-
-//void CatWindow::on_done_settings_changed(){
-//    doneFlagTemp = doneSettingsFlag;
-//    doneFlagTemp = !doneFlagTemp;
-////    doneSettingsFlag = !doneSettingsFlag;
-
-//    if(doneFlagTemp){
-//        if(!check_input_boxes()){  //done, no repeated input
-////            doneSettingsButton->setText("Edit");
-//            statusBarLabel->setText(tr("Ready..."));
-//            commandCat->sendStimulationPatternFlag();
-//            emitCommandSent();
-
-//            sendStimulationPattern();
-//        }
-//        else{
-//            doneFlagTemp = !doneFlagTemp;
-////            doneSettingsFlag = !doneSettingsFlag;
-//            statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Repeated input sets: ") +
-//                                       QString::number(repeatedLocs[0]) + tr(", ") + QString::number(repeatedLocs[1]) + tr(" ..."));
-//        }
-//    }
-//    else{
-////        doneSettingsButton->setText("Done");
-//        statusBarLabel->setText(tr("Editting threshold input output..."));
-//    }
-
-//    // set enable
-//    doneSettingsFlag = doneFlagTemp;
-//    settingsInputGroup->setEnabled(!doneSettingsFlag);
-//    settingsOutputGroup->setEnabled(!doneSettingsFlag);
-//    for(int i = 0; i < indexThreshold; i++){
-//        removeSettingsButton[i]->setEnabled(!doneSettingsFlag);
-//    }
-//    addSettingsButton->setEnabled(!doneSettingsFlag);
-//}
 
 void CatWindow::sendStimulationPattern(){
     if(methodsClassifyBox[0]->isChecked()){  //threshold
@@ -399,7 +333,6 @@ void CatWindow::check_input_boxes(){
 void CatWindow::on_add_checkbox_clicked(){
     indexThreshold++;
     createLayout();
-    check_input_boxes();
 }
 
 void CatWindow::on_remove_checkbox_clicked(int index){
@@ -412,7 +345,6 @@ void CatWindow::on_remove_checkbox_clicked(int index){
 
     indexThreshold --;
     createLayout();
-    check_input_boxes();
 }
 
 void CatWindow::createSettingsLayout(int index){
@@ -825,6 +757,20 @@ void CatWindow::createStatusBar(){
 }
 
 void CatWindow::createActions(){
+    //FileMenu
+    openSettingsAction = new QAction(tr("&Open"));
+    openSettingsAction->setShortcut(tr("Ctrl+O"));
+    connect(openSettingsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_read_settings_changed()));
+
+    saveSettingsAction = new QAction(tr("&Save"));
+    saveSettingsAction->setShortcut(tr("Ctrl+S"));
+    connect(saveSettingsAction, SIGNAL(triggered(bool)), this, SLOT(on_write_settings_changed()));
+
+    saveSettingsAsAction = new QAction(tr("S&ave As"));
+    saveSettingsAsAction->setShortcut(tr("Ctrl+A"));
+    connect(saveSettingsAsAction, SIGNAL(triggered(bool)), configurationFile, SLOT(on_write_settings_changed()));
+
+    //GUIMenu
     odinAction = new QAction(tr("Od&in Control Panel"));
     odinAction->setShortcut(tr("Ctrl+I"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
@@ -833,9 +779,22 @@ void CatWindow::createActions(){
     sylphAction->setShortcut(tr("Ctrl+R"));
     connect(sylphAction, SIGNAL(triggered(bool)), this, SLOT(on_sylph_triggered()));
 
-    fileMenu = menuBar()->addMenu(tr("G&UI"));
-    fileMenu->addAction(odinAction);
-    fileMenu->addAction(sylphAction);
+    //Add to menu
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(openSettingsAction);
+    openSettingsRecentAction = fileMenu->addMenu(tr("O&pen Recent"));
+    for(int i = 0; i < 10; i++){
+        recentFilenameSettings[i] = new QAction;
+        connect(recentFilenameSettings[i], SIGNAL(triggered(bool)), filenameSettingsAllMapper, SLOT(map()));
+        filenameSettingsAllMapper->setMapping(recentFilenameSettings[i], i);
+    }
+
+    fileMenu->addAction(saveSettingsAction);
+    fileMenu->addAction(saveSettingsAsAction);
+
+    GUIMenu = menuBar()->addMenu(tr("G&UI"));
+    GUIMenu->addAction(odinAction);
+    GUIMenu->addAction(sylphAction);
 }
 
 void CatWindow::sendParameters(){
@@ -907,6 +866,7 @@ void CatWindow::sendParameters(){
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {
         QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
+        mainWidget->setEnabled(true);
         });
     delay += delayInterval;
 }
@@ -918,8 +878,6 @@ void CatWindow::on_classify_methods_changed(){
         commandCat->setSMChannel(i, methodsClassifyBox[i]->isChecked());
     }
 
-//    disableInputClassifyMethods();
-
     if(temp != commandCat->getClassifyMethods()){
         qDebug() << "Sent classify methods to: " << commandCat->getClassifyMethods();
         commandCat->sendClassifyMethods();
@@ -930,7 +888,6 @@ void CatWindow::on_classify_methods_changed(){
         emitCommandSent();
 
         createLayout();
-        check_input_boxes();
     }
 }
 
@@ -946,7 +903,7 @@ void CatWindow::on_update_numClass_changed(){
         indexFeature = numClassValue.toInt();
         filenameSocket->doDisconnect();
         createLayout();
-        statusBarLabel->setText("Ready...");
+//        statusBarLabel->setText("Ready...");
     });
 }
 
@@ -1304,16 +1261,207 @@ void CatWindow::on_filename_discard(){
     statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!! File DISCARDED!!!"));
 }
 
-//void CatWindow::disableInputClassifyMethods(){
-//    groupThreasholding->setEnabled(!methodsClassifyBox[1]->isChecked());  //disable when feature is selected
-//    thresholdTab->setEnabled(!methodsClassifyBox[1]->isChecked());
+void CatWindow::updateFilenameSettingsAll(){
+    if(!filenameSettings.contains(filenameMostRecent)){  //exclude the most recent filename
+        if(!filenameSettingsAll.contains(filenameSettings)){  //check if it's contained in the recent filename list
+            filenameSettingsAll.prepend(filenameSettings);  //add into filenameSettingsAll
+            indexRecentFilenameSettings ++;
+        }
+        else{  //move that
+            int index = filenameSettingsAll.indexOf(QRegExp("*"+filenameSettings+"*", Qt::CaseInsensitive, QRegExp::Wildcard));
+            filenameSettingsAll.move(index, 0);
+        }
+        updateOpenSettingsRecent();
+    }
+}
 
-//    featureTab->setEnabled(methodsClassifyBox[1]->isChecked());  // enable when feature is selected
+void CatWindow::updateOpenSettingsRecent(){
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+    qDebug() << "filenameSettingsAll: " << filenameSettingsAll;
+    if(indexRecentFilenameSettings >= 10){
+        filenameSettingsAll.removeLast();
+        indexRecentFilenameSettings --;
+    }
+    int diff = indexRecentFilenameSettings - indexRecentFilenameAction;
+    if(diff > 0){
+        for(int i = 0; i < diff; i++){
+            openSettingsRecentAction->addAction(recentFilenameSettings[indexRecentFilenameAction + i]);  //add into list
+        }
+    }
+    else if(diff < 0){
+        for(int i = 0; i < (-diff); i++){
+            openSettingsRecentAction->removeAction(recentFilenameSettings[indexRecentFilenameAction - i - 1]);  //remove from list
+        }
+    }
+    indexRecentFilenameAction = indexRecentFilenameSettings;
 
-//    tabSettings->setCurrentIndex(methodsClassifyBox[1]->isChecked());
-//}
+    qDebug() << "no. settings: " << indexRecentFilenameSettings << "\nno. actions: " << indexRecentFilenameAction;
+
+    for(int i = 0; i < indexRecentFilenameSettings; i++){
+        recentFilenameSettings[i]->setText(filenameSettingsAll[i]);
+    }
+}
+
+void CatWindow::writeSettings(){
+    filenameSettings = configurationFile->getFilenameSettings();
+    on_write_settings_changed();
+}
+
+void CatWindow::on_write_settings_changed(){
+    QSettings settings(filenameSettings, QSettings::IniFormat);
+
+    settings.setValue("methodsClassifyBox", methodsClassifyBox[0]->isChecked());  //classify methods
+    settings.beginWriteArray("threshold");  //threshold
+    for(int i = 0; i < 4; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("digit", commandCat->getThreshold(i));
+        settings.setValue("power", commandCat->getThresholdPower(i));
+    }
+    settings.endArray();
+    settings.beginWriteArray("thresholdStimulation");  //threshold stimulation pattern
+    for(int i = 0; i < 30; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("input", inputCheckBoxValue[i]);
+        settings.setValue("output", outputCheckBoxValue[i]);
+    }
+    settings.endArray();
+    settings.setValue("thresholdStimulation/indexThreshold", indexThreshold);
+    settings.beginWriteArray("featureStimulation");  //feature stimulation pattern
+    for(int i = 0; i < 30; i++){
+        settings.setArrayIndex(i);
+        settings.setValue("input", featureInputCheckBoxValue[i]);
+        settings.setValue("output", featureOutputCheckBoxValue[i]);
+    }
+    settings.endArray();
+    settings.setValue("featureStimulation/indexFeature", indexFeature);
+    settings.beginGroup("parameters");  //parameters
+    settings.setValue("decoding", windowDecodingSpinBox->text());
+    settings.setValue("overlap", windowOverlapSpinBox->text());
+    settings.setValue("samplingFrequency", windowSamplingFrequencySpinBox->text());
+    settings.setValue("extendStimulation", extendStimSpinBox->text());
+    settings.setValue("highpass", highpassSpinBox->text());
+    settings.setValue("highpassFlag", highpassFlag);
+    settings.setValue("lowpass", lowpassSpinBox->text());
+    settings.setValue("lowpassFlag", lowpassFlag);
+    settings.setValue("notch", notchSpinBox->text());
+    settings.setValue("notchFlag", notchFlag);
+    settings.endGroup();
+    if(filenameSettings.contains(filenameMostRecent)){
+        qDebug() << "Writing most recent settings filename......";
+        settings.setValue("filenameSettingsAll", filenameSettingsAll);
+    }
+
+    statusBarLabel->setText(tr("Save settings as: ") + filenameSettings);
+    qDebug() << "all saved keys: " << settings.allKeys();
+    qDebug() << "local filename now: " << filenameSettings;
+    qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
+    updateFilenameSettingsAll();
+}
+
+void CatWindow::on_read_settings_changed(){
+    if(!(firstLoadingFlag && filename.contains(filenameMostRecent))){
+        filenameSettings = configurationFile->getFilenameSettings();
+        qDebug() << "reading settings that is not the most recent settings...";
+        readSettings();
+    }
+}
+
+void CatWindow::on_read_settings_selected_changed(int index){
+    filenameSettingsTemp = filenameSettingsAll[index];
+    QFile file(filenameSettingsTemp);
+    qDebug() << "status of the file is: " << file.exists();
+    if(file.exists()){
+        filenameSettings = filenameSettingsAll[index];
+        readSettings();
+    }
+    else{
+        qDebug() << "file doesn't exist...!!!";
+        indexTemp = index;
+        QMessageBox removeFilenameBox;
+        removeFilenameBox.setText(filenameSettingsTemp + " does not exist...\nRemove from list?");
+        removeFilenameBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        removeFilenameBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = removeFilenameBox.exec();
+
+        switch(ret){
+            case QMessageBox::Ok:
+                filenameSettingsAll.removeAt(indexTemp);  //remove filename in filenameSettingsAll
+                indexRecentFilenameSettings --;
+                updateOpenSettingsRecent();
+                break;
+            case QMessageBox::Cancel:
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void CatWindow::readSettings(){
+    QSettings settings(filenameSettings, QSettings::IniFormat);
+
+    commandCat->setClassifyMethods(0, settings.value("methodsClassifyBox").toBool());  //classify methods
+    commandCat->setSMChannel(0, settings.value("methodsClassifyBox").toBool());
+    commandCat->setClassifyMethods(1, !settings.value("methodsClassifyBox").toBool());  //classify methods
+    commandCat->setSMChannel(1, !settings.value("methodsClassifyBox").toBool());
+    settings.beginReadArray("threshold");  //threshold
+    for(int i = 0; i < 4; i++){
+        settings.setArrayIndex(i);
+        commandCat->setThreshold(i, settings.value("digit").toInt());
+        commandCat->setThresholdPower(i, settings.value("power").toInt());
+    }
+    settings.endArray();
+    settings.beginReadArray("thresholdStimulation");  //threshold stimulation pattern
+    for(int i = 0; i < 30; i++){
+        settings.setArrayIndex(i);
+        inputCheckBoxValue[i] = settings.value("input").toInt();
+        outputCheckBoxValue[i] = settings.value("output").toInt();
+    }
+    settings.endArray();
+    indexThreshold = settings.value("thresholdStimulation/indexThreshold").toInt();
+    settings.beginReadArray("featureStimulation");  //feature stimulation pattern
+    for(int i = 0; i < 30; i++){
+        settings.setArrayIndex(i);
+        featureInputCheckBoxValue[i] = settings.value("input").toInt();
+        featureOutputCheckBoxValue[i] = settings.value("output").toInt();
+    }
+    settings.endArray();
+    indexFeature = settings.value("featureStimulation/indexFeature").toInt();
+    settings.beginGroup("parameters");  //parameters
+    commandCat->setDecodingWindowSize(settings.value("decoding").toInt());
+    commandCat->setOverlapWindowSize(settings.value("overlap").toInt());
+    commandCat->setSamplingFreq(settings.value("samplingFrequency").toInt());
+    commandCat->setExtendStimulation(settings.value("extendStimulation").toInt());
+    commandCat->setHighpassCutoffFreq(settings.value("highpass").toInt());
+    highpassFlag = settings.value("highpassFlag").toBool();
+    commandCat->setLowpassCutoffFreq(settings.value("lowpass").toInt());
+    lowpassFlag = settings.value("lowpassFlag").toBool();
+    commandCat->setNotchCutoffFreq(settings.value("notch").toInt());
+    notchFlag = settings.value("notchFlag").toBool();
+    settings.endGroup();
+    if(firstLoadingFlag){
+        qDebug() << "Reading most recent settings filename......";
+        filenameSettingsAll = settings.value("filenameSettingsAll").toStringList();
+        indexRecentFilenameSettings = filenameSettingsAll.size();
+        qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll << "\nSize: " << indexRecentFilenameSettings;
+        updateOpenSettingsRecent();
+    }
+
+//    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
+    createLayout();
+
+    mainWidget->setEnabled(false);
+    updateFilenameSettingsAll();
+    sendParameters();
+    qDebug() << "local filename now: " << filenameSettings;
+    qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
+}
+
+void CatWindow::closeEvent(QCloseEvent *event){
+    configurationFile->writeMostRecentSettings();
+    event->accept();
+}
 
 CatWindow::~CatWindow(){
-//    filenameSocket->doDisconnect();
 }
 }
