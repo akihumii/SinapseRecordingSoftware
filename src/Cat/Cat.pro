@@ -25,6 +25,12 @@ INCLUDEPATH += $$PWD../common
 
 DEPENDPATH += $$PWD../common
 
+#PRE_TARGETDEPS += -L$$OUT_PWD/../common/release/common.a
+
+#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/release/common.lib
+#else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../common/debug/common.lib
+#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../common/common.a
+
 SOURCES += main.cpp \
     catwindow.cpp \
     commandcat.cpp \

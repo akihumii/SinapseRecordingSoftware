@@ -12,14 +12,14 @@ public:
     QString filenameSettings;
 
     QString getFilenameSettings();
-    QStringList *getFilenameSettingsAll();
+    QStringList getFilenameSettingsAll();
 
     void writeMostRecentSettings();
     void readMostRecentSettings();
     void setFilenameSettingsMostRecent(QString filename);
 
 private:
-    QStringList *filenameSettingsAll;
+    QStringList filenameSettingsAll;
     QString filenameSettingsTemp;
     QString filenameSettingsDir = QDir::currentPath();
     QString filenameSettingsMostRecent = "mostRecent.ini";

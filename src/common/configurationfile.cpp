@@ -18,8 +18,7 @@ void ConfigurationFile::on_read_settings_changed(){
     filenameSettingsTemp = QFileDialog::getOpenFileName(this, tr("Open settings..."), filenameSettingsDir, tr("Config Files (*.ini)"));
     if(!filenameSettingsTemp.isEmpty()){
         filenameSettings = filenameSettingsTemp;
-        addFilenameSettingsAll();
-        qDebug() << "checking checking checking...";
+//        addFilenameSettingsAll();
         changeFilenameSettingsDir();
         qDebug() << "User is opening configuration file: " << filenameSettings;
         emit readSettingsSignal();
@@ -43,8 +42,8 @@ void ConfigurationFile::readMostRecentSettings(){
 }
 
 void ConfigurationFile::addFilenameSettingsAll(){
-//    filenameSettingsAll->prepend(filenameSettings);
-//    filenameSettingsAll->removeDuplicates();
+    filenameSettingsAll.prepend(filenameSettings);
+    filenameSettingsAll.removeDuplicates();
 
 //    QSettings settings(filenameSettingsMostRecent, QSettings::IniFormat);
 //    settings.beginWriteArray("filenameSettingsAll");
@@ -56,22 +55,22 @@ void ConfigurationFile::addFilenameSettingsAll(){
 
     qDebug() << "local filename!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " << filenameSettings;
     qDebug() << "local filenameSettingsAll!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " << filenameSettingsAll;
-    qDebug() << "checking checking...";
 //    qDebug() << "config file filenameSettingsAll!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " << settings.value("filenameSettingsAll");
 }
 
 void ConfigurationFile::readFilenameSettingsAll(){
-    QSettings settings(filenameSettings, QSettings::IniFormat);
-    int size = settings.beginReadArray("filenameSettingsAll");
-    for(int i = 0; i < size; i++){
-        settings.setArrayIndex(i);
-        filenameSettingsAll->prepend(settings.value("filenameRecent").toString());
-    }
-    settings.endArray();
+//    QSettings settings(filenameSettings, QSettings::IniFormat);
+//    int size = settings.beginReadArray("filenameSettingsAll");
+//    for(int i = 0; i < size; i++){
+//        settings.setArrayIndex(i);
+//        filenameSettingsAll.prepend(settings.value("filenameRecent").toString());
+//    }
+//    settings.endArray();
 //    filenameSettingsAll->removeDuplicates();
 
 //    qDebug() << "local filenameSettingsAll!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " << filenameSettingsAll;
-    qDebug() << "config file filenameSettingsAll!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " << settings.value("filenameSettingsAll");
+//    qDebug() << "config file filenameSettingsAll~: " << settings.value("filenameSettingsAll");
+    qDebug() << "config file filenameSettingsAll~: ";
 }
 
 void ConfigurationFile::changeFilenameSettingsDir(){
@@ -87,6 +86,6 @@ QString ConfigurationFile::getFilenameSettings(){
     return filenameSettings;
 }
 
-QStringList *ConfigurationFile::getFilenameSettingsAll(){
+QStringList ConfigurationFile::getFilenameSettingsAll(){
     return filenameSettingsAll;
 }

@@ -31,8 +31,11 @@ private:
 
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
+    QMenu *fileMenuTwo;
     QAction *openSettingsAction;
-    QAction *openSettingsRecentAction;
+//    QAction *openSettingsRecentAction;
+    QMenu *openSettingsRecentAction;
+    QAction *recentFilenameSettings[10];
     QAction *saveSettingsAction;
     QAction *saveSettingsAsAction;
     QMenu *GUIMenu;
@@ -158,7 +161,12 @@ private:
     QStringList commandArg;
     QString commandStdout;
 
+    QString filenameMostRecent = "catMostRecent.ini";
+    QString filenameSettings = filenameMostRecent;
+    QString filenameSettingsTemp;
     QStringList filenameSettingsAll;
+    int indexRecentFilenameSettings = 0;
+    QSignalMapper *filenameSettingsAllMapper;
 
     QString filename;
     QString filenameDiscard = "DISCARDFILE!!!";
@@ -199,6 +207,10 @@ private:
     void receiveSavedFiles();
     void controlInput(bool flag);
 
+    void updateFilenameSettingsAll();
+    void writeSettings();
+    void readSettings();
+
     void closeEvent(QCloseEvent *event);
 
     char *lastSentCommand = new char[3];
@@ -238,9 +250,9 @@ private slots:
     void on_add_checkbox_clicked();
     void on_remove_checkbox_clicked(int index);
     void on_update_numClass_changed();
-    void on_open_recent_changed();
-    void writeSettings();
-    void readSettings();
+    void on_write_settings_changed();
+    void on_read_settings_changed();
+    void on_read_settings_selected_changed(int index);
     void readOutput();
 
 signals:
