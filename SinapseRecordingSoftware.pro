@@ -26,7 +26,7 @@ SUBDIRS +=   \
 #    src/AMWFlash \
 #    src/NeuroModulation
 
-#common.subdir = src/common
+common.subdir = src/common
 #Neutrino.subdir = src/Neutrino
 #SylphII.subdir = src/SylphII
 SylphX.subdir = src/SylphX

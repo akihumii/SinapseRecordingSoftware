@@ -189,6 +189,8 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
     //channel labels
     QLabel *channelLabel[8];
     QHBoxLayout *settingsInputLabelLayout = new QHBoxLayout;
+    QLabel *removeHeader = new QLabel("remove");
+    settingsInputLabelLayout->addWidget(removeHeader);
     for(int i = 0; i < 4; i++){
         channelLabel[i] = new QLabel("Ch " + QString::number(i+1));
         settingsInputLabelLayout->addWidget(channelLabel[i]);
@@ -229,33 +231,33 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
     connect(removeMapper, SIGNAL(mapped(int)), this, SLOT(on_remove_checkbox_clicked(int)));
 
     //Row of checkboxes
-    QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
-    addSettingsButton = new QPushButton("+");
-    addSettingsButton->setFixedSize(35, 30);
-    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
-    settingsButtonLayout->addWidget(addSettingsButton);
     if(indexThreshold >= 30){
         addSettingsButton->setEnabled(false);
 //        settingsButtonLayout->setAlignment(addSettingsButton, Qt::AlignRight);
     }
 
-    QHBoxLayout *removeSubLayout[indexThreshold];
-    QLabel *removeLabel[indexThreshold];
     for(int i = 0; i < indexThreshold; i++){
         createSettingsLayout(i);  // create input and output boxes
-        removeSettingsButton[i] = new QPushButton("-");
-        removeSettingsButton[i]->setFixedSize(boxWidth, boxHeight);
-        connect(removeSettingsButton[i], SIGNAL(clicked(bool)), removeMapper, SLOT(map()));
-        removeMapper->setMapping(removeSettingsButton[i], i);
-
-        removeSubLayout[i] = new QHBoxLayout;
-        removeLabel[i] = new QLabel(QString::number(i+1));
-        removeLabel[i]->setFixedSize(15, boxHeight);
-        removeSubLayout[i]->addWidget(removeLabel[i]);
-        removeSubLayout[i]->addWidget(removeSettingsButton[i]);
-        settingsButtonLayout->addLayout(removeSubLayout[i]);
-//        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
     }
+//    QVBoxLayout *settingsButtonLayout = new QVBoxLayout();
+    QHBoxLayout *addButtonInputSubLayout = new QHBoxLayout;
+    QHBoxLayout *addButtonOutputSubLayout = new QHBoxLayout;
+    addSettingsButton = new QPushButton("+");
+    addSettingsButton->setFixedWidth(35);
+//    addSettingsButton->setFixedSize(35, 10);
+    connect(addSettingsButton, SIGNAL(clicked(bool)), this, SLOT(on_add_checkbox_clicked()));
+//    settingsButtonLayout->addWidget(addSettingsButton);
+    addButtonInputSubLayout->addWidget(addSettingsButton);
+    QLabel *addEmptyInput[4];
+    QLabel *addEmptyOutput[4];
+    for(int i = 0; i < 4; i++){
+        addEmptyInput[i] = new QLabel;
+        addEmptyOutput[i] = new QLabel;
+        addButtonInputSubLayout->addWidget(addEmptyInput[i]);
+        addButtonOutputSubLayout->addWidget(addEmptyOutput[i]);
+    }
+    settingsInputLayout->addLayout(addButtonInputSubLayout);
+    settingsOutputLayout->addLayout(addButtonOutputSubLayout);
 
     //Grouping
     settingsInputGroup = new QGroupBox(tr("Input"));
@@ -266,7 +268,7 @@ QVBoxLayout *CatWindow::createThresholdLayouot(){
 
     //Major Grouping
     QHBoxLayout *settingsThresholdGroupLayout = new QHBoxLayout;
-    settingsThresholdGroupLayout->addLayout(settingsButtonLayout);
+//    settingsThresholdGroupLayout->addLayout(settingsButtonLayout);
     settingsThresholdGroupLayout->addWidget(settingsInputGroup);
     settingsThresholdGroupLayout->addWidget(settingsOutputGroup);
 
@@ -348,6 +350,20 @@ void CatWindow::on_remove_checkbox_clicked(int index){
 }
 
 void CatWindow::createSettingsLayout(int index){
+    //minus button
+    removeSettingsButton[index] = new QPushButton("-");
+    removeSettingsButton[index]->setFixedSize(boxWidth, boxHeight);
+    connect(removeSettingsButton[index], SIGNAL(clicked(bool)), removeMapper, SLOT(map()));
+    removeMapper->setMapping(removeSettingsButton[index], index);
+
+//    removeSubLayout[i] = new QHBoxLayout;
+    removeLabel[index] = new QLabel(QString::number(index+1));
+    removeLabel[index]->setFixedSize(15, boxHeight);
+//    removeSubLayout[i]->addWidget(removeLabel[i]);
+//    removeSubLayout[i]->addWidget(removeSettingsButton[i]);
+//    settingsButtonLayout->addLayout(removeSubLayout[i]);
+//        settingsButtonLayout->setAlignment(removeSettingsButton[i], Qt::AlignRight);
+
     //Boxes
     inputBoxCh1[index] = new QCheckBox;
     inputBoxCh2[index] = new QCheckBox;
@@ -401,6 +417,8 @@ void CatWindow::createSettingsLayout(int index){
     settingsInputSubLayout[index] = new QHBoxLayout;
     settingsOutputSubLayout[index] = new QHBoxLayout;
 
+    settingsInputSubLayout[index]->addWidget(removeLabel[index]);
+    settingsInputSubLayout[index]->addWidget(removeSettingsButton[index]);
     settingsInputSubLayout[index]->addWidget(inputBoxCh1[index]);
     settingsInputSubLayout[index]->addWidget(inputBoxCh2[index]);
     settingsInputSubLayout[index]->addWidget(inputBoxCh3[index]);

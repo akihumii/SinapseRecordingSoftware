@@ -62,6 +62,7 @@ private:
 
     QLabel *trainingSaveDir;
 
+    QLabel *removeLabel[30];
     QVBoxLayout *settingsInputLayout;
     QHBoxLayout *settingsInputSubLayout[30];
     QVBoxLayout *settingsOutputLayout;
