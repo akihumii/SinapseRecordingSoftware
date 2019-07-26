@@ -55,14 +55,17 @@ private:
     QVBoxLayout *createThresholdLayouot();
     QHBoxLayout *createFeatureLayout();
 
+    QVBoxLayout *settingsButtonLayout;
     QGroupBox *groupMethodsClassify;
     QGroupBox *parametersGroup;
     QGroupBox *groupSettings;
     QGroupBox *groupThreasholding;
 
+
     QLabel *trainingSaveDir;
 
     QLabel *removeLabel[30];
+    QHBoxLayout *settingsEditSubLayout[30];
     QVBoxLayout *settingsInputLayout;
     QHBoxLayout *settingsInputSubLayout[30];
     QVBoxLayout *settingsOutputLayout;
@@ -71,6 +74,7 @@ private:
     QHBoxLayout *settingsFeatureInputSubLayout[30];
     QVBoxLayout *settingsFeatureOutputLayout;
     QHBoxLayout *settingsFeatureOutputSubLayout[30];
+    QGroupBox *settingsButtonsGroup;
     QGroupBox *settingsInputGroup;
     QGroupBox *settingsOutputGroup;
     QGroupBox *settingsFeatureInputGroup;
@@ -193,6 +197,8 @@ private:
     void createChannelLabel();
     void createSettingsLayout(int index);
     void createFeatureSettingsLayout(int index);
+
+    void createAddButton();
 
     void sendParameters();
     void sendHighpassParameters(int value);
