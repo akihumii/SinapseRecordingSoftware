@@ -29,6 +29,7 @@ private:
     FilenameDialog *filenameDialog;
     ConfigurationFile *configurationFile;
 
+    QWidget *mainWidget;
     QStatusBar *statusBarMainWindow;
     QMenu *fileMenu;
     QAction *openSettingsAction;
@@ -40,8 +41,6 @@ private:
     QMenu *GUIMenu;
     QAction *odinAction;
     QAction *sylphAction;
-
-    QWidget *mainWidget;
 
     QGroupBox *createMethodsGroup();
     QGroupBox *createThreasholdingGroup();
@@ -180,7 +179,6 @@ private:
     QByteArray numClassValue;
     QString commandNumClass = "GIMMENUMCLASS!!!";
 
-    int currentTab = 0;
     int startDelay = 3000;
     int indexThreshold = 1;
     int indexFeature = 3;
@@ -190,6 +188,9 @@ private:
     int featureOutputCheckBoxValue[30] = {0};
     int boxWidth = 20;
     int boxHeight = 20;
+    QSize sizeTemp;
+    int widthTemp = 0;
+    int heightTemp = 0;
 
     void createLayout();
     void createStatusBar();
@@ -220,6 +221,7 @@ private:
     void updateOpenSettingsRecent();
     void readSettings();
 
+    void resizeGUI();
     void closeEvent(QCloseEvent *event);
 
     char *lastSentCommand = new char[3];

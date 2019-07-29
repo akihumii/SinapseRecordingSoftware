@@ -42,11 +42,24 @@ void CatWindow::createLayout(){
     mainLayout->addWidget(createParametersGroup());
     mainLayout->addWidget(createRecordingGroup());
     mainLayout->addLayout(createStartButton());
+    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
     mainWidget->setLayout(mainLayout);
-    setCentralWidget(mainWidget);
     if(methodsClassifyBox[0]->isChecked()) check_input_boxes();
-//    mainLayout->setSizeConstraint( QLayout::SetFixedSize );
-    this->resize(this->sizeHint());
+    resizeGUI();
+    setCentralWidget(mainWidget);
+}
+
+void CatWindow::resizeGUI(){
+    qDebug() << "the size is::::::::::::::: " << this->sizeHint() << "and the mainWidget size is:::::::::: " << mainWidget->sizeHint();
+    qDebug() << "the size is::::::::::::::: " << this->width() << "and the mainWidget size is:::::::::: " << mainWidget->height();
+
+    commandCat->getClassifyMethods() ? sizeTemp = mainWidget->sizeHint() : sizeTemp = this->sizeHint();
+
+    if(sizeTemp.width() > widthTemp) widthTemp = sizeTemp.width();
+    heightTemp = sizeTemp.height() + 40;
+
+    this->setFixedSize(widthTemp, heightTemp);
+//    mainWidget->setFixedSize(widthTemp, heightTemp);
 }
 
 QGroupBox *CatWindow::createMethodsGroup(){
@@ -714,7 +727,7 @@ QGroupBox *CatWindow::createRecordingGroup(){
 
     //buttons
     recordingButton = new QPushButton;
-    commandCat->getRecording() == 520 ? recordingButton->setText("Start Recor&ding") : recordingButton->setText("Stop Recor&ding");
+    commandCat->getRecording() == 520 ? recordingButton->setText("Start Savin&g Data") : recordingButton->setText("Stop Savin&g Data");
     connect(recordingButton, SIGNAL(clicked(bool)), this, SLOT(on_recording_changed()));
 
     recordingTransferButton = new QPushButton(tr("Transfer Recordings"));
@@ -1118,7 +1131,7 @@ void CatWindow::on_recording_changed(){
     if(!recordingFlag){
         recordingFlag = true;
         commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Stop Recor&ding");
+        recordingButton->setText("Stop Savin&g Data");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>"));
 //        controlInput(false);
 
@@ -1127,7 +1140,7 @@ void CatWindow::on_recording_changed(){
     else{
         recordingFlag = false;
         commandCat->setRecording(recordingFlag);
-        recordingButton->setText("Start Recor&ding");
+        recordingButton->setText("Start Savin&g Data");
         statusBarLabel->setText(tr("<b><FONT COLOR='#ff0000'> Recording stopped!!!"));
 //        controlInput(true);
 
@@ -1137,10 +1150,6 @@ void CatWindow::on_recording_changed(){
     emitCommandSent();
     qDebug() << "Sent recording to : " << commandCat->getRecording();
 }
-
-//void CatWindow::on_tab_changed(int value){
-//    currentTab = value;
-//}
 
 void CatWindow::on_filename_changed(){
     filenameSocket->doConnect("192.168.4.3", 7777);
