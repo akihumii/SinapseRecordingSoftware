@@ -306,6 +306,8 @@ void OdinWindow::sendParameter(){
 
     for(int i = 0; i < 4; i++){  // send pulse duration
         QTimer::singleShot((STARTDELAY+delay+i*delayInterval), [=] {
+            commandOdin->setPulseDuration(i, pulseDurationSpinBox[i]->text().toInt());
+            qDebug() << "Set channel " << i << "pulse duration to : " << pulseDurationSpinBox[i]->text().toInt();
             commandOdin->sendPulseDuration(i);
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
@@ -316,7 +318,6 @@ void OdinWindow::sendParameter(){
         QTimer::singleShot((STARTDELAY+delay+i*delayInterval), [=] {
             commandOdin->setAmplitude(i, amplitudeSpinBox[i]->text().toDouble());
             qDebug() << "Set channel " << i << "amplitude to : " << amplitudeSpinBox[i]->text().toDouble();
-
             commandOdin->sendAmplitude(i);
             strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
             emit commandSent(lastSentCommand);
@@ -324,11 +325,27 @@ void OdinWindow::sendParameter(){
     }
     delay += 4*delayInterval;
     QTimer::singleShot((STARTDELAY+delay), [=] {  // send frequency
+        commandOdin->setFrequency(frequencySpinBox->text().toInt());
+        qDebug() << "Set frequency to : " << frequencySpinBox->text().toInt();
         commandOdin->sendFrequency();
         strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
         emit commandSent(lastSentCommand);
     });
     delay += delayInterval;
+    for(int i = 0; i < 4; i++){
+        QTimer::singleShot((STARTDELAY+delay+i*delayInterval), [=] {  // send frequency
+            commandOdin->setChannelEnabled(i, channelEnable[i]->isChecked());
+            qDebug() << "Setting Channel Enable for channel " << i+1 << channelEnable[i]->isChecked();
+        });
+    }
+    delay += 4*delayInterval;
+    QTimer::singleShot((STARTDELAY+delay), [=] {  // send frequency
+        commandOdin->sendChannelEnable();
+        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+        emit commandSent(lastSentCommand);
+    });
+    delay += delayInterval;
+
 //    QTimer::singleShot((STARTDELAY+delay), [=] {  // send step size utilzing sending step size increase
 //        commandOdin->sendStepSizeIncrease();
 //        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
@@ -370,6 +387,7 @@ void OdinWindow::sendParameter(){
 //            emit commandSent(lastSentCommand);
 //        });
 //    }
+
     QTimer::singleShot((STARTDELAY+delay), [=] {
         QMessageBox::information(this, "Done!", "Stimulator parameters have been sent...");
         mainWidget->setEnabled(true);
@@ -611,11 +629,11 @@ void OdinWindow::on_pulseDuration_Changed(){
                 commandOdin->sendPulseDuration(i);
                 strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
                 emit commandSent(lastSentCommand);
-                QTimer::singleShot(40, [=] {
-                        commandOdin->sendFrequency();
-                        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
-                        emit commandSent(lastSentCommand);
-                });
+//                QTimer::singleShot(40, [=] {
+//                        commandOdin->sendFrequency();
+//                        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+//                        emit commandSent(lastSentCommand);
+//                });
 //            }
         }
     }

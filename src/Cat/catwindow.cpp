@@ -26,7 +26,7 @@ CatWindow::CatWindow(){
     configurationFile->readMostRecentSettings();
     firstLoadingFlag = false;
     createLayout();
-    sendParameters();
+//    sendParameters();
     startDelay = 0;  //no need to wait for other connection anymore
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
@@ -857,6 +857,8 @@ void CatWindow::sendParameters(){
     int delayInterval = 60;
     for(int i = 0; i < 4; i++){  // send threhsold digits
         QTimer::singleShot((startDelay+delay+i*delayInterval), [=] {
+            commandCat->setThreshold(i, thresholdingSpinBox[i]->text().toInt());
+            qDebug() << "Sent channel " << i << "threshold power to : " << thresholdingSpinBox[i]->text().toInt();
             commandCat->sendThreshold(i);
             emitCommandSent();
         });
@@ -864,17 +866,26 @@ void CatWindow::sendParameters(){
     delay += 4*delayInterval;
     for(int i = 0; i < 4; i++){  // send threshold power
         QTimer::singleShot((startDelay+delay+i*delayInterval), [=] {
+            commandCat->setThresholdPower(i, thresholdingPowerSpinBox[i]->text().toInt());
+            qDebug() << "Sent channel " << i << "threshold power to : " << thresholdingPowerSpinBox[i]->text().toInt();
             commandCat->sendThresholdPower(i);
             emitCommandSent();
         });
     }
     delay += 4*delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  // send single or multi channel classification
+    for(int i = 0; i < 2; i++){  // send single or multi channel classification
+        commandCat->setSMChannel(i, methodsSMChannelBox[i]->isChecked());
+    }
+    QTimer::singleShot((startDelay+delay), [=] {
         commandCat->sendSMChannel();
         emitCommandSent();
     });
     delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  // send classify methods
+    for(int i = 0; i < 2; i++){  // send classify methods
+        commandCat->setClassifyMethods(i, methodsClassifyBox[i]->isChecked());
+        commandCat->setSMChannel(i, methodsClassifyBox[i]->isChecked());
+    }
+    QTimer::singleShot((startDelay+delay), [=] {
         commandCat->sendClassifyMethods();
         emitCommandSent();
     });
@@ -885,38 +896,35 @@ void CatWindow::sendParameters(){
     });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send decoding window size
+        commandCat->setDecodingWindowSize(windowDecodingSpinBox->text().toInt());
+        qDebug() << "Sent decoding window size to : " << windowDecodingSpinBox->text().toInt();
         commandCat->sendDecodingWindowSize();
         emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send overlap window size
+        commandCat->setOverlapWindowSize(windowOverlapSpinBox->text().toInt());
+        qDebug() << "Sent overlap window size to : " << windowOverlapSpinBox->text().toInt();
         commandCat->sendOverlapWindowSize();
         emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send sampling freq
+        commandCat->setSamplingFreq(windowSamplingFrequencySpinBox->text().toInt());
+        qDebug() << "Sent decoding window size to : " << windowSamplingFrequencySpinBox->text().toInt();
         commandCat->sendSamplingFreq();
         emitCommandSent();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {  // send extend stimulation
+        commandCat->setExtendStimulation(extendStimSpinBox->text().toInt());
+        qDebug() << "Sent extend stimulation to : " << extendStimSpinBox->text().toInt();
         commandCat->sendExtendStimulation();
         emitCommandSent();
         });
     delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  // send highpass freq
-        commandCat->sendHighpassCutoffFreq();
-        emitCommandSent();
-        });
-    delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  // send lowpass freq
-        commandCat->sendLowpassCutoffFreq();
-        emitCommandSent();
-        });
-    delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  //send notch freq
-        commandCat->sendNotchCutoffFreq();
-        emitCommandSent();
+    QTimer::singleShot((startDelay+delay), [=] {  // send filtering parameters
+        sendFilteringParameters();
         });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {
