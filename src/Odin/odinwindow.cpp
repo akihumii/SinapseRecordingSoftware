@@ -26,6 +26,7 @@ OdinWindow::OdinWindow(){
 
     createStatusBar();
     createActions();
+    mainWidget = new QWidget;
     configurationFile->readMostRecentSettings();
     firstLoadingFlag = false;
     createLayout();
