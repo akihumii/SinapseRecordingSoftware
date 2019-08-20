@@ -26,7 +26,7 @@ CatWindow::CatWindow(){
     configurationFile->readMostRecentSettings();
     firstLoadingFlag = false;
     createLayout();
-    sendParameters();
+//    sendParameters();
     startDelay = 0;  //no need to wait for other connection anymore
 //    highpassCheckBox->setChecked(true);
 //    notchCheckBox->setChecked(true);
@@ -1452,8 +1452,8 @@ void CatWindow::readSettings(){
     QSettings settings(filenameSettings, QSettings::IniFormat);
 
     commandCat->setClassifyMethods(0, settings.value("methodsClassifyBox").toBool());  //classify methods
-    commandCat->setSMChannel(0, settings.value("methodsClassifyBox").toBool());
-    commandCat->setClassifyMethods(1, !settings.value("methodsClassifyBox").toBool());  //classify methods
+    commandCat->setClassifyMethods(1, !settings.value("methodsClassifyBox").toBool());
+    commandCat->setSMChannel(0, settings.value("methodsClassifyBox").toBool());  //SM channel
     commandCat->setSMChannel(1, !settings.value("methodsClassifyBox").toBool());
     settings.beginReadArray("threshold");  //threshold
     for(int i = 0; i < 4; i++){

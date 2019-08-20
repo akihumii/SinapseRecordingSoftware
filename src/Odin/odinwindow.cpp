@@ -329,6 +329,13 @@ void OdinWindow::sendParameter(){
         emit commandSent(lastSentCommand);
     });
     delay += delayInterval;
+    QTimer::singleShot((STARTDELAY+delay), [=] {  // send channel enable
+        commandOdin->sendChannelEnable();
+        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
+        emit commandSent(lastSentCommand);
+    });
+    delay += delayInterval;
+
 //    QTimer::singleShot((STARTDELAY+delay), [=] {  // send step size utilzing sending step size increase
 //        commandOdin->sendStepSizeIncrease();
 //        strcpy(lastSentCommand, commandOdin->getlastSentCommand().data());
