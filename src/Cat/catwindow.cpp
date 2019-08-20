@@ -23,6 +23,7 @@ CatWindow::CatWindow(){
     notchValueSets = new QVector<double>;
     createStatusBar();
     createActions();
+    mainWidget = new QWidget;
     configurationFile->readMostRecentSettings();
     firstLoadingFlag = false;
     createLayout();
@@ -904,20 +905,23 @@ void CatWindow::sendParameters(){
         emitCommandSent();
         });
     delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  // send highpass freq
-        commandCat->sendHighpassCutoffFreq();
-        emitCommandSent();
-        });
-    delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  // send lowpass freq
-        commandCat->sendLowpassCutoffFreq();
-        emitCommandSent();
-        });
-    delay += delayInterval;
-    QTimer::singleShot((startDelay+delay), [=] {  //send notch freq
-        commandCat->sendNotchCutoffFreq();
-        emitCommandSent();
-        });
+    QTimer::singleShot((startDelay+delay), [=] {  // send filtering parameters
+        sendFilteringParameters();
+    });
+//    QTimer::singleShot((startDelay+delay), [=] {  // send highpass freq
+//        commandCat->sendHighpassCutoffFreq();
+//        emitCommandSent();
+//        });
+//    delay += delayInterval;
+//    QTimer::singleShot((startDelay+delay), [=] {  // send lowpass freq
+//        commandCat->sendLowpassCutoffFreq();
+//        emitCommandSent();
+//        });
+//    delay += delayInterval;
+//    QTimer::singleShot((startDelay+delay), [=] {  //send notch freq
+//        commandCat->sendNotchCutoffFreq();
+//        emitCommandSent();
+//        });
     delay += delayInterval;
     QTimer::singleShot((startDelay+delay), [=] {
         QMessageBox::information(this, "Done!", "Classification parameters have been sent...");
@@ -1313,6 +1317,7 @@ void CatWindow::on_filename_discard(){
 }
 
 void CatWindow::updateFilenameSettingsAll(){
+    qDebug() << "entered update filenmae Settings all...";
     if(!filenameSettings.contains(filenameMostRecent)){  //exclude the most recent filename
         if(!filenameSettingsAll.contains(filenameSettings)){  //check if it's contained in the recent filename list
             filenameSettingsAll.prepend(filenameSettings);  //add into filenameSettingsAll
@@ -1496,14 +1501,20 @@ void CatWindow::readSettings(){
         indexRecentFilenameSettings = filenameSettingsAll.size();
         qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll << "\nSize: " << indexRecentFilenameSettings;
         updateOpenSettingsRecent();
+        qDebug() << "finished updating open settingsrecent...";
+        mainWidget->setEnabled(false);
+        updateFilenameSettingsAll();
+        qDebug() << "finished first read up...";
+    }
+    else{
+        createLayout();
+        mainWidget->setEnabled(false);
+        updateFilenameSettingsAll();
+        sendParameters();
     }
 
 //    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
-    createLayout();
 
-    mainWidget->setEnabled(false);
-    updateFilenameSettingsAll();
-    sendParameters();
     qDebug() << "local filename now: " << filenameSettings;
     qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
 }

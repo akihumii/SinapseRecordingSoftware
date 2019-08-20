@@ -804,14 +804,18 @@ void OdinWindow::readSettings(){
         indexRecentFilenameSettings = filenameSettingsAll.size();
         qDebug() << "Loaded filenameSettingsAll: " << filenameSettingsAll << "\nSize: " << indexRecentFilenameSettings;
         updateOpenSettingsRecent();
+        mainWidget->setEnabled(false);
+        updateFilenameSettingsAll();
+    }
+    else{
+        createLayout();
+        mainWidget->setEnabled(false);
+        updateFilenameSettingsAll();
+        sendParameter();
+
     }
 
 //    statusBarLabel->setText(tr("Read settings: ") + configurationFile->getFilenameSettings());
-    createLayout();
-
-    mainWidget->setEnabled(false);
-    updateFilenameSettingsAll();
-    sendParameter();
     qDebug() << "local filename now: " << filenameSettings;
     qDebug() << "configuratoin filename now: " << configurationFile->getFilenameSettings();
 
