@@ -37,6 +37,7 @@ public:
 
     SerialChannel *serialChannel;
     DataProcessor *dataProcessor;
+    DataProcessor *dataProcessorSerial;
     DataStream *dataStream;
     Dynomometer *dynomometer;
 

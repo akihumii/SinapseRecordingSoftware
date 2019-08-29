@@ -15,7 +15,8 @@ MainWindow::MainWindow(){
     dynomometer = new Dynomometer();
     dataStream = new DataStream(this);
     dataProcessor = new DataProcessor(dataStream);
-    serialChannel = new SerialChannel(this, dataProcessor);
+    dataProcessorSerial = new DataProcessor(dataStream);
+    serialChannel = new SerialChannel(this, dataProcessorSerial);
     socketSylph = new SocketSylph(dataProcessor);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
 
@@ -303,8 +304,9 @@ void MainWindow::connectSylph(){
         serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
         serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
         updateStatusBar(0, temp);
+        qDebug() << temp;
     }
-    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+//    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
         int p = 8000;  // Try to connect to on-Rpi decoding code
         QString ip = "192.168.4.3";
 
@@ -324,7 +326,7 @@ void MainWindow::connectSylph(){
             QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
                                                                  "Check your connections and run the program again..");
         }
-    }
+//    }
 }
 
 MainWindow::~MainWindow(){
@@ -345,7 +347,7 @@ void MainWindow::updateData(){
 //    }
     for(int i=0; i<TOTAL_CHANNELS-1; i++){
             channelGraph[i]->graph()->setData(dataProcessor->retrieveXAxis(), (dataProcessor->isFilterEnabled() && i < EMG_CHANNELS)? dataProcessor->filterData(dataProcessor->retrieveData(i), i): dataProcessor->retrieveData(i));
-            if(i < EMG_CHANNELS && dataStream->getStreamConnected(i)){
+            if(i < EMG_CHANNELS && dataStream->getStreamConnected(i)){ // to stream data to Matlab online classifier
                 dataStream->streamData(i);
             }
             else if(i < EMG_CHANNELS && dataStream->getChannelSize(i) > 40960){
@@ -355,8 +357,14 @@ void MainWindow::updateData(){
                 channelGraph[i]->replot();
             }
     }
-    channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
-    channelGraph[12]->replot();
+    if(serialChannel->isConnected()){
+        channelGraph[12]->graph()->setData(dataProcessorSerial->retrieveDyno_XAxis(), dataProcessorSerial->retrieveData(0));
+        channelGraph[12]->replot();
+    }
+    else{
+        channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
+        channelGraph[12]->replot();
+    }
 }
 
 void MainWindow::on_disableStream_triggered(){
@@ -381,8 +389,14 @@ void MainWindow::on_timeFrame_changed(int timeFrameIndex){
         channelGraph[i]->xAxis->setTickStep(timeFrameSteps[timeFrameIndex]);
         channelGraph[i]->replot();
     }
-    channelGraph[12]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
-//    channelGraph[12]->xAxis->setTickStep(1);
+    if(serialChannel->isConnected()){
+        channelGraph[12]->xAxis->setRange(0, dataProcessorSerial->getNumDataPoints()*period, Qt::AlignLeft);
+        channelGraph[12]->xAxis->setTickStep(timeFrameSteps[timeFrameIndex]);
+    }
+    else{
+        channelGraph[12]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
+    //    channelGraph[12]->xAxis->setTickStep(1);
+    }
     channelGraph[12]->replot();
 }
 
