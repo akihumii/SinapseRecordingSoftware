@@ -29,6 +29,8 @@ public:
     int parseFrameMarkersWithChecks(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int mark);
     int getResyncCounter();
+    void sortADCData(QByteArray adcData);
+    QVector<quint8> ADC_Data;
 
 signals:
     void dataLost();
@@ -49,6 +51,9 @@ private:
     double dyno_data = 0.0;
     QVector<double> dyno_store;
     bool dyno_start = false;
+    bool forceSensorFlag = true;
+    int biasFullWord = 0;
+    int biasMultiplier= 0;
 //signals:
 //    void channelACrossed();
 //    void channelBCrossed();

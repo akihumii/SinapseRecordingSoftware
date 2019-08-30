@@ -39,6 +39,7 @@ public:
     DataProcessor *dataProcessor;
     DataProcessor *dataProcessorSerial;
     DataStream *dataStream;
+    DataStream *dataStreamSerial;
     Dynomometer *dynomometer;
 
     Odin::OdinWindow *x;
@@ -198,6 +199,8 @@ private:
     void setDefaultGraph();
     void activateChannelGraph(int index);
     void updateStatusBar(int index, QString message);
+
+    bool forceSensorFlag = true;
 
 private slots:
     void updateData();

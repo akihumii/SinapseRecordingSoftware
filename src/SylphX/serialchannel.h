@@ -40,9 +40,11 @@ private:
     bool connected = false;
     bool implantConnected = false;
     bool ADCConnected = false;
+    bool ForceSensorFlag = true;
     int portOrder = 1;
     qint64 packetSize = 25;
     qint64 maxSize = packetSize*65;
+    qint64 maxSizeSerial = packetSize*5;
     int bytesRead = 0;
     int temp;
     double rate = 0.0;
