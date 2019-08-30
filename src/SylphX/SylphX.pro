@@ -42,7 +42,8 @@ HEADERS += \
     ../Cat/socketfilename.h \
     ../Cat/filenamedialog.h \
     dynomometer.h \
-    treedialog.h
+    treedialog.h \
+    socketforce.h
 
 
 SOURCES += \
@@ -62,4 +63,5 @@ SOURCES += \
     ../Cat/socketfilename.cpp \
     ../Cat/filenamedialog.cpp \
     dynomometer.cpp \
-    treedialog.cpp
+    treedialog.cpp \
+    socketforce.cpp

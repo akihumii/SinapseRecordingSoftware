@@ -15,6 +15,7 @@
 #include "../common/datastream.h"
 #include "../Cat/catwindow.h"
 #include "dynomometer.h"
+#include "socketforce.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -41,6 +42,7 @@ public:
     DataStream *dataStream;
     DataStream *dataStreamSerial;
     Dynomometer *dynomometer;
+    SocketForce *forceSocket;
 
     Odin::OdinWindow *x;
     Cat::CatWindow *catGUI;
@@ -225,6 +227,7 @@ private slots:
     void on_dumbDataProcessor_triggered();
     void on_graph_clicked(int index);
     void on_dyno_triggered();
+    void on_force_triggered();
     void sendParameter(char *bytes);
 
     void about();

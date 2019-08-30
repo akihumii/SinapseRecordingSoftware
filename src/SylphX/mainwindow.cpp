@@ -18,8 +18,10 @@ MainWindow::MainWindow(){
     dataProcessor = new DataProcessor(dataStream);
     dataProcessorSerial = new DataProcessor(dataStreamSerial);
     serialChannel = new SerialChannel(this, dataProcessorSerial);
+    connect(serialChannel, SIGNAL(receiveForceSignal()), this, SLOT(on_force_triggered()));
     socketSylph = new SocketSylph(dataProcessor);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    forceSocket = new SocketForce;
 
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
@@ -306,8 +308,10 @@ void MainWindow::connectSylph(){
         serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
         updateStatusBar(0, temp);
         qDebug() << temp;
+        forceSocket->doConnect("192.168.4.3", 5555);
+        qDebug() << "force socket status: " << forceSocket->isConnected();
     }
-    if(forceSensorFlag || !serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+    if(forceSensorFlag || (!serialChannel->isADCConnected() && !serialChannel->isImplantConnected())){
         int p = 8000;  // Try to connect to on-Rpi decoding code
         QString ip = "192.168.4.3";
 
@@ -371,6 +375,12 @@ void MainWindow::updateData(){
         channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
         channelGraph[12]->replot();
     }
+}
+
+void MainWindow::on_force_triggered(){
+    qDebug() << dataProcessorSerial->retrieveTransientData();
+    forceSocket->streamData(dataProcessorSerial->retrieveTransientData());
+    dataProcessorSerial->clearTransientData();
 }
 
 void MainWindow::on_disableStream_triggered(){

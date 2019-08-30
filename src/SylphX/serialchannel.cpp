@@ -36,11 +36,9 @@ void SerialChannel::ReadImplantData(){
         }
     }
     else{  // force sensor
-//        qDebug() << "Bytes available:" << implantPort->bytesAvailable();
         if(implantPort->bytesAvailable() >= maxSizeSerial && checked){
-//            qDebug() << "parsing frame markers...";
-//            bytesRead += dataProcessor->parseFrameMarkers(implantPort->read(maxSizeSerial));
             dataProcessor->parseFrameMarkers(implantPort->read(maxSizeSerial));
+            emit receiveForceSignal();
         }
         else if(implantPort->bytesAvailable() >= packetSize+1 && !checked){
             qDebug() << "checking";
