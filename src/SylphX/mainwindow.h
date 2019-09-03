@@ -42,7 +42,8 @@ public:
     DataStream *dataStream;
     DataStream *dataStreamSerial;
     Dynomometer *dynomometer;
-    SocketForce *forceSocket;
+    SocketForce *forceSocketRpi;
+    SocketForce *forceSocketMatlab;
 
     Odin::OdinWindow *x;
     Cat::CatWindow *catGUI;
@@ -52,6 +53,7 @@ public slots:
 private:
     QElapsedTimer timer;
     QTimer dataTimer;
+    QTimer forceTimer;
 
     int restartCount = 0;
     float samplingRate = 1250.0;
@@ -206,6 +208,7 @@ private:
 
 private slots:
     void updateData();
+    void updateForce();
     void on_resetX_triggered();
     void on_timeFrame_changed(int timeFrameIndex);
     void on_voltage_changed(int voltageIndex);
