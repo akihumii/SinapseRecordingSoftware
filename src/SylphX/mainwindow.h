@@ -204,7 +204,7 @@ private:
     void activateChannelGraph(int index);
     void updateStatusBar(int index, QString message);
 
-    bool forceSensorFlag = true;
+    bool forceSensorFlag = true;  // true: serial channel is now the force sensor; false: serial channel is FTDI
 
 private slots:
     void updateData();

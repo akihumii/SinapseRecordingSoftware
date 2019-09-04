@@ -316,9 +316,10 @@ void MainWindow::connectSylph(){
         qDebug() << "force socket to Rpi status: " << forceSocketRpi->isConnected();
         if(serialChannel->isImplantConnected() && forceSensorFlag) on_dyno_triggered();
     }
-    forceSocketMatlab->doConnect("127.0.0.1", 6666);
+//    forceSocketMatlab->doConnect("127.0.0.1", 6666);
+    forceSocketMatlab->setServer(6666);
     qDebug() << "force socket to Matlab status: " << forceSocketMatlab->isConnected();
-    if(forceSocketMatlab->isConnected()) forceSocketRpi->streamData(99999);  // stop streaming data from here, but from matlab so that we can see when the trial starts
+//    if(forceSocketMatlab->isConnected()) forceSocketRpi->streamData(99999);  // stop streaming data from here, but from matlab so that we can see when the trial starts
     if(forceSensorFlag || (!serialChannel->isADCConnected() && !serialChannel->isImplantConnected())){
         int p = 8000;  // Try to connect to on-Rpi decoding code
         QString ip = "192.168.4.3";
@@ -376,7 +377,7 @@ void MainWindow::updateData(){
             channelGraph[i]->replot();
         }
     }
-    if(!forceSensorFlag){
+    if(!serialChannel->isConnected() || !forceSensorFlag){
         channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
         channelGraph[12]->replot();
     }
@@ -390,9 +391,12 @@ void MainWindow::updateForce(){
 }
 
 void MainWindow::on_force_triggered(){
-//    qDebug() << dataProcessorSerial->retrieveTransientData();
-    forceSocketRpi->streamData(dataProcessorSerial->retrieveTransientData());
-    forceSocketMatlab->streamData(dataProcessorSerial->retrieveTransientData());
+    if(!forceSocketMatlab->isConnectedSocketForce()){
+        forceSocketRpi->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    else{
+        forceSocketMatlab->streamData(dataProcessorSerial->retrieveTransientData());
+    }
     dataProcessorSerial->clearTransientData();
 }
 

@@ -13,9 +13,17 @@ public:
     SocketForce();
     void streamData(double data);
     void streamData(QVector<double> data);
+    void setServer(int port);
+    bool isConnectedSocketForce();
 
 private:
+    QTcpServer *server;
+    QTcpSocket *socketForce;
     QDataStream *out;
+
+private slots:
+    void on_forcePort_connect();
+    void on_disconnect();
 };
 
 }
