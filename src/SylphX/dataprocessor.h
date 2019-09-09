@@ -29,6 +29,10 @@ public:
     int parseFrameMarkersWithChecks(QByteArray rawData);
     bool checkNextFrameMarker(QByteArray data, int mark);
     int getResyncCounter();
+    void sortADCData(QByteArray adcData);
+    void clearTransientData();
+    QVector<double> retrieveTransientData();
+    QVector<quint8> ADC_Data;
 
 signals:
     void dataLost();
@@ -48,7 +52,11 @@ private:
     int sync_index = 0;
     double dyno_data = 0.0;
     QVector<double> dyno_store;
+    QVector<double> forceData;
     bool dyno_start = false;
+    bool forceSensorFlag = true;
+    int biasFullWord = 0;
+    int biasMultiplier= 0;
 //signals:
 //    void channelACrossed();
 //    void channelBCrossed();

@@ -17,7 +17,7 @@ bool SocketAbstract::doConnect(QString ipAddress, int port){
             qDebug() << "Error: " << socketAbstract->errorString();
         }
         connectionTries++;
-        if(connectionTries>2)
+        if(connectionTries>0)
             return false;
     }
     return true;

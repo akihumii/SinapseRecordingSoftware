@@ -15,6 +15,7 @@
 #include "../common/datastream.h"
 #include "../Cat/catwindow.h"
 #include "dynomometer.h"
+#include "socketforce.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -37,8 +38,12 @@ public:
 
     SerialChannel *serialChannel;
     DataProcessor *dataProcessor;
+    DataProcessor *dataProcessorSerial;
     DataStream *dataStream;
+    DataStream *dataStreamSerial;
     Dynomometer *dynomometer;
+    SocketForce *forceSocketRpi;
+    SocketForce *forceSocketMatlab;
 
     Odin::OdinWindow *x;
     Cat::CatWindow *catGUI;
@@ -48,6 +53,7 @@ public slots:
 private:
     QElapsedTimer timer;
     QTimer dataTimer;
+    QTimer forceTimer;
 
     int restartCount = 0;
     float samplingRate = 1250.0;
@@ -198,8 +204,11 @@ private:
     void activateChannelGraph(int index);
     void updateStatusBar(int index, QString message);
 
+    bool forceSensorFlag = true;  // true: serial channel is now the force sensor; false: serial channel is FTDI
+
 private slots:
     void updateData();
+    void updateForce();
     void on_resetX_triggered();
     void on_timeFrame_changed(int timeFrameIndex);
     void on_voltage_changed(int voltageIndex);
@@ -221,6 +230,7 @@ private slots:
     void on_dumbDataProcessor_triggered();
     void on_graph_clicked(int index);
     void on_dyno_triggered();
+    void on_force_triggered();
     void sendParameter(char *bytes);
 
     void about();

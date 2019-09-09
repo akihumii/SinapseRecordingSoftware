@@ -14,10 +14,17 @@ MainWindow::MainWindow(){
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
     dynomometer = new Dynomometer();
     dataStream = new DataStream(this);
+    dataStreamSerial = new DataStream(this);
     dataProcessor = new DataProcessor(dataStream);
-    serialChannel = new SerialChannel(this, dataProcessor);
+    dataProcessorSerial = new DataProcessor(dataStreamSerial);
+    serialChannel = new SerialChannel(this, dataProcessorSerial);
+    connect(serialChannel, SIGNAL(receiveForceSignal()), this, SLOT(on_force_triggered()));
     socketSylph = new SocketSylph(dataProcessor);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    if(forceSensorFlag) connect(&forceTimer, SIGNAL(timeout()), this, SLOT(updateForce()));
+    forceSocketRpi = new SocketForce;
+    forceSocketMatlab = new SocketForce;
+
 
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
@@ -25,12 +32,13 @@ MainWindow::MainWindow(){
     connect(dynomometer, SIGNAL(dynoDataReady(double)), dataProcessor, SLOT(appendDynoData(double)));
 
     dataTimer.start(50);     //tick timer every XXX msec
+    if(forceSensorFlag) forceTimer.start(50);    //tick timer for reading force sensor
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
-    connectSylph();
     on_dyno_triggered();
+    connectSylph();
 //    on_timeFrame_changed(DEFAULT_XAXIS);
 //    on_voltage_changed(DEFAULT_YAXIS);
     qDebug() << "Starting SYLPH..";
@@ -82,7 +90,7 @@ void MainWindow::createLayout(){
     channelGraph[10]->yAxis->setTickStep(50);
     channelGraph[11]->yAxis->setRange(0, 66, Qt::AlignLeft);
     channelGraph[11]->yAxis->setTickStep(13);
-    channelGraph[12]->yAxis->setRange(-1, 5, Qt::AlignLeft);
+    forceSensorFlag? channelGraph[12]->yAxis->setRange(-0.00050, 2.0005, Qt::AlignLeft): channelGraph[12]->yAxis->setRange(-1, 5, Qt::AlignLeft);
     channelGraph[12]->yAxis->setTickStep(1);
 
     mainWidget = new QWidget;
@@ -303,8 +311,16 @@ void MainWindow::connectSylph(){
         serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
         serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
         updateStatusBar(0, temp);
+        qDebug() << temp;
+        forceSocketRpi->doConnect("192.168.4.3", 6666);
+        qDebug() << "force socket to Rpi status: " << forceSocketRpi->isConnected();
+        if(serialChannel->isImplantConnected() && forceSensorFlag) on_dyno_triggered();
     }
-    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+//    forceSocketMatlab->doConnect("127.0.0.1", 6666);
+    forceSocketMatlab->setServer(6666);
+    qDebug() << "force socket to Matlab status: " << forceSocketMatlab->isConnected();
+//    if(forceSocketMatlab->isConnected()) forceSocketRpi->streamData(99999);  // stop streaming data from here, but from matlab so that we can see when the trial starts
+    if(forceSensorFlag || (!serialChannel->isADCConnected() && !serialChannel->isImplantConnected())){
         int p = 8000;  // Try to connect to on-Rpi decoding code
         QString ip = "192.168.4.3";
 
@@ -317,13 +333,16 @@ void MainWindow::connectSylph(){
 //        }
 
         if(socketSylph->isConnected()){
-            updateStatusBar(0, "Connected to Sylph WiFi Module at " + ip + "/" + QString::number(p));
+            temp = "Connected to Sylph WiFi Module at " + ip + "/" + QString::number(p);
+            updateStatusBar(0, temp);
         }
         else{
-            updateStatusBar(0, "Failed to connect...");
+            temp = "Failed to connect...";
+            updateStatusBar(0, temp);
             QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
                                                                  "Check your connections and run the program again..");
         }
+        qDebug() << temp;
     }
 }
 
@@ -332,6 +351,9 @@ MainWindow::~MainWindow(){
         socketSylph->sendDisconnectSignal();
         socketSylph->doDisconnect();
     }
+    forceSocketRpi->streamData(99999);
+    forceSocketRpi->doDisconnect();
+    forceSocketMatlab->doDisconnect();
 //    delete x;
 }
 
@@ -344,19 +366,38 @@ void MainWindow::updateData(){
 //        updateStatusBar(1, "Data Rate: " + QString::number(serialChannel->getRate()) + " kbps");
 //    }
     for(int i=0; i<TOTAL_CHANNELS-1; i++){
-            channelGraph[i]->graph()->setData(dataProcessor->retrieveXAxis(), (dataProcessor->isFilterEnabled() && i < EMG_CHANNELS)? dataProcessor->filterData(dataProcessor->retrieveData(i), i): dataProcessor->retrieveData(i));
-            if(i < EMG_CHANNELS && dataStream->getStreamConnected(i)){
-                dataStream->streamData(i);
-            }
-            else if(i < EMG_CHANNELS && dataStream->getChannelSize(i) > 40960){
-                dataStream->clearChannelData(i);
-            }
-            if(!pause){
-                channelGraph[i]->replot();
-            }
+        channelGraph[i]->graph()->setData(dataProcessor->retrieveXAxis(), (dataProcessor->isFilterEnabled() && i < EMG_CHANNELS)? dataProcessor->filterData(dataProcessor->retrieveData(i), i): dataProcessor->retrieveData(i));
+        if(i < EMG_CHANNELS && dataStream->getStreamConnected(i)){ // to stream data to Matlab online classifier
+            dataStream->streamData(i);
+        }
+        else if(i < EMG_CHANNELS && dataStream->getChannelSize(i) > 40960){
+            dataStream->clearChannelData(i);
+        }
+        if(!pause){
+            channelGraph[i]->replot();
+        }
     }
-    channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
-    channelGraph[12]->replot();
+    if(!serialChannel->isConnected() || !forceSensorFlag){
+        channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
+        channelGraph[12]->replot();
+    }
+}
+
+void MainWindow::updateForce(){
+    channelGraph[12]->graph()->setData(dataProcessorSerial->retrieveXAxis(), dataProcessorSerial->retrieveData(4));
+    if(!pause){
+        channelGraph[12]->replot();
+    }
+}
+
+void MainWindow::on_force_triggered(){
+    if(!forceSocketMatlab->isConnectedSocketForce()){
+        forceSocketRpi->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    else{
+        forceSocketMatlab->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    dataProcessorSerial->clearTransientData();
 }
 
 void MainWindow::on_disableStream_triggered(){
@@ -376,13 +417,20 @@ void MainWindow::on_dyno_triggered(){
 void MainWindow::on_timeFrame_changed(int timeFrameIndex){
     currentTimeFrame = timeFrameIndex;
     dataProcessor->setNumDataPoints((TimeFrames) timeFrameIndex, samplingRate);
+    dataProcessorSerial->setNumDataPoints((TimeFrames) timeFrameIndex, samplingRate);
     for(int i=0;i<TOTAL_CHANNELS-1;i++){
         channelGraph[i]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
         channelGraph[i]->xAxis->setTickStep(timeFrameSteps[timeFrameIndex]);
         channelGraph[i]->replot();
     }
-    channelGraph[12]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
-//    channelGraph[12]->xAxis->setTickStep(1);
+    if(serialChannel->isConnected()){
+        qDebug() << "updating force sensor timeFrame...";
+        channelGraph[12]->xAxis->setRange(0, dataProcessorSerial->getNumDataPoints()*period, Qt::AlignLeft);
+    }
+    else{
+        channelGraph[12]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
+    //    channelGraph[12]->xAxis->setTickStep(1);
+    }
     channelGraph[12]->replot();
 }
 
