@@ -48,6 +48,8 @@ private:
     int bytesRead = 0;
     int temp;
     double rate = 0.0;
+signals:
+    void receiveForceSignal();
 };
 
 }

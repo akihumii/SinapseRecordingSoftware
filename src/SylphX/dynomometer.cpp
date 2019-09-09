@@ -21,5 +21,5 @@ void Dynomometer::on_dynoPort_connect(){
     socketDyno = server->nextPendingConnection();
     connect(socketDyno, SIGNAL(disconnected()), socketDyno, SLOT(deleteLater()));
     connect(socketDyno, SIGNAL(readyRead()), this, SLOT(getDynoData()));
-    qDebug() << "Connected";
+    qDebug() << "Dynamometer is connected...";
 }

@@ -18,8 +18,13 @@ MainWindow::MainWindow(){
     dataProcessor = new DataProcessor(dataStream);
     dataProcessorSerial = new DataProcessor(dataStreamSerial);
     serialChannel = new SerialChannel(this, dataProcessorSerial);
+    connect(serialChannel, SIGNAL(receiveForceSignal()), this, SLOT(on_force_triggered()));
     socketSylph = new SocketSylph(dataProcessor);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    if(forceSensorFlag) connect(&forceTimer, SIGNAL(timeout()), this, SLOT(updateForce()));
+    forceSocketRpi = new SocketForce;
+    forceSocketMatlab = new SocketForce;
+
 
 //    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
 //    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
@@ -27,6 +32,7 @@ MainWindow::MainWindow(){
     connect(dynomometer, SIGNAL(dynoDataReady(double)), dataProcessor, SLOT(appendDynoData(double)));
 
     dataTimer.start(50);     //tick timer every XXX msec
+    if(forceSensorFlag) forceTimer.start(50);    //tick timer for reading force sensor
     createStatusBar();
     createLayout();
     createActions();
@@ -306,8 +312,15 @@ void MainWindow::connectSylph(){
         serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
         updateStatusBar(0, temp);
         qDebug() << temp;
+        forceSocketRpi->doConnect("192.168.4.3", 6666);
+        qDebug() << "force socket to Rpi status: " << forceSocketRpi->isConnected();
+        if(serialChannel->isImplantConnected() && forceSensorFlag) on_dyno_triggered();
     }
-    if(forceSensorFlag || !serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
+//    forceSocketMatlab->doConnect("127.0.0.1", 6666);
+    forceSocketMatlab->setServer(6666);
+    qDebug() << "force socket to Matlab status: " << forceSocketMatlab->isConnected();
+//    if(forceSocketMatlab->isConnected()) forceSocketRpi->streamData(99999);  // stop streaming data from here, but from matlab so that we can see when the trial starts
+    if(forceSensorFlag || (!serialChannel->isADCConnected() && !serialChannel->isImplantConnected())){
         int p = 8000;  // Try to connect to on-Rpi decoding code
         QString ip = "192.168.4.3";
 
@@ -338,6 +351,9 @@ MainWindow::~MainWindow(){
         socketSylph->sendDisconnectSignal();
         socketSylph->doDisconnect();
     }
+    forceSocketRpi->streamData(99999);
+    forceSocketRpi->doDisconnect();
+    forceSocketMatlab->doDisconnect();
 //    delete x;
 }
 
@@ -361,16 +377,27 @@ void MainWindow::updateData(){
             channelGraph[i]->replot();
         }
     }
-    if(serialChannel->isConnected() && forceSensorFlag){
-        channelGraph[12]->graph()->setData(dataProcessorSerial->retrieveXAxis(), dataProcessorSerial->retrieveData(4));
-        if(!pause){
-            channelGraph[12]->replot();
-        }
-    }
-    else{
+    if(!serialChannel->isConnected() || !forceSensorFlag){
         channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
         channelGraph[12]->replot();
     }
+}
+
+void MainWindow::updateForce(){
+    channelGraph[12]->graph()->setData(dataProcessorSerial->retrieveXAxis(), dataProcessorSerial->retrieveData(4));
+    if(!pause){
+        channelGraph[12]->replot();
+    }
+}
+
+void MainWindow::on_force_triggered(){
+    if(!forceSocketMatlab->isConnectedSocketForce()){
+        forceSocketRpi->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    else{
+        forceSocketMatlab->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    dataProcessorSerial->clearTransientData();
 }
 
 void MainWindow::on_disableStream_triggered(){

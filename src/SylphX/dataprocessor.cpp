@@ -44,6 +44,9 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
                     RecordData(fullWord_rawData);
                 }
                 ChannelData[j+(NUM_CHANNELS-2)].replace(index, fullWord_rawData*(0.000000195)*biasMultiplier);
+                if(j == 0 && forceSensorFlag){
+                    forceData.append(fullWord_rawData*(0.000000195)*biasMultiplier);
+                }
     //            if(dataStream->getStreamConnected(j+(NUM_CHANNELS-2))){
     //                dataStream->appendData(j+(NUM_CHANNELS-2), fullWord_rawData*(0.000000195));
     //            }
@@ -70,7 +73,13 @@ int DataProcessor::parseFrameMarkers(QByteArray rawData){
     return rawData.size();
 }
 
+void DataProcessor::clearTransientData(){
+    forceData.clear();
+}
 
+QVector<double> DataProcessor::retrieveTransientData(){
+    return forceData;
+}
 
 int DataProcessor::parseFrameMarkersWithChecks(QByteArray rawData){
     if(leftOverData.size() > 0){
