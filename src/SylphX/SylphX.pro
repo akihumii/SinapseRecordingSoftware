@@ -12,7 +12,7 @@ TARGET = SylphX
 TEMPLATE = app
 
 # The application version
-VERSION = 1.3.3
+VERSION = 1.4.0
 
 # Define the preprocessor macro to get the application version in our application.
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
@@ -36,7 +36,14 @@ HEADERS += \
     ../Odin/socketodin.h \
     ../Odin/loopingthread.h \
     ../Odin/pulseplot.h \
-    ../Odin/odinwindow.h
+    ../Odin/odinwindow.h \
+    ../Cat/catwindow.h \
+    ../Cat/commandcat.h \
+    ../Cat/socketfilename.h \
+    ../Cat/filenamedialog.h \
+    dynomometer.h \
+    treedialog.h \
+    socketforce.h
 
 
 SOURCES += \
@@ -50,4 +57,11 @@ SOURCES += \
     ../Odin/commandodin.cpp \
     ../Odin/socketodin.cpp \
     ../Odin/pulseplot.cpp \
-    ../Odin/odinwindow.cpp
+    ../Odin/odinwindow.cpp \
+    ../Cat/catwindow.cpp \
+    ../Cat/commandcat.cpp \
+    ../Cat/socketfilename.cpp \
+    ../Cat/filenamedialog.cpp \
+    dynomometer.cpp \
+    treedialog.cpp \
+    socketforce.cpp

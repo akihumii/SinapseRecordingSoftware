@@ -307,3 +307,4 @@ src/SylphII/moc_predefs.h
 src/SylphX/SylphX
 src/SylphX/moc_predefs.h
 src/common/moc_predefs.h
+*.ini

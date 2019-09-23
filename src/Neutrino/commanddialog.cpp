@@ -23,6 +23,7 @@ CommandDialog::CommandDialog(SocketNeutrino *socketNeutrino_,
     delayThread->moveToThread(thread);
 
     connect(this, SIGNAL(closeWaitingMBox()), this, SLOT(on_exitBioImpedanceMeasurement()));
+//    on_sendCommand_clicked();
 }
 
 CommandDialog::~CommandDialog(){
@@ -153,7 +154,6 @@ void CommandDialog::createLayout(){
     ChannelLayout->addWidget(channelStreamLabel);
     for(int i=0;i<10;i++){
         SELCHN[i] = new QCheckBox("Channel "+QString::number(i+1), this);
-        connect(SELCHN[i], SIGNAL(toggled(bool)), this, SLOT(on_SELCHN_toggled()));
         ChannelLayout->addWidget(SELCHN[i]);
     }
     SELALL = new QPushButton(tr("Select All"));
@@ -289,9 +289,14 @@ void CommandDialog::createJTAGLayout(){
 }
 
 void CommandDialog::on_sendCommand_clicked(){
+    int numChannels = 0;
     for(int i=0;i<10;i++){
         NeutrinoChannel->setChannelState(i, SELCHN[i]->isChecked());
+        if(SELCHN[i]->isChecked()){
+            numChannels++;
+        }
     }
+    NeutrinoChannel->setNumChannels(numChannels);
     if(ModeComboBox->currentIndex() == 10){
         runFullBioImpedanceMeasurement();
     }
@@ -304,12 +309,14 @@ void CommandDialog::on_sendCommand_clicked(){
     if(NeutrinoCommand->constructCommand().at(6) == (char) WORDLENGTH_8){
         dataProcessor->setBitMode(WORDLENGTH_8);
         dataProcessor->setPlotEnabled(true);
+        dataProcessor->setSamplingFreq((3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         dataProcessor->clearallChannelData();
         NeutrinoChannel->setNumChannels(NeutrinoCommand->getNumChannels());
     }
     else if(NeutrinoCommand->constructCommand().at(6) == (char) WORDLENGTH_10){
         dataProcessor->setBitMode(WORDLENGTH_10);
         dataProcessor->setPlotEnabled(true);
+        dataProcessor->setSamplingFreq((3000000.0/((14.0)*(NeutrinoChannel->getNumChannels()+2.0))));
         dataProcessor->clearallChannelData();
         NeutrinoChannel->setNumChannels(NeutrinoCommand->getNumChannels());
     }
@@ -325,12 +332,6 @@ void CommandDialog::on_sendCommand_clicked(){
 }
 
 void CommandDialog::on_baud_toggled(){
-//    if(baudRateComboBox->currentIndex() == 0){
-//        NeutrinoSerial->setBaudRate(19200);
-//    }
-//    else{
-//        NeutrinoSerial->setBaudRate(38400);
-//    }
     baudRateComboBox->currentIndex() == 0? NeutrinoSerial->setBaudRate(19200) : NeutrinoSerial->setBaudRate(38400);
 }
 
@@ -342,7 +343,6 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
     });
     QTimer::singleShot(3000, [=] {
         BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
-//        on_BioImp_toggled();
         if(NeutrinoSerial->isConnected()){
             qDebug() << "Reset On:" << (quint8) NeutrinoSerial->getCurrentByte();
             bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
@@ -363,8 +363,6 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
                 QTimer::singleShot((6000 + 6000*k + 24000*i + 3000*j), [=] {
                     setInlineQuad(j);
                     BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
-//                    on_BioImp_toggled();
-//                    on_JTAG_toggled();
                     if(NeutrinoSerial->isConnected()){
                         qDebug() << (quint8) NeutrinoSerial->getCurrentByte();
                         bioImpedanceData.append(NeutrinoSerial->getCurrentByte());
@@ -397,84 +395,57 @@ void CommandDialog::runFullBioImpedanceMeasurement(){
     });
 }
 
-void CommandDialog::on_bioImpDelay_changed(){
-//    delayThread->delay((int) QString::number(bioImpDelayLineEdit->text()));
-}
-
 void CommandDialog::setBioImpedanceChannel(int channel){
+    for(int i = 0; i < 4; i++){
+        BioImpData[i]->setChecked(false);
+    }
     switch (channel){
         case 0:{
-            BioImpData[0]->setChecked(false);
-            BioImpData[1]->setChecked(false);
-            BioImpData[2]->setChecked(false);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 1:{
             BioImpData[0]->setChecked(true);
-            BioImpData[1]->setChecked(false);
-            BioImpData[2]->setChecked(false);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 2:{
-            BioImpData[0]->setChecked(false);
             BioImpData[1]->setChecked(true);
-            BioImpData[2]->setChecked(false);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 3:{
             BioImpData[0]->setChecked(true);
             BioImpData[1]->setChecked(true);
-            BioImpData[2]->setChecked(false);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 4:{
-            BioImpData[0]->setChecked(false);
-            BioImpData[1]->setChecked(false);
             BioImpData[2]->setChecked(true);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 5:{
             BioImpData[0]->setChecked(true);
-            BioImpData[1]->setChecked(false);
             BioImpData[2]->setChecked(true);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 6:{
-            BioImpData[0]->setChecked(false);
             BioImpData[1]->setChecked(true);
             BioImpData[2]->setChecked(true);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 7:{
             BioImpData[0]->setChecked(true);
             BioImpData[1]->setChecked(true);
             BioImpData[2]->setChecked(true);
-            BioImpData[3]->setChecked(false);
             break;
         }
         case 8:{
-            BioImpData[0]->setChecked(false);
-            BioImpData[1]->setChecked(false);
-            BioImpData[2]->setChecked(false);
             BioImpData[3]->setChecked(true);
             break;
         }
         case 9:{
             BioImpData[0]->setChecked(true);
-            BioImpData[1]->setChecked(false);
-            BioImpData[2]->setChecked(false);
             BioImpData[3]->setChecked(true);
             break;
         }
     }
-//    on_BioImp_toggled();
 }
 
 void CommandDialog::setInlineQuad(int input){
@@ -484,29 +455,27 @@ void CommandDialog::setInlineQuad(int input){
 void CommandDialog::setCurrentType(CURRENT_TYPE type){
     switch (type){
         case SMALL_CURRENT:{
-            JTAG[14]->setChecked(false);
-            JTAG[15]->setChecked(true);
+            setJTAGChecked(false, 14);
+            setJTAGChecked(true, 15);
             break;
         }
         case MEDIUM_CURRENT:{
-            JTAG[14]->setChecked(true);
-            JTAG[15]->setChecked(false);
+            setJTAGChecked(true, 14);
+            setJTAGChecked(false, 15);
             break;
         }
         case LARGE_CURRENT:{
-            JTAG[14]->setChecked(true);
-            JTAG[15]->setChecked(true);
+            setJTAGChecked(true, 14);
+            setJTAGChecked(true, 15);
             break;
         }
         default:{
-            JTAG[14]->setChecked(false);
-            JTAG[15]->setChecked(false);
+            setJTAGChecked(false, 14);
+            setJTAGChecked(false, 15);
             BioImpData[5]->setChecked(false);    // STEP 2: Check ETIRST
-//            on_BioImp_toggled();
             break;
         }
     }
-//    on_JTAG_toggled();
 }
 
 void CommandDialog::setBioImpedanceGain(GAIN gain){
@@ -540,7 +509,6 @@ void CommandDialog::setBioImpedanceGain(GAIN gain){
             break;
         }
     }
-//    on_JTAG_toggled();
 }
 
 void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
@@ -556,8 +524,7 @@ void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
     measureResetVoltage(bioImpedance, SUPER_HIGH_GAIN);
 
     // Turn off Reset voltage command
-    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST
-//    on_BioImp_toggled();
+    BioImpData[5]->setChecked(true);    // Check ETIRST true
 
     for(int i = 0; i < 10; i++){
         runCurrentMeasurement(i, bioImpedance, MEDIUM_GAIN, MEDIUM_CURRENT);
@@ -582,17 +549,16 @@ void CommandDialog::runAutoRangedBioImpedanceMeasurement(){
 
     BioImpedanceDialog bioImpedanceDialog(bioImpedance);
     bioImpedanceDialog.exec();
+
+
 }
 
 void CommandDialog::measureResetVoltage(BioImpedance *bioImpedance, GAIN gain){
     on_startBioImpedanceMeasurement();
 
     // Send reset voltage command
-    BioImpData[5]->setChecked(false);    // STEP 2: Check ETIRST false
-//    on_BioImp_toggled();
-
+    BioImpData[5]->setChecked(false);    // Check ETIRST false
     sendCommand(NeutrinoCommand->constructCommand());
-
     delaySeconds();
 
     // Read reset Voltage
@@ -605,18 +571,14 @@ void CommandDialog::measureResetVoltage(BioImpedance *bioImpedance, GAIN gain){
         bioImpedance->setResetVoltage(socketNeutrino->getCurrentByte(), gain);
     }
 
-    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST true
-//    on_BioImp_toggled();
+    BioImpData[5]->setChecked(true);    // Check ETIRST true
 }
 
 void CommandDialog::bioReset(){
-    BioImpData[5]->setChecked(false);    // STEP 2: Check ETIRST false
-
+    BioImpData[5]->setChecked(false);   // Check ETIRST false
     sendCommand(NeutrinoCommand->constructCommand());
-
     delaySeconds();
-
-    BioImpData[5]->setChecked(true);    // STEP 2: Check ETIRST true
+    BioImpData[5]->setChecked(true);    // Check ETIRST true
 }
 
 void CommandDialog::runCurrentMeasurement(int i, BioImpedance *bioImpedance, GAIN bioGain, CURRENT_TYPE bioCurrent){
@@ -760,16 +722,6 @@ void CommandDialog::delaySeconds(){
 void CommandDialog::on_startBioImpedanceMeasurement(){
     mboxWait->show();
     setWindowTitle(tr("Neutrino Command - Running Auto BioImpedance Measurement"));
-//    JTAG[10]->setChecked(true);
-//    NeutrinoCommand->setJTAGbit(10);    //PDN of BIOIMPEDANCE
-//    JTAG[82]->setChecked(true);
-//    NeutrinoCommand->setJTAGbit(82);    //OFFCMFB
-//    JTAG[89]->setChecked(true);
-//    NeutrinoCommand->setJTAGbit(89);    //INVBIASRESET
-//    JTAG[96]->setChecked(true);
-//    NeutrinoCommand->setJTAGbit(96);    //PDS2
-//    JTAG[97]->setChecked(true);
-//    NeutrinoCommand->setJTAGbit(97);    //PDS1
     setJTAGChecked(true, 10);
     setJTAGChecked(true, 82);
     setJTAGChecked(true, 89);
@@ -779,33 +731,9 @@ void CommandDialog::on_startBioImpedanceMeasurement(){
         BioImpData[i]->setChecked(false);
     }
     BioImpData[4]->setChecked(true);    //ENBIOPIN
-//    BioImpData[0]->setChecked(false);
-//    BioImpData[1]->setChecked(false);
-//    BioImpData[2]->setChecked(false);
-//    BioImpData[3]->setChecked(false);
-//    BioImpData[4]->setChecked(true);    //ENBIOPIN
-//    BioImpData[5]->setChecked(false);
-//    on_JTAG_toggled();
-//    on_BioImp_toggled();
 }
 
 void CommandDialog::on_exitBioImpedanceMeasurement(){
-//    JTAG[10]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(10);
-//    JTAG[14]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(14);
-//    JTAG[15]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(15);
-//    JTAG[16]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(16);
-//    JTAG[82]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(82);    // OFFCMFB
-//    JTAG[89]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(89);    //INVBIASRESET
-//    JTAG[96]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(96);    //PDS2
-//    JTAG[97]->setChecked(false);
-//    NeutrinoCommand->clearJTAGbit(97);    //PDS1
     setJTAGChecked(false, 10);
     setJTAGChecked(false, 14);
     setJTAGChecked(false, 15);
@@ -817,11 +745,6 @@ void CommandDialog::on_exitBioImpedanceMeasurement(){
     for(int i = 0; i < 6; i++){
         BioImpData[i]->setChecked(false);
     }
-//    BioImpData[1]->setChecked(false);
-//    BioImpData[2]->setChecked(false);
-//    BioImpData[3]->setChecked(false);
-//    BioImpData[4]->setChecked(false);
-//    BioImpData[5]->setChecked(false);
     on_chipReset_clicked();
     setWindowTitle(tr("Neutrino Command"));
     mboxWait->hide();
@@ -862,41 +785,18 @@ void CommandDialog::on_JTAG_toggled(int index){
     }
     if(JTAG[13]->isChecked()){          // SEL_LNA GAIN X40
         if(JTAG[12]->isChecked()){      // JTAG[12] = A0 | JTAG[11] = A1
-//            if(JTAG[11]->isChecked()){  // A0 = A1 = 1
-//                bioImpGain = 40.0 * 8.0;
-//            }
-//            else{                       // A0 = 1, A1 = 0
-//                bioImpGain = 40.0 * 4.0;
-//            }
-            bioImpGain = JTAG[11]->isChecked()? 40.0 * 8.0 : 40.0 * 4.0;
+            bioImpGain = JTAG[11]->isChecked()? 40.0 * 8.0 : 40.0 * 4.0;        // A0 = A1 = 1 : A0 = 1, A1 = 0
         }
         else{
-//            if(JTAG[11]->isChecked()){  // A0 = 0, A1 = 1
-//                bioImpGain = 40.0 * 6.0;
-//            }
-//            else{                       // A0 = A1 = 0
-//                bioImpGain = 40.0 * 2.0;
-//            }
-            bioImpGain = JTAG[11]->isChecked()? 40.0 * 6.0 : 40.0 * 2.0;
+            bioImpGain = JTAG[11]->isChecked()? 40.0 * 6.0 : 40.0 * 2.0;        // A0 = 0, A1 = 1 : A0 = A1 = 0
         }
     }
     else{
         if(JTAG[12]->isChecked()){      // JTAG[12] = A0 | JTAG[11] = A1
-//            if(JTAG[11]->isChecked()){  // A0 = A1 = 1
-                bioImpGain = JTAG[11]->isChecked()? 20.0 * 8.0 : 20.0 * 4.0;
-//            }
-//            else{                       // A0 = 1, A1 = 0
-//                bioImpGain = 20.0 * 4.0;
-//            }
+            bioImpGain = JTAG[11]->isChecked()? 20.0 * 8.0 : 20.0 * 4.0;        // A0 = A1 = 1 : A0 = 1, A1 = 0
         }
         else{
-//            if(JTAG[11]->isChecked()){  // A0 = 0, A1 = 1
-//                bioImpGain = 20.0 * 6.0;
-//            }
-//            else{                       // A0 = A1 = 0
-//                bioImpGain = 20.0 * 2.0;
-//            }
-            bioImpGain = JTAG[11]->isChecked()? 20.0 * 6.0 : 20.0 * 2.0;
+            bioImpGain = JTAG[11]->isChecked()? 20.0 * 6.0 : 20.0 * 2.0;        // A0 = 0, A1 = 1 : A0 = A1 = 0
         }
     }
     if(JTAG[79]->isChecked() || JTAG[77]->isChecked() || JTAG[76]->isChecked()){
@@ -940,16 +840,13 @@ void CommandDialog::on_amplifierSelectNone_clicked(){
     }
 }
 
-void CommandDialog::on_SELCHN_toggled(){
-
-}
-
 void CommandDialog::on_amplifierSelect_toggled(int index){
     setJTAGChecked(!amplifierSelect[index]->isChecked(), 66-index*5);
 }
 
 void CommandDialog::on_Mode_Changed(int Mode){
     NeutrinoCommand->setOPMode(Mode);
+    on_chipReset_clicked();
     setJTAGChecked((Mode == 5 || Mode == 6), 94);
     setJTAGChecked((Mode > 6 && Mode < 12), 10);
     BioImpData[4]->setChecked((Mode > 6 && Mode < 12));
@@ -1003,8 +900,8 @@ void CommandDialog::loadlastCommand(){
 }
 
 void CommandDialog::loadDefault(){
-    ModeComboBox->setCurrentIndex(2);
-    on_Mode_Changed(2);
+    ModeComboBox->setCurrentIndex(3);
+    on_Mode_Changed(3);
     for(int i=0;i<112;i++){
         JTAG[i]->setChecked(false);
     }
@@ -1013,7 +910,9 @@ void CommandDialog::loadDefault(){
     }
     setJTAGChecked(true, 102);
     setJTAGChecked(true, 5);
+//    setJTAGChecked(true, 6);
     setJTAGChecked(true, 7);
+    setJTAGChecked(true, 9);
 
     Exit->setChecked(true);
     on_SELALL_clicked();

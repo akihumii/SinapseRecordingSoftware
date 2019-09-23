@@ -1,12 +1,10 @@
 #include "command.h"
 
-Command::Command(Channel *NeutrinoChannel_)
-{
+Command::Command(Channel *NeutrinoChannel_){
     NeutrinoChannel = NeutrinoChannel_;
 }
 
-QByteArray Command::constructCommand()
-{
+QByteArray Command::constructCommand(){
     QByteArray outgoingCommand;
 
     for(int i=0;i<5;i++){       //Append 5x A5 in Hexadecimal

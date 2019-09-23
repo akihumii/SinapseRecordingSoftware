@@ -2,9 +2,10 @@
 #define SIGNALAUDIO_H
 
 #include "qtincludes.h"
+#include "filter.h"
 
-class SignalAudio : public QObject {
-    Q_OBJECT
+class SignalAudio {
+//    Q_OBJECT
 public:
     SignalAudio();
     ~SignalAudio();
@@ -21,9 +22,10 @@ protected:
     void appendAudioBuffer(int ChannelIndex, char LSB, char MSB);
     bool playAudio(int ChannelIndex);
 private:
+    Filter *filter;
     void clearAudioBuffer();
     int audioChannelSelected = 0;
-    int sampleRate = 44100;
+    int sampleRate = 8000;
     int sampleSize = 16;
 };
 

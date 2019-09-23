@@ -3,7 +3,6 @@
 FilterDialog::FilterDialog(Data *_dataProcessor){
     dataProcessor = _dataProcessor;
     createLayout();
-//    on_channelFilter_toggled();
 }
 
 void FilterDialog::createLayout(){
@@ -12,9 +11,6 @@ void FilterDialog::createLayout(){
     channel = new QGroupBox("Filter Setting");
 
     channelLayout = new QVBoxLayout;
-
-//    channelFilterEnable = new QCheckBox(tr("Enable Filter"));
-//    connect(channelFilterEnable, SIGNAL(toggled(bool)), this, SLOT(on_channelFilter_toggled()));
 
     filterLabel = new QLabel("Notch Filter");
     notchFilter = new QComboBox;
@@ -38,24 +34,7 @@ void FilterDialog::createLayout(){
     cutoffFreq[1]->setEnabled(false);
     connect(cutoffFreq[1], SIGNAL(returnPressed()), this, SLOT(on_highpassFreq_changed()));
     highpassLayout->addWidget(filterEnable[1]);
-//    highpassLayout->addWidget(cutoffLabel[1]);
     highpassLayout->addWidget(cutoffFreq[1]);
-
-//    QValidator *lowpassValidator = new QIntValidator(0, 7500, this);
-
-//    lowpassLayout = new QVBoxLayout;
-//    filterEnable[0] = new QCheckBox(tr("Low pass"));
-//    connect(filterEnable[0], SIGNAL(toggled(bool)), this, SLOT(on_lowpassEnable_toggled(bool)));
-//    cutoffLabel[0] = new QLabel("Cutoff Freq");
-//    cutoffFreq[0] = new QLineEdit;
-//    cutoffFreq[0]->setValidator(lowpassValidator);
-//    connect(cutoffFreq[0], SIGNAL(returnPressed()), this, SLOT(on_lowpassFreq_changed()));
-//    lowpassLayout->addWidget(filterEnable[0]);
-//    lowpassLayout->addWidget(cutoffLabel[0]);
-//    lowpassLayout->addWidget(cutoffFreq[0]);
-
-//    lownhighLayout->addLayout(lowpassLayout);
-//    channelLayout->addWidget(channelFilterEnable);
     lownhighLayout->addLayout(highpassLayout);
 
     channelLayout->addLayout(notchLayout);
@@ -90,68 +69,11 @@ void FilterDialog::loadPrevSetting(){
     else{
         filterEnable[1]->setChecked(false);
     }
-
-//    if(dataProcessor->isFilterEnabled()){
-//        channelFilterEnable->setChecked(true);
-//    }
-//    else{
-//        channelFilterEnable->setChecked(false);
-//    }
-
-//    if(dataProcessor->isLowpassFilterEnabled()){
-//        filterEnable[0]->setChecked(true);
-//        cutoffFreq[0]->setText(QString::number(dataProcessor->currentLowpassFreq()));
-//    }
-//    else{
-//        filterEnable[0]->setChecked(false);
-//    }
 }
 
 FilterDialog::~FilterDialog(){
 
 }
-
-//void FilterDialog::on_channelFilter_toggled(){
-//    if(channelFilterEnable->isChecked()){
-//        filterLabel->setEnabled(true);
-//        notchFilter->setEnabled(true);
-
-////        filterEnable[0]->setEnabled(true);
-////        cutoffLabel[0]->setEnabled(true);
-////        cutoffFreq[0]->setEnabled(true);
-
-//        filterEnable[1]->setEnabled(true);
-//        cutoffLabel[1]->setEnabled(true);
-//        cutoffFreq[1]->setEnabled(true);
-//    }
-//    else{
-//        filterLabel->setEnabled(false);
-//        notchFilter->setEnabled(false);
-
-////        filterEnable[0]->setEnabled(false);
-////        cutoffLabel[0]->setEnabled(false);
-////        cutoffFreq[0]->setEnabled(false);
-
-//        filterEnable[1]->setEnabled(false);
-//        cutoffLabel[1]->setEnabled(false);
-//        cutoffFreq[1]->setEnabled(false);
-//        dataProcessor->setHighpassFilterEnabled(false);
-//        dataProcessor->setLowpassFilterEnabled(false);
-//        dataProcessor->setNotchFilterEnabled(false);
-//    }
-////    if(dataProcessor->isLowpassFilterEnabled()){
-////        on_lowpassEnable_toggled(true);
-////    }
-////    else{
-////        on_lowpassEnable_toggled(false);
-////    }
-//    if(dataProcessor->isHighpassFilterEnabled()){
-//        on_highpassEnable_toggled(true);
-//    }
-//    else{
-//        on_highpassEnable_toggled(false);
-//    }
-//}
 
 void FilterDialog::on_highpassEnable_toggled(bool enableFlag){
         cutoffLabel[1]->setEnabled(enableFlag);
@@ -181,7 +103,6 @@ void FilterDialog::on_notchFilter_changed(int Index){
 void FilterDialog::on_highpassFreq_changed(){
     if(cutoffFreq[1]->text().toInt() > 99 && cutoffFreq[1]->text().toInt() < 7501){
         dataProcessor->setHighpassFilter(cutoffFreq[1]->text().toDouble(), samplingFreq);
-        qDebug() << cutoffFreq[1]->text().toInt();
     }
     else{
         QMessageBox::warning(        this,
@@ -189,16 +110,3 @@ void FilterDialog::on_highpassFreq_changed(){
                                      tr("Please enter a valid cutoff frequency ranging from 100 to 7500"));
     }
 }
-
-//void FilterDialog::on_lowpassFreq_changed(){
-//    dataProcessor->setLowpassFilter(cutoffFreq[0]->text().toDouble(), 20000);
-//}
-
-//void FilterDialog::on_lowpassEnable_toggled(bool enableFlag){
-//        cutoffLabel[0]->setEnabled(enableFlag);
-//        cutoffFreq[0]->setEnabled(enableFlag);
-//        if(dataProcessor->currentLowpassFreq() != 0){
-//            cutoffFreq[0]->setText(QString::number(dataProcessor->currentLowpassFreq()));
-//        }
-//        dataProcessor->setLowpassFilterEnabled(enableFlag);
-//}

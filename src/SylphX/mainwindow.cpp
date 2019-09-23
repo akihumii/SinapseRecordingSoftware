@@ -3,31 +3,49 @@
 namespace SylphX {
 
 MainWindow::MainWindow(){
-    x = new Odin::OdinWindow();
-    x->setFixedSize(x->sizeHint());
+//    x = new Odin::OdinWindow();
+//    x->setFixedSize(x->sizeHint());
+//    catGUI = new Cat::CatWindow();
+//    catGUI->setFixedSize(catGUI->sizeHint());
+//    y->show();
 //    x->show();
-    pythonProcess = new QProcess(this);
     QString version(APP_VERSION);
     timer.start();
     setWindowTitle(tr("SINAPSE Sylph X Recording Software V") + version);
-    data = new DataProcessor(samplingRate, pythonProcess);
-    serialChannel = new SerialChannel(this, data);
-    socketSylph = new SocketSylph(data);
-    connect(x, SIGNAL(commandSent()), socketSylph, SLOT(appendSync()));
+    dynomometer = new Dynomometer();
+    dataStream = new DataStream(this);
+    dataStreamSerial = new DataStream(this);
+    dataProcessor = new DataProcessor(dataStream);
+    dataProcessorSerial = new DataProcessor(dataStreamSerial);
+    serialChannel = new SerialChannel(this, dataProcessorSerial);
+    connect(serialChannel, SIGNAL(receiveForceSignal()), this, SLOT(on_force_triggered()));
+    socketSylph = new SocketSylph(dataProcessor);
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(updateData()));
+    if(forceSensorFlag) connect(&forceTimer, SIGNAL(timeout()), this, SLOT(updateForce()));
+    forceSocketRpi = new SocketForce;
+    forceSocketMatlab = new SocketForce;
+
+
+//    connect(dataProcessor, SIGNAL(channelACrossed()), x, SLOT(on_channelAThreshold_crossed()));
+//    connect(dataProcessor, SIGNAL(channelBCrossed()), x, SLOT(on_channelBThreshold_crossed()));
+
+    connect(dynomometer, SIGNAL(dynoDataReady(double)), dataProcessor, SLOT(appendDynoData(double)));
+
     dataTimer.start(50);     //tick timer every XXX msec
+    if(forceSensorFlag) forceTimer.start(50);    //tick timer for reading force sensor
     createStatusBar();
     createLayout();
     createActions();
     createMenus();
+    on_dyno_triggered();
     connectSylph();
-    on_timeFrame1000_triggered();
+//    on_timeFrame_changed(DEFAULT_XAXIS);
+//    on_voltage_changed(DEFAULT_YAXIS);
     qDebug() << "Starting SYLPH..";
 }
 
 void MainWindow::createLayout(){
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    for(int i=0;i<12;i++){
+    for(int i=0;i<TOTAL_CHANNELS;i++){
         channelGraph[i] = new QCustomPlot;
         channelGraph[i]->xAxis->setVisible(false);
         channelGraph[i]->axisRect()->setAutoMargins(QCP::msNone);
@@ -40,21 +58,13 @@ void MainWindow::createLayout(){
         channelGraph[i]->yAxis->setTickStep(100);
     }
 
-    data->setScale(1000000);
 
-    connect(channelGraph[0], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph1_clicked()));
-    connect(channelGraph[1], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph2_clicked()));
-    connect(channelGraph[2], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph3_clicked()));
-    connect(channelGraph[3], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph4_clicked()));
-    connect(channelGraph[4], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph5_clicked()));
-    connect(channelGraph[5], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph6_clicked()));
-    connect(channelGraph[6], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph7_clicked()));
-    connect(channelGraph[7], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph8_clicked()));
-    connect(channelGraph[8], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph9_clicked()));
-    connect(channelGraph[9], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph10_clicked()));
-    connect(channelGraph[10], SIGNAL(mousePress(QMouseEvent*)), this, SLOT(on_graph11_clicked()));
+    audioSelectMapper = new QSignalMapper(this);
+    connect(audioSelectMapper, SIGNAL(mapped(int)), this, SLOT(on_graph_clicked(int)));
 
-    for(int i = 0; i < 10; i ++){
+    for(int i = 0; i < EMG_CHANNELS; i ++){
+        audioSelectMapper->setMapping(channelGraph[i], i);
+        connect(channelGraph[i], SIGNAL(mousePress(QMouseEvent*)), audioSelectMapper, SLOT(map()));
         channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + " (uV)");
         channelGraph[i]->yAxis->setLabelFont(QFont(font().family(), 8));
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
@@ -63,73 +73,85 @@ void MainWindow::createLayout(){
     }
 
     channelGraph[10]->yAxis->setLabel("Sync Pulse (V)");
-    channelGraph[10]->yAxis->setLabelPadding(35);
     channelGraph[10]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[10]->setFixedHeight(100);
-    channelGraph[11]->yAxis->setLabel("Frame Marker");
-    channelGraph[11]->yAxis->setLabelPadding(35);
+    channelGraph[11]->yAxis->setLabel("Frame Marker('000)");
     channelGraph[11]->yAxis->setLabelFont(QFont(font().family(), 8));
     channelGraph[11]->setFixedHeight(100);
+    channelGraph[12]->yAxis->setLabel("Dynomometer");
+    channelGraph[12]->yAxis->setLabelFont(QFont(font().family(), 8));
+    channelGraph[12]->setFixedHeight(100);
+    channelGraph[12]->xAxis->setTickStep(1);
 
     channelGraph[0]->graph()->setPen(QPen(Qt::red));
     channelGraph[10]->graph()->setPen(QPen(Qt::darkGreen));
 
     channelGraph[10]->yAxis->setRange(-5, 260, Qt::AlignLeft);
     channelGraph[10]->yAxis->setTickStep(50);
-    channelGraph[11]->yAxis->setRange(0, 65535, Qt::AlignLeft);
-    channelGraph[11]->yAxis->setTickStep(13000);
-    channelGraph[11]->axisRect()->setMargins(QMargins(85,10,0,15));
+    channelGraph[11]->yAxis->setRange(0, 66, Qt::AlignLeft);
+    channelGraph[11]->yAxis->setTickStep(13);
+    forceSensorFlag? channelGraph[12]->yAxis->setRange(-0.00050, 2.0005, Qt::AlignLeft): channelGraph[12]->yAxis->setRange(-1, 5, Qt::AlignLeft);
+    channelGraph[12]->yAxis->setTickStep(1);
 
-    QVBoxLayout *leftLayout = new QVBoxLayout;
-    for(int i = 0; i < 5; i++){
-        leftLayout->addWidget(channelGraph[i]);
+    mainWidget = new QWidget;
+    mainLayout = new QVBoxLayout;
+    topLayout = new QVBoxLayout;
+    bottomLayout = new QVBoxLayout;
+
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        if(plotEnable[i]){
+            topLayout->addWidget(channelGraph[i]);
+        }
     }
-
-    QVBoxLayout *rightLayout = new QVBoxLayout;
-    for(int i = 5; i < 10; i++){
-        rightLayout->addWidget(channelGraph[i]);
+    if(dyno){
+        bottomLayout->addWidget(channelGraph[12]);
     }
-
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addLayout(leftLayout);
-    topLayout->addLayout(rightLayout);
-
-    QVBoxLayout *bottomLayout = new QVBoxLayout;
-    for(int i = 10; i < 12; i++){
+    for(int i = EMG_CHANNELS; i < TOTAL_CHANNELS-1; i++){
         bottomLayout->addWidget(channelGraph[i]);
     }
 
     mainLayout->addLayout(topLayout);
     mainLayout->addLayout(bottomLayout);
 
-    QWidget *mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
 }
 
 void MainWindow::createActions(){
-    for(int i = 0; i < 10; i++){
+    plotSelectMapper = new QSignalMapper(this);
+    connect(plotSelectMapper, SIGNAL(mapped(int)), this, SLOT(on_plotSelect_changed(int)));
+    for(int i = 0; i < EMG_CHANNELS; i++){
         audio[i] = new QAction("Channel " + QString::number(i+1, 10)+ " Audio Output");
+        plotSelectAction[i] = new QAction(plotSelect[i]);
+        plotSelectMapper->setMapping(plotSelectAction[i], i);
+        connect(plotSelectAction[i], SIGNAL(triggered(bool)), plotSelectMapper, SLOT(map()));
     }
-    audio[10] = new QAction(tr("Sync Pulse Audio Output"));
 
-    connect(audio[0], SIGNAL(triggered(bool)), this, SLOT(on_graph1_clicked()));
-    connect(audio[1], SIGNAL(triggered(bool)), this, SLOT(on_graph2_clicked()));
-    connect(audio[2], SIGNAL(triggered(bool)), this, SLOT(on_graph3_clicked()));
-    connect(audio[3], SIGNAL(triggered(bool)), this, SLOT(on_graph4_clicked()));
-    connect(audio[4], SIGNAL(triggered(bool)), this, SLOT(on_graph5_clicked()));
-    connect(audio[5], SIGNAL(triggered(bool)), this, SLOT(on_graph6_clicked()));
-    connect(audio[6], SIGNAL(triggered(bool)), this, SLOT(on_graph7_clicked()));
-    connect(audio[7], SIGNAL(triggered(bool)), this, SLOT(on_graph8_clicked()));
-    connect(audio[8], SIGNAL(triggered(bool)), this, SLOT(on_graph9_clicked()));
-    connect(audio[9], SIGNAL(triggered(bool)), this, SLOT(on_graph10_clicked()));
-    connect(audio[10], SIGNAL(triggered(bool)), this, SLOT(on_graph11_clicked()));
+    plotSelectAll = new QAction("Select All");
+    plotSelectNone = new QAction("Select None");
+    plotSelectDefault = new QAction("Select Default");
+    connect(plotSelectAll, SIGNAL(triggered(bool)), this, SLOT(on_plotSelectAll_triggered()));
+    connect(plotSelectNone, SIGNAL(triggered(bool)), this, SLOT(on_plotSelectNone_triggered()));
+    connect(plotSelectDefault, SIGNAL(triggered(bool)), this, SLOT(on_plotSelectDefault_triggered()));
 
     aboutAction = new QAction(tr("About SINAPSE Recording Software"));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
-    odinAction = new QAction(tr("Odin Control Panel"));
+    odinAction = new QAction(tr("&Od&in Control Panel"));
+    odinAction->setShortcut(tr("Ctrl+I"));
     connect(odinAction, SIGNAL(triggered(bool)), this, SLOT(on_odin_triggered()));
+
+    catAction = new QAction(tr("Ca&t Control Panel"));
+    catAction->setShortcut(tr("Ctrl+T"));
+    connect(catAction, SIGNAL(triggered(bool)), this, SLOT(on_cat_triggered()));
+
+    disableStream = new QAction(tr("&Disable stream"));
+    disableStream->setShortcut(tr("Ctrl+D"));
+    connect(disableStream, SIGNAL(triggered(bool)), this, SLOT(on_disableStream_triggered()));
+
+    dynoAction = new QAction(tr("Turn Dyna&mometer Off"));
+    dynoAction->setShortcut(tr("Ctrl+M"));
+    connect(dynoAction, SIGNAL(triggered(bool)), this, SLOT(on_dyno_triggered()));
 
     filterAction = new QAction(tr("Filter Configuration"), this);
     filterAction->setShortcut(tr("Ctrl+F"));
@@ -146,10 +168,6 @@ void MainWindow::createActions(){
     dataAnalyzerAction = new QAction(tr("Data Analy&zer"), this);
     dataAnalyzerAction->setShortcut(tr("Ctrl+Z"));
     connect(dataAnalyzerAction, SIGNAL(triggered()), this, SLOT(on_dataAnalyzer_triggered()));
-
-    pythonLaunchAction = new QAction(tr("&Python Launcher"), this);
-    pythonLaunchAction->setShortcut(tr("Ctrl+P"));
-    connect(pythonLaunchAction, SIGNAL(triggered()), this, SLOT(on_pythonLaunch_triggered()));
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+X"));
@@ -172,58 +190,40 @@ void MainWindow::createActions(){
     restartAction->setShortcut(tr("Ctrl+A"));
     connect(restartAction, SIGNAL(triggered(bool)), this, SLOT(on_restart_triggered()));
 
-    timeFrame10ms = new QAction(tr("10 milliseconds"), this);
-    timeFrame20ms = new QAction(tr("20 milliseconds"), this);
-    timeFrame50ms = new QAction(tr("50 milliseconds"), this);
-    timeFrame100ms = new QAction(tr("100 milliseconds"), this);
-    timeFrame200ms = new QAction(tr("200 milliseconds"), this);
-    timeFrame500ms = new QAction(tr("500 milliseconds"), this);
-    timeFrame1000ms = new QAction(tr("1 second"), this);
-    timeFrame2000ms = new QAction(tr("2 seconds"), this);
-    timeFrame5000ms = new QAction(tr("5 seconds"), this);
-
-    connect(timeFrame10ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame10_triggered()));
-    connect(timeFrame20ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame20_triggered()));
-    connect(timeFrame50ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame50_triggered()));
-    connect(timeFrame100ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame100_triggered()));
-    connect(timeFrame200ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame200_triggered()));
-    connect(timeFrame500ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame500_triggered()));
-    connect(timeFrame1000ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame1000_triggered()));
-    connect(timeFrame2000ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame2000_triggered()));
-    connect(timeFrame5000ms, SIGNAL(triggered(bool)), this, SLOT(on_timeFrame5000_triggered()));
+    timeFrameMapper = new QSignalMapper(this);
+    connect(timeFrameMapper, SIGNAL(mapped(int)), this, SLOT(on_timeFrame_changed(int)));
+    for(int i = 0; i < 9; i++){
+        timeFrameAction[i] = new QAction(timeFrameActionNames[i]);
+        timeFrameMapper->setMapping(timeFrameAction[i], i);
+        connect(timeFrameAction[i], SIGNAL(triggered(bool)), timeFrameMapper, SLOT(map()));
+    }
 
     resetDefaultY = new QAction(tr("Default Voltage Scale"), this);
     resetDefaultY->setShortcut(tr("Ctrl+Y"));
     connect(resetDefaultY, SIGNAL(triggered()), this, SLOT(on_resetY_triggered()));
 
-    voltage50u = new QAction(tr("+/- 50uV"));
-    voltage100u = new QAction(tr("+/- 100uV"));
-    voltage200u = new QAction(tr("+/- 200uV"));
-    voltage500u = new QAction(tr("+/- 500uV"));
-    voltage1000u = new QAction(tr("+/- 1000uV"));
-    voltage2000u = new QAction(tr("+/- 2000uV"));
-    voltage5000u = new QAction(tr("+/- 5000uV"));
-    voltage10000u = new QAction(tr("+/- 10000uV"));
+    voltageMapper = new QSignalMapper(this);
+    connect(voltageMapper, SIGNAL(mapped(int)), this, SLOT(on_voltage_changed(int)));
+    for(int i = 0; i < 8; i++){
+        voltageAction[i] = new QAction(voltageActionNames[i]);
+        voltageMapper->setMapping(voltageAction[i], i);
+        connect(voltageAction[i], SIGNAL(triggered(bool)), voltageMapper, SLOT(map()));
+    }
 
-    connect(voltage50u, SIGNAL(triggered(bool)), this, SLOT(on_voltage50u_triggered()));
-    connect(voltage100u, SIGNAL(triggered(bool)), this, SLOT(on_voltage100u_triggered()));
-    connect(voltage200u, SIGNAL(triggered(bool)), this, SLOT(on_voltage200u_triggered()));
-    connect(voltage500u, SIGNAL(triggered(bool)), this, SLOT(on_voltage500u_triggered()));
-    connect(voltage1000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage1000u_triggered()));
-    connect(voltage2000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage2000u_triggered()));
-    connect(voltage5000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage5000u_triggered()));
-    connect(voltage10000u, SIGNAL(triggered(bool)), this, SLOT(on_voltage10000u_triggered()));
 }
 
 void MainWindow::createMenus(){
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(odinAction);
+    fileMenu->addAction(catAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(disableStream);
+    fileMenu->addSeparator();
+    fileMenu->addAction(dynoAction);
     fileMenu->addSeparator();
     fileMenu->addAction(filterAction);
     fileMenu->addSeparator();
     fileMenu->addAction(dataAnalyzerAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(pythonLaunchAction);
     fileMenu->addSeparator();
     fileMenu->addAction(pauseAction);
     fileMenu->addSeparator();
@@ -232,70 +232,39 @@ void MainWindow::createMenus(){
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    plotSelectMenu = menuBar()->addMenu(tr("&Channel Plots"));
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        plotSelectMenu->addAction(plotSelectAction[i]);
+        plotSelectAction[i]->setCheckable(true);
+        plotSelectAction[i]->setChecked(plotEnable[i]);
+    }
+
+    plotSelectMenu->addSeparator();
+    plotSelectMenu->addAction(plotSelectAll);
+    plotSelectMenu->addAction(plotSelectNone);
+    plotSelectMenu->addSeparator();
+    plotSelectMenu->addAction(plotSelectDefault);
+
     timeFrameMenu = menuBar()->addMenu(tr("&Time Scales"));
     timeFrameGroup = new QActionGroup(this);
-    timeFrameMenu->addAction(timeFrame10ms);
-    timeFrame10ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame20ms);
-    timeFrame20ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame50ms);
-    timeFrame50ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame100ms);
-    timeFrame100ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame200ms);
-    timeFrame200ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame500ms);
-    timeFrame500ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame1000ms);
-    timeFrame1000ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame2000ms);
-    timeFrame2000ms->setCheckable(true);
-    timeFrameMenu->addAction(timeFrame5000ms);
-    timeFrame5000ms->setCheckable(true);
+    for(int i = 0; i < 9; i++){
+        timeFrameMenu->addAction(timeFrameAction[i]);
+        timeFrameAction[i]->setCheckable(true);
+        timeFrameGroup->addAction(timeFrameAction[i]);
+    }
+    timeFrameAction[DEFAULT_XAXIS]->setChecked(true);
 
-    timeFrameGroup = new QActionGroup(this);
-    timeFrameGroup->addAction(timeFrame10ms);
-    timeFrameGroup->addAction(timeFrame20ms);
-    timeFrameGroup->addAction(timeFrame50ms);
-    timeFrameGroup->addAction(timeFrame100ms);
-    timeFrame1000ms->setChecked(true);
-    timeFrameGroup->addAction(timeFrame200ms);
-    timeFrameGroup->addAction(timeFrame500ms);
-    timeFrameGroup->addAction(timeFrame1000ms);
-    timeFrameGroup->addAction(timeFrame2000ms);
-    timeFrameGroup->addAction(timeFrame5000ms);
-  
     timeFrameMenu->addSeparator();
     timeFrameMenu->addAction(resetDefaultX);
 
     voltageMenu = menuBar()->addMenu(tr("&Voltage Scales"));
-    voltageMenu->addAction(voltage50u);
-    voltage50u->setCheckable(true);
-    voltageMenu->addAction(voltage100u);
-    voltage100u->setCheckable(true);
-    voltageMenu->addAction(voltage200u);
-    voltage200u->setCheckable(true);
-    voltageMenu->addAction(voltage500u);
-    voltage500u->setCheckable(true);
-    voltageMenu->addAction(voltage1000u);
-    voltage1000u->setCheckable(true);
-    voltageMenu->addAction(voltage2000u);
-    voltage2000u->setCheckable(true);
-    voltageMenu->addAction(voltage5000u);
-    voltage5000u->setCheckable(true);
-    voltageMenu->addAction(voltage10000u);
-    voltage10000u->setCheckable(true);
-
     voltageGroup = new QActionGroup(this);
-    voltageGroup->addAction(voltage50u);
-    voltageGroup->addAction(voltage100u);
-    voltageGroup->addAction(voltage200u);
-    voltageGroup->addAction(voltage500u);
-    voltage500u->setChecked(true);
-    voltageGroup->addAction(voltage1000u);
-    voltageGroup->addAction(voltage2000u);
-    voltageGroup->addAction(voltage5000u);
-    voltageGroup->addAction(voltage10000u);
+    for(int i = 0; i < 8; i++){
+        voltageMenu->addAction(voltageAction[i]);
+        voltageAction[i]->setCheckable(true);
+        voltageGroup->addAction(voltageAction[i]);
+    }
+    voltageAction[DEFAULT_YAXIS]->setChecked(true);
 
     voltageMenu->addSeparator();
     voltageMenu->addAction(resetDefaultY);
@@ -336,227 +305,234 @@ void MainWindow::createStatusBar(){
 
 void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
-    statusBarText[0].clear();
+    QString temp;
     if(portInfo.size()>1){
         serialChannel->connectSylph();
-        statusBarText[0].clear();
-        if(serialChannel->isImplantConnected()){
-            statusBarText[0].append("Connected to Implant Port |");
-        }
-        else{
-            statusBarText[0].append("Connection to Implant Port failed |");
-        }
-        if(serialChannel->isADCConnected()){
-            statusBarText[0].append(" Connected to ADC Port");
-        }
-        else{
-            statusBarText[0].append(" Connection to ADC Port failed");
-        }
-        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+        serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
+        serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
+        updateStatusBar(0, temp);
+        qDebug() << temp;
+        forceSocketRpi->doConnect("192.168.4.3", 6666);
+        qDebug() << "force socket to Rpi status: " << forceSocketRpi->isConnected();
+        if(serialChannel->isImplantConnected() && forceSensorFlag) on_dyno_triggered();
     }
-    if(!serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
-        statusBarText[0].clear();
-        int i = 1;
-        do{
-            i++;
-            socketSylph->doConnect("192.168.4."+QString::number(i), 8888);
-        } while(!socketSylph->isConnected() && i < 4);
+//    forceSocketMatlab->doConnect("127.0.0.1", 6666);
+    forceSocketMatlab->setServer(6666);
+    qDebug() << "force socket to Matlab status: " << forceSocketMatlab->isConnected();
+//    if(forceSocketMatlab->isConnected()) forceSocketRpi->streamData(99999);  // stop streaming data from here, but from matlab so that we can see when the trial starts
+    if(forceSensorFlag || (!serialChannel->isADCConnected() && !serialChannel->isImplantConnected())){
+        int p = 8000;  // Try to connect to on-Rpi decoding code
+        QString ip = "192.168.4.3";
+
+        socketSylph->doConnect(ip, p);
+
+//        for(int i = 1; !socketSylph->isConnected() && i < 4; i++){
+//            p = 8888;
+//            ip = "192.168.4."+QString::number(i);
+//            socketSylph->doConnect(ip, p);
+//        }
+
         if(socketSylph->isConnected()){
-            statusBarText[0].append("Connected to Sylph WiFi Module at 192.168.4." + QString::number(i) + "/8888");
+            temp = "Connected to Sylph WiFi Module at " + ip + "/" + QString::number(p);
+            updateStatusBar(0, temp);
         }
         else{
-            statusBarText[0].append("Failed to connect...");
+            temp = "Failed to connect...";
+            updateStatusBar(0, temp);
             QMessageBox::information(this, "Failed to connect!", "No Sylph device detected.. \n"
                                                                  "Check your connections and run the program again..");
         }
-        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+        qDebug() << temp;
     }
 }
 
 MainWindow::~MainWindow(){
     if(socketSylph->isConnected()){
-        socketSylph->closeESP();
+        socketSylph->sendDisconnectSignal();
         socketSylph->doDisconnect();
     }
-    delete x;
+    forceSocketRpi->streamData(99999);
+    forceSocketRpi->doDisconnect();
+    forceSocketMatlab->doDisconnect();
+//    delete x;
 }
 
 void MainWindow::updateData(){
-    if(restartCount < 15 && serialChannel->isConnected()){
-        on_restart_triggered();
-        restartCount++;
+//    if(socketSylph->isConnected()){
+    updateStatusBar(1, "Data Rate: " + QString::number(socketSylph->isConnected()? socketSylph->getRate() : serialChannel->getRate()) + " kbps");
+    updateStatusBar(3, "Resync Count: " + QString::number(dataProcessor->getResyncCounter()));
+//    }
+//    else if (serialChannel->isImplantConnected()){
+//        updateStatusBar(1, "Data Rate: " + QString::number(serialChannel->getRate()) + " kbps");
+//    }
+    for(int i=0; i<TOTAL_CHANNELS-1; i++){
+        channelGraph[i]->graph()->setData(dataProcessor->retrieveXAxis(), (dataProcessor->isFilterEnabled() && i < EMG_CHANNELS)? dataProcessor->filterData(dataProcessor->retrieveData(i), i): dataProcessor->retrieveData(i));
+        if(i < EMG_CHANNELS && dataStream->getStreamConnected(i)){ // to stream data to Matlab online classifier
+            dataStream->streamData(i);
+        }
+        else if(i < EMG_CHANNELS && dataStream->getChannelSize(i) > 40960){
+            dataStream->clearChannelData(i);
+        }
+        if(!pause){
+            channelGraph[i]->replot();
+        }
     }
-    statusBarText[1].clear();
-    statusBarText[1].append("Data Rate: " + QString::number(socketSylph->getRate()) + " kbps");
-    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
-    for(int i=0; i<12; i++){
-            channelGraph[i]->graph()->setData(data->retrieveXAxis(), data->isFilterEnabled()? data->filterData(data->retrieveData(i), i): data->retrieveData(i));
-            if(!pause){
-                channelGraph[i]->replot();
-            }
+    if(!serialChannel->isConnected() || !forceSensorFlag){
+        channelGraph[12]->graph()->setData(dataProcessor->retrieveDyno_XAxis(), dataProcessor->retrieveData(12));
+        channelGraph[12]->replot();
     }
 }
 
-void MainWindow::on_timeFrame10_triggered(){
-    setTimeFrameTickStep(TimeFrames10ms, 0.001);
+void MainWindow::updateForce(){
+    channelGraph[12]->graph()->setData(dataProcessorSerial->retrieveXAxis(), dataProcessorSerial->retrieveData(4));
+    if(!pause){
+        channelGraph[12]->replot();
+    }
 }
 
-void MainWindow::on_timeFrame20_triggered(){
-    setTimeFrameTickStep(TimeFrames20ms, 0.002);
+void MainWindow::on_force_triggered(){
+    if(!forceSocketMatlab->isConnectedSocketForce()){
+        forceSocketRpi->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    else{
+        forceSocketMatlab->streamData(dataProcessorSerial->retrieveTransientData());
+    }
+    dataProcessorSerial->clearTransientData();
 }
 
-void MainWindow::on_timeFrame50_triggered(){
-    setTimeFrameTickStep(TimeFrames50ms, 0.005);
+void MainWindow::on_disableStream_triggered(){
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        dataStream->disableStream(i);
+    }
 }
 
-void MainWindow::on_timeFrame100_triggered(){
-    setTimeFrameTickStep(TimeFrames100ms, 0.01);
+void MainWindow::on_dyno_triggered(){
+    dyno? dynoAction->setText("Turn Dyna&mometer On") : dynoAction->setText("Turn Dyna&mometer Off");
+    dyno = !dyno;
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
 }
 
-void MainWindow::on_timeFrame200_triggered(){
-    setTimeFrameTickStep(TimeFrames200ms, 0.02);
+void MainWindow::on_timeFrame_changed(int timeFrameIndex){
+    currentTimeFrame = timeFrameIndex;
+    dataProcessor->setNumDataPoints((TimeFrames) timeFrameIndex, samplingRate);
+    dataProcessorSerial->setNumDataPoints((TimeFrames) timeFrameIndex, samplingRate);
+    for(int i=0;i<TOTAL_CHANNELS-1;i++){
+        channelGraph[i]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
+        channelGraph[i]->xAxis->setTickStep(timeFrameSteps[timeFrameIndex]);
+        channelGraph[i]->replot();
+    }
+    if(serialChannel->isConnected()){
+        qDebug() << "updating force sensor timeFrame...";
+        channelGraph[12]->xAxis->setRange(0, dataProcessorSerial->getNumDataPoints()*period, Qt::AlignLeft);
+    }
+    else{
+        channelGraph[12]->xAxis->setRange(0, dataProcessor->getNumDataPoints()*period, Qt::AlignLeft);
+    //    channelGraph[12]->xAxis->setTickStep(1);
+    }
+    channelGraph[12]->replot();
 }
 
-void MainWindow::on_timeFrame500_triggered(){
-    setTimeFrameTickStep(TimeFrames500ms, 0.05);
+void MainWindow::on_resetX_triggered(){
+    on_timeFrame_changed(DEFAULT_XAXIS);
+    timeFrameAction[DEFAULT_XAXIS]->setChecked(true);
 }
 
-void MainWindow::on_timeFrame1000_triggered(){
-    setTimeFrameTickStep(TimeFrames1000ms, 0.1);
-}
-
-void MainWindow::on_timeFrame2000_triggered(){
-    setTimeFrameTickStep(TimeFrames2000ms, 0.2);
-}
-
-void MainWindow::on_timeFrame5000_triggered(){
-    setTimeFrameTickStep(TimeFrames5000ms, 0.5);
-}
-
-void MainWindow::setTimeFrameTickStep(TimeFrames timeframe, double step){
-    data->setNumDataPoints(timeframe, samplingRate);
-//    data->clearallChannelData();
-    for(int i=0;i<12;i++){
-        channelGraph[i]->xAxis->setRange(0, data->getNumDataPoints()*period, Qt::AlignLeft);
-        channelGraph[i]->xAxis->setTickStep(step);
+void MainWindow::on_voltage_changed(int voltageIndex){
+    currentVoltageScale = voltageIndex;
+    voltageIndex < 4? dataProcessor->setScale(1000000) : dataProcessor->setScale(1000);
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        channelGraph[i]->yAxis->setRange(voltageMin[voltageIndex], voltageRange[voltageIndex], Qt::AlignLeft);
+        channelGraph[i]->yAxis->setTickStep(voltageStep[voltageIndex]);
+        channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + (dataProcessor->getScale()==1000? " (mV)": " (uV)"));
         channelGraph[i]->replot();
     }
 }
 
-void MainWindow::on_voltage50u_triggered(){
-    data->setScale(1000000);
-    setVoltageTickStep(50, 100, 10);
-}
-
-void MainWindow::on_voltage100u_triggered(){
-    data->setScale(1000000);
-    setVoltageTickStep(100, 200, 20);
-}
-
-void MainWindow::on_voltage200u_triggered(){
-    data->setScale(1000000);
-    setVoltageTickStep(200, 400, 40);
-}
-
-void MainWindow::on_voltage500u_triggered(){
-    data->setScale(1000000);
-    setVoltageTickStep(500, 1000, 100);
-}
-
-void MainWindow::on_voltage1000u_triggered(){
-    data->setScale(1000);
-    setVoltageTickStep(1, 2, 0.2);
-}
-
-void MainWindow::on_voltage2000u_triggered(){
-    data->setScale(1000);
-    setVoltageTickStep(2, 4, 0.4);
-}
-
-void MainWindow::on_voltage5000u_triggered(){
-    data->setScale(1000);
-    setVoltageTickStep(5, 10, 1);
-}
-
-void MainWindow::on_voltage10000u_triggered(){
-    data->setScale(1000);
-    setVoltageTickStep(10, 20, 2);
-}
-
-
-void MainWindow::setVoltageTickStep(double position, double size, double step){
-    for(int i=0;i<10;i++){
-        channelGraph[i]->yAxis->setRange(-position, size, Qt::AlignLeft);
-        channelGraph[i]->yAxis->setTickStep(step);
-        channelGraph[i]->yAxis->setLabel("Channel "+ QString::number(i+1, 10) + (data->getScale()==1000? " (mV)": " (uV)"));
-        channelGraph[i]->replot();
-    }
+void MainWindow::on_resetY_triggered(){
+    on_voltage_changed(DEFAULT_YAXIS);
+    voltageAction[DEFAULT_YAXIS]->setChecked(true);
 }
 
 void MainWindow::on_record_triggered(){
-    if(!data->isRecordEnabled()){
-        data->setRecordEnabled(true);
-//        data->setADCRecordEnabled(true);
-        statusBarText[2].clear();
-        statusBarText[2].append("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
-        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+    if(!dataProcessor->isRecordEnabled()){
+        dataProcessor->setRecordEnabled(true);
+        updateStatusBar(2, "<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording...</b>");
         recordAction->setText("Stop &Recording");
     }
-    else if(data->isRecordEnabled()){
-        data->setRecordEnabled(false);
-//        data->setADCRecordEnabled(false);
-        statusBarText[2].clear();
-        statusBarText[2].append("<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + data->getFileName() + "</b>");
-        statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+    else if(dataProcessor->isRecordEnabled()){
+        dataProcessor->setRecordEnabled(false);
+        updateStatusBar(2, "<b><FONT COLOR='#ff0000' FONT SIZE = 4> Recording stopped!!! File saved to " + dataProcessor->getFileName() + "</b>");
         recordAction->setText("Start &Recording");
     }
 }
 
+void MainWindow::on_plotSelect_changed(int channel){
+    plotEnable[channel] = !plotEnable[channel];
+    refreshScreen();
+}
+
+void MainWindow::on_plotSelectAll_triggered(){
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        plotEnable[i] = true;
+        plotSelectAction[i]->setChecked(true);
+    }
+    refreshScreen();
+}
+
+void MainWindow::on_plotSelectNone_triggered(){
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        plotEnable[i] = false;
+        plotSelectAction[i]->setChecked(false);
+    }
+    refreshScreen();
+}
+
+void MainWindow::on_plotSelectDefault_triggered(){
+    for(int i = 0; i < EMG_CHANNELS; i++){
+        plotEnable[i] = false;
+        plotSelectAction[i]->setChecked(false);
+    }
+    for(int i = 3; i < 7; i++){
+        plotEnable[i] = true;
+        plotSelectAction[i]->setChecked(true);
+    }
+    refreshScreen();
+}
+
+void MainWindow::refreshScreen(){
+    createLayout();
+    on_timeFrame_changed(currentTimeFrame);
+    on_voltage_changed(currentVoltageScale);
+}
+
 void MainWindow::on_playPause_triggered(){
-    if(pause){
-        pauseAction->setText("Pause graph");
-    }
-    else{
-        pauseAction->setText("Resume graph");
-    }
+    pause? pauseAction->setText("Pause graph") : pauseAction->setText("Resume graph");
     pause = !pause;
 }
 
 void MainWindow::on_chooseDirectory_triggered(){
-    statusBarText[2].clear();
-    statusBarText[2].append("Set your preferred save file directory");
-    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
-    data->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    updateStatusBar(2, "Set your preferred save file directory");
+    dataProcessor->setDirectory(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                  QDir::homePath() + "/Desktop/",
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks));
 
-    statusBarText[2].clear();
-    statusBarText[2].append("Save directory set to: " + data->getDirectory());
-    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
-}
-
-void MainWindow::on_resetX_triggered(){
-    data->setNumDataPoints(TimeFrames100ms, samplingRate);
-//    data->clearallChannelData();
-    timeFrame100ms->setChecked(true);
+    updateStatusBar(2, "Save directory set to: " + dataProcessor->getDirectory());
 }
 
 void MainWindow::on_odin_triggered(){
-    x->show();
+    emit showOdinSignal();
+}
+
+void MainWindow::on_cat_triggered(){
+    emit showCatSignal();
 }
 
 void MainWindow::on_filterConfig_trigger(){
-    FilterDialog filterDialog(data);
+    FilterDialog filterDialog(dataProcessor);
     filterDialog.exec();
-}
-
-void MainWindow::on_resetY_triggered(){
-    on_voltage500u_triggered();
-    channelGraph[10]->yAxis->setRange(0, 2.5, Qt::AlignLeft);
-    channelGraph[11]->yAxis->setRange(0, 250, Qt::AlignLeft);
-    channelGraph[11]->replot();
-    voltage500u->setChecked(true);
 }
 
 void MainWindow::on_dataAnalyzer_triggered(){
@@ -565,107 +541,26 @@ void MainWindow::on_dataAnalyzer_triggered(){
 //    process->start(file);
 }
 
-void MainWindow::on_pythonLaunch_triggered(){
-//    pythonProcess->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *args)
-//    {
-//        args->flags |= CREATE_NEW_CONSOLE;
-//        args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
-//        args->startupInfo->dwFlags |= STARTF_USEFILLATTRIBUTE;
-//        args->startupInfo->dwFillAttribute = BACKGROUND_BLUE | FOREGROUND_RED
-//                                           | FOREGROUND_INTENSITY;
-//    });
-//    QString file;
-//    file = "python " + QFileDialog::getOpenFileName(this,
-//        tr("Open Python Script"), QDir::currentPath(), tr("Python Files (*.py)"));
-////    file =  QDir::currentPath() + "/release/Data.py -arg1 arg1";
-//    pythonProcess->start(file);
-//    qDebug() << file;
-//    QByteArray temp = pythonProcess->readAll();
-//    qDebug() << temp;
-//    if(!pythonProcess->waitForStarted())
-//           qDebug() << "Failed to start";
-//    qDebug() << "Starting data streamer";
-}
-
 void MainWindow::on_restart_triggered(){
-    if(serialChannel->isADCConnected()){
-        serialChannel->closeADCPort();
-    }
-    if(serialChannel->isImplantConnected()){
-        serialChannel->closeImplantPort();
-    }
-//    data->clearallChannelData();
-    connectSylph();
-    if(socketSylph->isConnected()){
-        socketSylph->discardData();
-    }
+    socketSylph->setChecked(false);
+    serialChannel->setChecked(false);
 }
 
 // Display "About" message box.
-void MainWindow::about()
-{
+void MainWindow::about(){
     QMessageBox::about(this, tr("About SINAPSE Recording Software"),
             tr("<h2>Singapore Institute for Neurotechnology</h2>"
                "<p>Version 1.0"
                "<p>Copyright &copy; 2016-2018 SINAPSE"));
 }
 
-void MainWindow::on_graph1_clicked(){
+void MainWindow::on_graph_clicked(int index){
     setDefaultGraph();
-    activateChannelGraph(0);
-}
-
-void MainWindow::on_graph2_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(1);
-}
-void MainWindow::on_graph3_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(2);
-}
-
-void MainWindow::on_graph4_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(3);
-}
-
-void MainWindow::on_graph5_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(4);
-}
-
-void MainWindow::on_graph6_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(5);
-}
-
-void MainWindow::on_graph7_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(6);
-}
-
-void MainWindow::on_graph8_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(7);
-}
-
-void MainWindow::on_graph9_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(8);
-}
-
-void MainWindow::on_graph10_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(9);
-}
-
-void MainWindow::on_graph11_clicked(){
-    setDefaultGraph();
-    activateChannelGraph(10);
+    activateChannelGraph(index);
 }
 
 void MainWindow::setDefaultGraph(){
-    for(int i = 0; i < 11; i++){
+    for(int i = 0; i < EMG_CHANNELS; i++){
         channelGraph[i]->graph()->setPen(QPen(Qt::black));
         audio[i]->setChecked(false);
     }
@@ -673,16 +568,26 @@ void MainWindow::setDefaultGraph(){
 
 void MainWindow::activateChannelGraph(int index){
     channelGraph[index]->graph()->setPen(QPen(Qt::red));
-    data->setAudioChannel(index);
+    dataProcessor->setAudioChannel(index);
     audio[index]->setChecked(true);
 }
 
 void MainWindow::on_smartDataProcessor_triggered(){
-    data->setSmartDataProcessor(true);
+    dataProcessor->setSmartDataProcessor(true);
 }
 
 void MainWindow::on_dumbDataProcessor_triggered(){
-    data->setSmartDataProcessor(false);
+    dataProcessor->setSmartDataProcessor(false);
+}
+
+void MainWindow::updateStatusBar(int index, QString message){
+    statusBarText[index].clear();
+    statusBarText[index].append(message);
+    statusBarLabel->setText(statusBarText[0] + " | " +  statusBarText[1] + " | " + statusBarText[2] + " | " + statusBarText[3]);
+}
+
+void MainWindow::sendParameter(char *command){
+    socketSylph->writeCommand(command);
 }
 
 }

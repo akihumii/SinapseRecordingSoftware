@@ -11,9 +11,24 @@ public:
     void doDisconnect();
     bool isConnected();
     QString getError();
+    int getRate();
+    void setChecked(bool flag);
+    void sendDisconnectSignal();
+    void write(QByteArray command);
+    QByteArray read();
+
+private:
+    int bufferRead = 8;
 
 protected:
     QTcpSocket *socketAbstract;
+    int bytesRead = 0;
+    double rate = 0.0;
+    bool checked = false;
+    QTimer *timer;
+
+protected slots:
+    void updateRate();
 };
 
 #endif // SOCKETABSTRACT_H

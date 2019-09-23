@@ -22,14 +22,11 @@ private:
     Command *NeutrinoCommand;
     DataProcessor *NeutrinoData;
 
-    qint64 maxSize = 102400;
-    int numChannels;
-    QByteArray lastSentCommand;
+    qint64 maxSize = 4080;
     bool record = false;
 
     bool Mode_8Bit = false;
     char currentByte;
-    int getNumChannels(QByteArray lastCommand);
 
     QFile *File;
     QTextStream *out;
@@ -38,7 +35,7 @@ private:
     QString directory = QDir::homePath() + "/Desktop/";
 
 private slots:
-    void ReadCommand();
+    void readData();
 signals:
     void singleByteReady(double temp);
 };

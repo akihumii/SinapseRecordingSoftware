@@ -20,7 +20,7 @@ public:
 
 private:
     bool SELCHNarray[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int numChannels;
+    int numChannels = 10;
 };
 
 #endif // CHANNEL_H

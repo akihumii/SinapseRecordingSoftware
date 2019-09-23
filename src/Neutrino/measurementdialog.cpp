@@ -1,7 +1,6 @@
 #include "measurementdialog.h"
 
-MeasurementDialog::MeasurementDialog(SerialChannel *NeutrinoSerial_, SocketNeutrino *socketNeutrino_)
-{
+MeasurementDialog::MeasurementDialog(SerialChannel *NeutrinoSerial_, SocketNeutrino *socketNeutrino_){
     NeutrinoSerial = NeutrinoSerial_;
     socketNeutrino = socketNeutrino_;
     connect(NeutrinoSerial, SIGNAL(singleByteReady(double)), this, SLOT(updataData(double)));
@@ -9,8 +8,7 @@ MeasurementDialog::MeasurementDialog(SerialChannel *NeutrinoSerial_, SocketNeutr
     createLayout();
 }
 
-MeasurementDialog::~MeasurementDialog()
-{
+MeasurementDialog::~MeasurementDialog(){
 }
 
 void MeasurementDialog::updataData(double data){
@@ -88,12 +86,7 @@ void MeasurementDialog::on_record_clicked(){
     if(socketNeutrino->isConnected()){
         socketNeutrino->setRecordEnabled(!record);
     }
-    if(record){
-        recordButton->setText("Start Recording!");
-    }
-    else{
-        recordButton->setText("Stop Recording!");
-    }
+    record? recordButton->setText("Start Recording!") : recordButton->setText("Stop Recording!");
     record = !record;
 }
 

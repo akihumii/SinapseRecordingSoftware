@@ -4,25 +4,16 @@ namespace SylphX {
 
 SocketSylph::SocketSylph(DataProcessor *dataProcessor_){
     dataProcessor = dataProcessor_;
-    timer = new QTimer;
-    connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(ReadCommand()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateRate()));
-    timer->start(1000);
+    connect(socketAbstract, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(dataProcessor, SIGNAL(dataLost()), this, SLOT(resyncData()));
+
+//    player = new QMediaPlayer;
+//    player->setMedia(QUrl::fromLocalFile(QDir::currentPath() +QDir::separator()+ "coins.mp3"));
+//    player->setVolume(50);
 }
 
-void SocketSylph::discardData(){
-    for(int i = 0; i < 10; i++){
-        socketAbstract->read(maxSize*10);
-        qDebug() << "Discarding";
-    }
-    checked = false;
-}
-void SocketSylph::ReadCommand(){
-    if(initCount < 20){
-        discardData();
-        initCount++;
-    }
-    else if(socketAbstract->bytesAvailable() >= maxSize && checked){
+void SocketSylph::readData(){
+    if(socketAbstract->bytesAvailable() >= maxSize && checked){
         if(dataProcessor->isSmart()){
             bytesRead += dataProcessor->parseFrameMarkersWithChecks(socketAbstract->read(maxSize));
         }
@@ -36,31 +27,24 @@ void SocketSylph::ReadCommand(){
             checked = true;
             qDebug() << "checked is true";
         }
+        else{
+            readData();
+        }
     }
 }
 
-void SocketSylph::updateRate(){
-    rate = bytesRead*8/1000;
-    if(rate == 0 && checked){
-        initCount = 0;
-        checked = false;
+void SocketSylph::writeCommand(QByteArray command){
+//    if(command.size() > 1){
+//        player->play();
+//    }
+    if(this->isConnected()){
+        socketAbstract->write(command);
+        qDebug() << "Sent command of a size" << command.size() << "via TCP socket: " << (quint8) command.at(0) << (quint8) command.at(1) << (quint8) command.at(2);
     }
-    bytesRead = 0;
 }
 
-int SocketSylph::getRate(){
-    return rate;
-}
-
-void SocketSylph::appendSync(){
-    qDebug() << "Sync pulse detected!";
-}
-
-void SocketSylph::closeESP(){
-    qDebug() << "Closing ESP";
-    QByteArray closingMSG = "DISCONNECT!!!!!!";
-    socketAbstract->write(closingMSG);
-    socketAbstract->waitForBytesWritten(1000);
+void SocketSylph::resyncData(){
+    checked = false;
 }
 
 }

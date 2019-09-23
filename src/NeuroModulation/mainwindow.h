@@ -16,6 +16,8 @@ public:
 private:
     Command *command;
     SerialShuHao *serialShuHao;
+    QTcpServer *tcpServer;
+    QTcpSocket *tcpServerConnection;
 
     void createLayout();
 
@@ -52,6 +54,8 @@ private slots:
     void on_interPhaseInterval_editted();
     void on_sendCommand_clicked();
     void on_startStop_clicked();
+    void acceptConnection();
+    void echo();
 };
 
 #endif // MAINWINDOW_H
