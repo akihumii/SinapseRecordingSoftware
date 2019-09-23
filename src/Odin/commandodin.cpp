@@ -40,7 +40,7 @@ void CommandOdin::sendCommand(){
 
 void CommandOdin::sendStart(){
     outgoingCommand.clear();
-    outgoingCommand.append((const char) 0xF8);
+    outgoingCommand.append((const char) START_STIMULATION);
     outgoingCommand.append((const char) 0xF8);
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(outgoingCommand);
@@ -49,9 +49,15 @@ void CommandOdin::sendStart(){
     socketOdin->writeCommand(outgoingCommand);
 }
 
+void CommandOdin::sendStartFlag(){
+    outgoingCommand.clear();
+    outgoingCommand.append((const char) START_STIMULATION);
+    outgoingCommand.append((const char) 100);
+}
+
 void CommandOdin::sendStop(){
     outgoingCommand.clear();
-    outgoingCommand.append((const char) 0x8F);
+    outgoingCommand.append((const char) STOP_STIMULATION);
     outgoingCommand.append((const char) 0x8F);
     if(serialOdin->isOdinSerialConnected()){
         serialOdin->writeCommand(outgoingCommand);
@@ -119,9 +125,9 @@ void CommandOdin::sendPulseDuration(int channel){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Pulse Duration";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
 }
 
 void CommandOdin::sendFrequency(){
@@ -133,9 +139,57 @@ void CommandOdin::sendFrequency(){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Frequency";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
+}
+
+void CommandOdin::sendThreshold(int channel){
+    rpiCommand.clear();
+    switch (channel){
+        case 0:{
+            rpiCommand.append((const char) THRESHOLD_CHN1);
+            break;
+        }
+        case 1:{
+            rpiCommand.append((const char) THRESHOLD_CHN2);
+            break;
+        }
+        case 2:{
+            rpiCommand.append((const char) THRESHOLD_CHN3);
+            break;
+        }
+        case 3:{
+            rpiCommand.append((const char) THRESHOLD_CHN4);
+            break;
+        }
     }
+    rpiCommand.append((const char) getThreshold(channel));
+    qDebug() << "Sent thresholds" << rpiCommand;
+}
+
+void CommandOdin::sendThresholdPower(int channel){
+    rpiCommand.clear();
+    switch (channel){
+        case 0:{
+            rpiCommand.append((const char) THRESHOLD_POWER_CHN1);
+            break;
+        }
+        case 1:{
+            rpiCommand.append((const char) THRESHOLD_POWER_CHN2);
+            break;
+        }
+        case 2:{
+            rpiCommand.append((const char) THRESHOLD_POWER_CHN3);
+            break;
+        }
+        case 3:{
+            rpiCommand.append((const char) THRESHOLD_POWER_CHN4);
+            break;
+        }
+    }
+    rpiCommand.append((const char) getThresholdPower(channel));
+    qDebug() << "Sent threshold power" << rpiCommand ;
 }
 
 void CommandOdin::sendChannelEnable(){
@@ -147,13 +201,17 @@ void CommandOdin::sendChannelEnable(){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Channel Enabled";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
 }
 
 QByteArray CommandOdin::getlastSentCommand(){
     return outgoingCommand;
+}
+
+QByteArray CommandOdin::getlastRpiCommand(){
+    return rpiCommand;
 }
 
 void CommandOdin::setAmplitude(int channel, double value){
@@ -190,7 +248,19 @@ unsigned char CommandOdin::getAmplitudeByte(int index){
                 formulaFile.close();
             }
     // =================================================== HACK JOB =============================================================//
-        unsigned char temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;       // For 20.0mA
+        unsigned char temp;
+//        if(amplitude[index] >= 100.0){
+//            if(amplitude[index] - 100.0 >= 14.0){
+                temp = amplitude[index]*amplitude[index]*a + amplitude[index]*b - c;
+//            }
+//            else{
+//                temp = 1;
+//            }
+//            temp = (amplitude[index] - 100.0 >= 14.0)? amplitude[index]*amplitude[index]*a + amplitude[index]*b - c : 1;
+//        }
+//        else{
+//            temp = 0;
+//        }
         qDebug() << "What is temp here " << temp;
         return temp;
     }
@@ -224,6 +294,22 @@ char CommandOdin::getFrequencyByte(){
 
 int CommandOdin::getFrequency(){
     return frequency;
+}
+
+int CommandOdin::getThreshold(int channel){
+    return threshold[channel];
+}
+
+void CommandOdin::setThreshold(int channel, int value){
+    threshold[channel] = value;
+}
+
+int CommandOdin::getThresholdPower(int channel){
+    return thresholdPower[channel];
+}
+
+void CommandOdin::setThresholdPower(int channel, int value){
+    thresholdPower[channel] = value;
 }
 
 void CommandOdin::setChannelEnabled(int channel, bool flag){
@@ -280,9 +366,27 @@ void CommandOdin::sendThresholdEnable(){
     }
     socketOdin->writeCommand(outgoingCommand);
     qDebug() << "Sent Threshold Enabled";
-    for(int i = 0; i < outgoingCommand.size(); i++){
-        qDebug() << (quint8) outgoingCommand.at(i);
-    }
+//    for(int i = 0; i < outgoingCommand.size(); i++){
+//        qDebug() << (quint8) outgoingCommand.at(i);
+//    }
+}
+
+void CommandOdin::sendThresholdUpper(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) THRESHOLD_UPPER);
+    rpiCommand.append((const char) getThresholdUpper());
+}
+
+void CommandOdin::sendThresholdLower(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) THRESHOLD_LOWER);
+    rpiCommand.append((const char) getThresholdLower());
+}
+
+void CommandOdin::sendDebounceDelay(){
+    rpiCommand.clear();
+    rpiCommand.append((const char) DEBOUNCE_DELAY);
+    rpiCommand.append((const char) getDebounceDelay());
 }
 
 void CommandOdin::setThresholdEnable(char value){
@@ -300,6 +404,33 @@ void CommandOdin::setStepSize(double step){
 
 char CommandOdin::getStepSize(){
     return stepSize;
+}
+
+void CommandOdin::setThresholdUpper(double threshold){
+    thresholdUpper = threshold;
+    qDebug() << "Upper Threshold: " << (quint8) thresholdUpper;
+}
+
+char CommandOdin::getThresholdUpper(){
+    return thresholdUpper;
+}
+
+void CommandOdin::setThresholdLower(double threshold){
+    thresholdLower = threshold;
+    qDebug() << "Lower Threshold: " << (quint8) thresholdLower;
+}
+
+char CommandOdin::getThresholdLower(){
+    return thresholdLower;
+}
+
+void CommandOdin::setDebounceDelay(double delay){
+    debounceDelay = delay;
+    qDebug() << "Lower Threshold: " << (quint8) debounceDelay;
+}
+
+char CommandOdin::getDebounceDelay(){
+    return debounceDelay;
 }
 
 unsigned char CommandOdin::getCurrentAmplitude(){

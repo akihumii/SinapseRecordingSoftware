@@ -12,7 +12,10 @@
 #include "serialchannel.h"
 #include "../common/filterdialog.h"
 #include "../Odin/odinwindow.h"
-#include "datastream.h"
+#include "../common/datastream.h"
+#include "../Cat/catwindow.h"
+#include "dynomometer.h"
+#include "socketforce.h"
 
 class QComboBox;
 class QCustomPlot;
@@ -21,6 +24,8 @@ namespace SylphX {
 
 #define DEFAULT_XAXIS 7
 #define DEFAULT_YAXIS 3
+#define EMG_CHANNELS 10
+#define TOTAL_CHANNELS 13
 
 class MainWindow : public QMainWindow
 {
@@ -32,21 +37,29 @@ public:
     QLabel *statusBarLabel;
 
     SerialChannel *serialChannel;
-    DataProcessor *data;
+    DataProcessor *dataProcessor;
+    DataProcessor *dataProcessorSerial;
     DataStream *dataStream;
+    DataStream *dataStreamSerial;
+    Dynomometer *dynomometer;
+    SocketForce *forceSocketRpi;
+    SocketForce *forceSocketMatlab;
 
     Odin::OdinWindow *x;
+    Cat::CatWindow *catGUI;
 
 public slots:
 
 private:
     QElapsedTimer timer;
     QTimer dataTimer;
+    QTimer forceTimer;
 
     int restartCount = 0;
-    float samplingRate = 1000.0;
+    float samplingRate = 1250.0;
     float period = 1/samplingRate;
     bool pause = false;
+    bool dyno = true;
 
     QStatusBar *statusBarMainWindow;
 
@@ -55,7 +68,13 @@ private:
     QMenu *timeFrameMenu;
     QMenu *audioOutputMenu;
     QMenu *processorMenu;
+    QMenu *plotSelectMenu;
     QMenu *helpMenu;
+
+    QVBoxLayout *mainLayout;
+    QVBoxLayout *topLayout;
+    QVBoxLayout *bottomLayout;
+    QWidget *mainWidget;
 
     QAction *exitAction;
     QAction *recordAction;
@@ -66,8 +85,8 @@ private:
     QAction *resetDefaultY;
     QAction *filterAction;
     QAction *dataAnalyzerAction;
-    QAction *pythonLaunchAction;
     QAction *disableStream;
+    QAction *dynoAction;
     QActionGroup *timeFrameGroup;
     QSignalMapper *timeFrameMapper;
     QAction *timeFrameAction[9];
@@ -89,6 +108,7 @@ private:
                                     0.1,
                                     0.2,
                                     0.5};
+    int currentTimeFrame = DEFAULT_XAXIS;
 
     QSignalMapper *voltageMapper;
     QAction *voltageAction[8];
@@ -100,6 +120,7 @@ private:
                                       "+/- 2mV",
                                       "+/- 5mV",
                                       "+/- 10mV"};
+    int currentVoltageScale = DEFAULT_YAXIS;
     double voltageMin[8] =   { -50,
                                -100,
                                -200,
@@ -124,6 +145,32 @@ private:
                               0.4,
                               1,
                               2,};
+    QSignalMapper *plotSelectMapper;
+    QAction *plotSelectAction[EMG_CHANNELS];
+    QString plotSelect[EMG_CHANNELS] = {"Channel 1",
+                              "Channel 2",
+                              "Channel 3",
+                              "Channel 4",
+                              "Channel 5",
+                              "Channel 6",
+                              "Channel 7",
+                              "Channel 8",
+                              "Channel 9",
+                              "Channel 10"};
+    QAction *plotSelectAll;
+    QAction *plotSelectNone;
+    QAction *plotSelectDefault;
+
+    bool plotEnable[EMG_CHANNELS] = {false,
+                           false,
+                           false,
+                           true,
+                           true,
+                           true,
+                           true,
+                           false,
+                           false,
+                           false};
 
     QActionGroup *voltageGroup;
 
@@ -131,6 +178,7 @@ private:
     QSignalMapper *audioSelectMapper;
     QAction *aboutAction;
     QAction *odinAction;
+    QAction *catAction;
     QAction *isSmart;
     QAction *isDumb;
 
@@ -141,7 +189,7 @@ private:
 
     QString statusBarText[4];
 
-    QCustomPlot *channelGraph[12];
+    QCustomPlot *channelGraph[NUM_CHANNEL];
     SocketSylph *socketSylph;
     QProcess *pythonProcess;
 
@@ -149,19 +197,27 @@ private:
     void createActions();
     void createMenus();
     void createLayout();
+    void destroyPlots();
+    void refreshScreen();
     void connectSylph();
     void setDefaultGraph();
     void activateChannelGraph(int index);
     void updateStatusBar(int index, QString message);
 
+    bool forceSensorFlag = true;  // true: serial channel is now the force sensor; false: serial channel is FTDI
+
 private slots:
     void updateData();
+    void updateForce();
     void on_resetX_triggered();
     void on_timeFrame_changed(int timeFrameIndex);
     void on_voltage_changed(int voltageIndex);
+    void on_plotSelect_changed(int channel);
+    void on_plotSelectAll_triggered();
+    void on_plotSelectNone_triggered();
+    void on_plotSelectDefault_triggered();
     void on_resetY_triggered();
     void on_dataAnalyzer_triggered();
-    void on_pythonLaunch_triggered();
     void on_disableStream_triggered();
     void on_record_triggered();
     void on_chooseDirectory_triggered();
@@ -169,11 +225,19 @@ private slots:
     void on_filterConfig_trigger();
     void on_restart_triggered();
     void on_odin_triggered();
+    void on_cat_triggered();
     void on_smartDataProcessor_triggered();
     void on_dumbDataProcessor_triggered();
     void on_graph_clicked(int index);
+    void on_dyno_triggered();
+    void on_force_triggered();
+    void sendParameter(char *bytes);
 
     void about();
+
+signals:
+    void showOdinSignal();
+    void showCatSignal();
 };
 
 }

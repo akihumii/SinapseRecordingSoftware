@@ -11,28 +11,19 @@ class SocketSylph : public SocketAbstract {
     Q_OBJECT
 public:
     SocketSylph(DataProcessor *dataProcessor_);
-    void closeESP();
-    int getRate();
-    void setChecked(bool flag);
-
-public slots:
-    void appendSync();
+    void writeCommand(QByteArray command);
 
 private:
     QTcpSocket *socketSylph;
     DataProcessor *dataProcessor;
-    QTimer *timer;
+//    QMediaPlayer *player;
 
     qint64 packetSize = 25;
-    qint64 maxSize = packetSize*50;
-    int bytesRead = 0;
-    double rate = 0.0;
-
-    bool checked = false;
+    qint64 maxSize = packetSize*65;
 
 private slots:
-    void ReadCommand();
-    void updateRate();
+    void readData();
+    void resyncData();
 };
 
 }

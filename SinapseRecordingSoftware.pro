@@ -9,14 +9,19 @@ QT       += core gui network serialport multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = SIRE
+
+cache()
+
 TEMPLATE = subdirs
 
+
 SUBDIRS +=   \
-    src/common \
 #    src/Neutrino \
 #    src/SylphII \
     src/SylphX \
-    src/Odin
+    src/Odin \
+    src/Cat \
+    src/common
 #    src/Jane \
 #    src/AMWFlash \
 #    src/NeuroModulation
@@ -26,12 +31,14 @@ common.subdir = src/common
 #SylphII.subdir = src/SylphII
 SylphX.subdir = src/SylphX
 Odin.subdir = src/Odin
+Cat.subdir = src/Cat
 #Jane.subdir = src/Jane
 
 #Neutrino.depends = common
 #SylphII.depends = common
 SylphX.depends = common
 Odin.depends = common
+Cat.depends = common
 #Jane.depends = common
 
 FORMS +=

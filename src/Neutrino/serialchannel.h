@@ -21,7 +21,7 @@ public:
     void setRecordEnabled(bool flag);
     void setBaudRate(int baud);
 public slots:
-    void ReadData();
+    void readData();
 private:
     QSerialPort *serialData;
     QSerialPort *serialCommand;
@@ -35,7 +35,6 @@ private:
     bool connected = false;
     bool record = false;
     char currentByte;
-    int getNumChannels(QByteArray lastCommand);
     int portOrder =2;
 
     QFile *File;

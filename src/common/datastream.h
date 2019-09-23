@@ -1,9 +1,7 @@
 #ifndef DATASTREAM_H
 #define DATASTREAM_H
 
-#include "../common/qtincludes.h"
-
-namespace SylphX {
+#include "qtincludes.h"
 
 class DataStream : public QObject
 {
@@ -14,6 +12,9 @@ public:
     void streamData(int channel);
     void disableStream(int channel);
     void appendData(int channel, double data);
+    void appendData(int channel, QVector<double> data);
+    int getChannelSize(int channel);
+    void clearChannelData(int ChannelIndex);
 
 private:
     QTcpServer *serverMatlab[10];
@@ -39,14 +40,12 @@ private:
                                   false,
                                   false};
     QSignalMapper *connectionMapper;
+    QSignalMapper *socketMapper;
     QVector<double> ChannelData[10];
     QDataStream *out[10];
-
-    void clearChannelData(int ChannelIndex);
 private slots:
     void on_newConnection(int connected);
+    void disconnect(int i);
 };
-
-}
 
 #endif // DATASTREAM_H

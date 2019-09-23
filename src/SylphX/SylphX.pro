@@ -37,7 +37,13 @@ HEADERS += \
     ../Odin/loopingthread.h \
     ../Odin/pulseplot.h \
     ../Odin/odinwindow.h \
-    datastream.h
+    ../Cat/catwindow.h \
+    ../Cat/commandcat.h \
+    ../Cat/socketfilename.h \
+    ../Cat/filenamedialog.h \
+    dynomometer.h \
+    treedialog.h \
+    socketforce.h
 
 
 SOURCES += \
@@ -52,4 +58,10 @@ SOURCES += \
     ../Odin/socketodin.cpp \
     ../Odin/pulseplot.cpp \
     ../Odin/odinwindow.cpp \
-    datastream.cpp
+    ../Cat/catwindow.cpp \
+    ../Cat/commandcat.cpp \
+    ../Cat/socketfilename.cpp \
+    ../Cat/filenamedialog.cpp \
+    dynomometer.cpp \
+    treedialog.cpp \
+    socketforce.cpp

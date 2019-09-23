@@ -4,8 +4,8 @@
 #include "qtincludes.h"
 #include "filter.h"
 
-class SignalAudio : public QObject {
-    Q_OBJECT
+class SignalAudio {
+//    Q_OBJECT
 public:
     SignalAudio();
     ~SignalAudio();
