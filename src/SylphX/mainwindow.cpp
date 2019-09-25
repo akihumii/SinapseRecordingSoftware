@@ -299,13 +299,17 @@ void MainWindow::createStatusBar(){
 
 void MainWindow::connectSylph(){
     portInfo = QSerialPortInfo::availablePorts();
+    qDebug() << "Start connecting Sylph...... PortInfo: " << portInfo.size();
     QString temp;
-    if(portInfo.size()>1){
+    if(portInfo.size()>0){
         serialChannel->connectSylph();
         serialChannel->isImplantConnected() ? temp.append("Connected to Implant Port |") : temp.append("Connection to Implant Port failed |");
         serialChannel->isADCConnected()? temp.append(" Connected to ADC Port") : temp.append(" Connection to ADC Port failed");
         updateStatusBar(0, temp);
         qDebug() << temp;
+    }
+    else{
+        qDebug() << "No serial connection for Sylph......";
     }
     if(forceSensorFlag || !serialChannel->isADCConnected() && !serialChannel->isImplantConnected()){
         int p = 8000;  // Try to connect to on-Rpi decoding code

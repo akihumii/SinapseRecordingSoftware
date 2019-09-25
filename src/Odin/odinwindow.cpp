@@ -270,21 +270,22 @@ void OdinWindow::createStatusBar(){
 
 bool OdinWindow::connectOdin(){
     portInfo = QSerialPortInfo::availablePorts();
+    qDebug() << "Connecting Odin...... portInfo number: " << portInfo.size();
     connectionStatus.clear();
-    if(portInfo.size()>0){
-        connectionStatus.clear();
-        serialOdin->connectOdin();
-        if(serialOdin->isOdinSerialConnected()){
-            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
-            sendButton->setEnabled(true);
-            statusBarLabel->setText(connectionStatus);
-            return true;
-        }
-        else{
-            statusBarLabel->setText(connectionStatus);
-        }
-    }
-    if(!serialOdin->isOdinSerialConnected()){
+//    if(portInfo.size()>0){
+//        connectionStatus.clear();
+//        serialOdin->connectOdin();
+//        if(serialOdin->isOdinSerialConnected()){
+//            connectionStatus.append("Connected to Odin at " + serialOdin->getConnectedPort());
+//            sendButton->setEnabled(true);
+//            statusBarLabel->setText(connectionStatus);
+//            return true;
+//        }
+//        else{
+//            statusBarLabel->setText(connectionStatus);
+//        }
+//    }
+//    if(!serialOdin->isOdinSerialConnected()){
         socketOdin->doConnect("192.168.4.1", 30000);
         if(socketOdin->isConnected()){
             connectionStatus.append("Connected to Odin WiFi Module at 192.168.4.1/30000");
@@ -298,7 +299,7 @@ bool OdinWindow::connectOdin(){
             statusBarLabel->setText(connectionStatus);
             return false;
         }
-    }
+//    }
     return false;
 }
 
